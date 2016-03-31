@@ -5,8 +5,6 @@
 
 <p align="right">Wikipedia contributors, "Tertulia," <em>Wikipedia, The Free Encyclopedia</em>, <a href="https://en.wikipedia.org/w/index.php?title=Tertulia&oldid=688549965" target="_blank">https://en.wikipedia.org/w/index.php?title=Tertulia&oldid=688549965</a> (accessed March 31, 2016).</p>
 
-[Wikipedia contributors](https://en.wikipedia.org/w/index.php?title=Tertulia&oldid=688549965){:target="_blank"}
-
 ---
 
 Project status is kept updated in the [Wiki](https://github.com/isel-leic-ps/s1516v-tertulia/wiki).
