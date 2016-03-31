@@ -8,3 +8,5 @@
 ---
 
 Project status is kept updated in the [Wiki](https://github.com/isel-leic-ps/s1516v-tertulia/wiki).
+
+<p align="center"><small>António Borba da Silva - 22908 - a22908@alunos.isel.pt - 914452703</small></p>
