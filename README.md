@@ -9,8 +9,10 @@
 
 <p align="center">Project status is kept updated in the [Wiki](https://github.com/isel-leic-ps/s1516v-tertulia/wiki).</p>
 
+---
+
 <p><img src="http://imgs.xkcd.com/comics/algorithms.png" align="middle" /></p>
-<p align="right"><em>XKCD - A webcomic of romance, sarcasm, math, and language.</em>, <a href="http://xkcd.com/1667/" target="_blank">http://xkcd.com/1667/</a> (accessed April 13, 2016).</p>
+<p align="right"><small><em>XKCD - A webcomic of romance, sarcasm, math, and language.</em>, <a href="http://xkcd.com/1667/" target="_blank">http://xkcd.com/1667/</a> (accessed April 13, 2016).</small></p>
 
 ---
 
