@@ -1,36 +1,29 @@
 {
-	"name": "tertulias",
-	"version": "1.0.0",
-	"description": "tertulias server",
-	"main": "app.js",
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/aborba/tertulias-nodejs.git"
-	},
-	"keywords": [ "tertulias", "server" ],
-	"author": "ABS",
-	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/aborba/tertulias-nodejs/issues"
-	},
-	"homepage": "https://github.com/aborba/tertulias-nodejs#readme",
-	
-	"engines": {
-		"node": "=4.2.1"
-	},
-	"name": "azure-mobile-apps-quickstarts.backend.node.TodoSample",
-	"version": "0.0.1",
-	"description": "Samples for Azure Mobile Apps",
-	"author": "Microsoft",
-	"repository": "Azure/azure-mobile-apps-quickstarts",
-	"license": "MIT",
-	"dependencies": {
-		"azure-mobile-apps": "^2.0.0",
-		"express": "^4.13.0",
-		"swagger-ui": "^2.1.4"
-	},
-	"devDependencies": { }
+  "name": "azure-mobile-apps-quickstarts.backend.node.TodoSample",
+  "version": "0.0.1",
+  "description": "Samples for Azure Mobile Apps",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "Azure/azure-mobile-apps-quickstarts",
+  "keywords": [
+    "tertulias",
+    "server"
+  ],
+  "author": "Microsoft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aborba/tertulias-nodejs/issues"
+  },
+  "homepage": "https://github.com/aborba/tertulias-nodejs#readme",
+  "engines": {
+    "node": "=4.2.1"
+  },
+  "dependencies": {
+    "azure-mobile-apps": "^2.1.0",
+    "express": "^4.13.4",
+    "swagger-ui": "^2.1.4"
+  },
+  "devDependencies": {}
 }
