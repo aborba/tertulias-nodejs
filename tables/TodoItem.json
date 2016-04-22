@@ -1,8 +1,8 @@
 {
 	"autoIncrement": false,
-	"read": {"access": "anonymous"},
-	"insert": {"access": "anonymous"},
-	"update": {"access": "anonymous"},
-	"delete": {"access": "anonymous"},
-	"undelete": {"access": "anonymous"}
+	"read": {"access": "authenticated"},
+	"insert": {"access": "authenticated"},
+	"update": {"access": "authenticated"},
+	"delete": {"access": "authenticated"},
+	"undelete": {"access": "authenticated"}
 }
