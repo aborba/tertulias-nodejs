@@ -8,14 +8,14 @@ var app = express();
 
 // http://azure.github.io/azure-mobile-apps-node/global.html#configuration
 var mobileApp = azureMobileApps({
-    homePage: true,
-    swagger: true // UI support is enabled by installing the swagger-ui npm module.
+    homePage: false,
+    swagger: false // UI support is enabled by installing the swagger-ui npm module.
 });
 
 mobileApp.tables.import('./tables');
 mobileApp.api.import('./api');
 
-mobileApp.tables.initialize().then(function () {
+mobileApp.tables.initialize().then(function() {
     app.use(mobileApp);    // Register the Azure Mobile Apps middleware
     app.listen(process.env.PORT || 3000);   // Listen for requests
 });

@@ -5,6 +5,6 @@ var api = {
     });
 };
 
-api.access = 'authenticated';
+//api.access = 'authenticated';
 
 module.exports = api;
