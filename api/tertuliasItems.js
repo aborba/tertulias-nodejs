@@ -1,0 +1,70 @@
+var express = require('express');
+
+module.exports = function (configuration) {
+
+    var router = express.Router();
+
+    router.use(function timeLog(req, res, next) {
+        Console.log('Time: ', Date.now());
+        next();
+    });
+
+    router.get('/', (request, response) => {
+        response.send('Hello');
+    };
+
+    router.get('/about', (request, response, next) => {
+        response.send('This is the About');
+    };
+
+/*
+    router.get('/:cat', (request, response, next) => {
+        var query = 'SELECT Tertulias.id AS id, Tertulias.title AS title FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) INNER JOIN Users ON Members.usr = Users.id) WHERE (Users.id = @userId OR Tertulias.private = @privacy)';
+        /*
+        var queryParams = [
+                { name: 'userId', value: request.query.userId },
+                { name: 'privacy', value: 0 }
+            ];
+        if (request.params.tertuliaId != 'undefined') {
+            query += ' AND Tertulias.id = @tertuliaId';
+            queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
+        }
+
+        Console.log (query);
+        Console.log (queryParams);
+        */
+/*
+        request.azureMobile.data.execute({
+            sql: query,
+            parameters: [
+                { name: 'userId', value: request.query.userId },
+                { name: 'privacy', value: 0 }]
+        })
+        .then(function (results) {
+            response.json(results);
+        })
+        .catch(next);
+    });
+*/
+
+/*
+    router.post('/:category/:id', (request, response, next) => {
+        var query = {
+            sql: 'EXEC completeAllStoredProcedure @completed',
+            parameters: [
+                // { name: 'completed', value: request.query.completed }
+                { name: 'completed', value: 1 }
+            ]
+        };
+
+        request.azureMobile.data
+        .execute(query)
+        .then(function (results) {
+            response.json(results);
+        });
+    });
+*/
+
+    return router;
+
+};
