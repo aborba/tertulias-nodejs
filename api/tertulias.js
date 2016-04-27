@@ -33,7 +33,7 @@ var api = function (configuration) {
         .catch(next);
     });
 
-    post: (request, response, next) => {
+    router.post('/:category/:id', (request, response, next) => {
         var query = {
             sql: 'EXEC completeAllStoredProcedure @completed',
             parameters: [
@@ -47,7 +47,7 @@ var api = function (configuration) {
         .then(function (results) {
             response.json(results);
         });
-    }
+    });
 
     return router;
 
