@@ -21,13 +21,16 @@ var api = function (configuration) {
         Console.log (queryParams);
         */
 
-        request.azureMobile.data.execute(sql: query, parameters: [
+        request.azureMobile.data.execute({
+            sql: query,
+            parameters: [
                 { name: 'userId', value: request.query.userId },
-                { name: 'privacy', value: 0 }
-            ]);
+                { name: 'privacy', value: 0 }]
+        });
         .then(function (results) {
             response.json(results);
-        });
+        })
+        .catch(next);
     });
 
     post: (request, response, next) => {
@@ -45,6 +48,8 @@ var api = function (configuration) {
             response.json(results);
         });
     }
+
+    return router;
 
 };
 
