@@ -9,7 +9,7 @@ table.columns = {
 
 table.dynamicSchema = false;
 
-table.access = 'authenticated'; // anonymous|authenticated|disabled
+table.access = 'disabled'; // anonymous|authenticated|disabled
 
 table.read(function(context) {
 	context.query.where({ userId: context.user.id }, { private: "false" });
