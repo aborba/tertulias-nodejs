@@ -2,12 +2,14 @@ var azureMobileApps = require('azure-mobile-apps');
 
 var table = azureMobileApps.table();
 
-table.access = 'authenticated'; 
-
 table.columns = {
 	"text": "string",
-    "completed": "boolean"
+    "complete": "boolean"
 };
+
+table.dynamicSchema = false;
+
+table.access = 'authenticated'; 
 
 table.read(function(context) {
 	context.query.where({ userId: context.user.id });
