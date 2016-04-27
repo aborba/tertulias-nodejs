@@ -1,13 +1,11 @@
-var express = require('express'),
+var express = require('express');
+
 module.exports = function (configuration) {
 
     var router = express.Router();
 
-    router.get('/', (request, response, next) => {
-        var query = 'SELECT Tertulias.id AS id, Tertulias.title AS title \
-            FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) \
-            INNER JOIN Users ON Members.usr = Users.id)\
-            WHERE (Users.id = @userId OR Tertulias.private = @privacy)';
+    router.get('/:cat', (request, response, next) => {
+        var query = 'SELECT Tertulias.id AS id, Tertulias.title AS title FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) INNER JOIN Users ON Members.usr = Users.id) WHERE (Users.id = @userId OR Tertulias.private = @privacy)';
         /*
         var queryParams = [
                 { name: 'userId', value: request.query.userId },
