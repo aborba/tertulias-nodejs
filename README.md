@@ -5,8 +5,14 @@
 
 <p align="right">Wikipedia contributors, "Tertulia," <em>Wikipedia, The Free Encyclopedia</em>, <a href="https://en.wikipedia.org/w/index.php?title=Tertulia&oldid=688549965" target="_blank">https://en.wikipedia.org/w/index.php?title=Tertulia&oldid=688549965</a> (accessed March 31, 2016).</p>
 
+<img src="http://imgs.xkcd.com/comics/algorithms.png" align="middle" />
+
+<p align="right"><small><em>XKCD - A webcomic of romance, sarcasm, math, and language.</em>, <a href="http://xkcd.com/1667/" target="_blank">http://xkcd.com/1667/</a> (accessed April 13, 2016).</small></p>
+
 ---
 
 Project status is kept updated in the [Wiki](https://github.com/isel-leic-ps/s1516v-tertulia/wiki).
+
+---
 
 <p align="center"><small>António Borba da Silva - 22908 - <a href="mailto:a22908@alunos.isel.pt" target="_blank">a22908@alunos.isel.pt</a> - 914452703</small></p>
