@@ -20,7 +20,8 @@ var api = {
         var query = {
             sql: 'EXEC completeAllStoredProcedure @completed',
             parameters: [
-                { name: 'completed', value: request.query.completed }
+                // { name: 'completed', value: request.query.completed }
+                { name: 'completed', value: 1 }
             ]
         };
 
@@ -30,7 +31,7 @@ var api = {
             response.json(results);
         });
     }
-    
+
 };
 
 module.exports = api;
