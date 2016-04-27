@@ -1,6 +1,6 @@
-var express = require('express');
 
 module.exports = function (configuration) {
+var express = require('express');
 
     var router = express.Router();
 
