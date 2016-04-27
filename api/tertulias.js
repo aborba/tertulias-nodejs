@@ -2,7 +2,7 @@ var api = function (configuration) {
 
     var router = express.Router();
 
-    router.get('/', (request, response, next) => {
+    router.get('/:tertuliaId', (request, response, next) => {
         var query = 'SELECT Tertulias.id AS id, Tertulias.title AS title \
             FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) \
             INNER JOIN Users ON Members.usr = Users.id)\
@@ -26,13 +26,13 @@ var api = function (configuration) {
             parameters: [
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }]
-        });
+        })
         .then(function (results) {
             response.json(results);
         })
         .catch(next);
     });
-
+/*
     router.post('/:category/:id', (request, response, next) => {
         var query = {
             sql: 'EXEC completeAllStoredProcedure @completed',
@@ -48,6 +48,7 @@ var api = function (configuration) {
             response.json(results);
         });
     });
+*/
 
     return router;
 
