@@ -58,10 +58,10 @@ GO
 CREATE TABLE Members(
 	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
 	tertulia UNIQUEIDENTIFIER NOT NULL,
-	userId UNIQUEIDENTIFIER NOT NULL,
+	usr UNIQUEIDENTIFIER NOT NULL,
 	role UNIQUEIDENTIFIER NOT NULL,
 	CONSTRAINT fk_members_tertulia FOREIGN KEY (tertulia) REFERENCES Tertulias(id),
-	CONSTRAINT fk_members_user FOREIGN KEY (userId) REFERENCES Users(id),
+	CONSTRAINT fk_members_user FOREIGN KEY (usr) REFERENCES Users(id),
 	CONSTRAINT fk_members_role FOREIGN KEY (role) REFERENCES Roles(id)
 );
 GO
@@ -73,7 +73,7 @@ CREATE VIEW Members_Vw AS
 		Roles.id AS roleId, Roles.roleName AS roleName
 	FROM ((Members 
 		INNER JOIN Tertulias ON Members.tertulia = Tertulias.id) 
-			INNER JOIN Users ON Members.userId = Users.id) 
+			INNER JOIN Users ON Members.usr = Users.id) 
 				INNER JOIN Roles ON Members.role = Roles.id;
 GO
 
@@ -84,14 +84,19 @@ CREATE PROCEDURE dbo.SpInsertTertulia
 	@userId UNIQUEIDENTIFIER, 
 	@title VARCHAR(40), @subject VARCHAR(80), @schedule INTEGER, @private INTEGER
 AS
-BEGIN
-	BEGIN  TRAN
-		INSERT INTO Tertulias (title, subject, schedule, private) VALUES (@title, @subject, @schedule, @private);
-	    DECLARE @tertuliaId UNIQUEIDENTIFIER; SELECT @tertuliaId = id FROM Tertulias WHERE _id = SCOPE_IDENTITY();
-	    DECLARE @adminId UNIQUEIDENTIFIER; SELECT @AdminId = id FROM Roles WHERE roleName='Administrator';
-		INSERT INTO Members (tertulia, userId, role) VALUES (@tertuliaId, @userId, @adminId);
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION
+BEGIN TRY
+	INSERT INTO Tertulias (title, subject, schedule, private) VALUES (@title, @subject, @schedule, @private);
+    DECLARE @tertuliaId UNIQUEIDENTIFIER; SELECT @tertuliaId = id FROM Tertulias WHERE _id = SCOPE_IDENTITY();
+    DECLARE @adminId UNIQUEIDENTIFIER; SELECT @AdminId = id FROM Roles WHERE roleName='Administrator';
+	INSERT INTO Members (tertulia, usr, role) VALUES (@tertuliaId, @userId, @adminId);
 	COMMIT
-END
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK
+END CATCH
 GO
 
 /*
