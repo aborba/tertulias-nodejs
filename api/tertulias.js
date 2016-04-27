@@ -7,11 +7,11 @@ var api = function (configuration) {
             FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) \
             INNER JOIN Users ON Members.usr = Users.id)\
             WHERE (Users.id = @userId OR Tertulias.private = @privacy)';
+        /*
         var queryParams = [
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
             ];
-        /*
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
             queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
@@ -21,7 +21,10 @@ var api = function (configuration) {
         Console.log (queryParams);
         */
 
-        request.azureMobile.data.execute({ sql: query, parameters: queryParams });
+        request.azureMobile.data.execute({ sql: query, parameters: [
+                { name: 'userId', value: request.query.userId },
+                { name: 'privacy', value: 0 }
+            ] });
         .then(function (results) {
             response.json(results);
         });
