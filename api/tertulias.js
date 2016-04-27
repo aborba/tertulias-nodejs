@@ -16,7 +16,7 @@ var api = {
         request.azureMobile.data.execute({
             sql: 'SELECT * FROM Tertulias WHERE private = @privacy',
             parameters: [
-                { name: 'privacy', value: 'FALSE' }
+                { name: 'privacy', value: FALSE }
             ]
         })
         .then(function (results) {
