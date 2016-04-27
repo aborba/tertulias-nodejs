@@ -9,6 +9,10 @@ var api = {
                 { name: 'completed', value: request.query.completed }
             ]
         };
+            parameters: [
+                { name: 'userId', value: '63C0085B-C1F1-4217-93A6-33DA7E592DD0' },
+                { name: 'privacy', value: 0 }
+            ]
 */
         request.azureMobile.data.execute({
             sql: 'SELECT Tertulias.id AS id, Tertulias.title AS title \
@@ -16,7 +20,7 @@ var api = {
             INNER JOIN Users ON Members.usr = Users.id)\
             WHERE Users.id = @userId OR Tertulias.private = @privacy;',
             parameters: [
-                { name: 'userId', value: '63C0085B-C1F1-4217-93A6-33DA7E592DD0' },
+                { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
             ]
         })
