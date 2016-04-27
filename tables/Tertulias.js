@@ -12,7 +12,7 @@ table.dynamicSchema = false;
 table.access = 'anonymous'; // anonymous|authenticated|disabled
 
 table.read(function(context) {
-	context.query.where({ private: "false" });
+	context.query.where({ userId: context.user.id }, { private: "false" });
 	return context.execute();
 });
 
