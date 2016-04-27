@@ -1,33 +1,26 @@
-var api = {
+var api = function (configuration) {
 
-    get: (request, response, next) => {
+    var router = express.Router();
 
-/*
-        var query = {
-            sql: 'UPDATE TodoItem SET complete = @completed',
-            parameters: [
-                { name: 'completed', value: request.query.completed }
-            ]
-        };
-            parameters: [
-                { name: 'userId', value: '63C0085B-C1F1-4217-93A6-33DA7E592DD0' },
-                { name: 'privacy', value: 0 }
-            ]
-*/
-        request.azureMobile.data.execute({
-            sql: 'SELECT Tertulias.id AS id, Tertulias.title AS title \
+    router.get('/:tertuliaId', (request, response, next) => {
+        var query = 'SELECT Tertulias.id AS id, Tertulias.title AS title \
             FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) \
             INNER JOIN Users ON Members.usr = Users.id)\
-            WHERE Users.id = @userId OR Tertulias.private = @privacy;',
-            parameters: [
+            WHERE (Users.id = @userId OR Tertulias.private = @privacy)';
+        var queryParams = [
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
             ]
-        })
+        if (request.params.tertuliaId != 'undefined') {
+            query += ' AND Tertulias.id = @tertuliaId';
+            queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
+        }
+        
+        request.azureMobile.data.execute({ sql: query, parameters: queryParams });
         .then(function (results) {
             response.json(results);
         });
-    },
+    });
 
     post: (request, response, next) => {
         var query = {
