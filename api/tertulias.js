@@ -17,10 +17,10 @@ var api = function (configuration) {
             query += ' AND Tertulias.id = @tertuliaId';
             queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
         }
-        */
 
         Console.log (query);
         Console.log (queryParams);
+        */
 
         request.azureMobile.data.execute({ sql: query, parameters: queryParams });
         .then(function (results) {
