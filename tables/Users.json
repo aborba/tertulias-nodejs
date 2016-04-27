@@ -1,5 +1,5 @@
 {
-	"autoIncrement": false,
+	"autoIncrement": true,
 	"read":   	{"access": "authenticated"},
 	"insert": 	{"access": "authenticated"},
 	"update": 	{"access": "authenticated"},

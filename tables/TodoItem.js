@@ -4,6 +4,11 @@ var table = azureMobileApps.table();
 
 table.access = 'authenticated'; 
 
+table.columns = {
+	"text": "string",
+    "completed": "boolean"
+};
+
 table.read(function(context) {
 	context.query.where({ userId: context.user.id });
 	return context.execute();
