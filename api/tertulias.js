@@ -2,9 +2,6 @@ var api = {
 
     get: (request, response, next) => {
 
-        var query = {
-            sql: 'SELECT * FROM Tertulias WHERE private = FALSE'
-        };
 /*
         var query = {
             sql: 'UPDATE TodoItem SET complete = @completed',
@@ -14,7 +11,7 @@ var api = {
         };
 */
         request.azureMobile.data.execute({
-            sql: 'SELECT * FROM Tertulias WHERE private = @privacy',
+            sql: 'SELECT * FROM Tertulias WHERE private = 0',
             parameters: [
                 { name: 'privacy', value: 0 }
             ]
