@@ -3,14 +3,17 @@ var api = {
     get: (request, response, next) => {
 
         var query = {
+            sql: 'SELECT * FROM TodoItem'
+        };
+/*
+        var query = {
             sql: 'UPDATE TodoItem SET complete = @completed',
             parameters: [
                 { name: 'completed', value: request.query.completed }
             ]
         };
-
-        request.azureMobile.data
-        .execute(query)
+*/
+        request.azureMobile.data.execute(query)
         .then(function (results) {
             response.json(results);
         });

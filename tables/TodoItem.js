@@ -9,8 +9,9 @@ table.columns = {
 
 table.dynamicSchema = false;
 
-table.access = 'authenticated'; 
+table.access = 'disabled'; // anonymous|authenticated|disabled
 
+/*
 table.read(function(context) {
 	context.query.where({ userId: context.user.id });
 	return context.execute();
@@ -28,5 +29,6 @@ table.update(function(context) {
 table.delete(function(context) {
 	return context.execute();
 });
+*/
 
 module.exports = table;
