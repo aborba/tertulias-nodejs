@@ -1,9 +1,9 @@
 var api = {
 
     get: (request, response, next) => {
-
         var query = {
-            sql: 'SELECT * FROM TodoItem'
+            sql: 'SELECT * FROM TodoItem',
+            parameters: []
         };
 /*
         var query = {
@@ -19,6 +19,7 @@ var api = {
         });
     },
 
+/*
     post: (request, response, next) => {
         var query = {
             sql: 'EXEC completeAllStoredProcedure @completed',
@@ -34,7 +35,7 @@ var api = {
             response.json(results);
         });
     }
-
+*/
 };
 
 module.exports = api;

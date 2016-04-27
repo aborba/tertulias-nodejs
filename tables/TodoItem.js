@@ -3,8 +3,8 @@ var azureMobileApps = require('azure-mobile-apps');
 var table = azureMobileApps.table();
 
 table.columns = {
-	"text": "string",
-    "complete": "boolean"
+	'text': 'string',
+    'complete': 'boolean'
 };
 
 table.dynamicSchema = false;

@@ -1,7 +1,7 @@
 var api = {
 
     get: (request, response, next) => {
-        /*
+/*
         var query = {
             sql: 'SELECT Tertulias.id AS id, Tertulias.title AS title FROM ((Tertulias INNER JOIN Members ON Tertulias.id = Members.tertulia) INNER JOIN Users ON Members.usr = Users.id) WHERE (Users.id = '4562FB8E-973A-439D-BDD6-D7FEACA29C17' OR Tertulias.private = 0)',
             parameters: [
@@ -10,8 +10,7 @@ var api = {
                 { name: 'privacy', value: 0 }
             ]
         };
-        */
-        /*
+
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
             queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
@@ -19,15 +18,13 @@ var api = {
 
         Console.log (query);
         Console.log (queryParams);
-        */
 
-/*
         request.azureMobile.data.execute(query)
         .then(function (results) {
             response.json(results);
         });
-        */
-        request.azureMobile.data.execute('SELECT ''Hello''')
+*/
+        request.azureMobile.data.execute('SELECT "Hello"')
         .then(function (results) {
             response.json(results);
         });
