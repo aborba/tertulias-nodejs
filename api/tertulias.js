@@ -19,10 +19,13 @@ var api = {
         Console.log (queryParams);
         */
 
+/*
         request.azureMobile.data.execute(query)
         .then(function (results) {
             response.json(results);
         });
+        */
+        results.send('Hello');
     }
 */
 
