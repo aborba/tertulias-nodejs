@@ -11,11 +11,12 @@ var api = function (configuration) {
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
             ]
+        Console.log (query);
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
             queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
         }
-        
+
         Console.log (query);
         Console.log (queryParams);
 
