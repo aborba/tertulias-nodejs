@@ -21,10 +21,10 @@ var api = function (configuration) {
         Console.log (queryParams);
         */
 
-        request.azureMobile.data.execute({ sql: query, parameters: [
+        request.azureMobile.data.execute(sql: query, parameters: [
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
-            ] });
+            ]);
         .then(function (results) {
             response.json(results);
         });
