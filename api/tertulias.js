@@ -12,10 +12,12 @@ var api = function (configuration) {
                 { name: 'privacy', value: 0 }
             ]
         window.alert(query);
+        /*
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
             queryParams.push({ name: 'tertuliaId', value: request.params.tertuliaId });
         }
+        */
 
         Console.log (query);
         Console.log (queryParams);
