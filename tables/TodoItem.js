@@ -9,7 +9,7 @@ table.columns = {
 
 table.dynamicSchema = false;
 
-table.access = 'disabled'; // anonymous|authenticated|disabled
+table.access = 'anonymous'; // anonymous|authenticated|disabled
 
 /*
 table.read(function(context) {
