@@ -4,12 +4,17 @@ var express = require('express');
 
     var router = express.Router();
 
-    router.get('/', (request, response, next) => {
-        request.send('Hello');
+    router.use(function timeLog(req, res, next) {
+        Console.log('Time: ', Date.now());
+        next();
+    });
+
+    router.get('/', (request, response) => {
+        response.send('Hello');
     };
 
     router.get('/about', (request, response, next) => {
-        request.send('This is the About');
+        response.send('This is the About');
     };
 
     router.get('/:cat', (request, response, next) => {
