@@ -10,7 +10,7 @@ var api = function (configuration) {
         var queryParams = [
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
-            ]
+            ];
         /*
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
