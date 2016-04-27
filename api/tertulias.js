@@ -1,4 +1,5 @@
-var api = function (configuration) {
+var express = require('express'),
+module.exports = function (configuration) {
 
     var router = express.Router();
 
@@ -53,5 +54,3 @@ var api = function (configuration) {
     return router;
 
 };
-
-module.exports = api;
