@@ -11,7 +11,6 @@ var api = function (configuration) {
                 { name: 'userId', value: request.query.userId },
                 { name: 'privacy', value: 0 }
             ]
-        window.alert(query);
         /*
         if (request.params.tertuliaId != 'undefined') {
             query += ' AND Tertulias.id = @tertuliaId';
