@@ -27,7 +27,10 @@ var api = {
             response.json(results);
         });
         */
-        response.send('Hello');
+        request.azureMobile.data.execute('SELECT ''Hello''')
+        .then(function (results) {
+            response.json(results);
+        });
     }
 */
 
