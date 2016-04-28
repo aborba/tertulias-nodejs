@@ -36,7 +36,7 @@ mobileApp.tables.initialize()
     .then(function () {
         app.use(function (req, res, next) {
             console.log('Time:', Date.now());
-            res.send('Hello from Tertulias at ' + Date.now());
+            res.render('Hello from Tertulias at ' + Date.now());
             next();
         });
         app.use(mobileApp);    // Register the Azure Mobile Apps middleware
