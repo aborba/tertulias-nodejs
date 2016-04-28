@@ -23,6 +23,11 @@ var mobileApp = azureMobileApps({
     swagger: true
 });
 
+app.use(function (req, res, next) {
+    console.log('Time:', Date.now());
+    next();
+});
+
 // Import the files from the tables directory to configure the /tables endpoint
 mobileApp.tables.import('./tables');
 
