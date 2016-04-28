@@ -22,11 +22,9 @@ var mobileApp = azureMobileApps({
     // installing the swagger-ui npm module.
     swagger: true
 });
-var mobileApp2 = azureMobileApps();
 
 // Import the files from the tables directory to configure the /tables endpoint
 mobileApp.tables.import('./tables');
-mobileApp2.tables.import('./tables');
 
 // Import the files from the api directory to configure the /api endpoint
 mobileApp.api.import('./api');
@@ -36,11 +34,6 @@ mobileApp.api.import('./api');
 // and returns a Promise.
 mobileApp.tables.initialize()
     .then(function () {
-        app.use(mobileApp, mobileApp2);    // Register the Azure Mobile Apps middleware
-        app.use(function (req, res, next) {
-            console.log('Time:', Date.now());
-            res.send('Hello from Tertulias at ' + Date.now());
-            next();
-        });
+        app.use(mobileApp);    // Register the Azure Mobile Apps middleware
         app.listen(process.env.PORT || 3000);   // Listen for requests
     });
