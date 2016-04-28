@@ -23,12 +23,6 @@ var mobileApp = azureMobileApps({
     swagger: true
 });
 
-app.use(function (req, res, next) {
-    console.log('Time:', Date.now());
-    res.send('Hello');
-    next();
-});
-
 // Import the files from the tables directory to configure the /tables endpoint
 mobileApp.tables.import('./tables');
 
@@ -40,6 +34,11 @@ mobileApp.api.import('./api');
 // and returns a Promise.
 mobileApp.tables.initialize()
     .then(function () {
+        app.use(function (req, res, next) {
+            console.log('Time:', Date.now());
+            res.send('Hello from Tertulias at ' + Date.now());
+            next();
+        });
         app.use(mobileApp);    // Register the Azure Mobile Apps middleware
         app.listen(process.env.PORT || 3000);   // Listen for requests
     });
