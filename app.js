@@ -1,22 +1,6 @@
-var printHeader = function() {
-    console.log('   ______               __             ___                           ');
-    console.log('  /\\__  _\\             /\\ \\__         /\\_ \\    __                    ');
-    console.log('  \\/_/\\ \\/    __   _ __\\ \\ ,_\\  __  __\\//\\ \\  /\\_\\     __      ____  ');
-    console.log('     \\ \\ \\  /\'__`\\/\\`\'__\\ \\ \\/ /\\ \\/\\ \\ \\ \\ \\ \\/\\ \\  /\'__`\\   /\',__\\ ');
-    console.log('      \\ \\ \\/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\ \\_\\ \\ \\_\\ \\_\\ \\ \\/\\ \\ \\.\\_/\\__, `\\');
-    console.log('       \\ \\_\\ \\____\\\\ \\_\\  \\ \\__\\\\ \\____/ /\\____\\\\ \\_\\ \\__/.\\_\\/\\____/');
-    console.log('        \\/_/\\/____/ \\/_/   \\/__/ \\/___/  \\/____/ \\/_/\\/__/\\/_/\\/___/ ');
-}
+var util = require('./util');
 
-var dump = function(obj) {
-    console.log('=============================================');
-    console.log(obj.constructor.name + ' object');
-    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
-    console.log(obj);
-    console.log('---------------------------------------------');
-}
-
-printHeader();
+util.printHeader();
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
@@ -38,7 +22,7 @@ mobile.api.import('./api');
 console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
-        dump(mobile);
+        util.dump(mobile);
         console.log('Registering the Azure Mobile Apps middleware.');
         app.use(mobile);
         console.log('Listening for requests.');
