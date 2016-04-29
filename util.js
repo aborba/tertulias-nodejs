@@ -24,6 +24,7 @@ module.exports = {
 
 	    displayBanner(obj.banner, obj.pad);
 	    displayVersion(obj.version, obj.pad);
+	    console.log();
 	},
 
 	logTertulias: function(version) {
