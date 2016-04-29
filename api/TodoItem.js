@@ -7,7 +7,7 @@ var api = {
 
     get: function (req, res, next) {
         var query = {
-            sql: 'SELECT text FROM TodoItem;'
+            sql: 'SELECT * FROM TodoItem;'
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
