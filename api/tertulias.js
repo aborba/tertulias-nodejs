@@ -8,7 +8,7 @@ var api = {
 
     get: function (req, res, next) {
     	var sql = 'SELECT * FROM Tertulias WHERE private = 0';
-    	util.dumpObj(req);
+    	//util.dumpObj(req);
     	var parameters = [{
                 user: 'context.user.userId'
             }]
@@ -29,5 +29,5 @@ var api = {
 
 };
 
-//api.post.access = 'authenticated';
+//api.access = 'authenticated';
 module.exports = api;

@@ -23,7 +23,7 @@ mobile.api.import('./api');
 console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
-        util.dumpObj(mobile);
+        //util.dumpObj(mobile);
         console.log('Registering the Azure Mobile Apps middleware.');
         app.use(mobile);
         console.log('Listening for requests.');
