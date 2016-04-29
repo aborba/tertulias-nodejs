@@ -33,7 +33,7 @@ module.exports = {
 
 	dumpObj: function(obj) {
 	    console.log('=============================================');
-	    console.log(this.objName(obj) + ' object');
+	    console.log(obj.constructor.name + ' object');
 	    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 	    console.log(obj);
 	    console.log('---------------------------------------------');
