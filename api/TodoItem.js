@@ -7,9 +7,9 @@ var api = {
 
     get: function (req, res, next) {
         var query = {
-            sql: 'UPDATE TodoItem SET complete=@completed',
+            sql: 'SELECT text FROM TodoItem;',
             parameters: [
-                { completed: 1 }
+                { completed: '1' }
             ]
         };
         console.log(query);
