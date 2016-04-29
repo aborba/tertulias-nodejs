@@ -3,7 +3,7 @@ var api = {
     	var control = 1;
 
         if (typeof req.params.completed === 'undefined') {
-        	console.log('' + control++ + ': No completed parameter');
+        	console.log('-' + control++ + ': No completed parameter');
         	res.json(result: 'none');
         	return next();
         }
