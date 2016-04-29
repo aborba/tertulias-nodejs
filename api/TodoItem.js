@@ -27,7 +27,7 @@ var api = {
             ]
         };
         req.azureMobile.data.execute(query).then(function(results) {
-        	res.json(results);
+        	res.json('Ok');
         });
     }
 };
