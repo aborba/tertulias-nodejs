@@ -2,6 +2,7 @@ var api = {
 
     all: function (req, res, next) {
         console.log('In TodoItem all');
+        next();
     },
 
     get: function (req, res, next) {
@@ -17,7 +18,7 @@ var api = {
         	res.json('Ok');
         });
     }
-    
+
 };
 
 //api.post.access = 'authenticated';
