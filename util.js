@@ -4,22 +4,22 @@ module.exports = {
 	    if (typeof obj === typeof undefined) return;
 
 	    function getPadString(pad, padChar) {
-		    pad = typeof pad === typeof undefined ? 0 : pad + 1;
-	    	if (typeof padChar === typeof undefined) padChar = ' ';
+		    pad = typeof pad === 'undefined' ? 0 : pad + 1;
+	    	if (typeof padChar === 'undefined') padChar = ' ';
 		    return Array(pad).join(padChar);
 	    }
 
-	    function displayBanner(b, pad) {
-		    if (typeof b === typeof undefined) return;
+	    function displayBanner(banner, pad) {
+		    if (typeof banner === 'undefined') return;
 		    var padString = getPadString(pad);
-		    var bLen = b.length;
-			for (var i = 0; i < bLen; i++) console.log(padString + b[i]);
+		    var bannerLen = banner.length;
+			for (var i = 0; i < bannerLen; i++) console.log(padString + banner[i]);
 	    }
 
-	    function displayVersion(v, pad) {
-		    if (typeof v === typeof undefined) return;
+	    function displayVersion(version, pad) {
+		    if (typeof version === typeof undefined) return;
 		    var padString = getPadString(pad);
-		    console.log(padString + 'Version: ' + v);
+		    console.log(padString + 'Version: ' + version);
 	    }
 
 	    displayBanner(obj.banner, obj.pad);
