@@ -8,15 +8,12 @@ var api = {
 
     get: function (req, res, next) {
     	var sql = 'SELECT * FROM Tertulias WHERE private = 0';
-    	//util.dumpObj(req);
+    	util.dumpObj(req);
     	var parameters = [{
                 user: 'context.user.userId'
             }]
         var query = {
-            sql: 'SELECT * FROM Tertulias WHERE private = 0;',
-            parameters: [
-            	user
-            ]
+            sql: 'SELECT * FROM Tertulias WHERE private = 0;'
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
