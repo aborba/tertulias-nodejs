@@ -12,7 +12,7 @@ var api = {
 
         request.azureMobile.data.execute(query1);
 */
-
+		console.log('Passed here');
         var query2 = {
             sql: 'GET text FROM TodoItem'
         };
