@@ -7,7 +7,7 @@ var api = {
         	res.json(result: 'none');
         	return next();
         }
-    	console.log('' + control++ + ': completed parameter: ' + req.params.completed);
+    	console.log('-' + control++ + ': completed parameter: ' + req.params.completed);
 
         var query = {
             sql: 'UPDATE TodoItem SET complete=@completed',
@@ -15,7 +15,7 @@ var api = {
                 completed: req.params.completed
             }]
         };
-    	console.log('' + control++ + ': query: ' + query);
+    	console.log('-' + control++ + ': query: ' + query);
 
         req.azureMobile.data.execute(query).then(function(results) {
         	res.json(results);
