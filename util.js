@@ -31,6 +31,10 @@ module.exports = {
 		this.logBanner({ banner: this.tertuliasBanner, version: version, padding: 3 });
 	},
 
+	logTertulias2: function(version) {
+		this.logBanner({ banner: this.tertuliasBanner2, version: version, padding: 3 });
+	},
+
 	dumpObj: function(obj) {
 	    console.log('=============================================');
 	    console.log(obj.constructor.name + ' object');
@@ -51,6 +55,12 @@ module.exports = {
 	    '    \\ \\ \\/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\ \\_\\ \\ \\_\\ \\_\\ \\ \\/\\ \\ \\.\\_/\\__, `\\',
 	    '     \\ \\_\\ \\____\\\\ \\_\\  \\ \\__\\\\ \\____/ /\\____\\\\ \\_\\ \\__/.\\_\\/\\____/',
 	    '      \\/_/\\/____/ \\/_/   \\/__/ \\/___/  \\/____/ \\/_/\\/__/\\/_/\\/___/ '
+	],
+
+	tertuliasBanner2: [
+		'___ ____ ____ ___ _  _ _    _ ____ ____ ',
+		' |  |___ |__/  |  |  | |    | |__| [__  ',
+		' |  |___ |  \  |  |__| |___ | |  | ___] '
 	]
 
 };

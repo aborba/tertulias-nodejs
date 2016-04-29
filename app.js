@@ -1,7 +1,7 @@
-var appVersion = '14';
+var appVersion = '1';
 
 var util = require('./util');
-util.logBanner({ banner: util.tertuliasBanner, version: appVersion, pad: 3 });
+util.logTertulias2(appVersion);
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
