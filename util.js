@@ -11,7 +11,7 @@ module.exports = {
 	},
 
 	logBanner: function(banner, version) {
-		logBanner(banner);
+		this.logBanner(banner);
 	    if (typeof version === typeof undefined) {
 	    	return;
 	    }
@@ -19,7 +19,7 @@ module.exports = {
 	},
 
 	logTertulias: function(version) {
-		logBanner(tertuliasBanner, version);
+		this.logBanner(this.tertuliasBanner, version);
 	},
 
 	dump: function(obj) {
