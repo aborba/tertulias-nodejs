@@ -1,22 +1,25 @@
 var api = {
-    get: function (request, response, next) {
-    	var passCount = 1;
-		console.log('Passed here ' + passCount++);
-		console.log(request.params);
-		console.log('Passed here ' + passCount++);
+    get: function (req, res, next) {
+    	var control = 1;
 
-        if (typeof request.params.completed === 'undefined') return next();
-		console.log('Passed here ' + passCount++);
+        if (typeof req.params.completed === 'undefined') {
+        	console.log('' + control++ + ': No completed parameter');
+        	res.json(result: 'none');
+        	return next();
+        }
+    	console.log('' + control++ + ': completed parameter: ' + req.params.completed);
+
         var query = {
             sql: 'UPDATE TodoItem SET complete=@completed',
             parameters: [{
-                completed: request.params.completed
+                completed: req.params.completed
             }]
         };
-		console.log('Passed here ' + passCount++);
+    	console.log('' + control++ + ': query: ' + query);
 
-        request.azureMobile.data.execute(query);
-		console.log('Passed here ' + passCount++);
+        req.azureMobile.data.execute(query).then(function(results) {
+        	res.json(results);
+        });
     }
 };
 
