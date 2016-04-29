@@ -1,3 +1,11 @@
+console.log(' ______               __             ___                           ');
+console.log('/\\__  _\\             /\\ \\__         /\\_ \\    __                    ');
+console.log('\\/_/\\ \\/    __   _ __\\ \\ ,_\\  __  __\\//\\ \\  /\\_\\     __      ____  ');
+console.log('   \\ \\ \\  /\'__`\\/\\`\'__\\ \\ \\/ /\\ \\/\\ \\ \\ \\ \\ \\/\\ \\  /\'__`\\   /\',__\\ ');
+console.log('    \\ \\ \\/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\ \\_\\ \\ \\_\\ \\_\\ \\ \\/\\ \\L\\.\\_/\\__, `\\');
+console.log('     \\ \\_\\ \\____\\\\ \\_\\  \\ \\__\\\\ \\____/ /\\____\\\\ \\_\\ \\__/.\\_\\/\\____/');
+console.log('      \\/_/\\/____/ \\/_/   \\/__/ \\/___/  \\/____/ \\/_/\\/__/\\/_/\\/___/ ');
+
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
 
@@ -14,7 +22,6 @@ var mobile = azureMobileApps(appConfiguration);
 
 mobile.tables.import('./tables');
 mobile.api.import('./api');
-
 
 console.log('Initializing...');
 mobile.tables.initialize()
