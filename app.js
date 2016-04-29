@@ -1,4 +1,4 @@
-var appVersion = '6';
+var appVersion = '7';
 
 var util = require('./util');
 util.logBanner({ banner: util.tertuliasBanner, version: appVersion, pad: 3 });
