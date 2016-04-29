@@ -1,4 +1,4 @@
-require('../util');
+var util = require('../util');
 
 var api = {
 
