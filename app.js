@@ -1,27 +1,16 @@
-// ----------------------------------------------------------------------------
-// Copyright (c) 2015 Microsoft Corporation. All rights reserved.
-// ----------------------------------------------------------------------------
-
-// This is a base-level Azure Mobile App SDK.
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
 
-// Set up a standard Express app
 var app = express();
 
-// If you are producing a combined Web + Mobile app, then you should handle
-// anything like logging, registering middleware, etc. here
-
-// Configuration of the Azure Mobile Apps can be done via an object, the
-// environment or an auxiliary file.  For more information, see
-// http://azure.github.io/azure-mobile-apps-node/global.html#configuration
-var mobile = azureMobileApps({
-    // Explicitly enable the Azure Mobile Apps home page
+var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/global.html#configuration
+    debug: true,
     homePage: true,
-    // Explicitly enable swagger support. UI support is enabled by
-    // installing the swagger-ui npm module.
-    swagger: true
-});
+    swagger: true,
+    skipVersionCheck: true
+}
+
+var mobile = azureMobileApps(appConfiguration);
 
 // Import the files from the tables directory to configure the /tables endpoint
 mobile.tables.import('./tables');
@@ -34,6 +23,7 @@ mobile.api.import('./api');
 // and returns a Promise.
 mobile.tables.initialize()
     .then(function () {
+        console.log(dataConfiguration);
         app.use(mobile);    // Register the Azure Mobile Apps middleware
         app.listen(process.env.PORT || 3000);   // Listen for requests
     });
