@@ -13,8 +13,10 @@ var api = {
             ]
         };
         req.azureMobile.data.execute(query).then(function(results) {
-        	res.send('Ok');
-            next();
+            res.status(200)
+            .type('application/json')
+        	.json(results);
+            return next();
         });
     }
 
