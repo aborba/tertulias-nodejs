@@ -4,7 +4,7 @@ module.exports = {
 	    if (typeof obj === typeof undefined) return;
 
 	    function getPadString(pad, padChar) {
-		    if (typeof pad === typeof undefined) pad = 1;
+		    pad = typeof pad === typeof undefined ? 0 : pad + 1;
 	    	if (typeof padChar === typeof undefined) padChar = ' ';
 		    return Array(pad).join(padChar);
 	    }
