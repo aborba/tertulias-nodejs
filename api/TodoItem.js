@@ -14,8 +14,7 @@ var api = {
 */
 
         var query2 = {
-            sql: 'GET * FROM TodoItem',
-            parameters: []
+            sql: 'GET * FROM TodoItem'
         };
 
         request.azureMobile.data.execute(query2)
