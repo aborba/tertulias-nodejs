@@ -33,7 +33,7 @@ module.exports = {
 
 	dumpObj: function(obj) {
 	    console.log('=============================================');
-	    console.log(obj.constructor.name + ' object');
+	    console.log(this.objName(obj) + ' object');
 	    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 	    console.log(obj);
 	    console.log('---------------------------------------------');
@@ -41,7 +41,7 @@ module.exports = {
 
 	objName: function(obj) {
 		return obj.constructor.name;
-	}
+	},
 
 	tertuliasBanner: [
 	    ' ______               __             ___                           ',
