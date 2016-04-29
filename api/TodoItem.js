@@ -1,14 +1,24 @@
 var api = {
     get: function (request, response, next) {
+
+/*
         if (typeof request.params.completed === 'undefined') return next();
-        var query = {
+        var query1 = {
             sql: 'UPDATE TodoItem SET complete=@completed',
             parameters: [{
                 completed: request.params.completed
             }]
         };
 
-        request.azureMobile.data.execute(query)
+        request.azureMobile.data.execute(query1);
+*/
+
+        var query2 = {
+            sql: 'GET * FROM TodoItem',
+            parameters: []
+        };
+
+        request.azureMobile.data.execute(query2)
         .then(function (results) {
             response.json(results);
         });
