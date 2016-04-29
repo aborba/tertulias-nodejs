@@ -1,6 +1,6 @@
+var appVersion = '1';
 var util = require('./util');
-
-util.printHeader();
+util.logTertulias(1);
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
