@@ -12,6 +12,7 @@ var api = {
                 { completed: 1 }
             ]
         };
+        console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
             res.status(200)
             .type('application/json')
