@@ -1,3 +1,5 @@
+require('../util');
+
 var api = {
 
     all: function (req, res, next) {
