@@ -7,6 +7,6 @@ var api = {
 };
 
 api.get.access = 'anonymous';	// anonymous | authenticated
-api.post.access = 'authenticated';
+//api.post.access = 'authenticated';
 
 module.exports = api;
