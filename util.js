@@ -1,25 +1,25 @@
 module.exports = {
 
-	logBanner: function(banner) {
-	    if (typeof banner === typeof undefined) {
-	    	return;
+	logBanner: function(obj) {
+	    if (typeof obj === typeof undefined) return;
+
+	    function displayBanner(b) {
+		    if (typeof b === typeof undefined) return;
+		    var bLen = b.length;
+			for (var i = 0; i < bLen; i++) console.log(b[i]);
 	    }
-	    var bannerLength = banner.length;
-		for (var i = 0; i < bannerLength; i++) {
-		    console.log(banner[i]);
-		}
+
+	    function displayVersion(v) {
+		    if (typeof v === typeof undefined) return;
+		    console.log('Version: ' + v);
+	    }
+
+	    displayBanner(obj.banner);
+	    displayVersion(obj.version);
 	},
 
-	logBanner: function(banner, version) {
-		this.logBanner(banner);
-	    if (typeof version === typeof undefined) {
-	    	return;
-	    }
-	    console.log('Version: ' + version);
-	},
-
-	logTertulias: function(version) {
-		this.logBanner(this.tertuliasBanner, version);
+	logTertulias: function(ver) {
+		this.logBanner({ banner: this.tertuliasBanner, version: ver });
 	},
 
 	dump: function(obj) {
