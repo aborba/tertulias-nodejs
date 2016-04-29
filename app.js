@@ -23,6 +23,7 @@ mobile.api.import('./api');
 // and returns a Promise.
 mobile.tables.initialize()
     .then(function () {
+        console.log('initializing...');
         console.log(dataConfiguration);
         app.use(mobile);    // Register the Azure Mobile Apps middleware
         app.listen(process.env.PORT || 3000);   // Listen for requests

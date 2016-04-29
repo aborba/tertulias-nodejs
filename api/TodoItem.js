@@ -1,5 +1,7 @@
 var api = {
     get: function (req, res, next) {
+        console.log('In TodoItem get');
+        
     	var control = 1;
 
 /*
