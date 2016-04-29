@@ -1,4 +1,4 @@
-var appVersion = '2';
+var appVersion = '3';
 
 var util = require('./util');
 util.logBanner({ banner: util.tertuliasBanner, version: appVersion, pad: 3 });
@@ -23,7 +23,7 @@ mobile.api.import('./api');
 console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
-        util.dump(mobile);
+        util.dumpObj(mobile);
         console.log('Registering the Azure Mobile Apps middleware.');
         app.use(mobile);
         console.log('Listening for requests.');

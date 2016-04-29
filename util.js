@@ -31,13 +31,17 @@ module.exports = {
 		this.logBanner({ banner: this.tertuliasBanner, version: version, padding: 3 });
 	},
 
-	dump: function(obj) {
+	dumpObj: function(obj) {
 	    console.log('=============================================');
-	    console.log(obj.constructor.name + ' object');
+	    console.log(this.objName(obj) + ' object');
 	    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
 	    console.log(obj);
 	    console.log('---------------------------------------------');
 	},
+
+	objName: function(obj) {
+		return obj.constructor.name;
+	}
 
 	tertuliasBanner: [
 	    ' ______               __             ___                           ',

@@ -1,13 +1,12 @@
 var api = {
 
     all: function (req, res, next) {
-        console.log('In TodoItem all');
+        console.log('In: TodoItem');
+        console.log('In: ' + util.objName(this));
         next();
     },
 
     get: function (req, res, next) {
-        console.log('In TodoItem get');
-
         var query = {
             sql: 'UPDATE TodoItem SET complete=@completed',
             parameters: [
