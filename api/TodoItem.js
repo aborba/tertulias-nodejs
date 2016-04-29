@@ -15,5 +15,5 @@ var api = {
     }
 };
 
-api.post.access = 'authenticated';
+//api.post.access = 'authenticated';
 module.exports = api;
