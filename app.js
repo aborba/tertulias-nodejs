@@ -27,7 +27,9 @@ console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
         console.log('Initialization completed.');
+        console.log('=============================================');
         console.log(mobile);
+        console.log('---------------------------------------------');
         console.log('Registering the Azure Mobile Apps middleware.');
         app.use(mobile);
         console.log('Listening for requests.');
