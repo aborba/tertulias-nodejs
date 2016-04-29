@@ -20,16 +20,21 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
 
 var mobile = azureMobileApps(appConfiguration);
 
+var dump = function(obj) {
+    console.log('=============================================');
+    console.log('mobile object');
+    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv');
+    console.log(obj);
+    console.log('---------------------------------------------');
+}
+
 mobile.tables.import('./tables');
 mobile.api.import('./api');
 
 console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
-        console.log('Initialization completed.');
-        console.log('=============================================');
-        console.log(mobile);
-        console.log('---------------------------------------------');
+        dump(mobile);
         console.log('Registering the Azure Mobile Apps middleware.');
         app.use(mobile);
         console.log('Listening for requests.');
