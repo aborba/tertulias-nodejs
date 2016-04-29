@@ -4,7 +4,7 @@ var api = {
 
     all: function (req, res, next) {
         console.log('In: TodoItem');
-        console.log('In: ' + util.objName(api));
+        console.log('In: ' + util.objName(this));
         next();
     },
 
