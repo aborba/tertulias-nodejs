@@ -1,5 +1,8 @@
 var api = {
     get: function (request, response, next) {
+		console.log('Passed here');
+		console.log(request.params);
+		console.log('Passed here too');
 
 /*
         if (typeof request.params.completed === 'undefined') return next();
