@@ -1,7 +1,9 @@
 module.exports = {
 
 	logBanner: function(banner) {
-	    if (typeof banner === 'undefined') return;
+	    if (typeof banner === typeof undefined) {
+	    	return;
+	    }
 	    var bannerLength = banner.length;
 		for (var i = 0; i < bannerLength; i++) {
 		    console.log(banner[i]);
@@ -10,7 +12,9 @@ module.exports = {
 
 	logBanner: function(banner, version) {
 		logBanner(banner);
-	    if (typeof version === 'undefined') return;
+	    if (typeof version === typeof undefined) {
+	    	return;
+	    }
 	    console.log(Version: version);
 	},
 
