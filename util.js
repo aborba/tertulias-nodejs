@@ -15,7 +15,7 @@ module.exports = {
 	    if (typeof version === typeof undefined) {
 	    	return;
 	    }
-	    console.log(Version: version);
+	    console.log('Version: ' + version);
 	},
 
 	logTertulias: function(version) {
