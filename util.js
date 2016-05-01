@@ -43,6 +43,10 @@ module.exports = {
 	    console.log('---------------------------------------------');
 	},
 
+	nodeVersion: funtion() {
+		console.log('Node Version: ' + process.version);
+	},
+
 	objName: function(obj) {
 		return obj.constructor.name;
 	},
