@@ -43,7 +43,7 @@ module.exports = {
 	    console.log('---------------------------------------------');
 	},
 
-	nodeVersion: funtion() {
+	nodeVersion: function() {
 		console.log('Node Version: ' + process.version);
 	},
 
