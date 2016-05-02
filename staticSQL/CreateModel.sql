@@ -40,6 +40,7 @@ GO
 
 CREATE TABLE Users(
 	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
+	sid VARCHAR(40) NOT NULL,
 	alias VARCHAR(40) NOT NULL,
 	CONSTRAINT un_users_alias UNIQUE (alias)
 );
@@ -86,7 +87,7 @@ CREATE VIEW Tertulias_Vw AS
 		Tertulias.schedule AS tertuliaSchedule,
 		Tertulias.private AS tertuliaPrivate,
 		Tertulias._id AS tertuliaIdentity,
-		Users.id AS userId,
+		Users.sid AS userId,
 		Users.alias AS userAlias 
 	FROM (Tertulias 
 		INNER JOIN Members ON Members.tertulia = Tertulias.id) 
@@ -134,7 +135,7 @@ GO
 INSERT INTO Roles (roleName) VALUES (N'administrator'), (N'manager'), (N'member');
 GO
 
-INSERT INTO Users (alias) VALUES (N'aborba');
+INSERT INTO Users (sid, alias) VALUES ('sid:fadae567db0f67c6fe69d25ee8ffc0b5', N'aborba');
 GO
 
 DECLARE @userId UNIQUEIDENTIFIER; SELECT @UserId = id FROM Users WHERE alias = 'aborba';
