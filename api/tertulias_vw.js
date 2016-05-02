@@ -8,7 +8,9 @@ var api = {
     },
 
     get: function (req, res, next) {
-    	util.dumpObj(req.user.id);
+        util.dumpObj(req);
+        util.dumpObj(req.user);
+        util.dumpObj(res.user);
         var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE private = 0 OR userId=@userId;';
     	var parametersArr = [{
                 userId: 'context.user.userId'
