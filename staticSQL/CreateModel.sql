@@ -24,6 +24,7 @@ END;
 */
 
 IF object_id(N'dbo.Members_Vw') IS NOT NULL DROP VIEW Members_Vw;
+IF object_id(N'dbo.Tertulias_Vw') IS NOT NULL DROP VIEW Tertulias_Vw;
 IF object_id(N'dbo.Members') IS NOT NULL DROP TABLE Members;
 IF object_id(N'dbo.Users') IS NOT NULL DROP TABLE Users;
 IF object_id(N'dbo.Tertulias') IS NOT NULL DROP TABLE Tertulias;
@@ -75,6 +76,21 @@ CREATE VIEW Members_Vw AS
 		INNER JOIN Tertulias ON Members.tertulia = Tertulias.id) 
 			INNER JOIN Users ON Members.usr = Users.id) 
 				INNER JOIN Roles ON Members.role = Roles.id;
+GO
+
+CREATE VIEW Tertulias_Vw AS
+	SELECT
+		Tertulias.id AS tertuliaId,
+		Tertulias.title AS tertuliaTitle,
+		Tertulias.subject AS tertuliaSubject,
+		Tertulias.schedule AS tertuliaSchedule,
+		Tertulias.private AS tertuliaPrivate,
+		Tertulias._id AS tertuliaIdentity,
+		Users.id AS userId,
+		Users.alias AS userAlias 
+	FROM (Tertulias 
+		INNER JOIN Members ON Members.tertulia = Tertulias.id) 
+			INNER JOIN Users ON Members.usr = Users.id;
 GO
 
 IF object_id(N'dbo.SpInsertTertulia') IS NOT NULL DROP PROCEDURE SpInsertTertulia;

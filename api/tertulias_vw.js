@@ -1,19 +1,20 @@
 var util = require('../util');
+
 var api = {
 
     all: function (req, res, next) {
-        console.log('In: api/membersvw');
+        console.log('In: api/tertulias_vw');
         next();
     },
 
     get: function (req, res, next) {
-    	var sqlstr = 'SELECT * FROM Members_Vw WHERE private = 0 OR userId=@userId;';
-    	util.dumpObj(req);
+//    	util.dumpObj(req);
+        var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE private = 0 OR userId=@userId;';
     	var parametersArr = [{
                 userId: 'context.user.userId'
             }]
         var query = {
-            sql: sqlstr,
+            sql: sqlStr,
             parameters: parametersArr
         };
         console.log(query);
@@ -27,5 +28,5 @@ var api = {
 
 };
 
-//api.access = 'authenticated';
+api.access = 'authenticated';
 module.exports = api;
