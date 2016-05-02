@@ -8,7 +8,7 @@ var api = {
     },
 
     get: function (req, res, next) {
-        util.dumpObj(req.azureMobile);
+        util.dumpObj(req.azureMobile.user);
         var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE private = 0 OR userId=@userId;';
     	var parametersArr = [{
                 userId: 'context.user.userId'
