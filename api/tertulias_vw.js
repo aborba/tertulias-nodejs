@@ -19,6 +19,7 @@ var api = {
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
+            util.dump(results);
             res.status(200)
             .type('application/json')
         	.json(results);
