@@ -9,9 +9,9 @@ var api = {
 
     get: function (req, res, next) {
         util.dumpObj(req.azureMobile.user.id);
-        var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=@userId';
+        var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=@_userId';
     	var parametersArr = [{
-                userId: req.azureMobile.user.id
+                _userId: '\'' + req.azureMobile.user.id + '\''
             }]
         var query = {
             sql: sqlStr,
