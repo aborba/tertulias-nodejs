@@ -18,7 +18,7 @@ var api = {
                 uId: 'sid\\:' + uid.slice(4)
             }]
         parametersArr = [{
-                @uId: uid
+                uId: uid
             }]
         var query = {
             sql: sqlStr,
