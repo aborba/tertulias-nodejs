@@ -10,7 +10,7 @@ var api = {
 
     get: function (req, res, next) {
         util.dumpObj(req.azureMobile.user.id);
-        var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\'';
+        var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=@uId';
         var uidOk = '\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\'';
         var uid = req.azureMobile.user.id;
         var uid1 = uid.replace(/:/, "\\:");
@@ -23,9 +23,8 @@ var api = {
         console.log('uidOk=uid1? ' + uidOk.localeCompare(uid1));
         console.log('uidOk=uid2? ' + uidOk.localeCompare(uid2));
 
-        console.log(uid);
     	var parametersArr = [{
-                _userId: uid
+                uId: uid2
             }]
         var query = {
             sql: sqlStr,
@@ -33,8 +32,8 @@ var api = {
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
+            console.log('results');
             console.log(results);
-            util.dump(results);
             res.status(200)
             .type('application/json')
         	.json(results);
