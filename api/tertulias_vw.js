@@ -24,7 +24,7 @@ var api = {
         console.log('uidOk=uid2? ' + uidOk.localeCompare(uid2));
 
     	var parametersArr = [{
-                uId: 'sid\:' + uid.slice(4)
+                uId: 'sid\\:' + uid.slice(4)
             }]
         var query = {
             sql: sqlStr,
