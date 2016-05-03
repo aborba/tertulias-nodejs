@@ -12,7 +12,7 @@ var api = {
         util.dumpObj(req.azureMobile.user.id);
         var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=@_userId';
     	var parametersArr = [{
-                _userId: '\'sid' + '\' + ':' + req.azureMobile.user.id.slice(4) + '\''
+                _userId: '\'sid' + '\\' + ':' + req.azureMobile.user.id.slice(4) + '\''
             }]
         var query = {
             sql: sqlStr,
