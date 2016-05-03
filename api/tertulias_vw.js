@@ -11,11 +11,18 @@ var api = {
     get: function (req, res, next) {
         util.dumpObj(req.azureMobile.user.id);
         var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\'';
-        var uid = 'sid\\';
-        console.log(uid);
-        var uid = uid + ':';
-        console.log(uid);
-        var uid = '\'sid\\:fadae567db0f67c6fe69d25ee8ffc0b5\''; //uid + req.azureMobile.user.id.slice(4);
+        var uidOk = '\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\'';
+        var uid = req.azureMobile.user.id;
+        var uid1 = uid.replace(/:/, "\\:");
+        var uid2 = '\'sid\:' + uid.slice(4) + '\'';
+        console.log('uidOk:' + uidOk);
+        console.log('uid:' + uid);
+        console.log('uid1:' + uid1);
+        console.log('uid2:' + uid2);
+        console.log('uidOk=uid? ' + uidOk.localeCompare(uid));
+        console.log('uidOk=uid1? ' + uidOk.localeCompare(uid1));
+        console.log('uidOk=uid2? ' + uidOk.localeCompare(uid2));
+
         console.log(uid);
     	var parametersArr = [{
                 _userId: uid
