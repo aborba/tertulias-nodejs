@@ -15,7 +15,7 @@ var api = {
         var query = {
             sql: sqlStr,
             parameters: [
-                { uId: 'aborba' }
+                { name: 'uId', value: 'aborba' }
             ]
         };
         console.log(query);
