@@ -17,8 +17,6 @@ var api = {
         console.log(uid);
         var uid = uid + req.azureMobile.user.id.slice(4);
         console.log(uid);
-        var uid = '\'' + uid + '\'';
-        console.log(uid);
     	var parametersArr = [{
                 _userId: uid
             }]
