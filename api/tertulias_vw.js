@@ -18,7 +18,7 @@ var api = {
             parameters: parametersArr
         };
         query = {
-            sql: 'SELECT * FROM Tertulias_Vw;'
+            sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=0;'
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
