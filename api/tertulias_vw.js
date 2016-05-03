@@ -13,7 +13,7 @@ var api = {
         var query = {
             sql: "SELECT * FROM Tertulias_Vw WHERE private=@private OR userId=@userId;",
             parameters: [
-                { name: 'private', value: 0 },
+                { name: 'private', value: '0' },
                 { name: 'userId', value: req.azureMobile.user.id }
             ]
         };
