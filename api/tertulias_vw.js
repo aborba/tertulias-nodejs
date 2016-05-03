@@ -23,9 +23,14 @@ var api = {
             console.log(results);
             res.status(200)
             .type('application/json')
-        	.json(results);
+            .json(results);
             return next();
         });
+    }
+
+    post: function (req, res, next) {
+        console.log(req.azureMobile);
+        return next();
     }
 
 };
