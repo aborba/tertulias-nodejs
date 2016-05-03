@@ -9,6 +9,7 @@ var api = {
     },
 
     get: function (req, res, next) {
+        console.log(req.user.userId);
         util.dumpObj(req.azureMobile.user.id);
         var sqlStr = "SELECT * FROM Tertulias_Vw WHERE userAlias=\'@uId\';";
         var uid = req.azureMobile.user.id;
