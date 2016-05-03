@@ -17,6 +17,9 @@ var api = {
             sql: sqlStr,
             parameters: parametersArr
         };
+        query = {
+            sql: 'SELECT * FROM Tertulias_Vw WHERE userId=\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\''
+        };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
             console.log(results);
