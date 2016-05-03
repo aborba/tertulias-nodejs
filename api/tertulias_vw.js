@@ -1,4 +1,5 @@
 var util = require('../util');
+var qs = require('querystring');
 
 var api = {
 
@@ -11,14 +12,11 @@ var api = {
         util.dumpObj(req.azureMobile.user.id);
         var sqlStr = 'SELECT * FROM Tertulias_Vw WHERE userId=@_userId';
     	var parametersArr = [{
-                _userId: '\'' + req.azureMobile.user.id + '\''
+                _userId: '\'' + qs.escape(req.azureMobile.user.id) + '\''
             }]
         var query = {
             sql: sqlStr,
             parameters: parametersArr
-        };
-        query = {
-            sql: 'SELECT * FROM Tertulias_Vw WHERE userId=\'sid\:fadae567db0f67c6fe69d25ee8ffc0b5\''
         };
         console.log(query);
         req.azureMobile.data.execute(query).then(function(results) {
