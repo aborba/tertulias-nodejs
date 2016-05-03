@@ -11,9 +11,9 @@ var api = {
     get: function (req, res, next) {
         console.log(req.azureMobile.user.id);
         var query = {
-            sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=@privacy OR userId=@userId;',
+            sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=0 OR userId=@userId;',
             parameters: [
-                { name: 'privacy', value: '0', type: 'number' },
+//                { name: 'privacy', value: '0', type: 'number' },
                 { name: 'userId', value: req.azureMobile.user.id, type: 'string' }
             ]
         };
