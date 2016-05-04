@@ -12,9 +12,8 @@ var api = {
     get: function (req, res, next) {
         console.log('In: get');
         console.log(req.azureMobile.user.id);
-        console.log(req.azureMobile.user);
-/*
-        req.azureMobile.user.getIdentities({
+
+        req.azureMobile.user.getIdentity({
             success: function (identities) {
                 var request = require('request');
                 if (identities.google) {
@@ -41,7 +40,7 @@ var api = {
                 }
             }
         });
-*/
+
         var query = {
             sql: 'SELECT DISTINCT tertuliaId AS id, \
                       tertuliaTitle AS title, \
