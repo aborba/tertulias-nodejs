@@ -15,6 +15,8 @@ var api = {
 
         req.azureMobile.user.getIdentity({
             success: function (identities) {
+                console.log('ok');
+                console.log(identities);
                 var request = require('request');
                 if (identities.google) {
                     var googleAccessToken = identities.google.accessToken;
