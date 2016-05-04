@@ -26,7 +26,7 @@ var api = {
             .json(results);
             return next();
         });
-    }
+    },
 
     post: function (req, res, next) {
         console.log(req.azureMobile.user.id);
