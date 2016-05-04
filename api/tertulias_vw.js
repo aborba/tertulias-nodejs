@@ -33,7 +33,17 @@ var api = {
         console.log('In: post');
         console.log(req.azureMobile.user.id);
         console.log(req.body);
-        res.status(200);
+        var query = {
+            sql: 'INSERT INTO Terulias(title, subject, schedule, privacy) VALUES (@title, @subject, @schedule, @privacy)',
+            parameters: [
+                {name: 'title', value: req.body.title},
+                {name: 'subject', value: req.body.subject},
+                {name: 'schedule', value: req.body.schedule},
+                {name: 'privacy', value: req.body.privacy},
+            ]
+        };
+        console.log(query);
+        res.repond(200, 'OK');
         return next();
     }
 
