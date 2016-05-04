@@ -32,7 +32,7 @@ var api = {
     post: function (req, res, next) {
         console.log('In: post');
         console.log(req.azureMobile.user.id);
-        console.log(req.item);
+        console.log(req);
         res.status(200);
         return next();
     }
