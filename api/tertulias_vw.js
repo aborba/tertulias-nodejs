@@ -30,6 +30,7 @@ var api = {
 
     post: function (req, res, next) {
         console.log(req.azureMobile.user.id);
+        res.status(200)
         return next();
     }
 
