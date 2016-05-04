@@ -5,10 +5,11 @@ var api = {
 
     all: function (req, res, next) {
         console.log('In: api/tertulias_vw');
-        next();
+        return next();
     },
 
     get: function (req, res, next) {
+        console.log('In: get');
         console.log(req.azureMobile.user.id);
         var query = {
             sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=@privacy OR userId=@userId',
@@ -29,6 +30,7 @@ var api = {
     },
 
     post: function (req, res, next) {
+        console.log('In: post');
         console.log(req.azureMobile.user.id);
         res.status(200);
         return next();
