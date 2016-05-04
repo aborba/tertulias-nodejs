@@ -43,7 +43,7 @@ var api = {
             ]
         };
         console.log(query);
-        res.respond(200, 'OK');
+        res.send(200);
         return next();
     }
 
