@@ -1,5 +1,6 @@
 var util = require('../util');
 var qs = require('querystring');
+var u = require('azure-mobile-apps/src/auth/user');
 
 var api = {
 
@@ -10,6 +11,7 @@ var api = {
 
     get: function (req, res, next) {
         console.log('In: get');
+        console.log(req.azureMobile.user.getIdentity());
         console.log(req.azureMobile.user.id);
         var query = {
             sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=@privacy OR userId=@userId',
