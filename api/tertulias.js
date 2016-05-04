@@ -26,6 +26,7 @@ var api = {
                         } else {
                             try {
                                 var userData = JSON.parse(body);
+                                console.log('userdata: ' + userData);
                                 item.UserName = userData.name;
                                 request.execute();
                             } catch (ex) {
@@ -42,13 +43,13 @@ var api = {
         });
 
         var query = {
-            sql: 'SELECT DISTINCT tertuliaId AS id, \
-                      tertuliaTitle AS title, \
-                      tertuliaSubject AS subject, \
-                      tertuliaSchedule AS schedule, \
-                      tertuliaPrivate AS private \
-                  FROM Tertulias_Vw \
-                  WHERE tertuliaPrivate=@privacy OR userId=@userId',
+            sql: 'SELECT DISTINCT tertuliaId AS id, ' +
+                      'tertuliaTitle AS title, ' +
+                      'tertuliaSubject AS subject, ' +
+                      'tertuliaSchedule AS schedule, ' +
+                      'tertuliaPrivate AS private ' +
+                  'FROM Tertulias_Vw ' +
+                  'WHERE tertuliaPrivate=@privacy OR userId=@userId',
             parameters: [
                 { 'name': 'privacy', 'value': '0'},
                 { 'name': 'userId', 'value': req.azureMobile.user.id }
