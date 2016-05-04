@@ -12,7 +12,36 @@ var api = {
     get: function (req, res, next) {
         console.log('In: get');
         console.log(req.azureMobile.user.id);
-
+        console.log(req.azureMobile.user);
+/*
+        req.azureMobile.user.getIdentities({
+            success: function (identities) {
+                var request = require('request');
+                if (identities.google) {
+                    var googleAccessToken = identities.google.accessToken;
+                    var url = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + googleAccessToken;
+                    request(url, function (err, resp, body) {
+                        if (err || resp.statusCode !== 200) {
+                            console.error('Error sending data to Google API: ', err);
+                            request.respond(statusCodes.INTERNAL_SERVER_ERROR, body);
+                        } else {
+                            try {
+                                var userData = JSON.parse(body);
+                                item.UserName = userData.name;
+                                request.execute();
+                            } catch (ex) {
+                                console.error('Error parsing response from Google API: ', ex);
+                                request.respond(statusCodes.INTERNAL_SERVER_ERROR, ex);
+                            }
+                        }
+                    });
+                } else {
+                    // Insert with default user name
+                    request.execute();
+                }
+            }
+        });
+*/
         var query = {
             sql: 'SELECT DISTINCT tertuliaId AS id, \
                       tertuliaTitle AS title, \
