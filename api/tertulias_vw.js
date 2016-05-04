@@ -22,15 +22,15 @@ var api = {
             console.log('results');
             console.log(results);
             res.status(200)
-            .type('application/json')
-            .json(results);
+                .type('application/json')
+                .json(results);
             return next();
         });
     },
 
     post: function (req, res, next) {
         console.log(req.azureMobile.user.id);
-        res.status(200)
+        res.status(200);
         return next();
     }
 
