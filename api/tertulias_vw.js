@@ -29,7 +29,7 @@ var api = {
     }
 
     post: function (req, res, next) {
-        console.log(req.azureMobile);
+        console.log(req.azureMobile.user.id);
         return next();
     }
 
