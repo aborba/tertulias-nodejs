@@ -1,4 +1,4 @@
-var appVersion = 'F';
+var appVersion = 'G';
 
 var util = require('./util');
 util.logTertulias2(appVersion);
