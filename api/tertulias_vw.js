@@ -36,14 +36,14 @@ var api = {
         var query = {
             sql: 'INSERT INTO Terulias(title, subject, schedule, privacy) VALUES (@title, @subject, @schedule, @privacy)',
             parameters: [
-                {name: 'title', value: req.body.title},
-                {name: 'subject', value: req.body.subject},
-                {name: 'schedule', value: req.body.schedule},
-                {name: 'privacy', value: req.body.privacy},
+                {name: 'title', value: req.body.title || ""},
+                {name: 'subject', value: req.body.subject || ""},
+                {name: 'schedule', value: req.body.schedule || "0"},
+                {name: 'privacy', value: req.body.privacy || "0"},
             ]
         };
         console.log(query);
-        res.repond(200, 'OK');
+        res.respond(200, 'OK');
         return next();
     }
 
