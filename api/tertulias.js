@@ -41,6 +41,9 @@ var api = {
                     // Insert with default user name
                     request.execute();
                 }
+            },
+            error: {
+                console.log('error');
             }
         });
 
