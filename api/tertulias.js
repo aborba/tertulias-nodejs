@@ -5,16 +5,50 @@ var u = require('azure-mobile-apps/src/auth/user');
 var api = {
 
     all: function (req, res, next) {
-        console.log('In: api/tertulias_vw');
+        console.log('In: api/tertulias');
         return next();
     },
 
     get: function (req, res, next) {
         console.log('In: get');
-        console.log(req.azureMobile.user.getIdentity());
         console.log(req.azureMobile.user.id);
+
+        req.azureMobile.user.getIdentities({
+            success: function (identities) {
+                var request = require('request');
+                if (identities.google) {
+                    var googleAccessToken = identities.google.accessToken;
+                    var url = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + googleAccessToken;
+                    request(url, function (err, resp, body) {
+                        if (err || resp.statusCode !== 200) {
+                            console.error('Error sending data to Google API: ', err);
+                            request.respond(statusCodes.INTERNAL_SERVER_ERROR, body);
+                        } else {
+                            try {
+                                var userData = JSON.parse(body);
+                                item.UserName = userData.name;
+                                request.execute();
+                            } catch (ex) {
+                                console.error('Error parsing response from Google API: ', ex);
+                                request.respond(statusCodes.INTERNAL_SERVER_ERROR, ex);
+                            }
+                        }
+                    });
+                } else {
+                    // Insert with default user name
+                    request.execute();
+                }
+            }
+        });
+
         var query = {
-            sql: 'SELECT * FROM Tertulias_Vw WHERE tertuliaPrivate=@privacy OR userId=@userId',
+            sql: 'SELECT DISTINCT tertuliaId AS id, \
+                      tertuliaTitle AS title, \
+                      tertuliaSubject AS subject, \
+                      tertuliaSchedule AS schedule, \
+                      tertuliaPrivate AS private \
+                  FROM Tertulias_Vw \
+                  WHERE tertuliaPrivate=@privacy OR userId=@userId',
             parameters: [
                 { 'name': 'privacy', 'value': '0'},
                 { 'name': 'userId', 'value': req.azureMobile.user.id }
