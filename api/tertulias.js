@@ -49,9 +49,11 @@ var api = {
                 // FROM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 var request0 = new sql.Request(transaction);
-                var _userId;
+                var _userId = "";
                 request0.query('SELECT id FROM Users WHERE sid=\'sid:fadae567db0f67c6fe69d25ee8ffc0b5\';').then(function(rs) {
                     console.log(rs);
+                    console.log(rs[0]);
+                    console.log(rs[0].id);
                     _userId = rs[0].id;
                 });
                 console.log("Read User Id: " + _userId);
