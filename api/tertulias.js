@@ -22,7 +22,6 @@ var api = {
                 res.sendStatus(500);
                 return;
             }
-/*
             var transaction = new sql.Transaction(connection);
 
             transaction.begin(function(err) {
@@ -31,7 +30,8 @@ var api = {
                     transaction.rollback();
                     return;
                 }
-
+transaction.rollback();
+/*
                 var rolledback = false;
 
                 transaction.on('rollback', function(aborted) {
@@ -109,8 +109,8 @@ var api = {
                     console.log('trying to rollback');
                     transaction.rollback();
                 }
-            });
 */
+            });
         });
 
 /*
