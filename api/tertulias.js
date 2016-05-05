@@ -30,13 +30,11 @@ var api = {
                     transaction.rollback();
                     return;
                 }
-transaction.rollback();
-/*
                 var rolledback = false;
 
                 transaction.on('rollback', function(aborted) {
                     rolledback = true;
-                })
+                });
 
                 var sqlRequest = new sql.Request(transaction);
 
@@ -109,7 +107,6 @@ transaction.rollback();
                     console.log('trying to rollback');
                     transaction.rollback();
                 }
-*/
             });
         });
 
