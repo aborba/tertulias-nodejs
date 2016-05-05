@@ -12,17 +12,60 @@ var api = {
     },
 
     get: function (req, res, next) {
-        console.log('In: get');
-        console.log(req.azureMobile.user.id);
-        console.log('req.azureMobile.req.connection');
-        console.log(req.azureMobile.req.connection);
+//        console.log('In: get');
+//        console.log(req.azureMobile.user.id);
+//        console.log('req.azureMobile.req.connection');
+//        console.log(req.azureMobile.req.connection);
+//        console.log('==============================================================================================');
+//        console.log(req.azureMobile.req.IncomingMessage);
+//        console.log('==============================================================================================');
+
         console.log('==============================================================================================');
-        console.log(req.azureMobile.req.IncomingMessage);
-        console.log('==============================================================================================');
+        console.log('TRANSACTION TESTS');
 
         var transaction = new sql.Transaction();
-        transaction.begin();
-        transaction.rollback();
+        transaction.begin(function(err) {
+            var rolledback = false;
+            transaction.on('rollback', function(aborted) {
+                console.log('rolling back');
+                rolledback = true;
+            })
+            var request = new sql.Request(transaction);
+            request.query('SELECT DISTINCT tertuliaId AS id, ' +
+                      'tertuliaTitle AS title, ' +
+                      'tertuliaSubject AS subject, ' +
+                      'tertuliaSchedule AS schedule, ' +
+                      'tertuliaPrivate AS private ' +
+                  'FROM Tertulias_Vw ' +
+                  'WHERE tertuliaPrivate=0',
+                function(err, recordset) {
+                    if (err) {
+                        if (!rolledBack) {
+                            transaction.rollback(function(err) {
+                                console.log('rolling back');
+                            });
+                        }
+                    } else {
+                        transaction.commit(function(err) {
+                            if (err) {
+                                if (!rolledBack) {
+                                    transaction.rollback(function(err) {
+                                        console.log('rolling back');
+                                    });
+                                }
+                            }
+                            console.log('committed');
+                        });
+                        console.log(recordset);
+                    }
+                });
+            if (err) {
+                transaction.rollback();
+            }
+        });
+
+        console.log('TRANSACTION TESTS END');
+        console.log('==============================================================================================');
 
         var x = req.azureMobile.user.getIdentity({
             success: function (identities) {
