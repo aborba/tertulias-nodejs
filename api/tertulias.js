@@ -12,6 +12,8 @@ var api = {
     get: function (req, res, next) {
         console.log('In: get');
         console.log(req.azureMobile.user.id);
+        console.log('req.azureMobile.connection');
+        console.log(req.azureMobile.connection);
 
         var x = req.azureMobile.user.getIdentity({
             success: function (identities) {
