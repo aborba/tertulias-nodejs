@@ -85,7 +85,7 @@ var api = {
 
         console.log('TRANSACTION TESTS END');
         console.log('==============================================================================================');
-
+/*
         var x = req.azureMobile.user.getIdentity({
             success: function (identities) {
                 console.log('ok');
@@ -121,7 +121,8 @@ var api = {
         });
 
         console.log(x);
-
+*/
+/*
         var query = {
             sql: 'SELECT DISTINCT tertuliaId AS id, ' +
                       'tertuliaTitle AS title, ' +
@@ -144,6 +145,7 @@ var api = {
                 .json(results);
             return next();
         });
+        */
     },
 
     post: function (req, res, next) {
