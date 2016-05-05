@@ -2,6 +2,8 @@ var util = require('../util');
 var qs = require('querystring');
 var u = require('azure-mobile-apps/src/auth/user');
 
+var sql = require('mssql');
+
 var api = {
 
     all: function (req, res, next) {
@@ -17,6 +19,10 @@ var api = {
         console.log('==============================================================================================');
         console.log(req.azureMobile.req.IncomingMessage);
         console.log('==============================================================================================');
+
+        var transaction = new sql.Transaction();
+        transaction.begin();
+        transaction.rollback();
 
         var x = req.azureMobile.user.getIdentity({
             success: function (identities) {
