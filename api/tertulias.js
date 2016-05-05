@@ -16,29 +16,48 @@ var api = {
         var connection = new sql.Connection(util.sqlConfiguration);
         
         connection.connect(function(isError) {
+
             if (isError) {
                 console.log('An error ocurred while connecting to the database. Aborting');
                 console.log(isError);
                 res.sendStatus(500);
                 return;
             }
-            console.log('connected');
 
             var transaction = new sql.Transaction(connection);
-            console.log('beginning transaction');
+
             transaction.begin(function(err) {
+
+                if (err) {
+                    transaction.rollback();
+                    return;
+                }
+
                 var rolledback = false;
+
                 transaction.on('rollback', function(aborted) {
-                    console.log('rolling back - on');
                     rolledback = true;
                 })
-                console.log('building request');
-
-                // FROM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                 var sqlRequest = new sql.Request(transaction);
+
                 var _userId = "";
+
                 console.log('req.azureMobile.user.id: ' + req.azureMobile.user.id);
+
+                var preparedStatement = new sql.PreparedStatement();
+
+                preparedStatement.input('sid', sql.String);
+
+                preparedStatement.prepare('SELECT id FROM Users WHERE sid=@sid;', funtion(err) {
+                    preparedStatement.execute({sid: req.azureMobile.user.id}, function(err, recordset, affected) {
+                        console.log('preparedStatement result');
+                        console.log(recordset);
+                    });
+                    preparedStatement.unprepare(function(err) {
+                    });
+                });
+
                 sqlRequest.query('SELECT id FROM Users WHERE sid=\'sid:fadae567db0f67c6fe69d25ee8ffc0b5\';')
                 .then(function(rs) {
                     _userId = rs[0].id;
