@@ -41,14 +41,17 @@ var api = {
             }
             console.log('connected');
 
-            var transaction = new sql.Transaction();
+            var transaction = new sql.Transaction(connection);
+            console.log('beginning transaction');
             transaction.begin(function(err) {
                 var rolledback = false;
                 transaction.on('rollback', function(aborted) {
-                    console.log('rolling back');
+                    console.log('rolling back - on');
                     rolledback = true;
                 })
+                console.log('building request');
                 var request = new sql.Request(transaction);
+                console.log('request built');
                 request.query('SELECT DISTINCT tertuliaId AS id, ' +
                           'tertuliaTitle AS title, ' +
                           'tertuliaSubject AS subject, ' +
@@ -57,8 +60,10 @@ var api = {
                       'FROM Tertulias_Vw ' +
                       'WHERE tertuliaPrivate=0',
                     function(err, recordset) {
+                        console.log('select result');
                         if (err) {
                             if (!rolledBack) {
+                                console.log('trying to rollback');
                                 transaction.rollback(function(err) {
                                     console.log('rolling back');
                                 });
@@ -67,6 +72,7 @@ var api = {
                             transaction.commit(function(err) {
                                 if (err) {
                                     if (!rolledBack) {
+                                        console.log('trying to rollback');
                                         transaction.rollback(function(err) {
                                             console.log('rolling back');
                                         });
@@ -74,10 +80,12 @@ var api = {
                                 }
                                 console.log('committed');
                             });
+                            console.log('recordset');
                             console.log(recordset);
                         }
                     });
                 if (err) {
+                    console.log('trying to rollback');
                     transaction.rollback();
                 }
             });
