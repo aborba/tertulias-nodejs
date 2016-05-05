@@ -18,7 +18,6 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
 
 var mobile = azureMobileApps(appConfiguration);
 
-mobile.tables.import('./tables');
 mobile.api.import('./api');
 
 console.log('Initializing...');
