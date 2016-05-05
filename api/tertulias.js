@@ -41,7 +41,15 @@ var api = {
 
                 preparedStatement.input('sid', sql.String);
 
-                transaction.rollback();
+                preparedStatement.prepare(queryString, funtion(err) {
+                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                        function(err, recordset, affected) {
+                            console.log('preparedStatement result');
+                            console.log(recordset);
+                        });
+                    preparedStatement.unprepare();
+                });
+
             });
 
         });
