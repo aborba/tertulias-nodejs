@@ -12,31 +12,26 @@ var api = {
     },
 
     get: function (req, res, next) {
-//        console.log('In: get');
-//        console.log(req.azureMobile.user.id);
-//        console.log('req.azureMobile.req.connection');
-//        console.log(req.azureMobile.req.connection);
-//        console.log('==============================================================================================');
-//        console.log(req.azureMobile.req.IncomingMessage);
-//        console.log('==============================================================================================');
-
         console.log('==============================================================================================');
         console.log('TRANSACTION TESTS');
 
         console.log('connecting');
-        var connection = new sql.Connection({
+
+        var configuration = {
             user: 'aborba@tertulias',
             password: 'Apples123',
             server: 'tertulias.database.windows.net',
             database: 'tertulias',
-            options: {
-                encrypt: true // Use this if you're on Windows Azure
-            }
-        });
-        connection.connect(function(error) {
-            if (error) {
-                console.log('aborting');
-                console.log(error);
+            options: { encrypt: true }
+        };
+
+        var connection = new sql.Connection(configuration);
+        
+        connection.connect(function(isError) {
+            if (isError) {
+                console.log('An error ocurred while connecting to the database. Aborting');
+                console.log(isError);
+                res.sendStatus(500);
                 return;
             }
             console.log('connected');
@@ -50,6 +45,17 @@ var api = {
                     rolledback = true;
                 })
                 console.log('building request');
+
+                // FROM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+                var request0 = new sql.Request(transaction);
+                request0.query('SELECT id FROM Users WHERE sid=\'sid:fadae567db0f67c6fe69d25ee8ffc0b5\';').then(function(rs) {
+                    console.log(rs;)
+                });
+
+
+                // TO HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
                 var request = new sql.Request(transaction);
                 console.log('request built');
                 request.query('SELECT DISTINCT tertuliaId AS id, ' +
