@@ -3,9 +3,6 @@ var qs = require('querystring');
 var u = require('azure-mobile-apps/src/auth/user');
 
 var sql = require('mssql');
-console.log('connecting');
-sql.connect("mssql://aborba@tertulias:Apples123@tertulias.database.windows/tertulias")
-console.log('connected');
 
 var api = {
 
@@ -26,45 +23,50 @@ var api = {
         console.log('==============================================================================================');
         console.log('TRANSACTION TESTS');
 
-        var transaction = new sql.Transaction();
-        transaction.begin(function(err) {
-            var rolledback = false;
-            transaction.on('rollback', function(aborted) {
-                console.log('rolling back');
-                rolledback = true;
-            })
-            var request = new sql.Request(transaction);
-            request.query('SELECT DISTINCT tertuliaId AS id, ' +
-                      'tertuliaTitle AS title, ' +
-                      'tertuliaSubject AS subject, ' +
-                      'tertuliaSchedule AS schedule, ' +
-                      'tertuliaPrivate AS private ' +
-                  'FROM Tertulias_Vw ' +
-                  'WHERE tertuliaPrivate=0',
-                function(err, recordset) {
-                    if (err) {
-                        if (!rolledBack) {
-                            transaction.rollback(function(err) {
-                                console.log('rolling back');
-                            });
-                        }
-                    } else {
-                        transaction.commit(function(err) {
-                            if (err) {
-                                if (!rolledBack) {
-                                    transaction.rollback(function(err) {
-                                        console.log('rolling back');
-                                    });
-                                }
+        console.log('connecting');
+        sql.connect("mssql://aborba@tertulias:Apples123@tertulias.database.windows/tertulias").then(function() {
+            console.log('connected');
+
+            var transaction = new sql.Transaction();
+            transaction.begin(function(err) {
+                var rolledback = false;
+                transaction.on('rollback', function(aborted) {
+                    console.log('rolling back');
+                    rolledback = true;
+                })
+                var request = new sql.Request(transaction);
+                request.query('SELECT DISTINCT tertuliaId AS id, ' +
+                          'tertuliaTitle AS title, ' +
+                          'tertuliaSubject AS subject, ' +
+                          'tertuliaSchedule AS schedule, ' +
+                          'tertuliaPrivate AS private ' +
+                      'FROM Tertulias_Vw ' +
+                      'WHERE tertuliaPrivate=0',
+                    function(err, recordset) {
+                        if (err) {
+                            if (!rolledBack) {
+                                transaction.rollback(function(err) {
+                                    console.log('rolling back');
+                                });
                             }
-                            console.log('committed');
-                        });
-                        console.log(recordset);
-                    }
-                });
-            if (err) {
-                transaction.rollback();
-            }
+                        } else {
+                            transaction.commit(function(err) {
+                                if (err) {
+                                    if (!rolledBack) {
+                                        transaction.rollback(function(err) {
+                                            console.log('rolling back');
+                                        });
+                                    }
+                                }
+                                console.log('committed');
+                            });
+                            console.log(recordset);
+                        }
+                    });
+                if (err) {
+                    transaction.rollback();
+                }
+            });
         });
 
         console.log('TRANSACTION TESTS END');
