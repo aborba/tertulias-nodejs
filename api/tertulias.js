@@ -12,20 +12,8 @@ var api = {
     },
 
     get: function (req, res, next) {
-        console.log('==============================================================================================');
-        console.log('TRANSACTION TESTS');
 
-        console.log('connecting');
-
-        var configuration = {
-            user: 'aborba@tertulias',
-            password: 'Apples123',
-            server: 'tertulias.database.windows.net',
-            database: 'tertulias',
-            options: { encrypt: true }
-        };
-
-        var connection = new sql.Connection(configuration);
+        var connection = new sql.Connection(util.sqlConfiguration);
         
         connection.connect(function(isError) {
             if (isError) {
@@ -48,10 +36,10 @@ var api = {
 
                 // FROM HERE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-                var request0 = new sql.Request(transaction);
+                var sqlRequest = new sql.Request(transaction);
                 var _userId = "";
                 console.log('req.azureMobile.user.id: ' + req.azureMobile.user.id);
-                request0.query('SELECT id FROM Users WHERE sid=\'sid:fadae567db0f67c6fe69d25ee8ffc0b5\';')
+                sqlRequest.query('SELECT id FROM Users WHERE sid=\'sid:fadae567db0f67c6fe69d25ee8ffc0b5\';')
                 .then(function(rs) {
                     _userId = rs[0].id;
                     return _userId;
@@ -108,43 +96,6 @@ var api = {
 
         console.log('TRANSACTION TESTS END');
         console.log('==============================================================================================');
-/*
-        var x = req.azureMobile.user.getIdentity({
-            success: function (identities) {
-                console.log('ok');
-                console.log(identities);
-                var request = require('request');
-                if (identities.google) {
-                    var googleAccessToken = identities.google.accessToken;
-                    var url = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + googleAccessToken;
-                    request(url, function (err, resp, body) {
-                        if (err || resp.statusCode !== 200) {
-                            console.error('Error sending data to Google API: ', err);
-                            request.respond(statusCodes.INTERNAL_SERVER_ERROR, body);
-                        } else {
-                            try {
-                                var userData = JSON.parse(body);
-                                console.log('userdata: ' + userData);
-                                item.UserName = userData.name;
-                                request.execute();
-                            } catch (ex) {
-                                console.error('Error parsing response from Google API: ', ex);
-                                request.respond(statusCodes.INTERNAL_SERVER_ERROR, ex);
-                            }
-                        }
-                    });
-                } else {
-                    // Insert with default user name
-                    request.execute();
-                }
-            },
-            error: function(error) {
-                console.log('error: ' + error);
-            }
-        });
-
-        console.log(x);
-*/
 /*
         var query = {
             sql: 'SELECT DISTINCT tertuliaId AS id, ' +

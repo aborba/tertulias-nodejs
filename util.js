@@ -1,5 +1,13 @@
 module.exports = {
 
+	sqlConfiguration: {
+		user: 'aborba@tertulias',
+        password: 'Apples123',
+        server: 'tertulias.database.windows.net',
+        database: 'tertulias',
+        options: { encrypt: true }
+    },
+
 	logBanner: function(obj) {
 	    if (typeof obj === typeof undefined) return;
 
@@ -50,16 +58,6 @@ module.exports = {
 	objName: function(obj) {
 		return obj.constructor.name;
 	},
-
-	tertuliasBanner: [
-	    ' ______               __             ___                           ',
-	    '/\\__  _\\             /\\ \\__         /\\_ \\    __                    ',
-	    '\\/_/\\ \\/    __   _ __\\ \\ ,_\\  __  __\\//\\ \\  /\\_\\     __      ____  ',
-	    '   \\ \\ \\  /\'__`\\/\\`\'__\\ \\ \\/ /\\ \\/\\ \\ \\ \\ \\ \\/\\ \\  /\'__`\\   /\',__\\ ',
-	    '    \\ \\ \\/\\  __/\\ \\ \\/ \\ \\ \\_\\ \\ \\_\\ \\ \\_\\ \\_\\ \\ \\/\\ \\ \\.\\_/\\__, `\\',
-	    '     \\ \\_\\ \\____\\\\ \\_\\  \\ \\__\\\\ \\____/ /\\____\\\\ \\_\\ \\__/.\\_\\/\\____/',
-	    '      \\/_/\\/____/ \\/_/   \\/__/ \\/___/  \\/____/ \\/_/\\/__/\\/_/\\/___/ '
-	],
 
 	tertuliasBanner2: [
 		'___ ____ ____ ___ _  _ _    _ ____ ____ ',
