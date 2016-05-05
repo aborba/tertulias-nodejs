@@ -24,7 +24,7 @@ var api = {
         console.log('TRANSACTION TESTS');
 
         console.log('connecting');
-        sql.connect("mssql://aborba@tertulias:Apples123@tertulias.database.windows/tertulias").then(function() {
+        sql.connect("mssql://aborba\@tertulias:Apples123@tertulias.database.windows/tertulias").then(function() {
             console.log('connected');
 
             var transaction = new sql.Transaction();
