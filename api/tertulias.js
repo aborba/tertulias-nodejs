@@ -3,6 +3,9 @@ var qs = require('querystring');
 var u = require('azure-mobile-apps/src/auth/user');
 
 var sql = require('mssql');
+console.log('connecting');
+sql.connect("mssql://aborba@tertulias:Apples123@tertulias.database.windows/tertulias")
+console.log('connected');
 
 var api = {
 
