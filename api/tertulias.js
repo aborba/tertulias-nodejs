@@ -12,17 +12,17 @@ var api = {
 
     get: function (req, res, next) {
 
+        console.log('Hello!');
         var connection = new sql.Connection(util.sqlConfiguration);
         
-        connection.connect(function(isError) {
-
-            if (isError) {
+        connection.connect(function(err) {
+            if (err) {
                 console.log('An error ocurred while connecting to the database. Aborting');
                 console.log(isError);
                 res.sendStatus(500);
                 return;
             }
-
+/*
             var transaction = new sql.Transaction(connection);
 
             transaction.begin(function(err) {
@@ -110,10 +110,9 @@ var api = {
                     transaction.rollback();
                 }
             });
+*/
         });
 
-        console.log('TRANSACTION TESTS END');
-        console.log('==============================================================================================');
 /*
         var query = {
             sql: 'SELECT DISTINCT tertuliaId AS id, ' +
@@ -137,7 +136,7 @@ var api = {
                 .json(results);
             return next();
         });
-        */
+*/
     },
 
     post: function (req, res, next) {
