@@ -24,7 +24,18 @@ var api = {
         console.log('TRANSACTION TESTS');
 
         console.log('connecting');
-        sql.connect("mssql://aborba\@tertulias:Apples123@tertulias.database.windows/tertulias").then(function() {
+        var connection = new sql.Connection({
+            user: 'aborba@tertulias',
+            password: 'Apples123',
+            server: 'tertulias.database.windows',
+            database: 'tertulias'
+        });
+        connection.connect(function(error) {
+            if (error) {
+                console.log('aborting');
+                console.log(error);
+                return;
+            }
             console.log('connected');
 
             var transaction = new sql.Transaction();
