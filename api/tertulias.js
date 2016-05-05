@@ -27,7 +27,7 @@ var api = {
         var connection = new sql.Connection({
             user: 'aborba@tertulias',
             password: 'Apples123',
-            server: 'tertulias.database.windows',
+            server: 'tertulias.database.windows.net',
             database: 'tertulias'
         });
         connection.connect(function(error) {
