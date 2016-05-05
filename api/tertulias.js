@@ -28,7 +28,10 @@ var api = {
             user: 'aborba@tertulias',
             password: 'Apples123',
             server: 'tertulias.database.windows.net',
-            database: 'tertulias'
+            database: 'tertulias',
+            options: {
+                encrypt: true // Use this if you're on Windows Azure
+            }
         });
         connection.connect(function(error) {
             if (error) {
