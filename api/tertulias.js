@@ -12,8 +12,8 @@ var api = {
     get: function (req, res, next) {
         console.log('In: get');
         console.log(req.azureMobile.user.id);
-        console.log('req.azureMobile.connection');
-        console.log(req.azureMobile.req);
+        console.log('req.azureMobile.req.connection');
+        console.log(req.azureMobile.req.connection);
         console.log('==============================================================================================');
         console.log(req.azureMobile.req.IncomingMessage);
         console.log('==============================================================================================');
