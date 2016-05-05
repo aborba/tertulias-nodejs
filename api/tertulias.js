@@ -12,6 +12,48 @@ var api = {
 
     get: function (req, res, next) {
 
+        var connection = new sql.Connection(util.sqlConfiguration);
+
+        connection.connect(function(err) {
+            if (err) {
+                console.log('An error ocurred while connecting to the database. Aborting');
+                console.log(isError);
+                res.sendStatus(500);
+                return;
+            }
+
+            var transaction = new sql.Transaction(connection);
+
+            transaction.begin(function(err) {
+
+                if (err) { transaction.rollback(); return; }
+
+                var rolledback = false;
+                transaction.on('rollback', function(aborted) { rolledback = true; });
+
+                var sqlRequest = new sql.Request(transaction);
+
+                var _userId = "";
+
+                var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
+
+                var preparedStatement = new sql.PreparedStatement();
+
+                preparedStatement.input('sid', sql.String);
+
+                preparedStatement.prepare(queryString, funtion(err) {
+                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                        function(err, recordset, affected) {
+                            console.log('preparedStatement result');
+                            console.log(recordset);
+                        });
+                    preparedStatement.unprepare(function(err) { });
+                });
+
+            });
+
+        });
+
     },
 
     post: function (req, res, next) {
