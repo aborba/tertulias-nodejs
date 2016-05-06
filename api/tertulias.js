@@ -15,12 +15,7 @@ var api = {
 
         connection.connect(function(err) {
 
-            if (err) {
-                console.log('An error ocurred while connecting to the database. Aborting');
-                console.log(isError);
-                res.sendStatus(500);
-                return;
-            }
+            if (err) {console.log(isError); res.sendStatus(500); return; }
 
             var transaction = new sql.Transaction(connection);
 
@@ -33,7 +28,7 @@ var api = {
 
                 var sqlRequest = new sql.Request(transaction);
 
-                var _userId = "";
+                var _userId = '';
 
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
 
@@ -42,12 +37,16 @@ var api = {
                 preparedStatement.input('sid', sql.String);
 
                 preparedStatement.prepare(queryString, funtion(err) {
+                    if (err) { transaction.rollback(); return; }
                     preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
+                            if (err) { transaction.rollback(); return; }
                             console.log('preparedStatement result');
                             console.log(recordset);
-                        });
-                    preparedStatement.unprepare();
+                            transaction.rollback();
+                            preparedStatement.unprepare();
+                        }
+                    );
                 });
 
             });
