@@ -14,22 +14,23 @@ var api = {
 				if (err) { rollback(err, res, transaction); return; }
 				var sqlRequest = new sql.Request(transaction);
 				var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
-				var preparedStatement = new sql.PreparedStatement(connection);
+				var preparedStatement_0 = new sql.PreparedStatement(connection);
 				//transaction.on('commit', function(succeeded) { preparedStatement.unprepare(); res.sendStatus(200); });
 				//transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement.unprepare(); res.sendStatus(500); });
-				preparedStatement.input('sid', sql.NVarChar);
-				preparedStatement.prepare(queryString, function(err) {
+				preparedStatement_0.input('sid', sql.NVarChar);
+				preparedStatement_0.prepare(queryString, function(err) {
 					if (err) { rollback(err, res, transaction); return; }
-					preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+					preparedStatement_0.execute({ sid: req.azureMobile.user.id }, 
 						function(err, recordset, affected) {
 							if (err) { rollback(err, res, transaction); return; }
 							if (typeof recordset != 'undefined' && recordset[0] != null) { transaction.commit(); return; }
-							preparedStatement.unprepare();
+							preparedStatement_0.unprepare();
+							var preparedStatement_1 = new sql.PreparedStatement(connection);
 							queryString = 'INSERT INTO Users (sid) values (@sid);';
-							preparedStatement.input('sid', sql.NVarChar);
-							preparedStatement.prepare(queryString, function(err) {
+							preparedStatement_1.input('sid', sql.NVarChar);
+							preparedStatement_1.prepare(queryString, function(err) {
 								if (err) { rollback(err, res, transaction); return; }
-								preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+								preparedStatement_1.execute({ sid: req.azureMobile.user.id }, 
 									function(err, recordset, affected) {
 										if (err) { rollback(err, res, transaction); return; }
 										commit(res, transaction);
