@@ -36,24 +36,24 @@ var api = {
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
             	console.log('control point 11');
                 var preparedStatement_0 = new sql.PreparedStatement(connection);
-            	console.log('control point X');
+            	console.log('control point 12');
                 //transaction.on('commit', function(succeeded) { preparedStatement_0.unprepare(); res.sendStatus(200); });
                 //transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement_0.unprepare(); res.sendStatus(500); });
-            	console.log('control point 12');
-                preparedStatement_0.input('sid', sql.NVarChar);
             	console.log('control point 13');
+                preparedStatement_0.input('sid', sql.NVarChar);
+            	console.log('control point 14');
                 preparedStatement_0.prepare(queryString, function(err) {
-            		console.log('control point 14');
-                    if (err) { console.log('control point 15'); transaction.rollback(); return; }
-            		console.log('control point 16');
+            		console.log('control point 15');
+                    if (err) { console.log('control point 16'); transaction.rollback(); return; }
+            		console.log('control point 17');
                     preparedStatement_0.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
-                        	console.log('control point 17'); 
-                            if (err) {console.log('control point 18'); transaction.rollback(); return; }
-                            if (recordset) {console.log('control point 19'); transaction.commit(); return; }
-							console.log('control point 20');
-                            var preparedStatement_1 = new sql.PreparedStatement(connection);
+                        	console.log('control point 18'); 
+                            if (err) {console.log('control point 19'); transaction.rollback(); return; }
+                            if (recordset) {console.log('control point 20'); transaction.commit(); return; }
 							console.log('control point 21');
+                            var preparedStatement_1 = new sql.PreparedStatement(connection);
+							console.log('control point 22');
                             /*
 			                transaction.on('commit', function(succeeded) {
 			                	preparedStatement_0.unprepare();
@@ -68,29 +68,29 @@ var api = {
 			                });
 			                */
                             queryString = 'INSERT INTO Users (sid) values (@sid);';
-							console.log('control point 22');
-			                preparedStatement_1.input('sid', sql.NVarChar);
 							console.log('control point 23');
+			                preparedStatement_1.input('sid', sql.NVarChar);
+							console.log('control point 24');
 			                preparedStatement_1.prepare(queryString, function(err) {
-			                	console.log('control point 24');
-			                    if (err) { console.log('control point 25'); transaction.rollback(); return; }
-								console.log('control point 26');
+			                	console.log('control point 25');
+			                    if (err) { console.log('control point 26'); transaction.rollback(); return; }
+								console.log('control point 27');
 			                    preparedStatement_1.execute({ sid: req.azureMobile.user.id }, 
 			                        function(err, recordset, affected) {
-			                        	console.log('control point 27'); 
-					                    if (err) { console.log('control point X'); transaction.rollback(); return; }
 			                        	console.log('control point 28'); 
-					                    transaction.commit();
+					                    if (err) { console.log('control point X'); transaction.rollback(); return; }
 			                        	console.log('control point 29'); 
+					                    transaction.commit();
+			                        	console.log('control point 30'); 
 			                        }
 		                        );
 			                });
                         }
                     );
                  });
-                console.log('control point 30'); 
+                console.log('control point 31'); 
                 transaction.rollback();
-            	console.log('control point 31'); 
+            	console.log('control point 32'); 
             });
         });
 
