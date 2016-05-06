@@ -35,7 +35,7 @@ var api = {
                 var preparedStatement = new sql.PreparedStatement();
 
                 preparedStatement.input('sid', sql.String);
-
+/*
                 preparedStatement.prepare(queryString, funtion(err) {
                     if (err) { transaction.rollback(); return; }
                     preparedStatement.execute({ sid: req.azureMobile.user.id }, 
@@ -48,7 +48,8 @@ var api = {
                         }
                     );
                 });
-
+*/
+                transaction.rollback();
             });
 
         });
