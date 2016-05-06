@@ -3,6 +3,7 @@ var qs = require('querystring');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
+
 var api = {
 
     all: function (req, res, next) {
