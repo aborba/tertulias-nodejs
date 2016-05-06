@@ -33,6 +33,7 @@ var api = {
                     preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
                             if (err) { transaction.rollback(); res.sendStatus(500); return; }
+                            if (recordset) { transaction.rollback(); res.sendStatus(200); return; }
                             console.log('preparedStatement result');
                             console.log(recordset);
                             transaction.rollback();
