@@ -50,7 +50,7 @@ var api = {
                         function(err, recordset, affected) {
                         	console.log('control point 18'); 
                             if (err) {console.log('control point 19'); transaction.rollback(); return; }
-                            if (recordset) {console.log('control point 20'); transaction.commit(); return; }
+                            if (recordset) {console.log('control point 20' + recordset); transaction.commit(); return; }
 							console.log('control point 21');
                             var preparedStatement_1 = new sql.PreparedStatement(connection);
 							console.log('control point 22');
