@@ -50,8 +50,7 @@ var api = {
                         function(err, recordset, affected) {
                         	console.log('control point 18'); 
                             if (err) {console.log('control point 19'); transaction.rollback(); return; }
-                            if (typeof recordset != 'undefined' && recordset[0] != null) {console.log('control point 20'); console.log(recordset); transaction.commit(); return; }
-                            if (typeof recordsetnone != 'undefined' && recordsetnone[0] != null) {console.log('control point 20'); console.log(recordset); transaction.commit(); return; }
+                            if (typeof recordset != 'undefined' && recordset[0] != null) {console.log('control point 20'); transaction.commit(); return; }
 							console.log('control point 21');
                             var preparedStatement_1 = new sql.PreparedStatement(connection);
 							console.log('control point 22');
@@ -79,10 +78,10 @@ var api = {
 			                    preparedStatement_1.execute({ sid: req.azureMobile.user.id }, 
 			                        function(err, recordset, affected) {
 			                        	console.log('control point 28'); 
-					                    if (err) { console.log('control point X'); transaction.rollback(); return; }
-			                        	console.log('control point 29'); 
-					                    transaction.commit();
+					                    if (err) { console.log('control point 29'); console.log(err); transaction.rollback(); return; }
 			                        	console.log('control point 30'); 
+					                    transaction.commit();
+			                        	console.log('control point 31'); 
 			                        }
 		                        );
 			                });
