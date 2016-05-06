@@ -26,7 +26,7 @@ var api = {
                 var sqlRequest = new sql.Request(transaction);
                 var _userId = '';
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
-                var preparedStatement_0 = new sql.PreparedStatement_0(connection);
+                var preparedStatement_0 = new sql.PreparedStatement(connection);
                 transaction.on('commit', function(succeeded) { preparedStatement_0.unprepare(); res.sendStatus(200); });
                 transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement_0.unprepare(); res.sendStatus(500); });
                 preparedStatement_0.input('sid', sql.NVarChar);
@@ -36,7 +36,7 @@ var api = {
                         function(err, recordset, affected) {
                             if (err) {transaction.rollback(); return; }
                             if (recordset) {transaction.commit(); return; }
-                            var preparedStatement_1 = new sql.PreparedStatement_1(connection);
+                            var preparedStatement_1 = new sql.PreparedStatement(connection);
 			                transaction.on('commit', function(succeeded) {
 			                	preparedStatement_0.unprepare();
 			                	preparedStatement_1.unprepare();
