@@ -32,11 +32,25 @@ var api = {
                     if (err) { transaction.rollback(); return; }
                     preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
-                            if (err) { transaction.rollback(); res.sendStatus(500); return; }
-                            if (recordset) { transaction.rollback(); res.sendStatus(200); return; }
-                            console.log('preparedStatement result');
-                            console.log(recordset);
-                            transaction.rollback();
+                            if (err || recordset) { 
+                            	preparedStatement.unprepare();
+                            	transaction.rollback(); 
+                            	res.sendStatus(err ? 500 : 200);
+                            	return;
+                            }
+                            preparedStatement = new sql.PreparedStatement(connection);
+                            queryString = 'INSERT INTO Users (sid) values (@sid);';
+			                preparedStatement.input('sid', sql.NVarChar);
+			                preparedStatement.prepare(queryString, function(err) {
+			                    if (err) { preparedStatement.unprepare(); transaction.rollback(); return; }
+			                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+			                        function(err, recordset, affected) {
+			                        	preparedStatement.unprepare(); 
+					                    if (err) { transaction.rollback(); return; }
+					                    transaction.commit();
+			                        }
+		                        );
+			                });
                             preparedStatement.unprepare();
                         }
                     );
