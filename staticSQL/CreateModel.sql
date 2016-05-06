@@ -41,7 +41,7 @@ GO
 CREATE TABLE Users(
 	id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	sid VARCHAR(40) NOT NULL,
-	alias VARCHAR(40) NOT NULL,
+	alias VARCHAR(40),
 	CONSTRAINT un_users_alias UNIQUE (alias)
 );
 GO
