@@ -12,7 +12,6 @@ var api = {
 			transaction.begin(function(err) {
 				if (err) { transaction.rollback(); return; }
 				var rolledback = false;
-				transaction.on('rollback', function(aborted) { rolledback = true; res.sendStatus(500); });
 				var sqlRequest = new sql.Request(transaction);
 				var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
 				var preparedStatement = new sql.PreparedStatement(connection);
