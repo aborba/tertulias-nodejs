@@ -54,7 +54,6 @@ var api = {
 							console.log('control point 21');
                             var preparedStatement_1 = new sql.PreparedStatement(connection);
 							console.log('control point 22');
-                            /*
 			                transaction.on('commit', function(succeeded) {
 			                	preparedStatement_0.unprepare();
 			                	preparedStatement_1.unprepare();
@@ -66,7 +65,6 @@ var api = {
 			                	preparedStatement_1.unprepare();
 			                	res.sendStatus(500);
 			                });
-			                */
                             queryString = 'INSERT INTO Users (sid) values (@sid);';
 							console.log('control point 23');
 			                preparedStatement_1.input('sid', sql.NVarChar);
