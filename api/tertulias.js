@@ -1,8 +1,6 @@
 var util = require('../util');
-var qs = require('querystring');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
-
 
 var api = {
 
@@ -16,6 +14,7 @@ var api = {
         var connection = new sql.Connection(util.sqlConfiguration);
 
         connection.connect(function(err) {
+
             if (err) {
                 console.log('An error ocurred while connecting to the database. Aborting');
                 console.log(isError);
@@ -55,7 +54,9 @@ var api = {
 
         });
 
-    },
+    }
+/*
+    ,
 
     post: function (req, res, next) {
         console.log('In: post');
@@ -97,6 +98,7 @@ var api = {
         res.sendStatus(200);
         return next();
     }
+*/
 
 };
 
