@@ -22,36 +22,43 @@ var api = {
             transaction.begin(function(err) {
                 if (err) { transaction.rollback(); return; }
                 var rolledback = false;
-                transaction.on('rollback', function(aborted) { rolledback = true; });
+                transaction.on('rollback', function(aborted) { rolledback = true; res.sendStatus(500); });
                 var sqlRequest = new sql.Request(transaction);
                 var _userId = '';
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
-                var preparedStatement = new sql.PreparedStatement(connection);
-                preparedStatement.input('sid', sql.NVarChar);
-                preparedStatement.prepare(queryString, function(err) {
+                var preparedStatement_0 = new sql.PreparedStatement_0(connection);
+                transaction.on('commit', function(succeeded) { preparedStatement_0.unprepare(); res.sendStatus(200); });
+                transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement_0.unprepare(); res.sendStatus(500); });
+                preparedStatement_0.input('sid', sql.NVarChar);
+                preparedStatement_0.prepare(queryString, function(err) {
                     if (err) { transaction.rollback(); return; }
-                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                    preparedStatement_0.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
-                            if (err || recordset) { 
-                            	preparedStatement.unprepare();
-                            	transaction.rollback(); 
-                            	res.sendStatus(err ? 500 : 200);
-                            	return;
-                            }
-                            preparedStatement = new sql.PreparedStatement(connection);
+                            if (err) {transaction.rollback(); return; }
+                            if (recordset) {transaction.commit(); return; }
+                            var preparedStatement_1 = new sql.PreparedStatement_1(connection);
+			                transaction.on('commit', function(succeeded) {
+			                	preparedStatement_0.unprepare();
+			                	preparedStatement_1.unprepare();
+			                	res.sendStatus(200);
+			                });
+			                transaction.on('rollback', function(aborted) {
+			                	rolledback = true;
+			                	preparedStatement_0.unprepare();
+			                	preparedStatement_1.unprepare();
+			                	res.sendStatus(500);
+			                });
                             queryString = 'INSERT INTO Users (sid) values (@sid);';
-			                preparedStatement.input('sid', sql.NVarChar);
-			                preparedStatement.prepare(queryString, function(err) {
-			                    if (err) { preparedStatement.unprepare(); transaction.rollback(); return; }
-			                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+			                preparedStatement_1.input('sid', sql.NVarChar);
+			                preparedStatement_1.prepare(queryString, function(err) {
+			                    if (err) { transaction.rollback(); return; }
+			                    preparedStatement_1.execute({ sid: req.azureMobile.user.id }, 
 			                        function(err, recordset, affected) {
-			                        	preparedStatement.unprepare(); 
 					                    if (err) { transaction.rollback(); return; }
 					                    transaction.commit();
 			                        }
 		                        );
 			                });
-                            preparedStatement.unprepare();
                         }
                     );
                  });
