@@ -32,8 +32,10 @@ var api = {
 
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
 
-                var preparedStatement = new sql.PreparedStatement();
+                var preparedStatement = new sql.PreparedStatement(connection);
 
+                /* String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime;
+                   Buffer -> sql.VarBinary; sql.Table -> sql.TVP */
                 preparedStatement.input('sid', sql.NVarChar, req.azureMobile.user.id);
 
                 preparedStatement.prepare(queryString, function(err) {
