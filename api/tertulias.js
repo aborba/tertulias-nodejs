@@ -60,8 +60,6 @@ var api = {
         console.log('In: post');
         console.log(req.azureMobile.user.id);
         console.log(req.body);
-        console.log('req.azureMobile.connection');
-        console.log(req.azureMobile.connection);
         var query = {
             sql: 'INSERT INTO Terulias(title, subject, schedule, privacy) VALUES (@title, @subject, @schedule, @privacy)',
             parameters: [
