@@ -4,7 +4,7 @@ var sql = require('mssql');
 
 var transactionDone = false;
 
-var completeTransaction(err, data) {
+var completeTransaction = function(err, data) {
 	if (err) {
 		console.log(err);
 		if (!data) return;
