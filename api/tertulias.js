@@ -36,12 +36,10 @@ var api = {
 
                 /* String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime;
                    Buffer -> sql.VarBinary; sql.Table -> sql.TVP */
-                preparedStatement.input('sid', sql.NVarChar, req.azureMobile.user.id);
-                //preparedStatement.input('sid', sql.NVarChar);
-
+                preparedStatement.input('sid', sql.NVarChar);
                 preparedStatement.prepare(queryString, function(err) {
                     if (err) { transaction.rollback(); return; }
-                    preparedStatement.execute(//{ sid: req.azureMobile.user.id }, 
+                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
                             if (err) { transaction.rollback(); return; }
                             console.log('preparedStatement result');
