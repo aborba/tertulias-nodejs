@@ -89,8 +89,6 @@ var api = {
                     );
                  });
                 console.log('control point 31'); 
-                transaction.rollback();
-            	console.log('control point 32'); 
             });
         });
 
