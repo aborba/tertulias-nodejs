@@ -27,8 +27,8 @@ var api = {
                 var _userId = '';
                 var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
                 var preparedStatement_0 = new sql.PreparedStatement(connection);
-                transaction.on('commit', function(succeeded) { preparedStatement_0.unprepare(); res.sendStatus(200); });
-                transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement_0.unprepare(); res.sendStatus(500); });
+                //transaction.on('commit', function(succeeded) { preparedStatement_0.unprepare(); res.sendStatus(200); });
+                //transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement_0.unprepare(); res.sendStatus(500); });
                 preparedStatement_0.input('sid', sql.NVarChar);
                 preparedStatement_0.prepare(queryString, function(err) {
                     if (err) { transaction.rollback(); return; }
@@ -37,6 +37,7 @@ var api = {
                             if (err) {transaction.rollback(); return; }
                             if (recordset) {transaction.commit(); return; }
                             var preparedStatement_1 = new sql.PreparedStatement(connection);
+                            /*
 			                transaction.on('commit', function(succeeded) {
 			                	preparedStatement_0.unprepare();
 			                	preparedStatement_1.unprepare();
@@ -48,6 +49,7 @@ var api = {
 			                	preparedStatement_1.unprepare();
 			                	res.sendStatus(500);
 			                });
+			                */
                             queryString = 'INSERT INTO Users (sid) values (@sid);';
 			                preparedStatement_1.input('sid', sql.NVarChar);
 			                preparedStatement_1.prepare(queryString, function(err) {
