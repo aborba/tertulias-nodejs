@@ -59,6 +59,11 @@ module.exports = {
 		return obj.constructor.name;
 	},
 
+	isFunction: function(obj) {
+		var getType = {};
+		return obj && getType.toString.call(obj) === '[object Function]';
+	},
+
 	tertuliasBanner2: [
 		'___ ____ ____ ___ _  _ _    _ ____ ____ ',
 		' |  |___ |__/  |  |  | |    | |__| [__  ',
