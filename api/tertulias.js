@@ -34,7 +34,7 @@ var api = {
 
                 var preparedStatement = new sql.PreparedStatement();
 
-                preparedStatement.input('sid', sql.NVarChar);
+                preparedStatement.input('sid', sql.NVarChar, req.azureMobile.user.id);
 
                 preparedStatement.prepare(queryString, function(err) {
                     if (err) { transaction.rollback(); return; }
