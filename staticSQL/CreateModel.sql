@@ -32,14 +32,14 @@ IF object_id(N'dbo.Roles') IS NOT NULL DROP TABLE Roles;
 GO
 
 CREATE TABLE Roles(
-	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
+	id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	roleName VARCHAR(20) NOT NULL,
 	CONSTRAINT un_roles_name UNIQUE (roleName)
 );
 GO
 
 CREATE TABLE Users(
-	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
+	id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	sid VARCHAR(40) NOT NULL,
 	alias VARCHAR(40) NOT NULL,
 	CONSTRAINT un_users_alias UNIQUE (alias)
@@ -47,21 +47,20 @@ CREATE TABLE Users(
 GO
 
 CREATE TABLE Tertulias(
-	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
+	id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	title VARCHAR(40) NOT NULL,
 	subject VARCHAR(80),
 	schedule INTEGER NOT NULL DEFAULT 0,
 	private INTEGER NOT NULL DEFAULT 0,
-    _id INTEGER IDENTITY(1,1) NOT NULL,
 	CONSTRAINT un_tertulia_title UNIQUE (title)
 );
 GO
 
 CREATE TABLE Members(
-	id UNIQUEIDENTIFIER DEFAULT newid() PRIMARY KEY,
-	tertulia UNIQUEIDENTIFIER NOT NULL,
-	usr UNIQUEIDENTIFIER NOT NULL,
-	role UNIQUEIDENTIFIER NOT NULL,
+	id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	tertulia INTEGER NOT NULL,
+	usr INTEGER NOT NULL,
+	role INTEGER NOT NULL,
 	CONSTRAINT fk_members_tertulia FOREIGN KEY (tertulia) REFERENCES Tertulias(id),
 	CONSTRAINT fk_members_user FOREIGN KEY (usr) REFERENCES Users(id),
 	CONSTRAINT fk_members_role FOREIGN KEY (role) REFERENCES Roles(id)
@@ -86,7 +85,6 @@ CREATE VIEW Tertulias_Vw AS
 		Tertulias.subject AS tertuliaSubject,
 		Tertulias.schedule AS tertuliaSchedule,
 		Tertulias.private AS tertuliaPrivate,
-		Tertulias._id AS tertuliaIdentity,
 		Users.sid AS userId,
 		Users.alias AS userAlias 
 	FROM (Tertulias 
@@ -98,15 +96,15 @@ IF object_id(N'dbo.SpInsertTertulia') IS NOT NULL DROP PROCEDURE SpInsertTertuli
 GO
 
 CREATE PROCEDURE dbo.SpInsertTertulia
-	@userId UNIQUEIDENTIFIER, 
+	@userId INTEGER, 
 	@title VARCHAR(40), @subject VARCHAR(80), @schedule INTEGER, @private INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
 	INSERT INTO Tertulias (title, subject, schedule, private) VALUES (@title, @subject, @schedule, @private);
-    DECLARE @tertuliaId UNIQUEIDENTIFIER; SELECT @tertuliaId = id FROM Tertulias WHERE _id = SCOPE_IDENTITY();
-    DECLARE @adminId UNIQUEIDENTIFIER; SELECT @AdminId = id FROM Roles WHERE roleName='Administrator';
+    DECLARE @tertuliaId INTEGER; SET @tertuliaId = SCOPE_IDENTITY();
+    DECLARE @adminId INTEGER; SELECT @AdminId = id FROM Roles WHERE roleName='Administrator';
 	INSERT INTO Members (tertulia, usr, role) VALUES (@tertuliaId, @userId, @adminId);
 	COMMIT
 END TRY
@@ -138,7 +136,7 @@ GO
 INSERT INTO Users (sid, alias) VALUES ('sid:fadae567db0f67c6fe69d25ee8ffc0b5', N'aborba');
 GO
 
-DECLARE @userId UNIQUEIDENTIFIER; SELECT @UserId = id FROM Users WHERE alias = 'aborba';
+DECLARE @userId INTEGER; SELECT @UserId = id FROM Users WHERE alias = 'aborba';
 EXEC SpInsertTertulia @UserId, N'Tertulia do Tejo', N'O que seria do Mundo sem nós!', 0, 1;
 EXEC SpInsertTertulia @UserId, N'Tertúlia dos primos', N'Só Celoricos', 0, 1;
 EXEC SpInsertTertulia @UserId, N'Escolinha 72-77', N'Sempre em contato', 0, 1;

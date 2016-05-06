@@ -30,14 +30,15 @@ var api = {
 
                 var _userId = '';
 
-                var queryString = 'SELECT id FROM Users WHERE sid=@sid;';
+                var queryString_0 = 'SELECT id FROM Users WHERE sid=@sid;';
+                var queryString_1 = 'SELECT id FROM Users WHERE sid=@sid;';
 
                 var preparedStatement = new sql.PreparedStatement(connection);
 
                 /* String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime;
                    Buffer -> sql.VarBinary; sql.Table -> sql.TVP */
                 preparedStatement.input('sid', sql.NVarChar);
-                preparedStatement.prepare(queryString, function(err) {
+                preparedStatement.prepare(queryString_0, function(err) {
                     if (err) { transaction.rollback(); return; }
                     preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                         function(err, recordset, affected) {
