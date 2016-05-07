@@ -67,8 +67,6 @@ var api = {
 			console.log('control point 12');
 							if (err) { rollback(err, res, transaction); return; }
 			console.log('control point 13');
-							if (typeof recordset != 'undefined' && recordset[0] != null) { transaction.commit(); return; }
-			console.log('control point 14');
 							preparedStatement.unprepare();
 			console.log('control point 15');
 							preparedStatement.input('sid', sql.NVarChar);
