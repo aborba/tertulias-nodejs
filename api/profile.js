@@ -21,7 +21,7 @@ var api = {
 						if (err) { console.log('err 3'); console.log(err); res.sendStatus(500); return; }
 						console.log('recordset');
 						console.log(recordset);
-						console.log('OK 1'); res.sendStatus(200).type('application/json').json(recordset);
+						console.log('OK 1'); res.type('application/json').json(recordset);
 						preparedStatement.unprepare();
             			return next();
 					}
