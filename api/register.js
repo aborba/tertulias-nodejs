@@ -8,7 +8,7 @@ var tranDone = false;
 
 var api = {
 	post: function (req, res, next) {
-		var conn = new sql.conn(util.sqlConfiguration);
+		var conn = new sql.connection(util.sqlConfiguration);
 		conn.connect(function(err) {
 			if (err) { res.sendStatus(500); return; }
 			var tran = new sql.tran(conn);
