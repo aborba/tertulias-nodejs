@@ -9,8 +9,10 @@ var tranDone = false;
 var api = {
 	post: function (req, res, next) {
 		var conn = new sql.Connection(util.sqlConfiguration);
+		var usrName = userName(req.req.azureMobile.user);
+		console.log(usrName);
 		conn.connect(function(err) {
-			if (err) { res.sendStatus(500); return; }
+			if (err) { completeError(err, res); return; }
 			var tran = new sql.Transaction(conn);
 			tran.begin(function(err) {
 				if (err) { rollback500(err, res, tran); return; }
@@ -44,6 +46,41 @@ var api = {
 };
 
 api.access = 'authenticated';
+
+var userName = function(user) {
+	var item = {};
+    item.UserName = "";
+    user.getIdentities({
+        success: function (identities) {
+            var req = require('request');
+            if (identities.google) {
+                var googleAccessToken = identities.google.accessToken;
+                var url = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + googleAccessToken;
+                req(url, function (err, resp, body) {
+                    if (err || resp.statusCode !== 200) {
+                        console.error('Error sending data to Google API: ', err);
+                    } else {
+                        try {
+                            var userData = JSON.parse(body);
+                            console.log(userData.name);
+                            item.UserName = userData.name;
+                        } catch (ex) {
+                            console.error('Error parsing response from Google API: ', ex);
+                        }
+                    }
+                });
+            }
+            return item;
+        }
+    });
+}
+
+var completeError(err, res) {
+	if (err) {
+		console.error(err);
+		if (res) res.sendStatus(500);
+	}
+}
 
 var completetran = function(err, data) {
 	if (err) {

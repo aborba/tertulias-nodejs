@@ -12,22 +12,19 @@ var api = {
 	get: function (req, res, next) {
 		var connection = new sql.Connection(util.sqlConfiguration);
 		connection.connect(function(err) {
-			//if (err) { console.log(err); res.sendStatus(500); return; }
+			if (err) { completeError(err, res); return; }
 			var sqlRequest = new sql.Request(connection);
 			var preparedStatement = new sql.PreparedStatement(connection);
 			preparedStatement.input('sid', sql.NVarChar);
 			preparedStatement.prepare(querySelectUser, function(err) {
-				//if (err) { console.log(err); res.sendStatus(500); return; }
+				if (err) { completeError(err, res); return; }
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
-						//if (err) { console.log(err); res.sendStatus(500); return; }
+						if (err) { completeError(err, res); return; }
 						console.log('recordset:');
 						console.log(recordset);
 						preparedStatement.unprepare();
-						res
-						//.sendStatus(200)
-						.type('application/json')
-						.json(recordset);
+						res.type('application/json').json(recordset);
             			return next();
 					}
 				);
@@ -58,7 +55,6 @@ var api = {
 							psUpdateUser.input('alias', sql.NVarChar);
 							psUpdateUser.prepare(queryUpdateUser, function(err) {
 								if (err) { rollback(err, res, transaction); return; }
-								console.log('alias: ' + req.body.alias);
 								psUpdateUser.execute({
 									sid: req.azureMobile.user.id,
 									alias: req.body.alias || ""
@@ -78,9 +74,16 @@ var api = {
 
 api.access = 'authenticated';
 
+var completeError(err, res) {
+	if (err) {
+		console.error(err);
+		if (res) res.sendStatus(500);
+	}
+}
+
 var completeTransaction = function(err, data) {
 	if (err) {
-		console.log(err);
+		console.error(err);
 		if (!data) return;
 		if (!data.tranDone) {
 			data.tranDone = true;
