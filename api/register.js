@@ -25,6 +25,7 @@ var api = {
 							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
 							psSelectId.unprepare();
 							userName(req.azureMobile.user, function() {
+								/*
 								var psInsertSid = new sql.PreparedStatement(conn);
 								psInsertSid.input('sid', sql.NVarChar);
 								psInsertSid.prepare(queryInsertSid, function(err) {
@@ -36,6 +37,7 @@ var api = {
 										}
 									);
 								});
+								*/
 							});
 						}
 					);
@@ -50,7 +52,9 @@ api.access = 'authenticated';
 var userName = function(user, next) {
     user.getIdentity().then(function(identity){
     	console.log(identity);
+    	/*
     	next();
+    	*/
     });
 };
 
