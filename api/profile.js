@@ -10,7 +10,7 @@ var api = {
 		var connection = new sql.Connection(util.sqlConfiguration);
 		connection.connect(function(err) {
 			if (err) { res.sendStatus(500); return; }
-			var sqlRequest = new sql.Request(transaction);
+			var sqlRequest = new sql.Request(connection);
 			var queryString = 'SELECT sid, alias FROM Users WHERE sid=@sid;';
 			var preparedStatement = new sql.PreparedStatement(connection);
 			preparedStatement.input('sid', sql.NVarChar);
