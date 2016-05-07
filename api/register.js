@@ -9,7 +9,7 @@ var tranDone = false;
 var api = {
 	post: function (req, res, next) {
 		var conn = new sql.Connection(util.sqlConfiguration);
-		console.log(req.azureMobile.user.claims);
+		console.log(req.azureMobile.user.getIdentity());
 		var usrName = userName(req.user);
 		console.log(usrName);
 		conn.connect(function(err) {
@@ -51,7 +51,7 @@ api.access = 'authenticated';
 var userName = function(user) {
 	var item = {};
     item.UserName = "";
-    user.getIdentities({
+    user.getIdentity({
         success: function (identities) {
             var req = require('request');
             if (identities.google) {
