@@ -66,8 +66,8 @@ var rollback500 = function(err, res, tran) {
 	});
 }
 
-var rollback200 = function(err, res, tran) {
-	completetran(err, {
+var rollback200 = function(res, tran) {
+	completetran(undefined, {
 		tranDone: tranDone, 
 		action: tran.rollback,
 		res: res,
