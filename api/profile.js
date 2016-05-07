@@ -22,6 +22,7 @@ var api = {
 							res.sendStatus(500); return;
 						}
 						preparedStatement.unprepare();
+						console.log(recordset);
 						res.sendStatus(200).type('application/json').json(recordset);
             			return next();
 					}
