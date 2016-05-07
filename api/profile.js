@@ -74,7 +74,7 @@ var api = {
 
 api.access = 'authenticated';
 
-var completeError(err, res) {
+var completeError = function(err, res) {
 	if (err) {
 		console.error(err);
 		if (res) res.sendStatus(500);
