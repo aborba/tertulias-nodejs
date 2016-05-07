@@ -17,7 +17,7 @@ var api = {
 				if (err) { res.sendStatus(500); return; }
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
-						if (err) { res.sendStatus(500); return; }
+						if (err) { console.log(err); res.sendStatus(500); return; }
 						preparedStatement.unprepare();
 						console.log('recordset');
 						console.log(recordset);
