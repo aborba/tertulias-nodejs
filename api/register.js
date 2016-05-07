@@ -49,7 +49,6 @@ api.access = 'authenticated';
 
 var userName = function(user) {
 	var item = {};
-	/*
     item.UserName = "";
     user.getIdentities({
         success: function (identities) {
@@ -74,8 +73,6 @@ var userName = function(user) {
             return item;
         }
     });
-    */
-    return item;
 }
 
 var completeError = function(err, res) {
