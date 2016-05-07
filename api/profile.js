@@ -35,6 +35,8 @@ var api = {
 	},
 
 	post: function (req, res, next) {
+		console.log('body: ' + req.body);
+		console.log('alias: ' + req.body.alias);
 		var connection = new sql.Connection(util.sqlConfiguration);
 		connection.connect(function(err) {
 			if (err) { rollback(err, res, transaction); return; }
