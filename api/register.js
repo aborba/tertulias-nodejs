@@ -78,7 +78,7 @@ var userName = function(user) {
     return item;
 }
 
-var completeError(err, res) {
+var completeError = function(err, res) {
 	if (err) {
 		console.error(err);
 		if (res) res.sendStatus(500);
