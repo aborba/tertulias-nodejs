@@ -8,23 +8,36 @@ var api = {
 	get: function (req, res, next) {
 		console.log('in profile GET');
 		var connection = new sql.Connection(util.sqlConfiguration);
+		console.log('Control Point 1');
 		connection.connect(function(err) {
+		console.log('Control Point 2');
 			if (err) { res.sendStatus(500); return; }
+		console.log('Control Point 3');
 			var sqlRequest = new sql.Request(connection);
+		console.log('Control Point 4');
 			var queryString = 'SELECT sid, alias FROM Users WHERE sid=@sid;';
+		console.log('Control Point 5');
 			var preparedStatement = new sql.PreparedStatement(connection);
+		console.log('Control Point 6');
 			preparedStatement.input('sid', sql.NVarChar);
+		console.log('Control Point 7');
 			preparedStatement.prepare(queryString, function(err) {
+		console.log('Control Point 8');
 				if (err) { res.sendStatus(500); return; }
+		console.log('Control Point 9');
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
+		console.log('Control Point 10');
 						if (err || (typeof recordset != 'undefined' && recordset[0] != null)) {
+		console.log('Control Point 11');
 							res.sendStatus(500); return;
 						}
+		console.log('Control Point 12');
 						preparedStatement.unprepare();
 						console.log('recordset');
 						console.log(recordset);
 						res.sendStatus(200).type('application/json').json(recordset);
+		console.log('Control Point 13');
             			return next();
 					}
 				);
