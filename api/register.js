@@ -9,9 +9,6 @@ var tranDone = false;
 var api = {
 	post: function (req, res, next) {
 		var conn = new sql.Connection(util.sqlConfiguration);
-		console.log(req.azureMobile.user.getIdentity().then(function(response){ console.log(response); }));
-		var usrName = userName(req.user);
-		console.log(usrName);
 		conn.connect(function(err) {
 			if (err) { completeError(err, res); return; }
 			var tran = new sql.Transaction(conn);
@@ -27,6 +24,7 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
 							psSelectId.unprepare();
+							
 							var psInsertSid = new sql.PreparedStatement(conn);
 							psInsertSid.input('sid', sql.NVarChar);
 							psInsertSid.prepare(queryInsertSid, function(err) {
