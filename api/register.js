@@ -61,8 +61,18 @@ var api = {
 api.access = 'authenticated';
 
 var userName = function(user, next) {
-    user.getIdentity().then(function(_identity){
-    	console.log(_identity);
+    user.getIdentity().then(function(identity){
+    	console.log(identity);
+    	var claims = identity.google.claims;
+    	var email = claims.email_verified ? claims.emailaddress : "";
+    	var firstName = claims.givenname;
+    	var familyName = claims.surname;
+    	var photo = claims.picture;
+		console.log('claims: ' + claims);
+		console.log('email: ' + email);
+		console.log('firstName: ' + firstName);
+		console.log('familyName: ' + familyName);
+		console.log('photo: ' + photo);
     	next();
     });
 };
