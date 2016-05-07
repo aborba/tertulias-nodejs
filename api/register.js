@@ -1,4 +1,4 @@
-var util = require('../util');
+var util = requi re('../util');
 var sql = require('mssql');
 
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
@@ -24,17 +24,18 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
 							psSelectId.unprepare();
-							
-							var psInsertSid = new sql.PreparedStatement(conn);
-							psInsertSid.input('sid', sql.NVarChar);
-							psInsertSid.prepare(queryInsertSid, function(err) {
-								if (err) { rollback500(err, res, tran); return; }
-								psInsertSid.execute({ sid: req.azureMobile.user.id }, 
-									function(err, recordset, affected) {
-										if (err) { rollback500(err, res, tran); return; }
-										commit200(res, tran);
-									}
-								);
+							userName(req.azureMobile.user, function() {
+								var psInsertSid = new sql.PreparedStatement(conn);
+								psInsertSid.input('sid', sql.NVarChar);
+								psInsertSid.prepare(queryInsertSid, function(err) {
+									if (err) { rollback500(err, res, tran); return; }
+									psInsertSid.execute({ sid: req.azureMobile.user.id }, 
+										function(err, recordset, affected) {
+											if (err) { rollback500(err, res, tran); return; }
+											commit200(res, tran);
+										}
+									);
+								});
 							});
 						}
 					);
@@ -46,33 +47,12 @@ var api = {
 
 api.access = 'authenticated';
 
-var userName = function(user) {
-	var item = {};
-    item.UserName = "";
-    user.getIdentity({
-        success: function (identities) {
-            var req = require('request');
-            if (identities.google) {
-                var googleAccessToken = identities.google.accessToken;
-                var url = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + googleAccessToken;
-                req(url, function (err, resp, body) {
-                    if (err || resp.statusCode !== 200) {
-                        console.error('Error sending data to Google API: ', err);
-                    } else {
-                        try {
-                            var userData = JSON.parse(body);
-                            console.log(userData.name);
-                            item.UserName = userData.name;
-                        } catch (ex) {
-                            console.error('Error parsing response from Google API: ', ex);
-                        }
-                    }
-                });
-            }
-            return item;
-        }
+var userName = function(user, next) {
+    user.getIdentity().then(function(identity){
+    	console.log(identity);
+    	next();
     });
-}
+};
 
 var completeError = function(err, res) {
 	if (err) {
