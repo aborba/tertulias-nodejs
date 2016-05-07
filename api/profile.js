@@ -1,6 +1,7 @@
 var util = require('../util');
 var sql = require('mssql');
 
+var querySelectUser = 'SELECT * FROM Users WHERE sid=@sid;';
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
 
 var tranDone = false;
@@ -10,18 +11,16 @@ var api = {
 	get: function (req, res, next) {
 		var connection = new sql.Connection(util.sqlConfiguration);
 		connection.connect(function(err) {
-			if (err) { console.log('err 1'); console.log(err); res.sendStatus(500); return; }
+			if (err) { console.log(err); res.sendStatus(500); return; }
 			var sqlRequest = new sql.Request(connection);
 			var preparedStatement = new sql.PreparedStatement(connection);
 			preparedStatement.input('sid', sql.NVarChar);
-			preparedStatement.prepare(querySelectId, function(err) {
-				if (err) { console.log('err 2'); console.log(err); res.sendStatus(500); return; }
+			preparedStatement.prepare(querySelectUser, function(err) {
+				if (err) { console.log(err); res.sendStatus(500); return; }
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
-						if (err) { console.log('err 3'); console.log(err); res.sendStatus(500); return; }
-						console.log('recordset');
-						console.log(recordset);
-						console.log('OK 1'); res.type('application/json').json(recordset);
+						if (err) { console.log(err); res.sendStatus(500); return; }
+						res.type('application/json').json(recordset);
 						preparedStatement.unprepare();
             			return next();
 					}
