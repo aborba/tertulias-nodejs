@@ -9,7 +9,7 @@ var tranDone = false;
 var api = {
 	post: function (req, res, next) {
 		var conn = new sql.Connection(util.sqlConfiguration);
-		var usrName = userName(req.azureMobile.user);
+		var usrName = userName(req.user);
 		console.log(usrName);
 		conn.connect(function(err) {
 			if (err) { completeError(err, res); return; }
