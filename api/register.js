@@ -11,7 +11,7 @@ var api = {
 		var conn = new sql.Connection(util.sqlConfiguration);
 		conn.connect(function(err) {
 			if (err) { res.sendStatus(500); return; }
-			var tran = new sql.tran(conn);
+			var tran = new sql.Transaction(conn);
 			tran.begin(function(err) {
 				if (err) { rollback500(err, res, tran); return; }
 				var sqlRequest = new sql.Request(tran);
