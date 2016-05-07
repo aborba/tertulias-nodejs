@@ -51,35 +51,36 @@ var api = {
 			console.log('control point 5');
 				var sqlRequest = new sql.Request(transaction);
 			console.log('control point 6');
-				var preparedStatement = new sql.PreparedStatement(connection);
+				var psSelectId = new sql.PreparedStatement(connection);
 			console.log('control point 7');
-				transaction.on('commit', function(succeeded) { preparedStatement.unprepare(); res.sendStatus(200); });
-				transaction.on('rollback', function(aborted) { rolledback = true; preparedStatement.unprepare(); res.sendStatus(500); });
+				transaction.on('commit', function(succeeded) { psSelectId.unprepare(); res.sendStatus(200); });
+				transaction.on('rollback', function(aborted) { rolledback = true; psSelectId.unprepare(); res.sendStatus(500); });
 			console.log('control point 8');
-				preparedStatement.input('sid', sql.NVarChar);
+				psSelectId.input('sid', sql.NVarChar);
 			console.log('control point 9');
-				preparedStatement.prepare(querySelectId, function(err) {
+				psSelectId.prepare(querySelectId, function(err) {
 			console.log('control point 10');
 					if (err) { rollback(err, res, transaction); return; }
 			console.log('control point 11');
-					preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+					psSelectId.execute({ sid: req.azureMobile.user.id }, 
 						function(err, recordset, affected) {
 			console.log('control point 12');
 							if (err) { rollback(err, res, transaction); return; }
 			console.log('control point 13');
-							preparedStatement.unprepare();
+							psSelectId.unprepare();
 			console.log('control point 15');
-							preparedStatement.input('sid', sql.NVarChar);
+							var psUpdateUser = new sql.PreparedStatement(connection);
+							psUpdateUser.input('sid', sql.NVarChar);
 			console.log('control point 16');
-							preparedStatement.input('alias', sql.NVarChar);
+							psUpdateUser.input('alias', sql.NVarChar);
 			console.log('control point 17');
-							preparedStatement.prepare(queryUpdateUser, function(err) {
+							psUpdateUser.prepare(queryUpdateUser, function(err) {
 			console.log('control point 18');
 								if (err) { rollback(err, res, transaction); return; }
 			console.log('control point 19');
 								console.log('alias: ' + req.body.alias);
 			console.log('control point 20');
-								preparedStatement.execute({
+								psUpdateUser.execute({
 									sid: req.azureMobile.user.id,
 									alias: req.body.alias || ""
 								}, function(err, recordset, affected) {
@@ -88,6 +89,7 @@ var api = {
 			console.log('control point 22');
 									commit(res, transaction);
 			console.log('control point 23');
+									psUpdateUser.unprepare();
 								});
 							});
 						}
