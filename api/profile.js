@@ -3,7 +3,7 @@ var sql = require('mssql');
 
 var querySelectUser = 'SELECT * FROM Users WHERE sid=@sid;';
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryUpdateUser = 'UPDATE Users (alias) values (@alias) WHERE sid=@sid;';
+var queryUpdateUser = 'UPDATE Users SET alias=@alias WHERE sid=@sid;';
 
 var tranDone = false;
 
