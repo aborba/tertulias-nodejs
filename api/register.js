@@ -60,7 +60,7 @@ var userName = function(user, next) {
 
 var completeError = function(err, res) {
 	if (err) {
-		console.error(err);
+		console.log(err);
 		if (res) res.sendStatus(500);
 	}
 }
