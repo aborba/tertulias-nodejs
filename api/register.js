@@ -1,4 +1,4 @@
-var util = requi re('../util');
+var util = require('../util');
 var sql = require('mssql');
 
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
@@ -70,6 +70,17 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
 							psSelectId.unprepare();
+							var psInsertSid = new sql.PreparedStatement(conn);
+							psInsertSid.input('sid', sql.NVarChar);
+							psInsertSid.prepare(queryInsertSid, function(err) {
+								if (err) { rollback500(err, res, tran); return; }
+								psInsertSid.execute({ sid: req.azureMobile.user.id }, 
+									function(err, recordset, affected) {
+										if (err) { rollback500(err, res, tran); return; }
+										commit200(res, tran);
+									}
+								);
+							});
 								/*
 							userName(req.azureMobile.user, function() {
 								var psInsertSid = new sql.PreparedStatement(conn);
@@ -85,7 +96,6 @@ var api = {
 								});
 							});
 								*/
-							rollback200(res, tran);
 						}
 					);
 				});
