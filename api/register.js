@@ -37,7 +37,11 @@ var api = {
 								);
 							});
 							*/
-							userName(req.azureMobile.user, function() {
+							userName(req.azureMobile.user, function(userInfo) {
+								console.log('email: ' + userInfo.email);
+								console.log('firstName: ' + userInfo.firstName);
+								console.log('familyName: ' + userInfo.familyName);
+								console.log('photo: ' + userInfo.photo);
 								var psInsertSid = new sql.PreparedStatement(conn);
 								psInsertSid.input('sid', sql.NVarChar);
 								psInsertSid.prepare(queryInsertSid, function(err) {
@@ -62,18 +66,12 @@ api.access = 'authenticated';
 
 var userName = function(user, next) {
     user.getIdentity().then(function(identity){
-    	console.log(identity);
     	var claims = identity.google.claims;
     	var email = claims.email_verified ? claims.emailaddress : "";
     	var firstName = claims.givenname;
     	var familyName = claims.surname;
     	var photo = claims.picture;
-		console.log('claims: ' + claims);
-		console.log('email: ' + email);
-		console.log('firstName: ' + firstName);
-		console.log('familyName: ' + familyName);
-		console.log('photo: ' + photo);
-    	next();
+    	next({email: email, firstName: firstName, familyName: familyName, photo: photo});
     });
 };
 
