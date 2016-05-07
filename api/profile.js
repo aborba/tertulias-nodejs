@@ -1,7 +1,9 @@
 var util = require('../util');
 var sql = require('mssql');
 
-var transactionDone = false;
+var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
+
+var tranDone = false;
 
 var api = {
 
@@ -10,10 +12,9 @@ var api = {
 		connection.connect(function(err) {
 			if (err) { console.log('err 1'); console.log(err); res.sendStatus(500); return; }
 			var sqlRequest = new sql.Request(connection);
-			var queryString = 'SELECT sid, alias FROM Users WHERE sid=@sid;';
 			var preparedStatement = new sql.PreparedStatement(connection);
 			preparedStatement.input('sid', sql.NVarChar);
-			preparedStatement.prepare(queryString, function(err) {
+			preparedStatement.prepare(querySelectId, function(err) {
 				if (err) { console.log('err 2'); console.log(err); res.sendStatus(500); return; }
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
@@ -76,8 +77,8 @@ var completeTransaction = function(err, data) {
 	if (err) {
 		console.log(err);
 		if (!data) return;
-		if (!data.transactionDone) {
-			data.transactionDone = true;
+		if (!data.tranDone) {
+			data.tranDone = true;
 			if (data.action && util.isFunction(data.action)) data.action();
 			if (data.res && data.sendStatus && util.isFunction(data.res.sendStatus)) data.res.sendStatus(data.sendStatus);
 		}
@@ -86,7 +87,7 @@ var completeTransaction = function(err, data) {
 
 var rollback = function(err, res, transaction) {
 	completeTransaction(err, {
-		transactionDone: transactionDone, 
+		tranDone: tranDone, 
 		action: transaction.rollback,
 		res: res,
 		sendStatus: 500
@@ -95,7 +96,7 @@ var rollback = function(err, res, transaction) {
 
 var commit = function(res, transaction) {
 	completeTransaction(undefined, {
-		transactionDone: transactionDone, 
+		tranDone: tranDone, 
 		action: transaction.commit,
 		res: res,
 		sendStatus: 200
