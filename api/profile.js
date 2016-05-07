@@ -59,9 +59,10 @@ var api = {
 							preparedStatement.input('alias', sql.NVarChar);
 							preparedStatement.prepare(queryString, function(err) {
 								if (err) { rollback(err, res, transaction); return; }
+								console.log('alias: ' + req.body.alias);
 								preparedStatement.execute({
 									sid: req.azureMobile.user.id,
-									alias: 'aborba'
+									alias: req.body.alias || ""
 								}, function(err, recordset, affected) {
 									if (err) { rollback(err, res, transaction); return; }
 									commit(res, transaction);
