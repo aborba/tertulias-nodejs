@@ -49,14 +49,14 @@ var api = {
 
 api.access = 'authenticated';
 
+/*
 var userName = function(user, next) {
     user.getIdentity().then(function(_identity){
     	console.log(_identity);
-    	/*
     	next();
-    	*/
     });
 };
+*/
 
 var completeError = function(err, res) {
 	if (err) {
