@@ -8,20 +8,20 @@ var api = {
 	get: function (req, res, next) {
 		var connection = new sql.Connection(util.sqlConfiguration);
 		connection.connect(function(err) {
-			if (err) { res.sendStatus(500); return; }
+			if (err) { console.log('err 1'); console.log(err); res.sendStatus(500); return; }
 			var sqlRequest = new sql.Request(connection);
 			var queryString = 'SELECT sid, alias FROM Users WHERE sid=@sid;';
 			var preparedStatement = new sql.PreparedStatement(connection);
 			preparedStatement.input('sid', sql.NVarChar);
 			preparedStatement.prepare(queryString, function(err) {
-				if (err) { res.sendStatus(500); return; }
+				if (err) { console.log('err 2'); console.log(err); res.sendStatus(500); return; }
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
-						if (err) { console.log(err); res.sendStatus(500); return; }
+						if (err) { console.log('err 3'); console.log(err); res.sendStatus(500); return; }
 						preparedStatement.unprepare();
 						console.log('recordset');
 						console.log(recordset);
-						res.sendStatus(200).type('application/json').json(recordset);
+						console.log('OK 1'); res.sendStatus(200).type('application/json').json(recordset);
             			return next();
 					}
 				);
