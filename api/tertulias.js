@@ -2,8 +2,11 @@ var util = require('../util');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
-var querySelectTertulias = 'SELECT DISTINCT * FROM tertulias WHERE private=0 UNION' +
-    ' SELECT DISTINCT tertulias.* FROM tertulias INNER JOIN members ON tertulias.id=members.tertulia WHERE private=1 AND tertulias.sid=@sid;';
+var querySelectTertulias = 'SELECT DISTINCT * FROM Tertulias WHERE private=0' +
+    ' UNION' +
+        ' SELECT DISTINCT Tertulias.* FROM Tertulias INNER JOIN Members ON Tertulias.id=Members.tertulia' +
+            ' INNER JOIN Users ON Members.usr=Users.id' +
+        ' WHERE private=1 AND Users.sid=@sid;';
 
 var completeError = function(err, res) {
     if (err) {
