@@ -3,7 +3,7 @@ var sql = require('mssql');
 
 var querySelectUser = 'SELECT * FROM Users WHERE sid=@sid;';
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryUpdateUser = 'UPDATE Users SET alias=@alias WHERE sid=@sid;';
+var queryUpdateUser = 'UPDATE Users SET alias=@alias, email=@email, firstName=@firstName, lastName=@lastName, picture=@picture WHERE sid=@sid;';
 
 var tranDone = false;
 
@@ -51,11 +51,19 @@ var api = {
 							var psUpdateUser = new sql.PreparedStatement(connection);
 							psUpdateUser.input('sid', sql.NVarChar);
 							psUpdateUser.input('alias', sql.NVarChar);
+							psUpdateUser.input('email', sql.NVarChar);
+							psUpdateUser.input('firstName', sql.NVarChar);
+							psUpdateUser.input('lastName', sql.NVarChar);
+							psUpdateUser.input('picture', sql.NVarChar);
 							psUpdateUser.prepare(queryUpdateUser, function(err) {
 								if (err) { rollback(err, res, transaction); return; }
 								psUpdateUser.execute({
 									sid: req.azureMobile.user.id,
-									alias: req.body.alias || ""
+									alias: req.body.alias || "",
+									email: req.body.email || "",
+									firstName: req.body.firstName || "",
+									lastName: req.body.lastName || "",
+									picture: req.body.picture || "",
 								}, function(err, recordset, affected) {
 									if (err) { rollback(err, res, transaction); return; }
 									commit(res, transaction);

@@ -2,7 +2,7 @@ var util = require('../util');
 var sql = require('mssql');
 
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryInsertSid = 'INSERT INTO Users (sid, email, firstName, lastName, picture) values (@sid, @email, @firstName, @lastName, @picture);';
+var queryInsertSid = 'INSERT INTO Users (sid, alias, email, firstName, lastName, picture) values (@sid, @alias, @email, @firstName, @lastName, @picture);';
 
 var tranDone = false;
 
@@ -36,6 +36,7 @@ var api = {
 									if (err) { rollback500(err, res, tran); return; }
 									psInsertSid.execute({
 											sid: req.azureMobile.user.id,
+											alias: userInfo.alias,
 											email: userInfo.email,
 											firstName: userInfo.firstName,
 											lastName: userInfo.lastName,
@@ -62,6 +63,7 @@ var userName = function(user, next) {
     user.getIdentity().then(function(identity){
     	var claims = identity.google.claims;
     	next({
+    		alias: "",
     		email: claims.email_verified ? claims.emailaddress : "",
     		firstName: claims.givenname,
     		lastName: claims.surname,
