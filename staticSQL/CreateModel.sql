@@ -41,8 +41,13 @@ GO
 CREATE TABLE Users(
 	id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	sid VARCHAR(40) NOT NULL,
-	alias VARCHAR(40),
-	CONSTRAINT un_users_alias UNIQUE (alias)
+	alias VARCHAR(20),
+	firstName VARCHAR(40),
+	lastName VARCHAR(40),
+	email VARCHAR(40),
+	picture VARCHAR(80),
+	CONSTRAINT un_users_alias UNIQUE (alias),
+	CONSTRAINT un_users_email UNIQUE (email)
 );
 GO
 

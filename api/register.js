@@ -2,7 +2,7 @@ var util = require('../util');
 var sql = require('mssql');
 
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryInsertSid = 'INSERT INTO Users (sid) values (@sid);';
+var queryInsertSid = 'INSERT INTO Users (sid, email, firstName, lastName, photo) values (@sid, @email, @firstName, @lastName, @photo);';
 
 var tranDone = false;
 
@@ -24,32 +24,25 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							psSelectId.unprepare();
 							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
-							/*
-							var psInsertSid = new sql.PreparedStatement(conn);
-							psInsertSid.input('sid', sql.NVarChar);
-							psInsertSid.prepare(queryInsertSid, function(err) {
-								if (err) { rollback500(err, res, tran); return; }
-								psInsertSid.execute({ sid: req.azureMobile.user.id }, 
-									function(err, recordset, affected) {
-										if (err) { rollback500(err, res, tran); return; }
-										commit200(res, tran);
-									}
-								);
-							});
-							*/
 							userName(req.azureMobile.user, function(userInfo) {
-								console.log('email: ' + userInfo.email);
-								console.log('firstName: ' + userInfo.firstName);
-								console.log('familyName: ' + userInfo.familyName);
-								console.log('photo: ' + userInfo.photo);
 								var psInsertSid = new sql.PreparedStatement(conn);
 								psInsertSid.input('sid', sql.NVarChar);
+								psInsertSid.input('email', sql.NVarChar);
+								psInsertSid.input('firstName', sql.NVarChar);
+								psInsertSid.input('lastName', sql.NVarChar);
+								psInsertSid.input('photo', sql.NVarChar);
 								psInsertSid.prepare(queryInsertSid, function(err) {
 									if (err) { rollback500(err, res, tran); return; }
-									psInsertSid.execute({ sid: req.azureMobile.user.id }, 
-										function(err, recordset, affected) {
+									psInsertSid.execute({
+											sid: req.azureMobile.user.id,
+											email: userInfo.email,
+											firstName: userInfo.firstName,
+											lastName: userInfo.lastName,
+											photo: userInfo.photo
+										}, function(err, recordset, affected) {
 											if (err) { rollback500(err, res, tran); return; }
 											commit200(res, tran);
+											psInsertSid.unprepare();
 										}
 									);
 								});
@@ -69,9 +62,9 @@ var userName = function(user, next) {
     	var claims = identity.google.claims;
     	var email = claims.email_verified ? claims.emailaddress : "";
     	var firstName = claims.givenname;
-    	var familyName = claims.surname;
+    	var lastName = claims.surname;
     	var photo = claims.picture;
-    	next({email: email, firstName: firstName, familyName: familyName, photo: photo});
+    	next({email: email, firstName: firstName, lastName: lastName, photo: photo});
     });
 };
 
