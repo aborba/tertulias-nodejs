@@ -45,7 +45,7 @@ CREATE TABLE Users(
 	firstName VARCHAR(40),
 	lastName VARCHAR(40),
 	email VARCHAR(40),
-	picture VARCHAR(80),
+	picture VARCHAR(250),
 	CONSTRAINT un_users_alias UNIQUE (alias),
 	CONSTRAINT un_users_email UNIQUE (email)
 );
