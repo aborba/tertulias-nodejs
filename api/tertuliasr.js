@@ -9,7 +9,7 @@ var authenticate = require('azure-mobile-apps/src/express/middleware/authenticat
 module.exports = function (configuration) {
     var router = express.Router();
 
-    router.get('/', authenticate(configuration), authorize, function (req, res) {
+    router.get('/tertuliasr', authenticate(configuration), authorize, function (req, res) {
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
