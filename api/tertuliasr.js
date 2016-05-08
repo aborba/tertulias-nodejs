@@ -5,7 +5,7 @@ var sql = require('mssql');
 
 var router = express.Router();
 
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
     var connection = new sql.Connection(util.sqlConfiguration);
     connection.connect(function(err) {
         var sqlRequest = new sql.Request(connection);
@@ -27,7 +27,7 @@ router.get('/', function (req, res, next) {
     });
 });
 
-router.get('/page/:nr', function (req, res, next) {
+router.get('/page/:nr', function (req, res) {
 	console.log('par ' + req.params.nr);
 }
 
