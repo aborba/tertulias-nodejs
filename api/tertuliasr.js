@@ -29,7 +29,7 @@ router.get('/', function (req, res) {
 
 router.get('/page/:nr', function (req, res) {
 	console.log('par ' + req.params.nr);
-}
+});
 
 router.access = 'authenticated';
 module.exports = router;
