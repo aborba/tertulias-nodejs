@@ -1,10 +1,16 @@
 var util = require('../util');
-var transUtil = require('./transUtil');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
 var querySelectTertulias = 'SELECT DISTINCT * FROM tertulias WHERE private=0 UNION' +
     ' SELECT DISTINCT tertulias.* FROM tertulias INNER JOIN members ON tertulias.id=members.tertulia WHERE private=1 AND sid=@sid;';
+
+var completeError = function(err, res) {
+    if (err) {
+        console.error(err);
+        if (res) res.sendStatus(500);
+    }
+};
 
 var api = {
 
