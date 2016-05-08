@@ -1,5 +1,5 @@
 var util = require('../util');
-var transUtil = require('transUtil');
+var transUtil = require('./transUtil');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
