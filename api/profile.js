@@ -21,8 +21,6 @@ var api = {
 				preparedStatement.execute({ sid: req.azureMobile.user.id }, 
 					function(err, recordset, affected) {
 						if (err) { completeError(err, res); return; }
-						console.log('recordset:');
-						console.log(recordset);
 						preparedStatement.unprepare();
 						res.type('application/json').json(recordset);
             			return next();

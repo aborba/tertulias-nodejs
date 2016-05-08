@@ -27,6 +27,7 @@ var api = {
 							userName(req.azureMobile.user, function(userInfo) {
 								var psInsertSid = new sql.PreparedStatement(conn);
 								psInsertSid.input('sid', sql.NVarChar);
+								psInsertSid.input('alias', sql.NVarChar);
 								psInsertSid.input('email', sql.NVarChar);
 								psInsertSid.input('firstName', sql.NVarChar);
 								psInsertSid.input('lastName', sql.NVarChar);
@@ -60,11 +61,12 @@ api.access = 'authenticated';
 var userName = function(user, next) {
     user.getIdentity().then(function(identity){
     	var claims = identity.google.claims;
-    	var email = claims.email_verified ? claims.emailaddress : "";
-    	var firstName = claims.givenname;
-    	var lastName = claims.surname;
-    	var picture = claims.picture;
-    	next({email: email, firstName: firstName, lastName: lastName, picture: picture});
+    	next({
+    		email: claims.email_verified ? claims.emailaddress : "",
+    		firstName: claims.givenname,
+    		lastName: claims.surname,
+    		picture: claims.picture
+    	});
     });
 };
 
