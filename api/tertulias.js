@@ -1,6 +1,10 @@
 var util = require('../util');
+var transUtil = require('transUtil');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
+
+var querySelectTertulias = 'SELECT DISTINCT * FROM tertulias WHERE private=0 UNION' +
+    ' SELECT DISTINCT tertulias.* FROM tertulias INNER JOIN members ON tertulias.id=members.tertulia WHERE private=1 AND sid=@sid;';
 
 var api = {
 
@@ -12,49 +16,23 @@ var api = {
     get: function (req, res, next) {
 
         var connection = new sql.Connection(util.sqlConfiguration);
-
         connection.connect(function(err) {
-
-            if (err) {console.log(isError); res.sendStatus(500); return; }
-
-            var transaction = new sql.Transaction(connection);
-
-            transaction.begin(function(err) {
-
-                if (err) { transaction.rollback(); return; }
-
-                var rolledback = false;
-                transaction.on('rollback', function(aborted) { rolledback = true; });
-
-                var sqlRequest = new sql.Request(transaction);
-
-                var _userId = '';
-
-                var queryString_0 = 'SELECT id FROM Users WHERE sid=@sid;';
-                var queryString_1 = 'SELECT id FROM Users WHERE sid=@sid;';
-
-                var preparedStatement = new sql.PreparedStatement(connection);
-
-                /* String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime;
-                   Buffer -> sql.VarBinary; sql.Table -> sql.TVP */
-                preparedStatement.input('sid', sql.NVarChar);
-                preparedStatement.prepare(queryString_0, function(err) {
-                    if (err) { transaction.rollback(); return; }
-                    preparedStatement.execute({ sid: req.azureMobile.user.id }, 
-                        function(err, recordset, affected) {
-                            if (err) { transaction.rollback(); return; }
-                            console.log('preparedStatement result');
-                            console.log(recordset);
-                            transaction.rollback();
-                            preparedStatement.unprepare();
-                        }
-                    );
-                 });
-                transaction.rollback();  
-            });
-
+            var sqlRequest = new sql.Request(connection);
+            var preparedStatement = new sql.PreparedStatement(connection);
+            /* String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime;
+               Buffer -> sql.VarBinary; sql.Table -> sql.TVP */
+            preparedStatement.input('sid', sql.NVarChar);
+            preparedStatement.prepare(querySelectTertulias, function(err) {
+                if (err) { completeError(err, res); return; }
+                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                    function(err, recordset, affected) {
+                        if (err) { completeError(err, res); return; }
+                        console.log(recordset);
+                        preparedStatement.unprepare();
+                    }
+                );
+             });
         });
-
     }
 /*
     ,
