@@ -2,7 +2,7 @@ var util = require('../util');
 var sql = require('mssql');
 
 var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryInsertSid = 'INSERT INTO Users (sid, email, firstName, lastName, photo) values (@sid, @email, @firstName, @lastName, @photo);';
+var queryInsertSid = 'INSERT INTO Users (sid, email, firstName, lastName, picture) values (@sid, @email, @firstName, @lastName, @picture);';
 
 var tranDone = false;
 
@@ -30,7 +30,7 @@ var api = {
 								psInsertSid.input('email', sql.NVarChar);
 								psInsertSid.input('firstName', sql.NVarChar);
 								psInsertSid.input('lastName', sql.NVarChar);
-								psInsertSid.input('photo', sql.NVarChar);
+								psInsertSid.input('picture', sql.NVarChar);
 								psInsertSid.prepare(queryInsertSid, function(err) {
 									if (err) { rollback500(err, res, tran); return; }
 									psInsertSid.execute({
@@ -38,7 +38,7 @@ var api = {
 											email: userInfo.email,
 											firstName: userInfo.firstName,
 											lastName: userInfo.lastName,
-											photo: userInfo.photo
+											picture: userInfo.picture
 										}, function(err, recordset, affected) {
 											if (err) { rollback500(err, res, tran); return; }
 											commit200(res, tran);
@@ -63,8 +63,8 @@ var userName = function(user, next) {
     	var email = claims.email_verified ? claims.emailaddress : "";
     	var firstName = claims.givenname;
     	var lastName = claims.surname;
-    	var photo = claims.picture;
-    	next({email: email, firstName: firstName, lastName: lastName, photo: photo});
+    	var picture = claims.picture;
+    	next({email: email, firstName: firstName, lastName: lastName, picture: picture});
     });
 };
 
