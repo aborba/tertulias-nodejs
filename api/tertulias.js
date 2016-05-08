@@ -38,6 +38,7 @@ var api = {
                         if (err) { completeError(err, res); return; }
                         console.log(recordset);
                         preparedStatement.unprepare();
+                        res.type('application/json').json(recordset);
                     }
                 );
              });
