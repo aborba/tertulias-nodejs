@@ -1,4 +1,29 @@
 /*
+ PREFIXES
+	co - Contributions
+	ei - EventsItems
+	ev - Events
+	in - Invitations
+	it - Items
+ 	lo - Locations
+ 	mb - Members
+ 	md - MonthlyD
+ 	mw - MonthlyW
+ 	nt - EnumTypes
+ 	no - Notifications
+ 	nv - EnumValues
+ 	qi - QuantifiedItems
+ 	sc - Schedules
+ 	tp - Templates
+ 	tr - Tertulias
+	us - Users
+	wk - Weekly
+	yd - YearlyD
+	ym - YearlyM
+	yw - YearlyW
+ */
+
+/*
 Use master;
 GO
 
@@ -14,90 +39,159 @@ BEGIN
 	END;
 END
 GO
-*/
+ */
 
-/*
+/*sp
+
 Use Tertulias;
 GO
-*/
+ */
 
-IF OBJECT_ID(N'dbo.sp_postMessage_byAlias') IS NOT NULL DROP PROCEDURE sp_postMessage_byAlias;
-IF OBJECT_ID(N'dbo.sp_postMessage') IS NOT NULL DROP PROCEDURE sp_postMessage;
-IF OBJECT_ID(N'dbo.sp_insertTertulia') IS NOT NULL DROP PROCEDURE sp_insertTertulia;
-IF OBJECT_ID(N'dbo.sp_buildChecklist') IS NOT NULL DROP PROCEDURE sp_buildChecklist;
-IF OBJECT_ID(N'dbo.sp_createEventDefaultLocation') IS NOT NULL DROP PROCEDURE sp_createEventDefaultLocation;
-IF OBJECT_ID(N'dbo.sp_createEvent') IS NOT NULL DROP PROCEDURE sp_createEvent;
-IF OBJECT_ID(N'dbo.sp_getEventIdTertuliaId') IS NOT NULL DROP PROCEDURE sp_getEventIdTertuliaId;
-IF OBJECT_ID(N'dbo.sp_assignChecklistItems') IS NOT NULL DROP PROCEDURE sp_assignChecklistItems;
-IF OBJECT_ID(N'dbo.sp_getId') IS NOT NULL DROP PROCEDURE sp_getId;
-IF OBJECT_ID(N'dbo.FnGetCatalogItemId_byTertuliaId') IS NOT NULL DROP FUNCTION FnGetCatalogItemId_byTertuliaId;
-IF OBJECT_ID(N'dbo.FnGetTemplateId_byTertuliaId') IS NOT NULL DROP FUNCTION FnGetTemplateId_byTertuliaId;
-IF OBJECT_ID(N'dbo.FnGetUserId_byAlias') IS NOT NULL DROP FUNCTION FnGetUserId_byAlias;
-IF OBJECT_ID(N'dbo.FnGetTertuliaLocation_byTertuliaId') IS NOT NULL DROP FUNCTION FnGetTertuliaLocation_byTertuliaId;
-IF OBJECT_ID(N'dbo.FnGetTertuliaTemplateId_byTertuliaId') IS NOT NULL DROP FUNCTION FnGetTertuliaTemplateId_byTertuliaId;
-IF OBJECT_ID(N'dbo.FnGetEventId_byTertuliaId') IS NOT NULL DROP FUNCTION FnGetEventId_byTertuliaId;
+IF OBJECT_ID(N'dbo.fnGetEnum') IS NOT NULL DROP FUNCTION fnGetEnum;
+IF OBJECT_ID(N'dbo.spSetEnum') IS NOT NULL DROP PROCEDURE spSetEnum;
 GO
-IF OBJECT_ID(N'dbo.Messages') IS NOT NULL DROP TABLE Messages;
-IF OBJECT_ID(N'dbo.Tags') IS NOT NULL DROP TABLE Tags;
+
+IF OBJECT_ID(N'dbo.spAcceptInvitation') IS NOT NULL DROP PROCEDURE spAcceptInvitation;
+IF OBJECT_ID(N'dbo.spInvite') IS NOT NULL DROP PROCEDURE spInvite;
+IF OBJECT_ID(N'dbo.fnGetTemplate_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTemplate_byTertuliaId;
+IF OBJECT_ID(N'dbo.fnGetUserId_byAlias') IS NOT NULL DROP FUNCTION fnGetUserId_byAlias;
+IF OBJECT_ID(N'dbo.fnGetTertuliaLocation_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTertuliaLocation_byTertuliaId;
+IF OBJECT_ID(N'dbo.fnGetItem_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetItem_byTertuliaId;
+IF OBJECT_ID(N'dbo.fnGetEvent_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetEvent_byTertuliaId;
+IF OBJECT_ID(N'dbo.sp_getId') IS NOT NULL DROP PROCEDURE sp_getId;
+IF OBJECT_ID(N'dbo.sp_getEventIdTertuliaId') IS NOT NULL DROP PROCEDURE sp_getEventIdTertuliaId;
+IF OBJECT_ID(N'dbo.sp_createEvent') IS NOT NULL DROP PROCEDURE sp_createEvent;
+IF OBJECT_ID(N'dbo.sp_createEventDefaultLocation') IS NOT NULL DROP PROCEDURE sp_createEventDefaultLocation;
+IF OBJECT_ID(N'dbo.sp_insertTertulia_MonthlyW') IS NOT NULL DROP PROCEDURE sp_insertTertulia_MonthlyW;
+
+IF OBJECT_ID(N'dbo.sp_postNotification_byAlias') IS NOT NULL DROP PROCEDURE sp_postNotification_byAlias;
+IF OBJECT_ID(N'dbo.sp_postNotification') IS NOT NULL DROP PROCEDURE sp_postNotification;
+IF OBJECT_ID(N'dbo.sp_buildEventsItems') IS NOT NULL DROP PROCEDURE sp_buildEventsItems;
+IF OBJECT_ID(N'dbo.sp_assignChecklistItems') IS NOT NULL DROP PROCEDURE sp_assignChecklistItems;
+GO
+IF OBJECT_ID(N'dbo.Invitations') IS NOT NULL DROP TABLE Invitations;
+IF OBJECT_ID(N'dbo.fnCountOpenInvitations') IS NOT NULL DROP FUNCTION fnCountOpenInvitations;
+IF OBJECT_ID(N'dbo.Notifications') IS NOT NULL DROP TABLE Notifications;
 IF OBJECT_ID(N'dbo.Contributions') IS NOT NULL DROP TABLE Contributions;
 IF OBJECT_ID(N'dbo.EventsItems') IS NOT NULL DROP TABLE EventsItems;
-IF OBJECT_ID(N'dbo.TemplatesCat') IS NOT NULL DROP TABLE TemplatesCat;
-IF OBJECT_ID(N'dbo.ItemsCatalog') IS NOT NULL DROP TABLE ItemsCatalog;
+IF OBJECT_ID(N'dbo.QuantifiedItems') IS NOT NULL DROP TABLE QuantifiedItems;
 IF OBJECT_ID(N'dbo.Templates') IS NOT NULL DROP TABLE Templates;
+IF OBJECT_ID(N'dbo.Items') IS NOT NULL DROP TABLE Items;
 IF OBJECT_ID(N'dbo.Events') IS NOT NULL DROP TABLE Events;
 IF OBJECT_ID(N'dbo.Members') IS NOT NULL DROP TABLE Members;
 IF OBJECT_ID(N'dbo.Users') IS NOT NULL DROP TABLE Users;
 IF OBJECT_ID(N'dbo.Tertulias') IS NOT NULL DROP TABLE Tertulias;
-IF OBJECT_ID(N'dbo.Roles') IS NOT NULL DROP TABLE Roles;
 IF OBJECT_ID(N'dbo.Locations') IS NOT NULL DROP TABLE Locations;
+IF OBJECT_ID(N'dbo.YearlyM') IS NOT NULL DROP TABLE YearlyM;
+IF OBJECT_ID(N'dbo.YearlyW') IS NOT NULL DROP TABLE YearlyW;
+IF OBJECT_ID(N'dbo.YearlyD') IS NOT NULL DROP TABLE YearlyD;
+IF OBJECT_ID(N'dbo.MonthlyW') IS NOT NULL DROP TABLE MonthlyW;
+IF OBJECT_ID(N'dbo.MonthlyD') IS NOT NULL DROP TABLE MonthlyD;
+IF OBJECT_ID(N'dbo.Weekly') IS NOT NULL DROP TABLE Weekly;
 IF OBJECT_ID(N'dbo.Schedules') IS NOT NULL DROP TABLE Schedules;
-IF OBJECT_ID(N'dbo.Recurrencies') IS NOT NULL DROP TABLE Recurrencies;
+IF OBJECT_ID(N'dbo.EnumValues') IS NOT NULL DROP TABLE EnumValues;
+IF OBJECT_ID(N'dbo.EnumTypes') IS NOT NULL DROP TABLE EnumTypes;
 GO
 
--- See <TEST 01>
-CREATE TABLE Roles(
-	ro_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	ro_name VARCHAR(20) NOT NULL,
-	CONSTRAINT un_roles_name UNIQUE (ro_name)
+CREATE TABLE EnumTypes(
+	nt_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	nt_name VARCHAR(20) NOT NULL,
+	CONSTRAINT un_enumtype_name UNIQUE (nt_name)
 );
 GO
 
--- See <TEST 04>
-CREATE TABLE Users(
-	us_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	us_sid VARCHAR(40) NOT NULL,
-	us_alias VARCHAR(20),
-	us_firstName VARCHAR(40),
-	us_lastName VARCHAR(40),
-	us_email VARCHAR(40),
-	us_picture VARCHAR(255),
-	CONSTRAINT un_users_alias UNIQUE (us_alias),
-	CONSTRAINT un_users_email UNIQUE (us_email)
+CREATE TABLE EnumValues(
+	nv_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	nv_type INTEGER NOT NULL,
+	nv_name VARCHAR(20) NOT NULL,
+	nv_value INTEGER DEFAULT 0,
+	CONSTRAINT un_enumvalue_name UNIQUE (nv_type, nv_name),
+	CONSTRAINT fk_enumvalue_type FOREIGN KEY (nv_type) REFERENCES EnumTypes(nt_id)
 );
 GO
 
--- See <TEST 02>
-CREATE TABLE Recurrencies(
-	rc_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	rc_name VARCHAR(40) NOT NULL,
-	rc_description VARCHAR(255) NOT NULL,
-	CONSTRAINT un_recurrency_name UNIQUE (rc_name)
-);
-GO
-
--- See <TEST 06>
+-- See <TEST 03>
 CREATE TABLE Schedules(
 	sc_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	sc_recurrency INTEGER NOT NULL,
-	sc_fromStart BIT NOT NULL DEFAULT '1',
-	sc_skip INTEGER NOT NULL,
-	sc_param1 VARCHAR(10),
-	sc_param2 VARCHAR(10),
-	CONSTRAINT fk_schedule_recurrency FOREIGN KEY (sc_recurrency) REFERENCES Recurrencies(rc_id)
+	CONSTRAINT fk_schedule_recurrency FOREIGN KEY (sc_recurrency) REFERENCES EnumValues(nv_id)
 );
 GO
 
--- See <TEST 05> <TEST 07>
+-- See <TEST 0XX>
+CREATE TABLE Weekly(
+	wk_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	wk_schedule INTEGER NOT NULL,
+	wk_dow INTEGER NOT NULL,
+	wk_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_weekly_schedule FOREIGN KEY (wk_schedule) REFERENCES Schedules(sc_id),
+	CONSTRAINT fk_weekly_dow FOREIGN KEY (wk_dow) REFERENCES EnumValues(nv_id)
+);
+GO
+
+-- See <TEST 0XX>
+CREATE TABLE MonthlyD(
+	md_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	md_schedule INTEGER NOT NULL,
+	md_dom INTEGER NOT NULL,
+	md_is_fromend BIT NOT NULL DEFAULT 0,
+	md_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_monthlyd_schedule FOREIGN KEY (md_schedule) REFERENCES Schedules(sc_id),
+	CONSTRAINT fk_monthlyd_dom FOREIGN KEY (md_dom) REFERENCES EnumValues(nv_id)
+);
+GO
+
+-- See <TEST 0XX>
+CREATE TABLE MonthlyW(
+	mw_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	mw_schedule INTEGER NOT NULL,
+	mw_dow INTEGER NOT NULL DEFAULT 1,
+	mw_weeknr INTEGER NOT NULL DEFAULT 0,
+	mw_is_fromstart BIT NOT NULL DEFAULT 1,
+	mw_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_monthlyw_schedule FOREIGN KEY (mw_schedule) REFERENCES Schedules(sc_id),
+	CONSTRAINT fk_monthlyw_dow FOREIGN KEY (mw_dow) REFERENCES EnumValues(nv_id)
+);
+GO
+
+-- See <TEST 0XX>
+CREATE TABLE YearlyD(
+	yd_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	yd_schedule INTEGER NOT NULL,
+	yd_doy INTEGER NOT NULL DEFAULT 1,
+	yd_is_fromend BIT NOT NULL DEFAULT 0,
+	yd_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_yearlyd_schedule FOREIGN KEY (yd_schedule) REFERENCES Schedules(sc_id)
+);
+GO
+
+-- See <TEST 0XX>
+CREATE TABLE YearlyW(
+	yw_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	yw_schedule INTEGER NOT NULL,
+	yw_dow INTEGER NOT NULL DEFAULT 1,
+	yw_weeknr INTEGER NOT NULL DEFAULT 0,
+	yw_is_fromend BIT NOT NULL DEFAULT 0,
+	yw_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_yearlyw_schedule FOREIGN KEY (yw_schedule) REFERENCES Schedules(sc_id),
+	CONSTRAINT fk_yearlyw_dow FOREIGN KEY (yw_dow) REFERENCES EnumValues(nv_id)
+);
+GO
+
+-- See <TEST 0XX>
+CREATE TABLE YearlyM(
+	ym_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	ym_schedule INTEGER NOT NULL,
+	ym_dom INTEGER NOT NULL DEFAULT 1,
+	ym_month INTEGER NOT NULL DEFAULT 0,
+	ym_is_fromend BIT NOT NULL DEFAULT 0,
+	ym_skip INTEGER NOT NULL DEFAULT 0,
+	CONSTRAINT fk_yearlym_schedule FOREIGN KEY (ym_schedule) REFERENCES Schedules(sc_id),
+	CONSTRAINT fk_yearlym_month FOREIGN KEY (ym_month) REFERENCES EnumValues(nv_id)
+);
+GO
+
+-- See <TEST 02> <TEST 007>
 CREATE TABLE Locations(
 	lo_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	lo_name VARCHAR(40) NOT NULL,
@@ -111,21 +205,37 @@ CREATE TABLE Locations(
 );
 GO
 
--- See <TEST 06> <TEST 07>
+-- See <TEST 03> <TEST 007>
 CREATE TABLE Tertulias(
 	tr_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	tr_name VARCHAR(40) NOT NULL,
 	tr_subject VARCHAR(80),
-	tr_location INTEGER NOT NULL DEFAULT 0,
-	tr_schedule INTEGER NOT NULL DEFAULT 0,
-	tr_private BIT NOT NULL DEFAULT 0,
+	tr_location INTEGER NOT NULL,
+	tr_schedule INTEGER NOT NULL,
+	tr_is_private BIT NOT NULL DEFAULT 0,
+	tr_is_cancelled BIT NOT NULL DEFAULT 0,
 	CONSTRAINT un_tertulia_name UNIQUE (tr_name),
 	CONSTRAINT fk_tertulia_location FOREIGN KEY (tr_location) REFERENCES Locations(lo_id),
 	CONSTRAINT fk_tertulia_schedule FOREIGN KEY (tr_schedule) REFERENCES Schedules(sc_id)
 );
 GO
 
--- See <TEST 06>
+-- See <TEST 01>
+CREATE TABLE Users(
+	us_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	us_sid VARCHAR(40) NOT NULL,
+	us_alias VARCHAR(20),
+	us_firstName VARCHAR(40),
+	us_lastName VARCHAR(40),
+	us_email VARCHAR(40),
+	us_picture VARCHAR(255),
+	CONSTRAINT un_users_sid UNIQUE (us_sid),
+	CONSTRAINT un_users_alias UNIQUE (us_alias),
+	CONSTRAINT un_users_email UNIQUE (us_email)
+);
+GO
+
+-- See <TEST 03>
 CREATE TABLE Members(
 	mb_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	mb_tertulia INTEGER NOT NULL,
@@ -133,12 +243,11 @@ CREATE TABLE Members(
 	mb_role INTEGER NOT NULL,
 	CONSTRAINT un_members_tu UNIQUE (mb_tertulia, mb_user),
 	CONSTRAINT fk_members_tertulia FOREIGN KEY (mb_tertulia) REFERENCES Tertulias(tr_id),
-	CONSTRAINT fk_members_user FOREIGN KEY (mb_user) REFERENCES Users(us_id),
-	CONSTRAINT fk_members_role FOREIGN KEY (mb_role) REFERENCES Roles(ro_id)
+	CONSTRAINT fk_members_user FOREIGN KEY (mb_user) REFERENCES Users(us_id)
 );
 GO
 
--- See <TEST 07>
+-- See <TEST 007>
 CREATE TABLE Events(
 	ev_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	ev_tertulia INTEGER NOT NULL,
@@ -151,106 +260,149 @@ CREATE TABLE Events(
 );
 GO
 
--- See <TEST 08>
-CREATE TABLE ItemsCatalog(
-	ic_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	ic_name VARCHAR(40) NOT NULL,
-	ic_tertulia INTEGER NOT NULL,
-	CONSTRAINT un_checklistsitems_tnsu UNIQUE (ic_tertulia, ic_name),
-	CONSTRAINT fk_checklistsitems_tertulia FOREIGN KEY (ic_tertulia) REFERENCES Tertulias(tr_id)
+-- See <TEST 008>
+CREATE TABLE Items(
+	it_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	it_name VARCHAR(40) NOT NULL,
+	it_tertulia INTEGER NOT NULL,
+	CONSTRAINT un_items_tnsu UNIQUE (it_tertulia, it_name),
+	CONSTRAINT fk_items_tertulia FOREIGN KEY (it_tertulia) REFERENCES Tertulias(tr_id)
 );
 GO
 
--- See <TEST 09>
+-- See <TEST 009>
 CREATE TABLE Templates(
 	tp_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	tp_name VARCHAR(40) NOT NULL,
 	tp_tertulia INTEGER NOT NULL,
-	CONSTRAINT un_checklistsTemplates_name UNIQUE (tp_tertulia, tp_name),
-	CONSTRAINT fk_checklistsTemplates_tertulia FOREIGN KEY (tp_tertulia) REFERENCES Tertulias(tr_id)
+	CONSTRAINT un_templates_name UNIQUE (tp_tertulia, tp_name),
+	CONSTRAINT fk_templates_tertulia FOREIGN KEY (tp_tertulia) REFERENCES Tertulias(tr_id)
 );
 GO
 
--- See <TEST 10> <TEST 11>
-CREATE TABLE TemplatesCat(
-	tc_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	tc_template INTEGER NOT NULL,
-	tc_item INTEGER NOT NULL,
-	tc_quantity INTEGER NOT NULL,
-	CONSTRAINT un_checkliststemplatesItems_tni UNIQUE (tc_template, tc_item),
-	CONSTRAINT fk_checkliststemplatesItems_checklist FOREIGN KEY (tc_template) REFERENCES Templates(tp_id),
-	CONSTRAINT fk_checkliststemplatesItems_item FOREIGN KEY (tc_item) REFERENCES ItemsCatalog(ic_id)
+-- See <TEST 010> <TEST 011>
+CREATE TABLE QuantifiedItems(
+	qi_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	qi_template INTEGER NOT NULL,
+	qi_item INTEGER NOT NULL,
+	qi_quantity INTEGER NOT NULL,
+	CONSTRAINT un_quantifieditems_tni UNIQUE (qi_template, qi_item),
+	CONSTRAINT fk_quantifieditems_template FOREIGN KEY (qi_template) REFERENCES Templates(tp_id),
+	CONSTRAINT fk_quantifieditems_item FOREIGN KEY (qi_item) REFERENCES Items(it_id)
 );
 GO
 
--- See <TEST 11> <TEST 12>
+-- See <TEST 011> <TEST 012>
 CREATE TABLE EventsItems(
 	ei_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	ei_event INTEGER NOT NULL,
 	ei_item INTEGER NOT NULL,
 	ei_quantity INTEGER NOT NULL DEFAULT 1,
-	CONSTRAINT un_eventschecklists_ei UNIQUE (ei_event, ei_item),
-	CONSTRAINT fk_eventschecklists_event FOREIGN KEY (ei_event) REFERENCES Events(ev_id),
-	CONSTRAINT fk_eventschecklists_item FOREIGN KEY (ei_item) REFERENCES ItemsCatalog(ic_id)	
+	CONSTRAINT un_eventsitems_ei UNIQUE (ei_event, ei_item),
+	CONSTRAINT fk_eventsitems_event FOREIGN KEY (ei_event) REFERENCES Events(ev_id),
+	CONSTRAINT fk_eventsitems_item FOREIGN KEY (ei_item) REFERENCES Items(it_id)	
 );
 GO
 
--- See <TEST 12>
+-- See <TEST 012>
 CREATE TABLE Contributions(
 	ct_id INTEGER IDENTITY(1,1) PRIMARY KEY,
 	ct_user INTEGER NOT NULL,
 	ct_event INTEGER NOT NULL,
 	ct_item INTEGER NOT NULL,
 	ct_quantity INTEGER NOT NULL DEFAULT 1,
-	CONSTRAINT un_checklistsitemsassignments_iu UNIQUE (ct_user, ct_item),
-	CONSTRAINT fk_checklistsitemsassignments_user FOREIGN KEY (ct_user) REFERENCES Users(us_id),
-	CONSTRAINT fk_checklistsitemsassignments_event FOREIGN KEY (ct_event) REFERENCES Events(ev_id),
-	CONSTRAINT fk_checklistsitemsassignments_item FOREIGN KEY (ct_item) REFERENCES ItemsCatalog(ic_id)	
+	CONSTRAINT un_contributions_iu UNIQUE (ct_user, ct_event, ct_item),
+	CONSTRAINT fk_contributions_user FOREIGN KEY (ct_user) REFERENCES Users(us_id),
+	CONSTRAINT fk_contributions_event FOREIGN KEY (ct_event) REFERENCES Events(ev_id),
+	CONSTRAINT fk_contributions_item FOREIGN KEY (ct_item) REFERENCES Items(it_id)	
 );
 GO
 
--- See <TEST 03>
-CREATE TABLE Tags(
-	tg_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	tg_name VARCHAR(20) NOT NULL,
-	tg_description VARCHAR(40),
-	CONSTRAINT un_messagetypes_name UNIQUE (tg_name)
+-- See <TEST 013>
+CREATE TABLE Notifications(
+	no_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	no_tertulia INTEGER NOT NULL,
+	no_user INTEGER NOT NULL,
+	no_timestamp DATETIME NOT NULL DEFAULT GETDATE(),
+	no_tag INTEGER NOT NULL,
+	no_message VARCHAR(40),
+	CONSTRAINT un_notifications_tuttm UNIQUE (no_tertulia, no_user, no_timestamp, no_tag, no_message),
+	CONSTRAINT fk_notifications_tertulia FOREIGN KEY (no_tertulia) REFERENCES Tertulias(tr_id),
+	CONSTRAINT fk_notifications_usr FOREIGN KEY (no_user) REFERENCES Users(us_id),
+	CONSTRAINT fk_notifications_type FOREIGN KEY (no_tag) REFERENCES EnumValues(nv_id)
 );
 GO
 
--- See <TEST 13>
-CREATE TABLE Messages(
-	ms_id INTEGER IDENTITY(1,1) PRIMARY KEY,
-	ms_tertulia INTEGER NOT NULL,
-	ms_user INTEGER NOT NULL,
-	ms_timestamp DATETIME NOT NULL,
-	ms_tag INTEGER NOT NULL,
-	ms_message VARCHAR(40),
-	CONSTRAINT un_messages_tuttm UNIQUE (ms_tertulia, ms_user, ms_timestamp, ms_tag, ms_message),
-	CONSTRAINT fk_messages_tertulia FOREIGN KEY (ms_tertulia) REFERENCES Tertulias(tr_id),
-	CONSTRAINT fk_messages_usr FOREIGN KEY (ms_user) REFERENCES Users(us_id),
-	CONSTRAINT fk_messages_type FOREIGN KEY (ms_tag) REFERENCES Tags(tg_id)
+CREATE TABLE Invitations(
+	in_id INTEGER IDENTITY(1,1) PRIMARY KEY,
+	in_key VARCHAR(36) NOT NULL, -- Ex: E5FD8BEF-94EB-4BF4-B85A-FAA4B1B5FE33
+	in_tertulia INTEGER,
+	in_email VARCHAR(40) NOT NULL,
+	in_is_replied BIT NOT NULL DEFAULT 0,
+	in_invitationDate DATETIME DEFAULT GETDATE(),
+	CONSTRAINT un_invitations_key UNIQUE (in_key),
+	CONSTRAINT un_invitations_ke UNIQUE (in_key, in_email),
+	CONSTRAINT fk_invitations_tertulia FOREIGN KEY (in_tertulia) REFERENCES Tertulias(tr_id)
 );
 GO
+
+CREATE FUNCTION fnCountOpenInvitations(@email VARCHAR(40))
+RETURNS INTEGER
+AS 
+BEGIN
+	DECLARE @cnt INTEGER;
+	SELECT @cnt = COUNT(in_id) FROM Invitations WHERE in_email = @email AND in_is_replied = 0;
+	RETURN @cnt;
+END;
+GO
+
+ALTER TABLE Invitations ADD CONSTRAINT ck_invitations_1 CHECK (dbo.fnCountOpenInvitations(in_email) = 1);
+GO
+
 
 -- VIEWS
 
 -- FUNCTIONS AND STORED PROCEDURES
 
--- See <TEST 11>
-CREATE FUNCTION FnGetTemplateId_byTertuliaId(@tertuliaId INTEGER, @templateName VARCHAR(40))
+CREATE FUNCTION fnGetEnum(@enumtype VARCHAR(20), @name VARCHAR(20))
 RETURNS INTEGER
 AS 
 BEGIN
 	DECLARE @id INTEGER;
-	SELECT @id = tp_id FROM Templates 
-	WHERE tp_tertulia = @tertuliaId AND tp_name = @templateName;
+	SELECT @id = nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id 
+	WHERE nt_name = @enumtype AND nv_name = @name;
 	RETURN @id;
 END;
 GO
 
--- See <TEST 06> <TEST 12> <TEST 13>
-CREATE FUNCTION FnGetUserId_byAlias(@alias VARCHAR(40))
+CREATE PROCEDURE spSetEnum @enumtype VARCHAR(20), @name VARCHAR(20), @value INTEGER
+AS 
+BEGIN
+	DECLARE @id INTEGER;
+	IF NOT EXISTS (SELECT nt_id FROM EnumTypes WHERE nt_name = @enumtype)
+	BEGIN
+		INSERT INTO EnumTypes (nt_name) VALUES (@enumtype);
+		SET @id = SCOPE_IDENTITY();
+	END
+	ELSE SELECT @id = nt_id FROM EnumTypes WHERE nt_name = @enumtype;
+	INSERT INTO EnumValues (nv_type, nv_name, nv_value) VALUES (@id, @name, @value);
+END;
+GO
+
+-- See <TEST 011>
+CREATE FUNCTION fnGetTemplate_byTertuliaId(@tertuliaId INTEGER, @templateName VARCHAR(40))
+RETURNS INTEGER
+AS 
+BEGIN
+	DECLARE @id INTEGER;
+	SELECT @id = tp_id FROM Templates INNER JOIN Tertulias ON tp_tertulia = tr_id 
+	WHERE tp_tertulia = @tertuliaId AND tp_name = @templateName AND tr_is_cancelled = 0;
+	RETURN @id;
+END;
+GO
+
+-- See <TEST 03> <TEST 012> <TEST 013>
+CREATE FUNCTION fnGetUserId_byAlias(@alias VARCHAR(40))
 RETURNS INTEGER
 AS 
 BEGIN
@@ -260,53 +412,43 @@ BEGIN
 END;
 GO
 
--- See <TEST 07>
-CREATE FUNCTION FnGetTertuliaLocation_byTertuliaId(@tertuliaId INTEGER)
+-- See <TEST 007>
+CREATE FUNCTION fnGetTertuliaLocation_byTertuliaId(@tertuliaId INTEGER)
 RETURNS INTEGER
 AS 
 BEGIN
 	DECLARE @id INTEGER;
-	SELECT @id = tr_location FROM Tertulias WHERE tr_id = @tertuliaId;
+	SELECT @id = tr_location FROM Tertulias WHERE tr_id = @tertuliaId AND tr_is_cancelled = 0;
 	RETURN @id;
 END;
 GO
 
--- See <TEST 10> <TEST 12>
-CREATE FUNCTION FnGetCatalogItemId_byTertuliaId(@tertuliaId INTEGER, @itemName VARCHAR(40))
+-- See <TEST 010> <TEST 012>
+CREATE FUNCTION fnGetItem_byTertuliaId(@tertuliaId INTEGER, @itemName VARCHAR(40))
 RETURNS INTEGER
 AS 
 BEGIN
     DECLARE @id INTEGER;
-    SELECT @id = ic_id FROM ItemsCatalog WHERE ic_tertulia = @tertuliaId AND ic_name = @itemName;
+    SELECT @id = it_id FROM Items INNER JOIN Tertulias ON it_tertulia = tr_id
+    WHERE it_tertulia = @tertuliaId AND it_name = @itemName AND tr_is_cancelled = 0;
     RETURN @id;
 END;
 GO
 
--- See <TEST 10>
-CREATE FUNCTION FnGetTertuliaTemplateId_byTertuliaId(@tertuliaId INTEGER, @templateName VARCHAR(40))
-RETURNS INTEGER
-AS 
-BEGIN
-    DECLARE @id INTEGER;
-    SELECT @id = tp_id FROM Templates
-	WHERE tp_name = @templateName AND tp_tertulia = @tertuliaId;
-    RETURN @id;
-END;
-GO
-
--- See <TEST 12>
-CREATE FUNCTION FnGetEventId_byTertuliaId(@tertuliaId INTEGER, @eventDate DATETIME)
+-- See <TEST 012>
+CREATE FUNCTION fnGetEvent_byTertuliaId(@tertuliaId INTEGER, @eventDate DATETIME)
 RETURNS INTEGER
 AS
 BEGIN
     DECLARE @id INTEGER;
-    SELECT @id = ev_id FROM Events
-	WHERE ev_targetdate = @eventDate AND ev_tertulia = @tertuliaId;
+    SELECT @id = ev_id FROM Events INNER JOIN Tertulias ON ev_tertulia = tr_id
+	WHERE ev_targetdate = @eventDate AND ev_tertulia = @tertuliaId AND tr_is_cancelled = 0;
     RETURN @id;
 END
 GO
 
--- See <TEST 08> <TEST 09> <TEST 10> <TEST 12> <TEST 13>
+-- TODO: CHECK TERTULIAS
+-- See <TEST 008> <TEST 009> <TEST 010> <TEST 012> <TEST 013>
 CREATE PROCEDURE sp_getId
 	@starter VARCHAR(10),
     @tableName SYSNAME,
@@ -322,37 +464,53 @@ BEGIN
 END
 GO
 
--- See <TEST 11>
+-- See <TEST 011>
 CREATE PROCEDURE sp_getEventIdTertuliaId
 	@tertuliaName VARCHAR(40), @eventDate DATETIME,
 	@eventId INTEGER OUTPUT, @tertuliaId INTEGER OUTPUT
 AS
 BEGIN
 	EXEC @tertuliaId = sp_getId 'tr', 'Tertulias', @tertulianame;
-	SELECT @eventId = ev_id FROM Events WHERE ev_tertulia = @tertuliaId AND ev_targetdate = @eventDate;
+	SELECT @eventId = ev_id FROM Events INNER JOIN Tertulias ON ev_tertulia = tr_id
+	WHERE ev_tertulia = @tertuliaId AND ev_targetdate = @eventDate AND tr_is_cancelled = 0;
 END
 GO
 
--- See <TEST 06>
-CREATE PROCEDURE sp_insertTertulia
-	@userId INTEGER, 
+
+-- TODO: CHECK TERTULIAS
+-- See <TEST 03>
+drop proc sp_insertTertulia_MonthlyW;
+go
+CREATE PROCEDURE sp_insertTertulia_MonthlyW
 	@name VARCHAR(40), @subject VARCHAR(80), 
-	@recurrencyTypeName NVARCHAR(40), @fromStart BIT, @skip INTEGER, @param1 VARCHAR(10), @param2 VARCHAR(10), 
-	@locationName VARCHAR(40),
-	@private INTEGER
+	@userId INTEGER, 
+	@weekDay VARCHAR(20), @weekNr INTEGER, 
+	@fromStart BIT, @skip INTEGER, 
+	@locationName VARCHAR(40), 
+	@isPrivate INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
-	DECLARE @recurrencyTypeId INTEGER, @locationId INTEGER, @scheduleId INTEGER, @tertuliaId INTEGER, @ownerId INTEGER;
-	EXEC @recurrencyTypeId = dbo.sp_getId 'rc', 'Recurrencies', @recurrencyTypeName;
-	EXEC @locationId = dbo.sp_getId 'lo', 'Locations', @locationName;
-	INSERT INTO Schedules (sc_recurrency, sc_fromstart, sc_skip, sc_param1, sc_param2) VALUES (@recurrencyTypeId, @fromStart, @skip, @param1, @param2);
-	SET @scheduleId = SCOPE_IDENTITY();
-	INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_private) VALUES (@name, @subject, @locationId, @scheduleId, @private);
-    SET @tertuliaId = SCOPE_IDENTITY();
-    EXEC @ownerId = dbo.sp_getId 'ro', 'Roles', 'Owner';
-	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertuliaId, @userId, @ownerId);
+	DECLARE @recurrency INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
+
+	SET @recurrency = dbo.fnGetEnum('Recurrency', 'MonthlyW');
+	EXEC @location = dbo.sp_getId 'lo', 'Locations', @locationName;
+
+	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
+
+	INSERT INTO Schedules (sc_recurrency) VALUES (@recurrency);
+	SET @schedule = SCOPE_IDENTITY();
+
+	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) 
+	VALUES (@schedule, @dow, @weekNr, @fromStart, @skip);
+
+    INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
+    VALUES (@name, @subject, @location, @schedule, @isPrivate);
+    SET @tertulia = SCOPE_IDENTITY();
+
+    SET @owner = dbo.fnGetEnum('Roles', 'owner');
+	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @owner);
 	COMMIT
 END TRY
 BEGIN CATCH
@@ -361,7 +519,8 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 07>
+-- TODO: CHECK TERTULIAS
+-- See <TEST 007>
 CREATE PROCEDURE sp_createEvent
 	@tertuliaName VARCHAR(40), 
 	@eventLocation VARCHAR(40),
@@ -370,10 +529,10 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
-	DECLARE @tertuliaId INTEGER, @locationId INTEGER;
-	EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
-	EXEC @locationId = dbo.sp_getId 'lo', 'Locations', @eventLocation;
-	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertuliaId, @locationId, @eventDate);
+	DECLARE @tertulia INTEGER, @location INTEGER;
+	EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
+	EXEC @location = dbo.sp_getId 'lo', 'Locations', @eventLocation;
+	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
 	COMMIT
 END TRY
 BEGIN CATCH
@@ -382,7 +541,7 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 07>
+-- See <TEST 007>
 CREATE PROCEDURE sp_createEventDefaultLocation
 	@tertuliaName VARCHAR(40), 
 	@eventDate DATETIME
@@ -392,7 +551,7 @@ BEGIN TRANSACTION
 BEGIN TRY
 	DECLARE @tertuliaId INTEGER, @locationId INTEGER;
 	EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
-	SET @locationId = dbo.FnGetTertuliaLocation_byTertuliaId(@tertuliaId);
+	SET @locationId = dbo.fnGetTertuliaLocation_byTertuliaId(@tertuliaId);
 	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertuliaId, @locationId, @eventDate);
 	COMMIT
 END TRY
@@ -402,8 +561,8 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 11>
-CREATE PROCEDURE sp_buildChecklist
+-- See <TEST 011>
+CREATE PROCEDURE sp_buildEventsItems
 	@tertuliaName VARCHAR(40), 
 	@eventDate DATETIME, 
 	@templateName VARCHAR(40)
@@ -411,16 +570,16 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
-	DECLARE @eventId INTEGER, @tertuliaId INTEGER, @templateId INTEGER;
-	EXEC dbo.sp_getEventIdTertuliaId @tertulianame, @eventDate, @eventId OUTPUT, @tertuliaId OUTPUT;
-	SET @templateId = dbo.FnGetTemplateId_byTertuliaId(@tertuliaId, @templateName);
-	DECLARE _cursor CURSOR FOR SELECT tc_item, tc_quantity FROM TemplatesCat WHERE tc_template = @templateId;
+	DECLARE @event INTEGER, @tertulia INTEGER, @template INTEGER;
+	EXEC dbo.sp_getEventIdTertuliaId @tertulianame, @eventDate, @event OUTPUT, @tertulia OUTPUT;
+	SET @template = dbo.fnGetTemplate_byTertuliaId(@tertulia, @templateName);
+	DECLARE _cursor CURSOR FOR SELECT tc_item, tc_quantity FROM TemplatesCat WHERE tc_template = @template; -- VAMOS AQUI
 	OPEN _cursor;
 	DECLARE @itemId INTEGER, @baseQty INTEGER;
 	FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		INSERT INTO EventsItems (ei_event, ei_item, ei_quantity) VALUES (@eventId, @itemId, @baseQty);
+		INSERT INTO EventsItems (ei_event, ei_item, ei_quantity) VALUES (@event, @itemId, @baseQty);
 		FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
 	END
 	CLOSE _cursor;
@@ -434,7 +593,7 @@ END CATCH
 GO
 
 -- Commit Event Checklist item to user
--- See <TEST 12>
+-- See <TEST 012>
 CREATE PROCEDURE sp_assignChecklistItems
 	@userAlias VARCHAR(40), 
 	@tertulianame VARCHAR(40), 
@@ -446,10 +605,10 @@ SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
 	DECLARE @userId INTEGER, @tertuliaId INTEGER, @eventId INTEGER, @itemId INTEGER, @totalQuantity INTEGER, @committedQuantity INTEGER;
-	SET @userId = dbo.FnGetUserId_byAlias(@userAlias);
+	SET @userId = dbo.fnGetUserId_byAlias(@userAlias);
 	EXEC @tertuliaId = sp_getId 'tr', 'Tertulias', @tertulianame;
-	SET @eventId = dbo.FnGetEventId_byTertuliaId(@tertuliaId, @eventDate);
-	SET @itemId = dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, @itemName);
+	SET @eventId = dbo.fnGetEvent_byTertuliaId(@tertuliaId, @eventDate);
+	SET @itemId = dbo.fnGetItem_byTertuliaId(@tertuliaId, @itemName);
 
 	SELECT @totalQuantity = SUM(ei_quantity) FROM EventsItems 
 	WHERE ei_event = @eventId AND ei_item = @itemId;
@@ -478,8 +637,8 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 13>
-CREATE PROCEDURE sp_postMessage
+-- See <TEST 013>
+CREATE PROCEDURE sp_postNotification
 	@userId INTEGER,
 	@tertuliaName VARCHAR(40), 
 	@typeName VARCHAR(40), 
@@ -488,11 +647,11 @@ AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION
 BEGIN TRY
-	DECLARE @tertuliaId INTEGER, @typeId INTEGER;
-	EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
-	EXEC @typeId = dbo.sp_getId 'tg', 'Tags', @typeName;
-	INSERT INTO Messages (ms_tertulia, ms_user, ms_timestamp, ms_tag, ms_message) 
-	VALUES (@tertuliaId, @userId, GETDATE(), @typeId, @message);
+	DECLARE @tertulia INTEGER, @tag INTEGER;
+	EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
+	EXEC @tag = dbo.sp_getId 'tg', 'Tags', @typeName;
+	INSERT INTO Notifications (no_tertulia, no_user, no_timestamp, no_message) 
+	VALUES (@tertulia, @userId, @tag, @message);
 	COMMIT
 END TRY
 BEGIN CATCH
@@ -501,8 +660,8 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 13>
-CREATE PROCEDURE sp_postMessage_byAlias
+-- See <TEST 013>
+CREATE PROCEDURE sp_postNotification_byAlias
 	@userAlias VARCHAR(40), 
 	@tertuliaName VARCHAR(40), 
 	@typeName VARCHAR(40), 
@@ -510,55 +669,115 @@ CREATE PROCEDURE sp_postMessage_byAlias
 AS
 BEGIN
 	DECLARE @userId INTEGER;
-	SET @userId = dbo.FnGetUserId_byAlias(@userAlias);
-	EXEC dbo.sp_postMessage @userId, @tertulianame, @typeName, @message;
+	SET @userId = dbo.fnGetUserId_byAlias(@userAlias);
+	EXEC dbo.sp_postNotification @userId, @tertulianame, @typeName, @message;
 END
+GO
+
+CREATE PROCEDURE spInvite @tertuliaName VARCHAR(40), @email VARCHAR(40)
+AS 
+BEGIN
+	DECLARE @tertulia INTEGER; EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', @tertulianame;
+	DECLARE @token VARCHAR(36); SET @token = newid();
+	INSERT INTO Invitations (in_key, in_tertulia, in_email) VALUES (@token, @tertulia, @email);
+	RETURN @token;
+END;
+GO
+
+CREATE PROCEDURE spAcceptInvitation @userId INTEGER, @token VARCHAR(36)
+AS 
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION
+BEGIN TRY
+	DECLARE @tertulia INTEGER, @role INTEGER, @email_i VARCHAR(40), @email_u VARCHAR(40);
+	SELECT @tertulia = in_tertulia, @email_i = in_email FROM Invitations 
+		WHERE in_key = @token AND in_is_replied = 0;
+	SELECT @email_u = us_email FROM Users WHERE us_id = @userId;
+	IF @email_i <> @email_u
+	BEGIN
+		ROLLBACK;
+		RETURN -1;
+	END
+	SET @role = dbo.fnGetEnum('Roles', 'owner');
+	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @role);
+	UPDATE Invitations SET in_is_replied = 1 WHERE in_key = @token;
+	RETURN @token;
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK
+END CATCH
 GO
 
 
 -- BASE DATA
 
-
--- Setup supported tertulias member Roles
--- TEST 01
-INSERT INTO Roles (ro_name) VALUES
-	  (N'owner')
-	, (N'manager')
-	, (N'member');
+-- WeekDays
+EXEC spSetEnum N'WeekDays', N'sunday',    1;
+EXEC spSetEnum N'WeekDays', N'monday',    2;
+EXEC spSetEnum N'WeekDays', N'tuesday',   3; 
+EXEC spSetEnum N'WeekDays', N'wednesday', 4;
+EXEC spSetEnum N'WeekDays', N'thursday',  5;
+EXEC spSetEnum N'WeekDays', N'friday',    6;
+EXEC spSetEnum N'WeekDays', N'saturday',  7;
 GO
 
--- Setup supported types of recurrency for tertulias
--- TEST 02
-INSERT INTO Recurrencies (rc_name, rc_description) VALUES
-	  (N'No Repeat', 'No recurrency.')
-	, (N'Daily', 'Occurs every [skip+1] days.')
-	, (N'Weekly', 'Occurs every [skip+1] weeks on [param1] weekday.')
-	, (N'Monthly', 'Occurs every [skip+1] months on fromStart?[param1]:[EOM-param1] day.')
-	, (N'Yearly', 'Occurs every [skip+1] years on [param2] day of [param1] month.')
-	, (N'Monthly - On a week day of a week', 'Occurs every [skip+1] months on [param2] weekday of fromStart?[param1]:[MW-param1] week.')
-	, (N'Yearly - on a day', 'Occurs every [skip+1] years on fromStart?[param1]:[YD-param1] day of the year.');
+-- MonthsNames
+EXEC spSetEnum N'MonthNames', N'january',    1;
+EXEC spSetEnum N'MonthNames', N'february',   2;
+EXEC spSetEnum N'MonthNames', N'march',      3;
+EXEC spSetEnum N'MonthNames', N'april',      4;
+EXEC spSetEnum N'MonthNames', N'may',        5;
+EXEC spSetEnum N'MonthNames', N'june',       6;
+EXEC spSetEnum N'MonthNames', N'july',       7;
+EXEC spSetEnum N'MonthNames', N'august',     8;
+EXEC spSetEnum N'MonthNames', N'september',  9;
+EXEC spSetEnum N'MonthNames', N'october',   10;
+EXEC spSetEnum N'MonthNames', N'november',  11;
+EXEC spSetEnum N'MonthNames', N'december',  12;
 GO
 
--- Setup Message Types
--- TEST 03
-INSERT INTO Tags (tg_name, tg_description) VALUES 
-	  ('Announcement', 'Announcements regarding for a Tertulia.')
-	, ('Warning', 'Warnings for Tertulias.');
+-- Recurrencies
+EXEC spSetEnum N'Recurrency', N'Weekly',   0; -- Events with a weekly recurrency on a week day.
+EXEC spSetEnum N'Recurrency', N'MonthlyD', 0; -- Events with a monthly recurrency on a month day.
+EXEC spSetEnum N'Recurrency', N'MonthlyW', 0; -- Events with a monthly recurrency on a week day of a week of the month.
+EXEC spSetEnum N'Recurrency', N'YearlyD',  0; -- Events with a yearly recurrency on a year day.
+EXEC spSetEnum N'Recurrency', N'YearlyW',  0; -- Events with a yearly recurrency on a week day of a week of the year.
+EXEC spSetEnum N'Recurrency', N'YearlyM',  0; -- Events with a yearly recurrency on a month day of a month of the year
+GO
+
+-- Roles
+EXEC spSetEnum N'Roles', N'owner',   0;
+EXEC spSetEnum N'Roles', N'manager', 0;
+EXEC spSetEnum N'Roles', N'member',  0;
+GO
+
+-- Tags
+EXEC spSetEnum N'Tags', N'announcements', 0;
 GO
 
 
 -- TEST DATA
 
+-- Create a Schedule
+-- To reposition
+DECLARE @dow INTEGER; SET @dow = dbo.fnGetEnum('WeekDays', 'Monday');
+DECLARE @recurrency INTEGER; SET @recurrency = dbo.fnGetEnum('Recurrency', 'MonthlyW');
+INSERT INTO Schedules (sc_recurrency) VALUES (@recurrency);
+DECLARE @sc_id INTEGER; SET @sc_id = SCOPE_IDENTITY();
+INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) VALUES (@sc_id, @dow, 0, 1, 0);
+GO
+
 
 -- Create application users
--- TEST 04
+-- TEST 01
 INSERT INTO Users (us_sid, us_alias, us_firstname, us_lastname, us_email, us_picture) VALUES 
 	-- ('sid:fadae567db0f67c6fe69d25ee8ffc0b5', N'aborba', N'António', N'Borba da Silva', 'antonio.borba@gmail.com', ''),
 	('sid:357a070bdaf6a373efaf9ab34c8ae5b9', N'GGLabs', N'António', N'Borba da Silva', 'abs@ggl.pt', 'https://lh4.googleusercontent.com/-l5aXbFF6eI8/AAAAAAAAAAI/AAAAAAAAAik/bjXsvC1iVHY/s96-c/photo.jpg');
 GO
 
 -- Create a set of tertulia locations
--- TEST 05
+-- TEST 02
 INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude) VALUES
 	  (N'Pastelaria Mexicana',              N'Avenida Guerra Junqueiro 30C',                      N'1000-167 Lisboa',  'Portugal', '38.740117', '-9.136394')
 	, (N'Restaurante Picanha',              N'Rua das Janelas Verdes 96',                         N'1200 Lisboa',      'Portugal', '38.705678', '-9.160624')
@@ -577,29 +796,40 @@ INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_
 GO
 
 -- Create a set of tertulias
--- TEST 06
+-- TEST 03
 DECLARE @userId INTEGER;
-SET @UserId = dbo.FnGetUserId_byAlias('GGLabs');
-EXEC sp_insertTertulia @UserId, N'Tertulia do Tejo', N'O que seria do Mundo sem nós!', 'Monthly', 1, 1, '10', '', 'Restaurante Cave Real', 0;
-EXEC sp_insertTertulia @UserId, N'Tertúlia dos primos', N'Só Celoricos', 'Monthly', 1, 3, '11', '', 'Restaurante O Jacinto', 0;
-EXEC sp_insertTertulia @UserId, N'Escolinha 72-77', N'Sempre em contato', 'Yearly', 1, 3, '4/1', '', 'Restaurante EntreCopos', 0;
-EXEC sp_insertTertulia @UserId, N'Natais BS', N'Mais um...', 'Yearly', '0', 0, '25/12', '', 'Avó Fernanda', 0;
-SET @UserId = dbo.FnGetUserId_byAlias('GGLabs')
-EXEC sp_insertTertulia @UserId, N'Gulbenkian Música', N'', 'Monthly', '1', 0, '12', '', 'Restaurante Gardens', 0;
-EXEC sp_insertTertulia @UserId, N'CALM', N'Ex MAC - Sempre só nós 8', 'Monthly', '5', 0, '1', '', 'Restaurante Taberna Gourmet', 0;
-EXEC sp_insertTertulia @UserId, N'AtHere', N'Tipo RoBoTo', 'Weekly', '1', 0, '5', '', 'Pastelaria Zineira', 0;
-EXEC sp_insertTertulia @UserId, N'Terças Ggl', N'', 'Weekly', '1', 0, '3', '', 'Varsailles - Técnico', 0;
+SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
+-- [name], [subject], [userId], [weekDay], [weekNr], [fromStart], [skip], [locationName], [isPrivate]
+EXEC sp_insertTertulia_MonthlyW N'Tertulia do Tejo'   , N'O que seria do Mundo sem nós!', @UserId, 'friday'  , 2, 1,  0, 'Restaurante Cave Real'      , 1;
+EXEC sp_insertTertulia_MonthlyW N'Tertúlia dos primos', N'Só Celoricos'                 , @UserId, 'friday'  , 0, 1,  3, 'Restaurante O Jacinto'      , 1;
+EXEC sp_insertTertulia_MonthlyW N'Escolinha 72-77'    , N'Sempre em contato'            , @UserId, 'saturday', 0, 1, 10, 'Restaurante EntreCopos'     , 1;
+EXEC sp_insertTertulia_MonthlyW N'Natais BS'          , N'Mais um...'                   , @UserId, 'sunday'  , 0, 0, 51, 'Avó Fernanda'               , 1;
+SET @UserId = dbo.fnGetUserId_byAlias('GGLabs')
+EXEC sp_insertTertulia_MonthlyW N'Gulbenkian Música'  , N''                             , @UserId, 'thursday', 1, 1,  3, 'Restaurante Gardens'        , 0;
+EXEC sp_insertTertulia_MonthlyW N'CALM'               , N'Ex MAC - Sempre só nós 8'     , @UserId, 'friday'  , 0, 0,  3, 'Restaurante Taberna Gourmet', 1;
+EXEC sp_insertTertulia_MonthlyW N'AtHere'             , N'Tipo RoBoTo'                  , @UserId, 'thursday', 0, 0,  5, 'Pastelaria Zineira'         , 1;
+EXEC sp_insertTertulia_MonthlyW N'Terças Ggl'         , N''                             , @UserId, 'tuesday' , 0, 0,  0, 'Varsailles - Técnico'       , 1;
 GO
 
+@name VARCHAR(40),
+@subject VARCHAR(80), 
+@userId INTEGER, 
+@weekDay VARCHAR(20),
+@weekNr INTEGER, 
+@fromStart BIT,
+@skip INTEGER, 
+@locationName VARCHAR(40), 
+@isPrivate INTEGER
+
 -- Create Tertulia Events
--- TEST 07
+-- TEST 007
 EXEC dbo.sp_createEvent 'Terças Ggl', 'Lisboa Racket Center', '20160523 13:00:00';
 EXEC dbo.sp_createEventDefaultLocation 'Tertulia do Tejo', '20160904 13:00:00';
 EXEC dbo.sp_createEventDefaultLocation 'Escolinha 72-77', '20161022 20:00:00';
 GO
 
 -- Create Tertulia Items inventory
--- Test 08
+-- Test 008
 DECLARE @tertuliaId INTEGER;
 EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
 INSERT INTO ItemsCatalog (ic_name, ic_tertulia) VALUES 
@@ -626,7 +856,7 @@ INSERT INTO ItemsCatalog (ic_name, ic_tertulia) VALUES
 GO
 
 -- Create Tertulia Items Templates
--- TEST 09
+-- TEST 009
 DECLARE @tertuliaId INTEGER;
 EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
 INSERT INTO Templates (tp_name, tp_tertulia) VALUES
@@ -638,43 +868,43 @@ INSERT INTO Templates (tp_name, tp_tertulia) VALUES
 GO
 
 -- Fill Tertulia Items Templates with items from Tertulia Items inventory
--- TEST 10
+-- TEST 010
 DECLARE @templateId INTEGER, @tertuliaId INTEGER;
 EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
-SET @templateId = dbo.FnGetTertuliaTemplateId_byTertuliaId(@tertuliaId, 'Snacks');
+SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Snacks');
 INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Pão cereais (500g)'), 2),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Fiambre (500g)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Queijo Flamengo (500g)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Pacotes Batata Frita (500g)'), 4),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Sortido de frutos secos (200g)'), 6),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Pacote de bolacha maria'), 2);
-SET @templateId = dbo.FnGetTertuliaTemplateId_byTertuliaId(@tertuliaId, 'Drinks');
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pão cereais (500g)'), 2),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Fiambre (500g)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Queijo Flamengo (500g)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pacotes Batata Frita (500g)'), 4),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Sortido de frutos secos (200g)'), 6),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pacote de bolacha maria'), 2);
+SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Drinks');
 INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Coca-Cola (1lt)'), 2),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Sumol laranja (1lt)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 4),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Coca-Cola em lata (1)'), 6),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2);
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Coca-Cola (1lt)'), 2),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Sumol laranja (1lt)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 4),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Coca-Cola em lata (1)'), 6),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2);
 EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo';
-SET @templateId = dbo.FnGetTertuliaTemplateId_byTertuliaId(@tertuliaId, 'Drinks');
+SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Drinks');
 INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Vinho Verde Branco (75cl)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Vinho Tinto Frutado (75cl)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Gin (75cl)'), 1),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Copos de vidro'), 4),
-	(@templateId, dbo.FnGetCatalogItemId_byTertuliaId(@tertuliaId, 'Guardanapos de papel (200g)'), 1);
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Vinho Verde Branco (75cl)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Vinho Tinto Frutado (75cl)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Gin (75cl)'), 1),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Copos de vidro'), 4),
+	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Guardanapos de papel (200g)'), 1);
 GO
 
 -- Fill Event Checklist with Tertulia Template
--- TEST 11
-EXEC sp_buildChecklist 'Tertulia do Tejo', '2016-09-04 13:00:00', 'Drinks';
+-- TEST 011
+EXEC sp_buildEventsItems 'Tertulia do Tejo', '2016-09-04 13:00:00', 'Drinks';
 GO
 
 -- Commit to handle items to a Tertulia event
--- TEST 12
+-- TEST 012
 DECLARE @commitment INTEGER, @itemName VARCHAR(40);
 SET @itemName = 'Copos de vidro';
 EXEC @commitment = sp_assignChecklistItems 'GGLabs', 'Tertulia do Tejo', '2016-09-04 13:00:00', @itemName, 2;
@@ -685,6 +915,6 @@ PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
 GO
 
 -- Post a message in a Tertulia
--- TEST 13
-EXEC sp_postMessage_byAlias 'GGLabs', 'Tertulia do Tejo', 'Announcement', 'My test post to a tertulia';
+-- TEST 013
+EXEC sp_postNotification_byAlias 'GGLabs', 'Tertulia do Tejo', 'Announcement', 'My test 0post to a tertulia';
 GO
