@@ -338,7 +338,7 @@ CREATE TABLE Invitations(
 	in_key VARCHAR(36) NOT NULL, -- Ex: E5FD8BEF-94EB-4BF4-B85A-FAA4B1B5FE33
 	in_tertulia INTEGER,
 	in_email VARCHAR(40) NOT NULL,
-	in_is_replied BIT NOT NULL DEFAULT 0,
+	in_is_acknowledged BIT NOT NULL DEFAULT 0,
 	in_invitationDate DATETIME DEFAULT GETDATE(),
 	CONSTRAINT un_invitations_key UNIQUE (in_key),
 	CONSTRAINT un_invitations_ke UNIQUE (in_key, in_email),
@@ -351,7 +351,7 @@ RETURNS INTEGER
 AS 
 BEGIN
 	DECLARE @cnt INTEGER;
-	SELECT @cnt = COUNT(in_id) FROM Invitations WHERE in_email = @email AND in_is_replied = 0;
+	SELECT @cnt = COUNT(in_id) FROM Invitations WHERE in_email = @email AND in_is_acknowledged = 0;
 	RETURN @cnt;
 END;
 GO
@@ -691,7 +691,7 @@ BEGIN TRANSACTION
 BEGIN TRY
 	DECLARE @tertulia INTEGER, @role INTEGER, @email_i VARCHAR(40), @email_u VARCHAR(40);
 	SELECT @tertulia = in_tertulia, @email_i = in_email FROM Invitations 
-		WHERE in_key = @token AND in_is_replied = 0;
+		WHERE in_key = @token AND in_is_acknowledged = 0;
 	SELECT @email_u = us_email FROM Users WHERE us_id = @userId;
 	IF @email_i <> @email_u
 	BEGIN
@@ -700,7 +700,7 @@ BEGIN TRY
 	END
 	SET @role = dbo.fnGetEnum('Roles', 'owner');
 	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @role);
-	UPDATE Invitations SET in_is_replied = 1 WHERE in_key = @token;
+	UPDATE Invitations SET in_is_acknowledged = 1 WHERE in_key = @token;
 	RETURN @token;
 END TRY
 BEGIN CATCH
