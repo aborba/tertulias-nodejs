@@ -4,8 +4,8 @@ var sql = require('mssql');
 
 var querySelectTertulias = 'SELECT DISTINCT Tertulias.* FROM Tertulias' +
         ' INNER JOIN Members ON tr_id=mb_tertulia' +
-        ' INNER JOIN Users ON mb_user=us_id' +
-    ' WHERE us_sid=@sid';
+        ' INNER JOIN Users ON mb_user=us_id';// +
+    //' WHERE us_sid=@sid';
 
 var completeError = function(err, res) {
     if (err) {
