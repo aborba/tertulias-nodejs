@@ -1,0 +1,89 @@
+Item
+- Scalar attributes: name
+* An [Item] belongs to exactly ONE [Tertulia].
+
+QuantifiedItem
+- Scalar attributes: quantity
+* A [QuantifiedItem] is related to exactly ONE [Item].
+* A [QuantifiedItem] belongs to exactly ONE [Template].
+
+Template
+- Scalar attributes: name
+* A Template belongs to exactly ONE [Tertulia].
+* A Template has a set of [QuantifiedItem].
+
+Tertulia
+- Scalar attributes: name, subject, isPrivate, isArchived
+* A [Tertulia] has exactly ONE default [Location].
+* A [Tertulia] has exactly ONE [Schedule].
+* A [Tertulia] has a set of one or more [Member]s.
+* A [Tertulia] has a set of one or more [Member]s with [Role] "Owner".
+* A [Tertulia] has a set of zero or more [Event]s.
+* A [Tertulia] has a set of zero or more [Template]s.
+* A [Tertulia] has a set of zero or more [Item]s.
+* A [Tertulia] has a set of zero or more [Message]s.
+
+Location
+- Scalar attributes: name, address, zip, coordinates
+  ? GeoLocation vs WebLocation
+
+Schedule
+  - ...
+  Recurrence
+    WeeklyRecurrence
+    - ....
+    MonthlyRecurrence
+    - ....
+    LastWeekDayOfMonth
+    - WeekDay
+
+Event
+  - date, note
+
+Role
+  - type : enum{owner, manager, member}
+
+Recurrency
+- 
+
+Member
+-
+
+Message
+-
+
+Tag
+-
+
+TemplateCat
+-
+
+ItemsCatalog
+-
+
+EventsItem
+-
+
+Contribution
+-
+
+
+
+A Template has a set of QuantifiedItems
+A QuantifiedItem is related to exactly one Item
+A Tertulia has a set of Items
+An Item is exclusive to a Tertulia
+
+Tertulia has exactly one default Location
+Tertulia has exactly one Schedule
+Tertulia has zero or more Events
+Tertulia has a SET of Member Users
+  Each Member references a User and has ONE Role
+A Tertulia has zero or more Template
+A Template belongs to exactly ONE Tertulia
+A Template is created and edited by the Tertulia Owner or Manager
+
+An Event belongs to exactly one Tertulia
+An Event MAY have one specific Location
+  By default it inherits the Tertulia Location
+
