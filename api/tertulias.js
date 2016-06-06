@@ -2,13 +2,10 @@ var util = require('../util');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
-var querySelectPublic = 'SELECT DISTINCT * FROM Tertulias WHERE private=0';
-var querySelectMine = 'SELECT DISTINCT Tertulias.* FROM Tertulias' +
-        ' INNER JOIN Members ON Tertulias.id=Members.tertulia' +
-        ' INNER JOIN Users ON Members.usr=Users.id' +
-    ' WHERE private=1 AND Users.sid=@sid';
-
-var querySelectTertulias = querySelectPublic + ' UNION ' + querySelectMine + ';';
+var querySelectTertulias = 'SELECT DISTINCT Tertulias.* FROM Tertulias' +
+        ' INNER JOIN Members ON tr_id=mb_tertulia' +
+        ' INNER JOIN Users ON mb_user=us_id' +
+    ' WHERE us_sid=@sid';
 
 var completeError = function(err, res) {
     if (err) {
@@ -25,7 +22,6 @@ var api = {
     },
 
     get: function (req, res, next) {
-
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
