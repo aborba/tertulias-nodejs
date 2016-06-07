@@ -79,7 +79,8 @@ var api = {
             //preparedStatement.input('sid', sql.NVarChar);
             for (var key in paramsT) {
                 //preparedStatement.input(key, paramsT[key]);
-                preparedStatement.input(key, sql.NVarChar);
+                preparedStatement.input('sid', paramsT[key]);
+                console.log('key: ' + key);
             }
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
