@@ -7,17 +7,31 @@ var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, t
 ' FROM Tertulias' +
 ' INNER JOIN Members ON tr_id = mb_tertulia' +
 ' INNER JOIN Users ON mb_user = us_id' +
-' WHERE tr_is_cancelled = 0' +
-' AND us_sid = @sid';
+' WHERE tr_is_cancelled = 0'; // AND us_sid = @sid';
 
-var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia' +
+var queryTertuliaX = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, tr_schedule, tr_is_private' +
+' FROM Tertulias' +
+' INNER JOIN Members ON tr_id = mb_tertulia' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0' +// AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
+var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude' +
 ' FROM Locations' +
 ' INNER JOIN Tertulias ON lo_tertulia = tr_id' +
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
-' WHERE tr_is_cancelled = 0' +
-//' AND us_sid = @sid' +
-' AND tr_name = @tertulia';
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
+var queryDefaultLocation = 'SELECT lo_id, lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude' +
+' FROM Locations' +
+' INNER JOIN Tertulias ON lo_tertulia = tr_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia'
+' AND lo_id = (SELECT tr_location FROM Tertulias WHERE tr_id = @tertulia)';
 
 var completeError = function(err, res) {
     if (err) {
@@ -36,23 +50,25 @@ var api = {
     get: function (req, res, next) {
         //console.log(req);
 
-        var query;
+        var selectedQuery;
         var paramsT = [];
         var paramsV = [];
         var id = req.query.id;
         console.log('id: ' + id);
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
-            query = queryTertulias;
+            selectedQuery = queryTertulias;
             paramsT.push({ 'sid': sql.NVarChar});
             paramsV.push({ 'sid': req.azureMobile.user.id });
         } else {
             var sub = req.query.sub;
             if (typeof sub === typeof undefined) {
                 console.log('Preparing to get my Tertulia with id: ' + id);
+                selectedQuery = queryTertuliaX;
             } else {
                 if (sub === 'locations') {
                     console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + id);
+                    selectedQuery = queryLocations;
                 } else {
                     res.sendStatus(500);
                     return;
@@ -66,7 +82,7 @@ var api = {
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
   //          preparedStatement.input('sid', sql.NVarChar);
-            preparedStatement.prepare(query, function(err) {
+            preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
 //                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                 preparedStatement.execute(null, 
