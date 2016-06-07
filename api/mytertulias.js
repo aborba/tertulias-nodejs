@@ -53,7 +53,7 @@ var api = {
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
-            paramsT.['sid'] = sql.NVarChar;
+            paramsT['sid'] = sql.NVarChar;
             paramsV.push({ 'sid': req.azureMobile.user.id });
         } else {
             var sub = req.query.sub;
