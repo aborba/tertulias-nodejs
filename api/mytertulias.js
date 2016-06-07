@@ -78,7 +78,8 @@ var api = {
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
             //preparedStatement.input('sid', sql.NVarChar);
             for (var key in paramsT) {
-                preparedStatement.input(key, paramsT[key]);
+                //preparedStatement.input(key, paramsT[key]);
+                preparedStatement.input(key, sql.NVarChar);
             }
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
