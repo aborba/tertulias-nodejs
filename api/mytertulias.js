@@ -9,7 +9,7 @@ var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, t
 ' INNER JOIN Users ON mb_user = us_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
-var queryTertuliaX = queryTertulias; //+ ' AND tr_id = @tertulia';
+var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
 
 var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude' +
 ' FROM Locations' +
