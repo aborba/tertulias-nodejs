@@ -77,11 +77,13 @@ var api = {
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
             //preparedStatement.input('sid', sql.NVarChar);
+            console.log('begin keys');
             for (var key in paramsT) {
+                console.log('key: ' + key);
                 //preparedStatement.input(key, paramsT[key]);
                 preparedStatement.input('sid', paramsT[key]);
-                console.log('key: ' + key);
             }
+            console.log('end keys');
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
                 preparedStatement.execute({ sid: req.azureMobile.user.id }, 
