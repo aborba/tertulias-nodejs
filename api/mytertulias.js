@@ -43,29 +43,39 @@ var api = {
     },
 
     get: function (req, res, next) {
-        //console.log(req);
-
         var selectedQuery;
         var paramsT = [];
         var paramsV = {};
-        var id = req.query.id;
-        console.log('id: ' + id);
+        var tr_id = req.query.id;
+        console.log('id: ' + tr_id);
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
-            paramsT['sid'] = sql.NVarChar;
-            paramsV = { 'sid': req.azureMobile.user.id };
+            paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+            paramsV = {
+                'sid': req.azureMobile.user.id
+            };
         } else {
             var sub = req.query.sub;
             if (typeof sub === typeof undefined) {
-                console.log('Preparing to get my Tertulia with id: ' + id);
-                paramsT['sid'] = sql.NVarChar;
-                paramsV = { 'sid': req.azureMobile.user.id };
+                console.log('Preparing to get my Tertulia with id: ' + tr_id);
                 selectedQuery = queryTertuliaX;
+                paramsT['sid'] = sql.NVarChar;
+                paramsT['tertulia'] = sql.NVarChar;
+                paramsV = {
+                    'sid': req.azureMobile.user.id,
+                    'tertulia': tr_id
+                };
             } else {
                 if (sub === 'locations') {
-                    console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + id);
+                    console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + tr_id);
                     selectedQuery = queryLocations;
+                    paramsT['sid'] = sql.NVarChar;
+                    paramsT['tertulia'] = sql.NVarChar;
+                    paramsV = {
+                        'sid': req.azureMobile.user.id,
+                        'tertulia': tr_id
+                    };
                 } else {
                     res.sendStatus(500);
                     return;
@@ -77,14 +87,9 @@ var api = {
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
             var preparedStatement = new sql.PreparedStatement(connection);
-            // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-            //preparedStatement.input('sid', sql.NVarChar);
-            for (var key in paramsT) {
-                preparedStatement.input(key, paramsT[key]);
-            }
+            for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
-//                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                 preparedStatement.execute(paramsV, 
                     function(err, recordset, affected) {
                         if (err) { completeError(err, res); return; }
