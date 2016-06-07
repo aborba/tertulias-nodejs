@@ -76,7 +76,8 @@ var api = {
             var sqlRequest = new sql.Request(connection);
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-            preparedStatement.input('sid', sql.NVarChar);
+            //preparedStatement.input('sid', sql.NVarChar);
+            preparedStatement.input(paramsT);
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
                 preparedStatement.execute({ sid: req.azureMobile.user.id }, 
