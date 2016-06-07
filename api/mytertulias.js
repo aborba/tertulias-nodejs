@@ -26,7 +26,7 @@ var completeError = function(err, res) {
     }
 };
 
-var api = function(configuration) {
+var api = function(config) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
