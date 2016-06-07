@@ -76,19 +76,17 @@ var api = {
             var sqlRequest = new sql.Request(connection);
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-  //          preparedStatement.input('sid', sql.NVarChar);
-            console.log('sid: ' + req.azureMobile.user.id);
+            preparedStatement.input('sid', sql.NVarChar);
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
-//                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
-                preparedStatement.execute(null, 
+                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
                     function(err, recordset, affected) {
                         if (err) { completeError(err, res); return; }
                         console.log(recordset);
                         preparedStatement.unprepare();
                         res.type('application/json').json(recordset);
                     }
-                    );
+                );
             });
         });
     }
