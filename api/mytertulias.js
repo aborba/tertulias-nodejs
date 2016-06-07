@@ -28,6 +28,15 @@ var queryDefaultLocation = 'SELECT lo_id, lo_name, lo_address, lo_zip, lo_countr
 ' AND tr_id = @tertulia'
 ' AND lo_id = (SELECT tr_location FROM Tertulias WHERE tr_id = @tertulia)';
 
+var queryScheduleType =  'SELECT nv_name' +
+' FROM Tertulias' +
+' INNER JOIN Schedules ON tr_schedule = sc_id' +
+' INNER JOIN EnumValues ON sc_recurrency = nv_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
 var completeError = function(err, res) {
     if (err) {
         console.error(err);
@@ -81,6 +90,16 @@ var api = {
                     case 'defaultLocation':
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryDefaultLocation;
+                        paramsT['sid'] = sql.NVarChar;
+                        paramsT['tertulia'] = sql.NVarChar;
+                        paramsV = {
+                            'sid': req.azureMobile.user.id,
+                            'tertulia': tr_id
+                        };
+                        break;
+                    case 'scheduleType':
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryScheduleType;
                         paramsT['sid'] = sql.NVarChar;
                         paramsT['tertulia'] = sql.NVarChar;
                         paramsV = {
