@@ -97,10 +97,12 @@ var api = {
                                 selectedQuery = queryScheduleMonthlyW;
                                 break;
                             default:
+                                console.log('Bum - de dentro.');
                                 res.sendStatus(400);
                                 return;
                         }
                     default:
+                        console.log('Bum - de fora.');
                         res.sendStatus(400);
                         return;
                 }
