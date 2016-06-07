@@ -85,7 +85,8 @@ var api = {
                         break;
                     case 'schedule':
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
-                        var schedule_type = req.query.type;
+                        var schedule_type = req.query.sel;
+                        console.log('schedule type: ' + schedule_type);
                         if (typeof schedule_type === typeof undefined) {
                             res.sendStatus(400);
                             return;
