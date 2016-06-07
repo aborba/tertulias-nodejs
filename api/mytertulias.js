@@ -48,12 +48,18 @@ var api = {
             paramsV.push({ 'sid': req.azureMobile.user.id });
         } else {
             var sub = req.query.sub;
-            if (typeof id === typeof undefined) {
+            if (typeof sub === typeof undefined) {
                 console.log('Preparing to get my Tertulia with id: ' + id);
             } else {
-                console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + id);
+                if (sub === 'locations') {
+                    console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + id);
+                } else {
+                    res.sendStatus(500);
+                    return;
+                }
             }
         }
+        
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
