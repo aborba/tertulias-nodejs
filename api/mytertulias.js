@@ -67,18 +67,30 @@ var api = {
                     'tertulia': tr_id
                 };
             } else {
-                if (sub === 'locations') {
-                    console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + tr_id);
-                    selectedQuery = queryLocations;
-                    paramsT['sid'] = sql.NVarChar;
-                    paramsT['tertulia'] = sql.NVarChar;
-                    paramsV = {
-                        'sid': req.azureMobile.user.id,
-                        'tertulia': tr_id
-                    };
-                } else {
-                    res.sendStatus(500);
-                    return;
+                switch (sub) {
+                    case 'locations':
+                        console.log('Preparing to get all the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryLocations;
+                        paramsT['sid'] = sql.NVarChar;
+                        paramsT['tertulia'] = sql.NVarChar;
+                        paramsV = {
+                            'sid': req.azureMobile.user.id,
+                            'tertulia': tr_id
+                        };
+                        break;
+                    case 'defaultLocation':
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryDefaultLocation;
+                        paramsT['sid'] = sql.NVarChar;
+                        paramsT['tertulia'] = sql.NVarChar;
+                        paramsV = {
+                            'sid': req.azureMobile.user.id,
+                            'tertulia': tr_id
+                        };
+                        break;
+                    default:
+                        res.sendStatus(500);
+                        return;
                 }
             }
         }
