@@ -88,7 +88,8 @@ var api = {
             console.log('end keys');
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
-                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+//                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                preparedStatement.execute(paramsV, 
                     function(err, recordset, affected) {
                         if (err) { completeError(err, res); return; }
                         console.log(recordset);
