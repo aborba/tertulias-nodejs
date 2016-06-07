@@ -34,7 +34,10 @@ var api = {
     },
 
     get: function (req, res, next) {
-        console.log(req);
+        //console.log(req);
+
+        var id = query.id;
+        console.log('id: ' + id);
 
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
