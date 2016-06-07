@@ -5,8 +5,8 @@ var sql = require('mssql');
 
 var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, tr_schedule, tr_is_private' +
 ' FROM Tertulias' +
-' INNER JOIN Members ON tr_id=mb_tertulia' +
-' INNER JOIN Users ON mb_user=us_id' +
+' INNER JOIN Members ON tr_id = mb_tertulia' +
+' INNER JOIN Users ON mb_user = us_id' +
 ' WHERE tr_is_cancelled = 0' +
 ' AND us_sid = @sid';
 
@@ -16,7 +16,7 @@ var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_cou
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
 ' WHERE tr_is_cancelled = 0' +
-' AND us_sid = @sid' +
+//' AND us_sid = @sid' +
 ' AND tr_name = @tertulia';
 
 var completeError = function(err, res) {
@@ -59,16 +59,17 @@ var api = {
                 }
             }
         }
-        
+
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-            preparedStatement.input('sid', sql.NVarChar);
+  //          preparedStatement.input('sid', sql.NVarChar);
             preparedStatement.prepare(query, function(err) {
                 if (err) { completeError(err, res); return; }
-                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+//                preparedStatement.execute({ sid: req.azureMobile.user.id }, 
+                preparedStatement.execute(null, 
                     function(err, recordset, affected) {
                         if (err) { completeError(err, res); return; }
                         console.log(recordset);
