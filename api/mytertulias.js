@@ -53,7 +53,7 @@ var api = {
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
-            paramsT.push({ 'sid': sql.NVarChar});
+            paramsT.['sid'] = sql.NVarChar;
             paramsV.push({ 'sid': req.azureMobile.user.id });
         } else {
             var sub = req.query.sub;
@@ -77,7 +77,9 @@ var api = {
             var preparedStatement = new sql.PreparedStatement(connection);
             // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
             //preparedStatement.input('sid', sql.NVarChar);
-            preparedStatement.input(paramsT);
+            for (var key in paramsT) {
+                preparedStatement.input(key, paramsT[key]);
+            }
             preparedStatement.prepare(selectedQuery, function(err) {
                 if (err) { completeError(err, res); return; }
                 preparedStatement.execute({ sid: req.azureMobile.user.id }, 
