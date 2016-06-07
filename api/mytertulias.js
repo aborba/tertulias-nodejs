@@ -7,7 +7,7 @@ var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, t
 ' FROM Tertulias' +
 ' INNER JOIN Members ON tr_id = mb_tertulia' +
 ' INNER JOIN Users ON mb_user = us_id' +
-' WHERE tr_is_cancelled = 0'; // AND us_sid = @sid';
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 var queryTertuliaX = queryTertulias; //+ ' AND tr_id = @tertulia';
 
