@@ -36,10 +36,11 @@ var api = {
     get: function (req, res, next) {
         //console.log(req);
 
-        var id = req.query.id;
         var query;
         var paramsT = [];
         var paramsV = [];
+        var id = req.query.id;
+        console.log('id: ' + id);
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             query = queryTertulias;
