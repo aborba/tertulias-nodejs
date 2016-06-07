@@ -36,7 +36,6 @@ var api = {
     get: function (req, res, next) {
         console.log(req);
 
-
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
