@@ -59,6 +59,8 @@ var api = {
             var sub = req.query.sub;
             if (typeof sub === typeof undefined) {
                 console.log('Preparing to get my Tertulia with id: ' + id);
+                paramsT['sid'] = sql.NVarChar;
+                paramsV.push({ 'sid': req.azureMobile.user.id });
                 selectedQuery = queryTertuliaX;
             } else {
                 if (sub === 'locations') {
