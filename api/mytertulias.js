@@ -48,7 +48,7 @@ var api = {
         var paramsV = {};
         var tr_id = req.query.id;
         console.log('id: ' + tr_id);
-        if (typeof id === typeof undefined) {
+        if (typeof tr_id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
             paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
