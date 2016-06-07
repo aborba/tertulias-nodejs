@@ -101,6 +101,7 @@ var api = {
                                 res.sendStatus(400);
                                 return;
                         }
+                        break;
                     default:
                         console.log('Bum - de fora.');
                         res.sendStatus(400);
