@@ -47,20 +47,20 @@ var api = {
 
         var selectedQuery;
         var paramsT = [];
-        var paramsV = [];
+        var paramsV = {};
         var id = req.query.id;
         console.log('id: ' + id);
         if (typeof id === typeof undefined) {
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
             paramsT['sid'] = sql.NVarChar;
-            paramsV.push({ 'sid': req.azureMobile.user.id });
+            paramsV = { 'sid': req.azureMobile.user.id };
         } else {
             var sub = req.query.sub;
             if (typeof sub === typeof undefined) {
                 console.log('Preparing to get my Tertulia with id: ' + id);
                 paramsT['sid'] = sql.NVarChar;
-                paramsV.push({ 'sid': req.azureMobile.user.id });
+                paramsV = { 'sid': req.azureMobile.user.id };
                 selectedQuery = queryTertuliaX;
             } else {
                 if (sub === 'locations') {
