@@ -26,10 +26,17 @@ var completeError = function(err, res) {
     }
 };
 
-var api = function(config) {
-    var router = express.Router();
+var api = {
 
-    router.get('/', (req, res, next) => {
+    all: function (req, res, next) {
+        console.log('In: api/tertulias');
+        return next();
+    },
+
+    get: function (req, res, next) {
+        console.log(req);
+
+
         var connection = new sql.Connection(util.sqlConfiguration);
         connection.connect(function(err) {
             var sqlRequest = new sql.Request(connection);
@@ -49,7 +56,7 @@ var api = function(config) {
                 );
              });
         });
-    });
+    }
 };
 
 /*
