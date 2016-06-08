@@ -22,10 +22,11 @@ var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_cou
 var queryDefaultLocation = queryLocations +
 ' AND lo_id = (SELECT tr_location FROM Tertulias WHERE tr_id = @tertulia)';
 
-var queryMembers = 'SELECT us_sid, us_alias, us_firstName, us_lastName, us_email, us_picture, mb_role' +
+var queryMembers = 'SELECT us_sid, us_alias, us_firstName, us_lastName, us_email, us_picture, nv_name' +
 ' FROM Members' +
 ' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
+' INNER JOIN EnumValues ON mb_role = nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
 ' AND tr_id = @tertulia';
 
