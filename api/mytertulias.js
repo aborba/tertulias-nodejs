@@ -22,6 +22,15 @@ var queryLocations = 'SELECT DISTINCT lo_id, lo_name, lo_address, lo_zip, lo_cou
 var queryDefaultLocation = queryLocations +
 ' AND lo_id = (SELECT tr_location FROM Tertulias WHERE tr_id = @tertulia)';
 
+var queryMembers = 'SELECT *' +
+' FROM Members' +
+' INNER JOIN Schedules ON tr_schedule = sc_id' +
+' INNER JOIN EnumValues ON sc_recurrency = nv_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
 var queryScheduleType = 'SELECT nv_name' +
 ' FROM Tertulias' +
 ' INNER JOIN Schedules ON tr_schedule = sc_id' +
@@ -59,29 +68,33 @@ var api = {
         var paramsT = [];
         var paramsV = {};
         var tr_id = req.query.id;
-        if (typeof tr_id === typeof undefined) {
+        if (typeof tr_id === typeof undefined) { // /tertulias
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
             paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
             paramsV = {'sid': req.azureMobile.user.id };
-        } else {
+        } else { 
             var sub = req.query.sub;
             paramsT['sid'] = sql.NVarChar; paramsT['tertulia'] = sql.NVarChar;
             paramsV = {'sid': req.azureMobile.user.id, 'tertulia': tr_id };
-            if (typeof sub === typeof undefined) {
+            if (typeof sub === typeof undefined) { // /tertulias?id=[0-9]
                 selectedQuery = queryTertuliaX;
             } else {
                 switch (sub) {
-                    case 'locations':
+                    case 'locations': // /tertulias?id=[0-9]&sub=locations
                         selectedQuery = queryLocations;
                         break;
-                    case 'defaultLocation':
+                    case 'defaultLocation': // /tertulias?id=[0-9]&sub=defaultLocation
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryDefaultLocation;
                         break;
-                    case 'scheduleType':
+                    case 'scheduleType': // /tertulias?id=[0-9]&sub=scheduleType
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryScheduleType;
+                        break;
+                    case 'members': // /tertulias?id=[0-9]&sub=members
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryMembers;
                         break;
                     case 'schedule':
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
@@ -93,7 +106,7 @@ var api = {
                         }
                         console.log('Preparing to get the ' + schedule_type + ' ' + sub + ' of my Tertulia with id: ' + tr_id);
                         switch (schedule_type) {
-                            case 'MonthlyW':
+                            case 'MonthlyW': // /tertulias?id=[0-9]&sub=schedule&sel=MonthlyW
                                 selectedQuery = queryScheduleMonthlyW;
                                 break;
                             default:
