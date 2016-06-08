@@ -58,7 +58,7 @@ var queryItems = 'SELECT it_id, it_name' +
 
 var queryTemplates = 'SELECT tp_id, tp_name' +
 ' FROM Templates' +
-' INNER JOIN Tertulias ON it_tertulia = tr_id' +
+' INNER JOIN Tertulias ON tp_tertulia = tr_id' +
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
