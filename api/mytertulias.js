@@ -3,10 +3,11 @@ var util = require('../util');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
-var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, tr_schedule, tr_is_private' +
+var queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, tr_location, tr_schedule, tr_is_private, nv_name' +
 ' FROM Tertulias' +
 ' INNER JOIN Members ON tr_id = mb_tertulia' +
 ' INNER JOIN Users ON mb_user = us_id' +
+' INNER JOIN EnumValues ON mb_role = nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
