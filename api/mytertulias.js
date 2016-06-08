@@ -24,9 +24,7 @@ var queryDefaultLocation = queryLocations +
 
 var queryMembers = 'SELECT us_sid, us_alias, us_firstName, us_lastName, us_email, us_picture, mb_role' +
 ' FROM Members' +
-' INNER JOIN Schedules ON tr_schedule = sc_id' +
-' INNER JOIN EnumValues ON sc_recurrency = nv_id' +
-' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
 ' AND tr_id = @tertulia';
