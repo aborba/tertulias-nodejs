@@ -151,7 +151,7 @@ var api = {
                         break;
                     case 'template': // /tertulias?id=[0-9*]&sub=template&template=[A-z*]
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
-                        var template = req.query.template;
+                        var template = req.query.value;
                         console.log('Template: ' + template);
                         if (typeof template === typeof undefined) {
                             res.sendStatus(400);
