@@ -149,7 +149,7 @@ var api = {
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryTemplates;
                         break;
-                    case 'template': // /tertulias?id=[0-9*]&sub=template&template=[A-z*]
+                    case 'template': // /tertulias?id=[0-9*]&sub=template&value=[A-z*]
                         console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         var template = req.query.value;
                         console.log('Template: ' + template);
