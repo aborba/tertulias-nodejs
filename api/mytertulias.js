@@ -48,6 +48,33 @@ var queryScheduleMonthlyW = 'SELECT mw_dow, mw_weeknr, mw_is_fromstart, mw_skip'
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
 ' AND tr_id = @tertulia';
 
+var queryItems = 'SELECT it_id, it_name' +
+' FROM Items' +
+' INNER JOIN Tertulias ON it_tertulia = tr_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
+var queryTemplates = 'SELECT tp_id, tp_name' +
+' FROM Templates' +
+' INNER JOIN Tertulias ON it_tertulia = tr_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
+var queryTemplate = 'SELECT it_id, it_name' +
+' FROM QuantifiedItems' +
+' INNER JOIN Items ON qi_item = it_id' +
+' INNER JOIN Templates ON qi_template = tp_id' +
+' INNER JOIN Tertulias ON tp_tertulia = tr_id' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia'
+' AND tp_name = @template';
+
 var completeError = function(err, res) {
     if (err) {
         console.error(err);
@@ -113,6 +140,27 @@ var api = {
                                 res.sendStatus(400);
                                 return;
                         }
+                        break;
+                    case 'items': // /tertulias?id=[0-9]&sub=items
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryItems;
+                        break;
+                    case 'templates': // /tertulias?id=[0-9]&sub=templates
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryTemplates;
+                        break;
+                    case 'template': // /tertulias?id=[0-9*]&sub=template&template=[A-z*]
+                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        var template = req.query.template;
+                        console.log('Template: ' + template);
+                        if (typeof template === typeof undefined) {
+                            res.sendStatus(400);
+                            return;
+                        }
+                        console.log('Preparing to get the ' + sub + ' ' + template + ' of my Tertulia with id: ' + tr_id);
+                        selectedQuery = queryTemplate;
+                        paramsT['template'] = sql.NVarChar;
+                        paramsV['template'] = template;
                         break;
                     default:
                         console.log('Bum - de fora.');
