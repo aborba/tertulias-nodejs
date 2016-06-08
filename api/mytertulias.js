@@ -119,7 +119,7 @@ var api = {
                         selectedQuery = queryScheduleType;
                         break;
                     case 'members': // /tertulias?id=[0-9]&sub=members
-                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        console.log('mPreparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryMembers;
                         break;
                     case 'schedule':
@@ -142,7 +142,7 @@ var api = {
                         }
                         break;
                     case 'items': // /tertulias?id=[0-9]&sub=items
-                        console.log('Preparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
+                        console.log('iPreparing to get the ' + sub + ' of my Tertulia with id: ' + tr_id);
                         selectedQuery = queryItems;
                         break;
                     case 'templates': // /tertulias?id=[0-9]&sub=templates
