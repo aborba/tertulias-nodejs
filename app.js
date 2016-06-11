@@ -35,6 +35,8 @@ router.param('name', function(req, res, next, name) {
     next(); 
 });
 
+router.use(bodyParser.json());
+
 router.get('/', function(req, res) {
     res.send('Im the home page!');
 });
@@ -44,7 +46,6 @@ router.get('/about', function(req, res) {
 router.get('/hello/:name', function(req, res) {
     res.send('Hello ' +  req.params.name + '!');
 });
-
 
 router.use(bodyParser.json());
 app.use('/', router);
