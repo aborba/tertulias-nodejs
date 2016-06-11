@@ -29,6 +29,12 @@ var mobile = azureMobileApps(appConfiguration);
 var bodyParser = require('body-parser');
 var router = express.Router();
 
+router.param('name', function(req, res, next, name) {
+    console.log('doing name validations on ' + name);
+    req.name = name;
+    next(); 
+});
+
 router.get('/', function(req, res) {
     res.send('Im the home page!');
 });
