@@ -19,7 +19,7 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
 var mobile = azureMobileApps(appConfiguration);
 
 // region My experiment
-
+var bodyParser = require('body-parser');
 var router = express.Router();
 router.get('/', function(req, res) {
     res.send('Im the home page!');
