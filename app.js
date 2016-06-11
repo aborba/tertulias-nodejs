@@ -30,7 +30,7 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 
 router.param('name', function(req, res, next, name) {
-    console.log('doing name validations on ' + name);
+    console.log('doing first name validations on ' + name);
     req.name = name;
     next(); 
 });
@@ -45,6 +45,12 @@ router.get('/about', function(req, res) {
 });
 router.get('/hello/:name', function(req, res) {
     res.send('Hello ' +  req.params.name + '!');
+});
+
+router.param('name', function(req, res, next, name) {
+    console.log('doing first name validations on ' + name);
+    req.name = name;
+    next(); 
 });
 
 router.use(bodyParser.json());
