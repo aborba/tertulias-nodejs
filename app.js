@@ -18,9 +18,17 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
 
 var mobile = azureMobileApps(appConfiguration);
 
-// region My experiment
+//   #####                               #######                                                           
+//  #     # #####   ##   #####  #####    #       #    # #####  ###### #####  # ###### #    #  ####  ###### 
+//  #         #    #  #  #    #   #      #        #  #  #    # #      #    # # #      ##   # #    # #      
+//   #####    #   #    # #    #   #      #####     ##   #    # #####  #    # # #####  # #  # #      #####  
+//        #   #   ###### #####    #      #         ##   #####  #      #####  # #      #  # # #      #      
+//  #     #   #   #    # #   #    #      #        #  #  #      #      #   #  # #      #   ## #    # #      
+//   #####    #   #    # #    #   #      ####### #    # #      ###### #    # # ###### #    #  ####  ###### 
+
 var bodyParser = require('body-parser');
 var router = express.Router();
+
 router.get('/', function(req, res) {
     res.send('Im the home page!');
 });
@@ -28,14 +36,20 @@ router.get('/about', function(req, res) {
     res.send('Im the about page!');
 });
 router.get('/hello/:name', function(req, res) {
-    res.send('Hello' +  req.params.name + '!');
+    res.send('Hello ' +  req.params.name + '!');
 });
 
 
 router.use(bodyParser.json());
 app.use('/', router);
 
-// endregion My experiment
+//  #######                  #######                                                           
+//  #       #    # #####     #       #    # #####  ###### #####  # ###### #    #  ####  ###### 
+//  #       ##   # #    #    #        #  #  #    # #      #    # # #      ##   # #    # #      
+//  #####   # #  # #    #    #####     ##   #    # #####  #    # # #####  # #  # #      #####  
+//  #       #  # # #    #    #         ##   #####  #      #####  # #      #  # # #      #      
+//  #       #   ## #    #    #        #  #  #      #      #   #  # #      #   ## #    # #      
+//  ####### #    # #####     ####### #    # #      ###### #    # # ###### #    #  ####  ###### 
 
 mobile.api.import('./api');
 
