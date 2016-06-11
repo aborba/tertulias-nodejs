@@ -20,6 +20,10 @@ var mobile = azureMobileApps(appConfiguration);
 
 mobile.api.import('./api');
 
+app.get('/sample', function(req, res) {
+    res.send('this is a sample!');  
+});
+
 console.log('Initializing...');
 mobile.tables.initialize()
     .then(function () {
