@@ -1,5 +1,4 @@
 var express = require('express');
-var util = require('../util');
 var u = require('azure-mobile-apps/src/auth/user');
 
 var completeError = function(err, res) {
