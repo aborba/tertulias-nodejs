@@ -208,10 +208,9 @@ function calculateAndRespond(x, y, op, res) {
         default:
             res.send(400, 'Error');
     }
-    /*
     if (op === 'add') {
         result = x + y;
-    } elseif (op == 'sub') {
+    } /*elseif (op == 'sub') {
         result = x – y;
     } else {
         //res.send(400, { error: 'Operation "' + op + '" not supported' });
@@ -219,7 +218,6 @@ function calculateAndRespond(x, y, op, res) {
     }
     */
     res.send(200, { result: result });
-    //res.send(200, 'Ok');
 }
 
 function getImplementation(req, res) {
