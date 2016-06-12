@@ -221,7 +221,6 @@ function calculateAndRespond(x, y, op, res) {
     res.send(200, { result: result });
     //res.send(200, 'Ok');
 }
-/*
 
 function getImplementation(req, res) {
     console.log('In calculator');
@@ -235,6 +234,7 @@ function getImplementation(req, res) {
     calculateAndRespond(x, y, operation, res);
 }
 
+/*
 exports.register = function (api) {
     api.get('*', getImplementation);
 }
