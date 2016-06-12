@@ -87,6 +87,11 @@ var completeError = function(err, res) {
 
 var api = {
 
+    register: function (api) {
+        console.log('Registering');
+        api.get('*', getImplementation);
+    },
+
     all: function (req, res, next) {
         console.log('In: api/tertulias');
         return next();
@@ -191,10 +196,11 @@ var api = {
             });
         });
     }
+
 };
 
 api.access = 'authenticated';
-//module.exports = api;
+module.exports = api;
 
 function calculateAndRespond(x, y, op, res) {
     var result = 3;
@@ -230,7 +236,9 @@ function getImplementation(req, res) {
     calculateAndRespond(x, y, operation, res);
 }
 
+/*
 exports.register = function (api) {
     console.log('Registering');
     api.get('*', getImplementation);
 }
+*/

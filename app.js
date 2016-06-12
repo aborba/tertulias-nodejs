@@ -18,44 +18,6 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
 
 var mobile = azureMobileApps(appConfiguration);
 
-//   #####                               #######                                                           
-//  #     # #####   ##   #####  #####    #       #    # #####  ###### #####  # ###### #    #  ####  ###### 
-//  #         #    #  #  #    #   #      #        #  #  #    # #      #    # # #      ##   # #    # #      
-//   #####    #   #    # #    #   #      #####     ##   #    # #####  #    # # #####  # #  # #      #####  
-//        #   #   ###### #####    #      #         ##   #####  #      #####  # #      #  # # #      #      
-//  #     #   #   #    # #   #    #      #        #  #  #      #      #   #  # #      #   ## #    # #      
-//   #####    #   #    # #    #   #      ####### #    # #      ###### #    # # ###### #    #  ####  ###### 
-
-var bodyParser = require('body-parser');
-var router = express.Router();
-
-router.param('name', function(req, res, next, name) {
-    console.log('doing first name validations on ' + name);
-    req.name = name;
-    next(); 
-});
-
-router.get('/', function(req, res) {
-    res.send('Im the home page!');
-});
-router.get('/about', function(req, res) {
-    res.send('Im the about page!');
-});
-router.get('/hello/:name', function(req, res) {
-    res.send('Hello ' +  req.params.name + '!');
-});
-
-router.use(bodyParser.json());
-app.use('/', router);
-
-//  #######                  #######                                                           
-//  #       #    # #####     #       #    # #####  ###### #####  # ###### #    #  ####  ###### 
-//  #       ##   # #    #    #        #  #  #    # #      #    # # #      ##   # #    # #      
-//  #####   # #  # #    #    #####     ##   #    # #####  #    # # #####  # #  # #      #####  
-//  #       #  # # #    #    #         ##   #####  #      #####  # #      #  # # #      #      
-//  #       #   ## #    #    #        #  #  #      #      #   #  # #      #   ## #    # #      
-//  ####### #    # #####     ####### #    # #      ###### #    # # ###### #    #  ####  ###### 
-
 mobile.api.import('./api');
 
 console.log('Initializing...');
