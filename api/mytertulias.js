@@ -170,10 +170,6 @@ var api = {
                         res.sendStatus(400);
                         return;
                 }
-            },
-
-            register: function (api) {
-                api.get(‘*’, getImplementation);
             }
         }
 
@@ -198,7 +194,7 @@ var api = {
 };
 
 api.access = 'authenticated';
-//module.exports = api;
+module.exports = api;
 
 exports.register: function (api) {
     api.get(‘*’, getImplementation);
