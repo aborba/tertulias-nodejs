@@ -198,6 +198,17 @@ module.exports = api;
 
 function calculateAndRespond(x, y, op, res) {
     var result;
+    /*
+    switch (op) {
+        case 'add':
+            result = x + y;
+            break;
+        case 'sub':
+            result = x - y;
+            break;
+        default:
+            res.send(400, 'Error');
+    }
     if (op === 'add') {
         result = x + y;
     } elseif (op == 'sub') {
@@ -207,6 +218,7 @@ function calculateAndRespond(x, y, op, res) {
         res.send(400, 'Error');
     }
     //res.send(200, { result: result });
+    */
     res.send(200, 'Ok');
 }
 /*
