@@ -197,7 +197,7 @@ api.access = 'authenticated';
 module.exports = api;
 
 exports.register = function (api) {
-    api.get(‘*’, getImplementation);
+    api.get('*', getImplementation);
 }
 
 function getImplementation(req, res) {
