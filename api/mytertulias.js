@@ -198,7 +198,6 @@ api.access = 'authenticated';
 
 function calculateAndRespond(x, y, op, res) {
     var result = 3;
-    /*
     switch (op) {
         case 'add':
             result = x + y;
@@ -209,6 +208,7 @@ function calculateAndRespond(x, y, op, res) {
         default:
             res.send(400, 'Error');
     }
+    /*
     if (op === 'add') {
         result = x + y;
     } elseif (op == 'sub') {
