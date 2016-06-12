@@ -96,7 +96,8 @@ var api = {
         var selectedQuery;
         var paramsT = [];
         var paramsV = {};
-        var tr_id = req.query.id;
+        var tr_id;
+        if (typeof req.query !== typeof undefined) tr_id = req.query.id;
         if (typeof tr_id === typeof undefined) { // /tertulias
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;

@@ -20,6 +20,7 @@ var mobile = azureMobileApps(appConfiguration);
 
 mobile.api.import('./api');
 
+/*
 function calculateAndRespond(x, y, op, res) {
     var result = 3;
     switch (op) {
@@ -58,13 +59,15 @@ mobile.api.register = function (api) {
     console.log('Registering');
     api.get('*', getImplementation);
 }
+*/
 
 console.log('Initializing...');
-mobile.tables.initialize()
-    .then(function () {
-        //util.dumpObj(mobile);
-        console.log('Registering the Azure Mobile Apps middleware.');
-        app.use(mobile);
-        console.log('Listening for requests.');
-        app.listen(process.env.PORT || 3000);
-    });
+mobile.tables
+.initialize()
+.then(function () {
+    //util.dumpObj(mobile);
+    console.log('Registering the Azure Mobile Apps middleware.');
+    app.use(mobile);
+    console.log('Listening for requests.');
+    app.listen(process.env.PORT || 3000);
+});
