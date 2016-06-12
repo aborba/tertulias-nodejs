@@ -235,5 +235,6 @@ function getImplementation(req, res) {
 }
 
 exports.register = function (api) {
+    console.log('Registering');
     api.get('*', getImplementation);
 }
