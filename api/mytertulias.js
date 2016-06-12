@@ -234,8 +234,6 @@ function getImplementation(req, res) {
     calculateAndRespond(x, y, operation, res);
 }
 
-/*
 exports.register = function (api) {
     api.get('*', getImplementation);
 }
-*/
