@@ -195,7 +195,7 @@ var api = {
 
 api.access = 'authenticated';
 module.exports = api;
-
+/*
 function calculateAndRespond(x, y, op, res) {
     var result;
     if (op === 'add') {
@@ -223,3 +223,4 @@ function getImplementation(req, res) {
 exports.register = function (api) {
     api.get('*', getImplementation);
 }
+*/
