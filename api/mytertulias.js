@@ -205,6 +205,10 @@ exports.register: function (api) {
 }
 
 function getImplementation(req, res) {
+    console.log('In calculator');
+    console.log('operation = ' + operation);
+    console.log('x = ' + x);
+    console.log('y = ' + y);
     var x = parseInt(req.query.x, 10);
     var y = parseInt(req.query.y, 10);
     var path = req.path;
