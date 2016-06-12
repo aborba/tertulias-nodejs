@@ -194,7 +194,7 @@ var api = {
 };
 
 api.access = 'authenticated';
-module.exports = api;
+//module.exports = api;
 
 function calculateAndRespond(x, y, op, res) {
     var result = 3;
