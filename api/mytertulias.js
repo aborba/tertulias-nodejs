@@ -210,7 +210,7 @@ function calculateAndRespond(x, y, op, res) {
     }
     if (op === 'add') {
         result = x + y;
-    } elseif (op == 'sub') {
+    } else if (op == 'sub') {
         result = x – y;
     } /*else {
         //res.send(400, { error: 'Operation "' + op + '" not supported' });
