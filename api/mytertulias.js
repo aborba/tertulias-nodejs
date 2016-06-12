@@ -203,9 +203,11 @@ function calculateAndRespond(x, y, op, res) {
     } elseif (op == 'sub') {
         result = x – y;
     } else {
-        res.send(400, { error: 'Operation "' + op + '" not supported' });
+        //res.send(400, { error: 'Operation "' + op + '" not supported' });
+        res.send(400, 'Error');
     }
-    res.send(200, { result: result });
+    //res.send(200, { result: result });
+    res.send(200, 'Ok');
 }
 /*
 
