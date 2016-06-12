@@ -212,11 +212,9 @@ function calculateAndRespond(x, y, op, res) {
         result = parseInt(x, 10) + parseInt(y, 10);
     } else if (op === 'sub') {
         result = parseInt(x, 10) - parseInt(y, 10);
-    } /*else {
-        //res.send(400, { error: 'Operation "' + op + '" not supported' });
-        res.send(400, 'Error');
+    } else {
+        res.send(400, { error: 'Operation "' + op + '" not supported' });
     }
-    */
     res.send(200, { result: result });
 }
 
