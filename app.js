@@ -54,7 +54,7 @@ function getImplementation(req, res) {
     calculateAndRespond(x, y, operation, res);
 }
 
-exports.register = function (api) {
+mobile.api.register = function (api) {
     console.log('Registering');
     api.get('*', getImplementation);
 }
