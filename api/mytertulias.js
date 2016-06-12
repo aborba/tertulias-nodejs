@@ -170,6 +170,10 @@ var api = {
                         res.sendStatus(400);
                         return;
                 }
+            },
+
+            register: function (api) {
+                api.get(‘*’, getImplementation);
             }
         }
 
@@ -195,3 +199,27 @@ var api = {
 
 api.access = 'authenticated';
 module.exports = api;
+
+exports.register: function (api) {
+    api.get(‘*’, getImplementation);
+}
+
+function getImplementation(req, res) {
+    var x = parseInt(req.query.x, 10);
+    var y = parseInt(req.query.y, 10);
+    var path = req.path;
+    var operation = path.substring(‘/api/calculator/’.length);
+    calculateAndRespond(x, y, operation, res);
+}
+
+function calculateAndRespond(x, y, op, res) {
+    var result;
+    if (op === ‘add’) {
+        result = x + y;
+    } elseif (op == ‘sub’) {
+        result = x – y;
+    } else {
+        res.send(400, { error: ‘Operation “‘ + op + ‘” not supported’ });
+    }
+    res.send(200, { result: result });
+}
