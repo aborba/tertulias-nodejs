@@ -197,7 +197,7 @@ api.access = 'authenticated';
 module.exports = api;
 
 function calculateAndRespond(x, y, op, res) {
-    var result;
+    var result = 3;
     /*
     switch (op) {
         case 'add':
@@ -217,9 +217,9 @@ function calculateAndRespond(x, y, op, res) {
         //res.send(400, { error: 'Operation "' + op + '" not supported' });
         res.send(400, 'Error');
     }
-    //res.send(200, { result: result });
     */
-    res.send(200, 'Ok');
+    res.send(200, { result: result });
+    //res.send(200, 'Ok');
 }
 /*
 
