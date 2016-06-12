@@ -200,18 +200,18 @@ function calculateAndRespond(x, y, op, res) {
     var result = 3;
     switch (op) {
         case 'add':
-            result = x + y;
+            result = parseInt(x, 10) + parseInt(y, 10);
             break;
         case 'sub':
-            result = x - y;
+            result = parseInt(x, 10) - parseInt(y, 10);
             break;
         default:
             res.send(400, 'Error');
     }
     if (op === 'add') {
-        result = x + y;
-    } elseif (op === 'sub') {
-        result = x + y;
+        result = parseInt(x, 10) + parseInt(y, 10);
+    } else if (op === 'sub') {
+        result = parseInt(x, 10) - parseInt(y, 10);
     } /*else {
         //res.send(400, { error: 'Operation "' + op + '" not supported' });
         res.send(400, 'Error');
