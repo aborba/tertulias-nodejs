@@ -198,7 +198,7 @@ var api = {
 };
 
 api.access = 'authenticated';
-module.exports = api;
+//module.exports = api;
 
 exports.register: function (api) {
     api.get(‘*’, getImplementation);
