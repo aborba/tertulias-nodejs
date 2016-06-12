@@ -195,7 +195,7 @@ var api = {
 
 api.access = 'authenticated';
 module.exports = api;
-/*
+
 function calculateAndRespond(x, y, op, res) {
     var result;
     if (op === 'add') {
@@ -207,6 +207,7 @@ function calculateAndRespond(x, y, op, res) {
     }
     res.send(200, { result: result });
 }
+/*
 
 function getImplementation(req, res) {
     console.log('In calculator');
