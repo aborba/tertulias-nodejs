@@ -87,11 +87,6 @@ var completeError = function(err, res) {
 
 var api = {
 
-    register: function (api) {
-        console.log('Registering');
-        api.get('*', getImplementation);
-    },
-
     all: function (req, res, next) {
         console.log('In: api/tertulias');
         return next();
@@ -201,44 +196,3 @@ var api = {
 
 api.access = 'authenticated';
 module.exports = api;
-
-function calculateAndRespond(x, y, op, res) {
-    var result = 3;
-    switch (op) {
-        case 'add':
-            result = parseInt(x, 10) + parseInt(y, 10);
-            break;
-        case 'sub':
-            result = parseInt(x, 10) - parseInt(y, 10);
-            break;
-        default:
-            res.send(400, 'Error');
-    }
-    if (op === 'add') {
-        result = parseInt(x, 10) + parseInt(y, 10);
-    } else if (op === 'sub') {
-        result = parseInt(x, 10) - parseInt(y, 10);
-    } else {
-        res.send(400, { error: 'Operation "' + op + '" not supported' });
-    }
-    res.send(200, { result: result });
-}
-
-function getImplementation(req, res) {
-    console.log('In calculator');
-    console.log('operation = ' + operation);
-    console.log('x = ' + x);
-    console.log('y = ' + y);
-    var x = parseInt(req.query.x, 10);
-    var y = parseInt(req.query.y, 10);
-    var path = req.path;
-    var operation = path.substring('/api/calculator/'.length);
-    calculateAndRespond(x, y, operation, res);
-}
-
-/*
-exports.register = function (api) {
-    console.log('Registering');
-    api.get('*', getImplementation);
-}
-*/
