@@ -98,7 +98,7 @@ function getImplementation(req, res) {
 
 app.register = function (api) {
     console.log('Registering');
-    api.get('calculator/{operation}', getImplementation);
+    api.get('calculator/:operation', getImplementation);
 }
 
 console.log('Initializing...');
