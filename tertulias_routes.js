@@ -45,6 +45,7 @@ router.all('/', function(req, res) {
 });
 
 router.get('/', function(req, res) {
+	console.log('Get: Here.');
 	if (! proceed) {
 		console.log('Get: User must be logged in. Existing.');
 		res.status(400).send('User must be logged in.');
