@@ -108,6 +108,7 @@ function getImplementation2(req, res) {
     res.status(200).send({ result: 'OK' });
 }
 
+var birds = require('./birds');
 
 console.log('Initializing...');
 mobile.tables
@@ -115,9 +116,8 @@ mobile.tables
 .then(function () {
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
-    router.get('/calculator/:operation', getImplementation);
-    router.get('/calculator', getImplementation2);
     app.use(mobile);
+    app.use('/birds', birds);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
