@@ -35,6 +35,9 @@ router.use(function timeLog(req, res, next) {
 });
 
 router.get('/', function(req, res) {
+	if (typeof req.azureMobile === typeof undefined || typeof req.azureMobile.user === typeof undefined) {
+		res.status(400).send('User must be logged in.');
+	}
     console.log(req.azureMobile);
     var selectedQuery = queryTertulias;
     var paramsT = [];
