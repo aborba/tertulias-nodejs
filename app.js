@@ -28,7 +28,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    app.use('/tertulias', tertulias_routes);
+    app.use('/api/tertulias', tertulias_routes);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
