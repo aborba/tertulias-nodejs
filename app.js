@@ -91,7 +91,8 @@ function getImplementation(req, res) {
     var x = parseInt(req.query.x, 10);
     var y = parseInt(req.query.y, 10);
     var path = req.path;
-    var operation = path.substring('/api/calculator/'.length);
+    var operation = path.substring('/calculator/'.length);
+    console.log(operation);
     calculateAndRespond(x, y, operation, res);
 }
 
