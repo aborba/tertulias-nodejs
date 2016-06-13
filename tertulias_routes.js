@@ -14,7 +14,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-	var id = 0;
+	var id = req.params.id;
 	res.status(statusOK)
 		.send('Tertulia ' + id + ' details.');
 });
