@@ -108,7 +108,7 @@ function getImplementation2(req, res) {
     res.status(200).send({ result: 'OK' });
 }
 
-var birds = require('./api/birds');
+var tertulias_routes = require('./tertulias_routes');
 
 console.log('Initializing...');
 mobile.tables
@@ -117,7 +117,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    app.use('/birds', birds);
+    app.use('/t', tertulias_routes);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
