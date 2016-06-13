@@ -6,6 +6,8 @@ util.nodeVersion();
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
+//me
+var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -15,6 +17,10 @@ var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/glob
     swagger: false,
     skipVersionCheck: true
 }
+
+//me
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 var mobile = azureMobileApps(appConfiguration);
 
@@ -108,7 +114,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    app.register = function (api) {
+    module.exports.register = function (api) {
         console.log('Registering');
         api.get('calculator', getImplementation2);
     };
