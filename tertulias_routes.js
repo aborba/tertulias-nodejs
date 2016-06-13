@@ -1,6 +1,6 @@
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
-var util = require('../util');
+var util = require('./util');
 var u = require('azure-mobile-apps/src/auth/user');
 var sql = require('mssql');
 
