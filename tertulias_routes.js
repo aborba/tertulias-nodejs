@@ -11,7 +11,7 @@ router.get('/', function(req, res) {
 });
 
 router.get('/:id', function(req, res) {
-  res.send('Tertulias item ' + id);
+  res.send('Tertulias item ' + req.query.id);
 });
 
 router.get('/about', function(req, res) {
