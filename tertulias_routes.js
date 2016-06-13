@@ -7,11 +7,15 @@ router.use(function timeLog(req, res, next) {
 });
 
 router.get('/', function(req, res) {
-  res.send('Birds home page');
+  res.send('Tertulias list');
+});
+
+router.get('/:id', function(req, res) {
+  res.send('Tertulias item ' + id);
 });
 
 router.get('/about', function(req, res) {
-  res.send('About birds');
+  res.send('About Tertulias');
 });
 
 module.exports = router;
