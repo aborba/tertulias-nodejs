@@ -39,6 +39,7 @@ router.get('/', function(req, res) {
     var paramsT = [];
     paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
     var paramsV = {'sid': req.azureMobile.user.id };
+    console.log(req);
 
 	var connection = new sql.Connection(util.sqlConfiguration);
     connection.connect(function(err) {
