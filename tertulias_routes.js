@@ -34,8 +34,19 @@ router.use(function timeLog(req, res, next) {
 	next();
 });
 
-router.get('/', function(req, res) {
+var proceed = true;
+
+router.all('/', function(req, res) {
 	if (typeof req.azureMobile === typeof undefined || typeof req.azureMobile.user === typeof undefined) {
+		proceed = false;
+		console.log('User must be logged in. Existing.');
+		return;
+	}
+};
+
+router.get('/', function(req, res) {
+	if (! proceed) {
+		console.log('User must be logged in. Existing.');
 		res.status(400).send('User must be logged in.');
 		return;
 	}
