@@ -114,10 +114,7 @@ mobile.tables
 .then(function () {
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
-    app.register = function (api) {
-        console.log('Registering');
-        api.get('calculator', getImplementation2);
-    };
+    app.route('calculator').get('calculator', getImplementation2);
     app.use(mobile);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
