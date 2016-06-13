@@ -102,13 +102,13 @@ var api = {
         if (typeof req.query !== typeof undefined) tr_id = req.query.id;
         console.log('In: GET api/tertulias step 1');
         if (typeof tr_id === typeof undefined) { // /tertulias
-        console.log('In: GET api/tertulias if');
+            console.log('In: GET api/tertulias if');
             console.log('Preparing to get all my Tertulias');
             selectedQuery = queryTertulias;
             paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
             paramsV = {'sid': req.azureMobile.user.id };
         } else { 
-        console.log('In: GET api/tertulias else');
+            console.log('In: GET api/tertulias else');
             var sub = req.query.sub;
             paramsT['sid'] = sql.NVarChar; paramsT['tertulia'] = sql.NVarChar;
             paramsV = {'sid': req.azureMobile.user.id, 'tertulia': tr_id };
