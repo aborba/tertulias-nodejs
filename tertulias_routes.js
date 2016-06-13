@@ -42,7 +42,7 @@ router.all('/', function(req, res) {
 		console.log('User must be logged in. Existing.');
 		return;
 	}
-};
+});
 
 router.get('/', function(req, res) {
 	if (! proceed) {
