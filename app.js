@@ -115,7 +115,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    module.exports.register = function (api) {
+    exports.register = function (api) {
         console.log('Registering');
         api.get('calculator', getImplementation2);
     };
