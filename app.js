@@ -104,7 +104,7 @@ function getImplementation(req, res) {
 
 function getImplementation2(req, res) {
     console.log('In Implementation2');
-    res.send(200, { result: 'OK' });
+    res.status(200).send({ result: 'OK' });
 }
 
 
