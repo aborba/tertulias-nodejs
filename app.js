@@ -8,6 +8,7 @@ var express = require('express'),
     azureMobileApps = require('azure-mobile-apps');
 //me
 var bodyParser = require('body-parser');
+var router = express.Router();
 
 var app = express();
 
@@ -114,7 +115,7 @@ mobile.tables
 .then(function () {
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
-    app.get('/calculator', getImplementation2);
+    router.get('/calculator', getImplementation2);
     app.use(mobile);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
