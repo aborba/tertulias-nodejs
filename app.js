@@ -108,7 +108,7 @@ function getImplementation2(req, res) {
     res.status(200).send({ result: 'OK' });
 }
 
-var birds = require('./birds');
+var birds = require('./api/birds');
 
 console.log('Initializing...');
 mobile.tables
