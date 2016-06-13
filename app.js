@@ -114,8 +114,8 @@ mobile.tables
 .then(function () {
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
-    app.route('calculator').get('calculator', getImplementation2);
     app.use(mobile);
+    app.route('calculator').get('calculator', getImplementation2);
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
