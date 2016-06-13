@@ -96,9 +96,13 @@ function getImplementation(req, res) {
     calculateAndRespond(x, y, operation, res);
 }
 
+function getImplementation2(req, res) {
+    console.log('In Implementation2');
+}
+
 app.register = function (api) {
     console.log('Registering');
-    api.get('calculator/:operation', getImplementation);
+    api.get('calculator', getImplementation2);
 }
 
 console.log('Initializing...');
