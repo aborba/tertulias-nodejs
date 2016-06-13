@@ -6,7 +6,7 @@ util.nodeVersion();
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps'),
-    tertulias_routes = require('./tertulias_routes');
+    tertuliasApi = require('./api/tertuliasApi');
 
 var app = express();
 
@@ -28,7 +28,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    app.use('/api/tertulias', tertulias_routes);
+    app.use('/api/tertulias', tertuliasApi(mobile.configuration));
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
