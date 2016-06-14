@@ -7,7 +7,7 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-var route_paths = requir('../route_paths');
+var route_paths = require('../route_paths');
 
 console.log(route_paths);
 
