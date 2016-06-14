@@ -50,19 +50,14 @@ module.exports = function (configuration) {
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
-	                    console.log(recordset);
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
-	                    	if (typeof req.t_links !== typeof undefined) {
-	                			for (var key in req.t_links) {
+	                    	if (typeof req.t_links !== typeof undefined)
+	                			for (var key in req.t_links)
 	                				elem['_links'].key = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-	                			}
-		                    }
 	                    });
-	                    console.log(recordset);
 	                    preparedStatement.unprepare();
-	                    res.type('application/json')
-	                    	.json(recordset);
+	                    res.type('application/json').json(recordset);
 	                    next();
 	                }
 	            );
