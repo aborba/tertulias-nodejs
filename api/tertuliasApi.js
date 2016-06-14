@@ -29,8 +29,9 @@ module.exports = function (configuration) {
 
     router.get('/:tertulia', (req, res, next) => {
 		req.selectedQuery = queryTertuliaX;
-	    req.paramsT = { 'sid': sql.NVarChar, 'tertulia': sql.NVarChar };
-	    req.paramsV = { 'sid': req.azureMobile.user.id, 'tertulia': req.params.tertulia };
+	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
+	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
+	    req.t_links = { edit: 'edit', members: 'members', messages: 'messages', events: 'events', nextevent: 'nextevent' };
 	    goQuery(req, res, next);
 	});
 
@@ -51,6 +52,10 @@ module.exports = function (configuration) {
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
+	                    	req.t_links.foreach(tag) {
+	                    		console.log(tag);
+	                    		//elem['_links'].tag.key = { href : 'tertulias/' + elem.tr_id + '/' + tag.value};
+	                    	};
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
