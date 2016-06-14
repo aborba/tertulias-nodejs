@@ -49,15 +49,16 @@ module.exports = function (configuration) {
 	            if (err) { completeError(err, res); return; }
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
-	                	console.log(req);
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
-	                    	if (typeof req.t_links !== typeof undefined)
+	                    	if (typeof req.t_links !== typeof undefined) {
+	                			console.log(req.t_links);
 		                    	req.t_links.foreach(function(tag) {
 		                    		console.log(tag);
 		                    		//elem['_links'].tag.key = { href : 'tertulias/' + elem.tr_id + '/' + tag.value};
 		                    	});
+		                    }
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
