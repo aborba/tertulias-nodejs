@@ -55,10 +55,12 @@ module.exports = function (configuration) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined) {
 	                			console.log(req.t_links);
-		                    	req.t_links.foreach(function(tag) {
-		                    		console.log(tag);
+	                			for (var key in req.t_links)
+	                				console.log(key + ' - ' + req.t_links[key]);
+//		                    	req.t_links.foreach(function(tag) {
+//		                    		console.log(tag);
 		                    		//elem['_links'].tag.key = { href : 'tertulias/' + elem.tr_id + '/' + tag.value};
-		                    	});
+//		                    	});
 		                    }
 	                    });
 	                    console.log(recordset);
