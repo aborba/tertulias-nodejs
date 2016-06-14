@@ -9,7 +9,7 @@ var util = require('../util');
 
 var route_paths = require('../route_paths');
 
-console.log(route_paths);
+console.log(route_paths.tertulia_defaultlocation);
 
 const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
 ' FROM Tertulias' +
