@@ -40,6 +40,10 @@ module.exports = function (configuration) {
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
+	                    recordset.forEach(function(elem) {
+	                    	elem['_links'] = {'self': 'tertulias/' + elem.tr_id };
+	                    	console.log(elem);
+	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    res.type('application/json').json(recordset);
