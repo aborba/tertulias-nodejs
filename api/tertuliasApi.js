@@ -26,7 +26,10 @@ module.exports = function (configuration) {
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    var paramsV = {'sid': req.azureMobile.user.id };
-	    goQuery(queryTertulias, paramsT, paramsV);
+	    req.selectedQuery = selectedQuery;
+	    req.paramsT = paramsT;
+	    req.paramsV = paramsV;
+	    goQuery(req, res, next);
 
 /*
 	    var connection = new sql.Connection(util.sqlConfiguration);
@@ -62,7 +65,10 @@ module.exports = function (configuration) {
 	    var paramsV = {
 	    	'sid': req.azureMobile.user.id,
 	    	'tertulia': req.params.tertulia };
-	    goQuery(queryTertuliaX, paramsT, paramsV);
+	    req.selectedQuery = selectedQuery;
+	    req.paramsT = paramsT;
+	    req.paramsV = paramsV;
+	    goQuery(req, res, next);
 
 /*
 	    var connection = new sql.Connection(util.sqlConfiguration);
@@ -89,7 +95,11 @@ module.exports = function (configuration) {
 	    */
 	});
 
-	var goQuery = function(selectedQuery, paramsT, paramsV) {
+	var goQuery = function(req, res, next) {
+		var selectedQuery = req.selectedQuery;
+	    var paramsT = req.paramsT;
+	    var paramsV = req.paramsV;
+
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
 	        var sqlRequest = new sql.Request(connection);
