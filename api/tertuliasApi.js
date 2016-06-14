@@ -22,9 +22,10 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		req.selectedQuery = queryTertulias;
-	    req.paramsT = [];
-	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    req.paramsV = {'sid': req.azureMobile.user.id };
+//	    req.paramsT = [];
+//	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.paramsV = { 'sid': req.azureMobile.user.id };
 	    goQuery(req, res, next);
 	});
 
