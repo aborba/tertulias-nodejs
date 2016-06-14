@@ -15,6 +15,8 @@ const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, 
 ' INNER JOIN EnumValues ON mb_role = nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
+var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
+
 module.exports = function (configuration) {
     var router = express.Router();
 
@@ -23,6 +25,35 @@ module.exports = function (configuration) {
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    var paramsV = {'sid': req.azureMobile.user.id };
+
+	    var connection = new sql.Connection(util.sqlConfiguration);
+	    connection.connect(function(err) {
+	        var sqlRequest = new sql.Request(connection);
+	        var preparedStatement = new sql.PreparedStatement(connection);
+	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+	            preparedStatement.execute(paramsV, 
+	                function(err, recordset, affected) {
+	                    if (err) { completeError(err, res); return; }
+	                    console.log(recordset);
+	                    preparedStatement.unprepare();
+	                    res.type('application/json').json(recordset);
+	                    next();
+	                }
+	            );
+	        });
+	    });
+	});
+
+    router.get('/:tertulia', (req, res, next) => {
+		var selectedQuery = queryTertuliaX;
+	    var paramsT = [];
+	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+		paramsT['tertulia'] = sql.NVarChar;
+	    var paramsV = {
+	    	'sid': req.azureMobile.user.id,
+	    	'tertulia': req.params.tertulia };
 
 	    var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
