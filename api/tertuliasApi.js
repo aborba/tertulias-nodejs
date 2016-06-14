@@ -54,13 +54,9 @@ module.exports = function (configuration) {
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined) {
-	                			console.log(req.t_links);
-	                			for (var key in req.t_links)
-	                				console.log(key + ' - ' + req.t_links[key]);
-//		                    	req.t_links.foreach(function(tag) {
-//		                    		console.log(tag);
-		                    		//elem['_links'].tag.key = { href : 'tertulias/' + elem.tr_id + '/' + tag.value};
-//		                    	});
+	                			for (var key in req.t_links) {
+	                				elem['_links'].key = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
+	                			}
 		                    }
 	                    });
 	                    console.log(recordset);
