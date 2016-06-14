@@ -50,6 +50,7 @@ module.exports = function (configuration) {
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
+	                    console.log(recordset);
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined) {
