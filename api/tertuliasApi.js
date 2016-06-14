@@ -16,12 +16,31 @@ const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, 
 module.exports = function (configuration) {
     var router = express.Router();
 
-    router.get('/', (req, res, next) => {
-    	req.azureMobile.tables('Tertulias')
-            .read()
-            .then(results => res.json(results))
-            .catch(next); // it is important to catch any errors and log them
-    });
+    router.get('/:category', (req, res, next) => {
+		var selectedQuery = queryTertulias;
+	    var paramsT = [];
+	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    var paramsV = {'sid': req.azureMobile.user.id };
+
+	    var connection = new sql.Connection(util.sqlConfiguration);
+	    connection.connect(function(err) {
+	        var sqlRequest = new sql.Request(connection);
+	        var preparedStatement = new sql.PreparedStatement(connection);
+	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+	            preparedStatement.execute(paramsV, 
+	                function(err, recordset, affected) {
+	                    if (err) { completeError(err, res); return; }
+	                    console.log(recordset);
+	                    preparedStatement.unprepare();
+	                    res.type('application/json').json(recordset);
+	                    next();
+	                }
+	            );
+	        });
+	    });
+	});
 
     return router;
 
