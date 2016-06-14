@@ -26,7 +26,9 @@ module.exports = function (configuration) {
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    var paramsV = {'sid': req.azureMobile.user.id };
+	    goQuery(queryTertulia, paramsT, paramsV);
 
+/*
 	    var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
 	        var sqlRequest = new sql.Request(connection);
@@ -48,6 +50,7 @@ module.exports = function (configuration) {
 	            );
 	        });
 	    });
+	    */
 	});
 
     router.get('/:tertulia', (req, res, next) => {
@@ -59,7 +62,9 @@ module.exports = function (configuration) {
 	    var paramsV = {
 	    	'sid': req.azureMobile.user.id,
 	    	'tertulia': req.params.tertulia };
+	    goQuery(queryTertuliaX, paramsT, paramsV);
 
+/*
 	    var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
 	        var sqlRequest = new sql.Request(connection);
@@ -81,7 +86,33 @@ module.exports = function (configuration) {
 	            );
 	        });
 	    });
+	    */
 	});
+
+	var goQuery = function(selectedQuery, paramsT, paramsV) {
+		var connection = new sql.Connection(util.sqlConfiguration);
+	    connection.connect(function(err) {
+	        var sqlRequest = new sql.Request(connection);
+	        var preparedStatement = new sql.PreparedStatement(connection);
+	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+	            preparedStatement.execute(paramsV, 
+	                function(err, recordset, affected) {
+	                    if (err) { completeError(err, res); return; }
+	                    recordset.forEach(function(elem) {
+	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
+	                    });
+	                    console.log(recordset);
+	                    preparedStatement.unprepare();
+	                    res.type('application/json')
+	                    	.json(recordset);
+	                    next();
+	                }
+	            );
+	        });
+	    });
+	}
 
     return router;
 
