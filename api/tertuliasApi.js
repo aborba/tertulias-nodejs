@@ -22,8 +22,6 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		req.selectedQuery = queryTertulias;
-//	    req.paramsT = [];
-//	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
 	    goQuery(req, res, next);
@@ -31,12 +29,8 @@ module.exports = function (configuration) {
 
     router.get('/:tertulia', (req, res, next) => {
 		req.selectedQuery = queryTertuliaX;
-	    req.paramsT = [];
-	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-		req.paramsT['tertulia'] = sql.NVarChar;
-	    req.paramsV = {
-	    	'sid': req.azureMobile.user.id,
-	    	'tertulia': req.params.tertulia };
+	    req.paramsT = { 'sid': sql.NVarChar, 'tertulia': sql.NVarChar };
+	    req.paramsV = { 'sid': req.azureMobile.user.id, 'tertulia': req.params.tertulia };
 	    goQuery(req, res, next);
 	});
 
