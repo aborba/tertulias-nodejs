@@ -41,8 +41,7 @@ module.exports = function (configuration) {
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
-	                    	elem['_links'] = {'self': 'tertulias/' + elem.tr_id };
-	                    	console.log(elem);
+	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
@@ -72,8 +71,7 @@ module.exports = function (configuration) {
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
-	                    	elem['_links'] = {'self': 'tertulias/' + elem.tr_id };
-	                    	console.log(elem);
+	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
