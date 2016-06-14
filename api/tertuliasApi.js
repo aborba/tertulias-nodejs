@@ -26,7 +26,7 @@ module.exports = function (configuration) {
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    var paramsV = {'sid': req.azureMobile.user.id };
-	    goQuery(queryTertulia, paramsT, paramsV);
+	    goQuery(queryTertulias, paramsT, paramsV);
 
 /*
 	    var connection = new sql.Connection(util.sqlConfiguration);
