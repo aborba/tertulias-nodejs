@@ -1,10 +1,15 @@
 var express = require('express'),
-bodyParser = require('body-parser'),
+	bodyParser = require('body-parser'),
+
 
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize = require('azure-mobile-apps/src/express/middleware/authorize');
 var sql = require('mssql');
 var util = require('../util');
+
+var route_paths = requir('../route_paths');
+
+console.log(route_paths);
 
 const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
 ' FROM Tertulias' +
@@ -55,7 +60,7 @@ module.exports = function (configuration) {
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-	                    	console.log(elem['_links']);
+	                    	//console.log(elem['_links']);
 	                    });
 	                    preparedStatement.unprepare();
 	                    res.type('application/json').json(recordset);
