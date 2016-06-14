@@ -21,6 +21,7 @@ module.exports = function (configuration) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
+    	console.log('In FUNCA /api/tertulias');
 		var selectedQuery = queryTertulias;
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
@@ -47,6 +48,7 @@ module.exports = function (configuration) {
 	});
 
     router.get('/:tertulia', (req, res, next) => {
+    	console.log('In FUNCA2 /api/tertulias/' + req.params.tertulia);
 		var selectedQuery = queryTertuliaX;
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
