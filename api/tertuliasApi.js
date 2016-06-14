@@ -21,78 +21,22 @@ module.exports = function (configuration) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
-    	console.log('In FUNCA /api/tertulias');
-		var selectedQuery = queryTertulias;
-	    var paramsT = [];
-	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    var paramsV = {'sid': req.azureMobile.user.id };
-	    req.selectedQuery = selectedQuery;
-	    req.paramsT = paramsT;
-	    req.paramsV = paramsV;
+		req.selectedQuery = queryTertulias;
+	    req.paramsT = [];
+	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.paramsV = {'sid': req.azureMobile.user.id };
 	    goQuery(req, res, next);
-
-/*
-	    var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	        var sqlRequest = new sql.Request(connection);
-	        var preparedStatement = new sql.PreparedStatement(connection);
-	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
-	        preparedStatement.prepare(selectedQuery, function(err) {
-	            if (err) { completeError(err, res); return; }
-	            preparedStatement.execute(paramsV, 
-	                function(err, recordset, affected) {
-	                    if (err) { completeError(err, res); return; }
-	                    recordset.forEach(function(elem) {
-	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
-	                    });
-	                    console.log(recordset);
-	                    preparedStatement.unprepare();
-	                    res.type('application/json').json(recordset);
-	                    next();
-	                }
-	            );
-	        });
-	    });
-	    */
 	});
 
     router.get('/:tertulia', (req, res, next) => {
-    	console.log('In FUNCA2 /api/tertulias/' + req.params.tertulia);
-		var selectedQuery = queryTertuliaX;
-	    var paramsT = [];
-	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-		paramsT['tertulia'] = sql.NVarChar;
-	    var paramsV = {
+		req.selectedQuery = queryTertuliaX;
+	    req.paramsT = [];
+	    req.paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+		req.paramsT['tertulia'] = sql.NVarChar;
+	    req.paramsV = {
 	    	'sid': req.azureMobile.user.id,
 	    	'tertulia': req.params.tertulia };
-	    req.selectedQuery = selectedQuery;
-	    req.paramsT = paramsT;
-	    req.paramsV = paramsV;
 	    goQuery(req, res, next);
-
-/*
-	    var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	        var sqlRequest = new sql.Request(connection);
-	        var preparedStatement = new sql.PreparedStatement(connection);
-	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
-	        preparedStatement.prepare(selectedQuery, function(err) {
-	            if (err) { completeError(err, res); return; }
-	            preparedStatement.execute(paramsV, 
-	                function(err, recordset, affected) {
-	                    if (err) { completeError(err, res); return; }
-	                    recordset.forEach(function(elem) {
-	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
-	                    });
-	                    console.log(recordset);
-	                    preparedStatement.unprepare();
-	                    res.type('application/json').json(recordset);
-	                    next();
-	                }
-	            );
-	        });
-	    });
-	    */
 	});
 
 	var goQuery = function(req, res, next) {
