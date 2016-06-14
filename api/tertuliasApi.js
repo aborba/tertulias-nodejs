@@ -51,10 +51,10 @@ module.exports = function (configuration) {
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
-	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
+	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
-	                				elem['_links'].key = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
+	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
 	                    	console.log(elem['_links']);
 	                    });
 	                    preparedStatement.unprepare();
