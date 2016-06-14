@@ -20,12 +20,15 @@ var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
 module.exports = function (configuration) {
     var router = express.Router();
 
-    router.get('/', (req, res, next) => {
-    	console.log('In FUNCA /api/tertulias');
-		var selectedQuery = queryTertulias;
+    router.get('/:tertulia', (req, res, next) => {
+    	console.log('In FUNCA2 /api/tertulias/' + req.params.tertulia);
+		var selectedQuery = queryTertuliaX;
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    var paramsV = {'sid': req.azureMobile.user.id };
+		paramsT['tertulia'] = sql.NVarChar;
+	    var paramsV = {
+	    	'sid': req.azureMobile.user.id,
+	    	'tertulia': req.params.tertulia };
 
 	    var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
@@ -47,15 +50,12 @@ module.exports = function (configuration) {
 	    });
 	});
 
-    router.get('/:tertulia', (req, res, next) => {
-    	console.log('In FUNCA2 /api/tertulias/' + req.params.tertulia);
-		var selectedQuery = queryTertuliaX;
+    router.get('/', (req, res, next) => {
+    	console.log('In FUNCA /api/tertulias');
+		var selectedQuery = queryTertulias;
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-		paramsT['tertulia'] = sql.NVarChar;
-	    var paramsV = {
-	    	'sid': req.azureMobile.user.id,
-	    	'tertulia': req.params.tertulia };
+	    var paramsV = {'sid': req.azureMobile.user.id };
 
 	    var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
