@@ -4,6 +4,7 @@ bodyParser = require('body-parser'),
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize = require('azure-mobile-apps/src/express/middleware/authorize');
 var sql = require('mssql');
+var util = require('../util');
 
 const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
 ' FROM Tertulias' +
