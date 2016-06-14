@@ -52,10 +52,10 @@ module.exports = function (configuration) {
 	                    if (err) { completeError(err, res); return; }
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = {self: { href : 'tertulias/' + elem.tr_id } };
-	                    	req.t_links.foreach(tag) {
+	                    	req.t_links.foreach(function(tag) {
 	                    		console.log(tag);
 	                    		//elem['_links'].tag.key = { href : 'tertulias/' + elem.tr_id + '/' + tag.value};
-	                    	};
+	                    	});
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
