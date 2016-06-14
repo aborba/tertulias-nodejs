@@ -16,7 +16,7 @@ const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, 
 module.exports = function (configuration) {
     var router = express.Router();
 
-    router.get('/:category', (req, res, next) => {
+    router.get('/', (req, res, next) => {
 		var selectedQuery = queryTertulias;
 	    var paramsT = [];
 	    paramsT['sid'] = sql.NVarChar; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
