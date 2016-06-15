@@ -77,6 +77,7 @@ module.exports = function (configuration) {
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
 	                    });
+	                    console.log(recordset._links);
 	                    preparedStatement.unprepare();
 	                    res.json(recordset);
 	                    next();
