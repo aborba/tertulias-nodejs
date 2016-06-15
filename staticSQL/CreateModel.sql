@@ -1,4 +1,5 @@
 -------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 --                                                                           --
 --    ####### ####### ######  ####### #     # #       ###    #     #####     --
 --       #    #       #     #    #    #     # #        #    # #   #     #    --
@@ -8,6 +9,7 @@
 --       #    #       #    #     #    #     # #        #  #     # #     #    --
 --       #    ####### #     #    #     #####  ####### ### #     #  #####     --
 --                                                                           --
+-------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
                                                                      
 /*
@@ -71,7 +73,8 @@ GO
 ----------------------------------------------------------------------
                                                             
 IF OBJECT_ID(N'dbo.fnGetEnum') IS NOT NULL DROP FUNCTION fnGetEnum;
-IF OBJECT_ID(N'dbo.spSetEnum') IS NOT NULL DROP PROCEDURE spSetEnum;
+IF OBJECT_ID(N'dbo.spSetEnumI') IS NOT NULL DROP PROCEDURE spSetEnumI;
+IF OBJECT_ID(N'dbo.spSetEnumS') IS NOT NULL DROP PROCEDURE spSetEnumS;
 GO
 
 IF OBJECT_ID(N'dbo.spAcceptInvitation') IS NOT NULL DROP PROCEDURE spAcceptInvitation;
@@ -142,6 +145,7 @@ CREATE TABLE EnumValues(
 	nv_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, nv_type INTEGER NOT NULL
 	, nv_name VARCHAR(20) NOT NULL
+	, nv_description VARCHAR(80)
 	, nv_value INTEGER DEFAULT 0
 	, CONSTRAINT un_enumvalue_name UNIQUE (nv_type, nv_name)
 	, CONSTRAINT fk_enumvalue_type FOREIGN KEY (nv_type) REFERENCES EnumTypes(nt_id)
@@ -151,8 +155,8 @@ GO
 -- See <TEST 03>
 CREATE TABLE Schedules(
 	sc_id INTEGER IDENTITY(1,1) PRIMARY KEY
-	, sc_recurrency INTEGER NOT NULL
-	, CONSTRAINT fk_schedule_recurrency FOREIGN KEY (sc_recurrency) REFERENCES EnumValues(nv_id)
+	, sc_type INTEGER NOT NULL
+	, CONSTRAINT fk_schedule_type FOREIGN KEY (sc_type) REFERENCES EnumValues(nv_id)
 );
 GO
 
@@ -441,7 +445,7 @@ BEGIN
 END;
 GO
 
-CREATE PROCEDURE spSetEnum @enumtype VARCHAR(20), @name VARCHAR(20), @value INTEGER
+CREATE PROCEDURE spSetEnumI @enumtype VARCHAR(20), @name VARCHAR(20), @value INTEGER
 AS 
 BEGIN
 	DECLARE @id INTEGER;
@@ -452,6 +456,20 @@ BEGIN
 	END
 	ELSE SELECT @id = nt_id FROM EnumTypes WHERE nt_name = @enumtype;
 	INSERT INTO EnumValues (nv_type, nv_name, nv_value) VALUES (@id, @name, @value);
+END;
+GO
+
+CREATE PROCEDURE spSetEnumS @enumtype VARCHAR(20), @name VARCHAR(20), @description VARCHAR(80)
+AS 
+BEGIN
+	DECLARE @id INTEGER;
+	IF NOT EXISTS (SELECT nt_id FROM EnumTypes WHERE nt_name = @enumtype)
+	BEGIN
+		INSERT INTO EnumTypes (nt_name) VALUES (@enumtype);
+		SET @id = SCOPE_IDENTITY();
+	END
+	ELSE SELECT @id = nt_id FROM EnumTypes WHERE nt_name = @enumtype;
+	INSERT INTO EnumValues (nv_type, nv_name, nv_description) VALUES (@id, @name, @description);
 END;
 GO
 
@@ -582,16 +600,16 @@ CREATE PROCEDURE sp_insertTertulia_MonthlyW
 	@isPrivate INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
 BEGIN TRY
-	DECLARE @recurrency INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
+	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
 
-	SET @recurrency = dbo.fnGetEnum('Recurrency', 'MonthlyW');
+	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyW');
 	EXEC @location = dbo.sp_getId 'lo', 'Locations', 'Dummy';
 
 	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
 
-	INSERT INTO Schedules (sc_recurrency) VALUES (@recurrency);
+	INSERT INTO Schedules (sc_type) VALUES (@scheduleType);
 	SET @schedule = SCOPE_IDENTITY();
 
 	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) 
@@ -609,11 +627,11 @@ BEGIN TRY
 
     SET @owner = dbo.fnGetEnum('Roles', 'owner');
 	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @owner);
-	COMMIT TRANSACTION
+	COMMIT TRANSACTION tran_sp_insertTertulia_MonthlyW
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_insertTertulia_MonthlyW
 END CATCH
 GO
 
@@ -625,17 +643,17 @@ CREATE PROCEDURE sp_createEvent
 	@eventDate DATETIME
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_createEvent
 BEGIN TRY
 	DECLARE @tertulia INTEGER, @location INTEGER;
 	EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
 	EXEC @location = dbo.sp_getId 'lo', 'Locations', @eventLocation;
 	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
-	COMMIT TRANSACTION
+	COMMIT TRANSACTION tran_sp_createEvent
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_createEvent
 END CATCH
 GO
 
@@ -645,17 +663,17 @@ CREATE PROCEDURE sp_createEventDefaultLocation
 	@eventDate DATETIME
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_createEventDfltLoc
 BEGIN TRY
 	DECLARE @tertuliaId INTEGER, @locationId INTEGER;
 	EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
 	SET @locationId = dbo.fnGetTertuliaLocation_byTertuliaId(@tertuliaId);
 	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertuliaId, @locationId, @eventDate);
-	COMMIT TRANSACTION
+	COMMIT TRANSACTION tran_sp_createEventDfltLoc
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_createEventDfltLoc
 END CATCH
 GO
 
@@ -666,12 +684,12 @@ CREATE PROCEDURE sp_buildEventsItems
 	@templateName VARCHAR(40)
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_buildEventsItems
 BEGIN TRY
 	DECLARE @event INTEGER, @tertulia INTEGER, @template INTEGER;
 	EXEC dbo.sp_getEventIdTertuliaId @tertulianame, @eventDate, @event OUTPUT, @tertulia OUTPUT;
 	SET @template = dbo.fnGetTemplate_byTertuliaId(@tertulia, @templateName);
-	DECLARE _cursor CURSOR FOR SELECT tc_item, tc_quantity FROM TemplatesCat WHERE tc_template = @template; -- VAMOS AQUI
+	DECLARE _cursor CURSOR FOR SELECT qi_item, qi_quantity FROM QuantifiedItems WHERE qi_template = @template;
 	OPEN _cursor;
 	DECLARE @itemId INTEGER, @baseQty INTEGER;
 	FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
@@ -682,11 +700,11 @@ BEGIN TRY
 	END
 	CLOSE _cursor;
 	DEALLOCATE _cursor;
-	COMMIT TRANSACTION
+	COMMIT TRANSACTION tran_sp_buildEventsItems
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_buildEventsItems
 END CATCH
 GO
 
@@ -700,7 +718,7 @@ CREATE PROCEDURE sp_assignChecklistItems
 	@itemQuantity INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_assignChecklistItems
 BEGIN TRY
 	DECLARE @userId INTEGER, @tertuliaId INTEGER, @eventId INTEGER, @itemId INTEGER, @totalQuantity INTEGER, @committedQuantity INTEGER;
 	SET @userId = dbo.fnGetUserId_byAlias(@userAlias);
@@ -726,12 +744,12 @@ BEGIN TRY
 	END ELSE BEGIN
 		UPDATE Contributions SET ct_quantity = @itemQuantity WHERE ct_user = @userId AND ct_event = @eventId AND ct_item = @itemId;
 	END
-	COMMIT;
+	COMMIT TRANSACTION tran_sp_assignChecklistItems;
 	RETURN @itemQuantity;
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_assignChecklistItems
 END CATCH
 GO
 
@@ -743,18 +761,18 @@ CREATE PROCEDURE sp_postNotification
 	@message VARCHAR(40)
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_sp_postNotification
 BEGIN TRY
 	DECLARE @tertulia INTEGER, @tag INTEGER;
 	EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', @tertuliaName;
-	EXEC @tag = dbo.sp_getId 'tg', 'Tags', @typeName;
-	INSERT INTO Notifications (no_tertulia, no_user, no_timestamp, no_message) 
+	SET @tag = dbo.fnGetEnum('Tags', 'announcements');
+	INSERT INTO Notifications (no_tertulia, no_user, no_tag, no_message) 
 	VALUES (@tertulia, @userId, @tag, @message);
-	COMMIT TRANSACTION
+	COMMIT TRANSACTION tran_sp_postNotification
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_sp_postNotification
 END CATCH
 GO
 
@@ -785,7 +803,7 @@ GO
 CREATE PROCEDURE spAcceptInvitation @userId INTEGER, @token VARCHAR(36)
 AS 
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION
+BEGIN TRANSACTION tran_spAcceptInvitation
 BEGIN TRY
 	DECLARE @tertulia INTEGER, @role INTEGER, @email_i VARCHAR(40), @email_u VARCHAR(40);
 	SELECT @tertulia = in_tertulia, @email_i = in_email FROM Invitations 
@@ -793,17 +811,18 @@ BEGIN TRY
 	SELECT @email_u = us_email FROM Users WHERE us_id = @userId;
 	IF @email_i <> @email_u
 	BEGIN
-		ROLLBACK; TRANSACTION
+		ROLLBACK TRANSACTION tran_spAcceptInvitation
 		RETURN -1;
 	END
 	SET @role = dbo.fnGetEnum('Roles', 'owner');
 	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @role);
 	UPDATE Invitations SET in_is_acknowledged = 1 WHERE in_key = @token;
+	COMMIT TRANSACTION tran_spAcceptInvitation
 	RETURN @token;
 END TRY
 BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION
+	ROLLBACK TRANSACTION tran_spAcceptInvitation
 END CATCH
 GO
 
@@ -822,57 +841,57 @@ GO
 ------------------------------------------------------------------------------
 
 -- DummyStuff
-EXEC spSetEnum N'Dummy', N'dummy', 0;
+EXEC spSetEnumI N'Dummy', N'dummy', 0;
 
 -- WeekDays
-EXEC spSetEnum N'WeekDays', N'sunday',    1;
-EXEC spSetEnum N'WeekDays', N'monday',    2;
-EXEC spSetEnum N'WeekDays', N'tuesday',   3; 
-EXEC spSetEnum N'WeekDays', N'wednesday', 4;
-EXEC spSetEnum N'WeekDays', N'thursday',  5;
-EXEC spSetEnum N'WeekDays', N'friday',    6;
-EXEC spSetEnum N'WeekDays', N'saturday',  7;
+EXEC spSetEnumI N'WeekDays', N'sunday',    1;
+EXEC spSetEnumI N'WeekDays', N'monday',    2;
+EXEC spSetEnumI N'WeekDays', N'tuesday',   3; 
+EXEC spSetEnumI N'WeekDays', N'wednesday', 4;
+EXEC spSetEnumI N'WeekDays', N'thursday',  5;
+EXEC spSetEnumI N'WeekDays', N'friday',    6;
+EXEC spSetEnumI N'WeekDays', N'saturday',  7;
 GO
 
 -- MonthsNames
-EXEC spSetEnum N'MonthNames', N'january',    1;
-EXEC spSetEnum N'MonthNames', N'february',   2;
-EXEC spSetEnum N'MonthNames', N'march',      3;
-EXEC spSetEnum N'MonthNames', N'april',      4;
-EXEC spSetEnum N'MonthNames', N'may',        5;
-EXEC spSetEnum N'MonthNames', N'june',       6;
-EXEC spSetEnum N'MonthNames', N'july',       7;
-EXEC spSetEnum N'MonthNames', N'august',     8;
-EXEC spSetEnum N'MonthNames', N'september',  9;
-EXEC spSetEnum N'MonthNames', N'october',   10;
-EXEC spSetEnum N'MonthNames', N'november',  11;
-EXEC spSetEnum N'MonthNames', N'december',  12;
+EXEC spSetEnumI N'MonthNames', N'january',    1;
+EXEC spSetEnumI N'MonthNames', N'february',   2;
+EXEC spSetEnumI N'MonthNames', N'march',      3;
+EXEC spSetEnumI N'MonthNames', N'april',      4;
+EXEC spSetEnumI N'MonthNames', N'may',        5;
+EXEC spSetEnumI N'MonthNames', N'june',       6;
+EXEC spSetEnumI N'MonthNames', N'july',       7;
+EXEC spSetEnumI N'MonthNames', N'august',     8;
+EXEC spSetEnumI N'MonthNames', N'september',  9;
+EXEC spSetEnumI N'MonthNames', N'october',   10;
+EXEC spSetEnumI N'MonthNames', N'november',  11;
+EXEC spSetEnumI N'MonthNames', N'december',  12;
 GO
 
--- Recurrencies
-EXEC spSetEnum N'Recurrency', N'Weekly',   0; -- Events with a weekly recurrency on a week day.
-EXEC spSetEnum N'Recurrency', N'MonthlyD', 0; -- Events with a monthly recurrency on a month day.
-EXEC spSetEnum N'Recurrency', N'MonthlyW', 0; -- Events with a monthly recurrency on a week day of a week of the month.
-EXEC spSetEnum N'Recurrency', N'YearlyD',  0; -- Events with a yearly recurrency on a year day.
-EXEC spSetEnum N'Recurrency', N'YearlyW',  0; -- Events with a yearly recurrency on a week day of a week of the year.
-EXEC spSetEnum N'Recurrency', N'YearlyM',  0; -- Events with a yearly recurrency on a month day of a month of the year
+-- ScheduleTypes
+EXEC spSetEnumS N'Schedule', N'Weekly',   N'Scheduled weekly on a day of the week.'; -- Events with a weekly scheduling on a week day.
+EXEC spSetEnumS N'Schedule', N'MonthlyD', N'Scheduled monthly on a day of the month.'; -- Events with a monthly scheduling on a month day.
+EXEC spSetEnumS N'Schedule', N'MonthlyW', N'Scheduled monthly on a day of the week of a week of the month.'; -- Events with a monthly scheduling on a week day of a week of the month.
+EXEC spSetEnumS N'Schedule', N'YearlyD',  N'Scheduled yearly on a day of the year.'; -- Events with a yearly scheduling on a year day.
+EXEC spSetEnumS N'Schedule', N'YearlyW',  N'Scheduled yearly on a day of the week of a week of the year.'; -- Events with a yearly scheduling on a week day of a week of the year.
+EXEC spSetEnumS N'Schedule', N'YearlyM',  N'Scheduled yearly on a day of the month of a month of the year.'; -- Events with a yearly scheduling on a month day of a month of the year.
 GO
 
 -- Roles
-EXEC spSetEnum N'Roles', N'owner',   0;
-EXEC spSetEnum N'Roles', N'manager', 0;
-EXEC spSetEnum N'Roles', N'member',  0;
+EXEC spSetEnumI N'Roles', N'owner',   0;
+EXEC spSetEnumI N'Roles', N'manager', 0;
+EXEC spSetEnumI N'Roles', N'member',  0;
 GO
 
 -- Tags
-EXEC spSetEnum N'Tags', N'announcements', 0;
+EXEC spSetEnumI N'Tags', N'announcements', 0;
 GO
 
 -- Dummy Data
 DECLARE @dummy INTEGER, @schedule INTEGER, @location INTEGER, @tertulia INTEGER;
 
 SET @dummy = dbo.fnGetEnum('Dummy', 'dummy');
-INSERT INTO Schedules (sc_recurrency) VALUES (@dummy);
+INSERT INTO Schedules (sc_type) VALUES (@dummy);
 SET @schedule = SCOPE_IDENTITY();
 
 INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia)
@@ -886,275 +905,4 @@ SET @tertulia = SCOPE_IDENTITY();
 UPDATE Locations SET lo_tertulia = @tertulia;
 
 ALTER TABLE Locations ADD CONSTRAINT fk_location_tertulia FOREIGN KEY (lo_tertulia) REFERENCES Tertulias(tr_id);
-GO
-
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
---                                                                          --
---    ####### #######  #####  #######    ######     #    #######    #       --
---       #    #       #     #    #       #     #   # #      #      # #      --
---       #    #       #          #       #     #  #   #     #     #   #     --
---       #    #####    #####     #       #     # #     #    #    #     #    --
---       #    #             #    #       #     # #######    #    #######    --
---       #    #       #     #    #       #     # #     #    #    #     #    --
---       #    #######  #####     #       ######  #     #    #    #     #    --
---                                                                          --
-------------------------------------------------------------------------------
-------------------------------------------------------------------------------
-
--- Create a Schedule
--- TEST 00
--- To reposition
-BEGIN TRANSACTION
-BEGIN TRY
-	DECLARE @dow INTEGER, @schedule INTEGER;
-	SET @dow = dbo.fnGetEnum('WeekDays', 'Monday');
-	DECLARE @recurrency INTEGER; SET @recurrency = dbo.fnGetEnum('Recurrency', 'MonthlyW');
-	INSERT INTO Schedules (sc_recurrency) VALUES (@recurrency);
-	SET @schedule = SCOPE_IDENTITY();
-	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) VALUES (@schedule, @dow, 0, 1, 0);
-	ROLLBACK TRANSACTION
-END TRY
-BEGIN CATCH
-	DECLARE @errno INTEGER, @errmsg VARCHAR(255);
-	SELECT @errno = ERROR_NUMBER(), @errmsg = ERROR_MESSAGE();
-	RAISERROR(N'Error number: %i, Error message: %s' -- Message text
-		, 10, 1 -- Severity, State
-		, @errno, @errmsg) WITH NOWAIT
-	ROLLBACK TRANSACTION
-END CATCH
-GO
-
--- Create application users
--- TEST 01
-INSERT INTO Users (us_sid, us_alias, us_firstname, us_lastname, us_email, us_picture) VALUES 
-	-- ('sid:fadae567db0f67c6fe69d25ee8ffc0b5', N'aborba', N'António', N'Borba da Silva', 'antonio.borba@gmail.com', ''),
-	('sid:357a070bdaf6a373efaf9ab34c8ae5b9', N'GGLabs', N'António', N'Borba da Silva', 'abs@ggl.pt', 'https://lh4.googleusercontent.com/-l5aXbFF6eI8/AAAAAAAAAAI/AAAAAAAAAik/bjXsvC1iVHY/s96-c/photo.jpg');
-GO
-
--- Create a set of tertulia locations
--- TEST 02
-DECLARE @userId INTEGER, @tertulia INTEGER;
-SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
-EXEC sp_insertTertulia_MonthlyW 
-	N'Tertulia do Tejo'                -- [name]
-	, N'O que seria do Mundo sem nós!' -- [subject]
-	, @UserId                          -- [userId]
-	, N'friday'                        -- [weekDay]
-	, 2                                -- [weekNr]
-	, 1                                -- [fromStart]
-	, 0                                -- [skip]
-	, N'Restaurante Cave Real'         -- [locationName]
-	, N'Avenida 5 de Outubro 13'       -- [locationAddress]
-	, N'1050 Lisboa'                   -- [locationZip]
-	, N'Portugal'                      -- [locationCountry]
-	, N'38.733541'                     -- [locationLatitude]
-	, N'-9.147056'                     -- [locationLongitude]
-	, 1;                               -- [isPrivate]
-SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Tertulia do Tejo';
-INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
-	  (N'Pastelaria Mexicana',              N'Avenida Guerra Junqueiro 30C',                      N'1000-167 Lisboa',  'Portugal', '38.740117', '-9.136394', @tertulia)
---	, (N'Restaurante Cave Real',            N'Avenida 5 de Outubro 13',                           N'1050 Lisboa',      'Portugal', '38.733541', '-9.147056', @tertulia)
-	, (N'Restaurante Picanha',              N'Rua das Janelas Verdes 96',                         N'1200 Lisboa',      'Portugal', '38.705678', '-9.160624', @tertulia)
-	, (N'Restaurante EntreCopos',           N'Rua de Entrecampos, nº11',                          N'1000-151 Lisboa',  'Portugal', '38.744912', '-9.145291', @tertulia)
-	, (N'Lisboa Racket Center',             N'Rua Alferes Malheiro',                              N'1700 Lisboa',      'Portugal', '38.758372', '-9.134471', @tertulia)
-	, (N'Restaurante O Jacinto',            N'Avenida Ventura Terra 2',                           N'1600-781 Lisboa',  'Portugal', '38.758563', '-9.167007', @tertulia)
-	, (N'Restaurante Taberna Gourmet',      N'Rua Padre Américo 28',                              N'1600-548 Lisboa',  'Portugal', '38.763603', '-9.180278', @tertulia)
-	, (N'Café A Luz Ideal',                 N'Rua Gen. Schiappa Monteiro 2A',                     N'1600-155 Lisboa',  'Portugal', '38.754401', '-9.174995', @tertulia)
-	, (N'Restaurante Honorato - Telheiras', N'Rua Professor Francisco Gentil, Lote A, Telheiras', N'1600 Lisboa',      'Portugal', '38.760363', '-9.166720', @tertulia)
-	, (N'Restaurante Gardens',              N'Rua Principal, S/N, Urbanização Quinta Alcoutins',  N'1600-263 Lisboa',  'Portugal', '38.776200', '-9.171391', @tertulia)
-	, (N'Pastelaria Arcadas',               N'Rua Cidade de Lobito 282',                          N'1800-071 Lisboa',  'Portugal', '38.764007', '-9.112470', @tertulia)
-	, (N'Varsailles - Técnico',             N'Avenida Rovisco Pais 1',                            N'1049-001 Lisboa',  'Portugal', '38.737674', '-9.138564', @tertulia)
-	, (N'Pastelaria Zineira',               N'Rua Principal, 444, Livramento',                    N'2765-383 Estoril', 'Portugal', '38.713092', '-9.371864', @tertulia)
-	, (N'Avó Fernanda',                     N'Avenida Nações Unidas, 33, 2.ºDtº',                 N'1600-531 Lisboa',  'Portugal', '38.764288', '-9.180429', @tertulia);
-GO
-
--- Create a set of tertulias
--- TEST 03
--- [name], [subject], [userId], [weekDay], [weekNr], [fromStart], [skip], [locationName], [isPrivate]
-BEGIN TRANSACTION
-BEGIN TRY
-	DECLARE @userId INTEGER, @tertulia INTEGER;
-	SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Tertúlia dos primos', N'Só Celoricos' -- [name], [subject]
-		, @UserId                               -- [userId]
-		, N'friday', 0 , 1 , 3                  -- [weekDay], [weekNr], [fromStart], [skip]
-		, N'Restaurante O Jacinto', N'Avenida Ventura Terra 2', N'1600-781 Lisboa', N'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
-		, N'38.758563', N'-9.167007'            -- [locationLatitude], [locationLongitude]
-		, 1;                                    -- [isPrivate]
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Escolinha 72-77', N'Sempre em contato'            
-		, @UserId
-		, 'saturday', 0, 1, 10
-		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151 Lisboa', 'Portugal'
-		, '38.744912', '-9.145291'
-		, 1;
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Natais BS' , N'Mais um...'
-		, @UserId
-		, 'sunday', 0, 0, 51
-		, 'Avó Fernanda', N'Avenida Nações Unidas, 33, 2.ºDtº', N'1600-531 Lisboa', 'Portugal'
-		, '38.764288', '-9.180429'
-		, 1;
-	SET @UserId = dbo.fnGetUserId_byAlias('GGLabs')
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Gulbenkian Música' , N''
-		, @UserId
-		, 'thursday', 1, 1, 3
-		, 'Restaurante Gardens', N'Rua Principal, S/N, Urbanização Quinta Alcoutins', N'1600-263 Lisboa', 'Portugal'
-		, '38.776200', '-9.171391'
-		, 0;
-	EXEC sp_insertTertulia_MonthlyW 
-		N'CALM', N'Ex MAC - Sempre só nós 8'
-		, @UserId
-		, 'friday' , 0, 0, 3
-		, 'Restaurante Taberna Gourmet', N'Rua Padre Américo 28', N'1600-548 Lisboa', 'Portugal'
-		, '38.763603', '-9.180278'
-		, 1;
-	EXEC sp_insertTertulia_MonthlyW 
-		N'AtHere', N'Tipo RoBoTo'
-		, @UserId
-		, 'thursday', 0, 0, 5
-		, 'Pastelaria Zineira', N'Rua Principal, 444, Livramento', N'2765-383 Estoril', 'Portugal'
-		, '38.713092', '-9.371864'
-		, 1;
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Terças Ggl', N''
-		, @UserId
-		, 'tuesday', 0, 0, 0
-		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001 Lisboa', 'Portugal'
-		, '38.737674', '-9.138564'
-		, 1;
-	ROLLBACK TRANSACTION
-END TRY
-BEGIN CATCH
-	DECLARE @errno INTEGER, @errmsg VARCHAR(255);
-	SELECT @errno = ERROR_NUMBER(), @errmsg = ERROR_MESSAGE();
-	RAISERROR(N'Error number: %i, Error message: %s' -- Message text
-		, 10, 1 -- Severity, State
-		, @errno, @errmsg) WITH NOWAIT
-	ROLLBACK TRANSACTION
-END CATCH
-GO
-
--- Create Tertulia Events
--- TEST 007
-BEGIN TRANSACTION
-BEGIN TRY
-	DECLARE @userId INTEGER, @tertulia INTEGER;
-	SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
-	EXEC sp_insertTertulia_MonthlyW 
-		N'Terças Ggl', N''         -- [name], [subject]
-		, @UserId                  -- [userId]
-		, N'tuesday', 0 , 0 , 0    -- [weekDay], [weekNr], [fromStart], [skip]
-		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001 Lisboa', 'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
-		, '38.737674', '-9.138564' -- [locationLatitude], [locationLongitude]
-		, 1;                       -- [isPrivate]
-	SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Terças Ggl';
-	INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
-		(N'Lisboa Racket Center', N'Rua Alferes Malheiro', N'1700 Lisboa', 'Portugal', '38.758372', '-9.134471', @tertulia);
-	EXEC dbo.sp_createEvent 'Terças Ggl', 'Lisboa Racket Center', '20160523 13:00:00';
-	EXEC dbo.sp_createEventDefaultLocation 'Terças Ggl', '20160904 13:00:00';
-	ROLLBACK TRANSACTION
-END TRY
-BEGIN CATCH
-	DECLARE @errno INTEGER, @errmsg VARCHAR(255);
-	SELECT @errno = ERROR_NUMBER(), @errmsg = ERROR_MESSAGE();
-	RAISERROR(N'Error number: %i, Error message: %s' -- Message text
-		, 10, 1 -- Severity, State
-		, @errno, @errmsg) WITH NOWAIT
-	ROLLBACK TRANSACTION
-END CATCH
-GO
-
--- Create Tertulia Items inventory
--- Test 008
-DECLARE @tertuliaId INTEGER;
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
-INSERT INTO ItemsCatalog (ic_name, ic_tertulia) VALUES 
-	('Coca-Cola (1lt)', @tertuliaId), 
-	('Sumol laranja (1lt)', @tertuliaId), 
-	('Cerveja (1lt)', @tertuliaId), 
-	('Coca-Cola em lata (1)', @tertuliaId),
-	('Água Tónica (1lt)', @tertuliaId),
-	('Pão cereais (500g)', @tertuliaId),
-	('Fiambre (500g)', @tertuliaId),
-	('Queijo Flamengo (500g)', @tertuliaId),
-	('Pacotes Batata Frita (500g)', @tertuliaId),
-	('Sortido de frutos secos (200g)', @tertuliaId),
-	('Pacote de bolacha maria', @tertuliaId);
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo';
-INSERT INTO ItemsCatalog (ic_name, ic_tertulia) VALUES  
-	('Cerveja (1lt)', @tertuliaId),
-	('Vinho Verde Branco (75cl)', @tertuliaId),
-	('Vinho Tinto Frutado (75cl)', @tertuliaId),
-	('Água Tónica (1lt)', @tertuliaId),
-	('Gin (75cl)', @tertuliaId),
-	('Copos de vidro', @tertuliaId),
-	('Guardanapos de papel (200g)', @tertuliaId);
-GO
-
--- Create Tertulia Items Templates
--- TEST 009
-DECLARE @tertuliaId INTEGER;
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
-INSERT INTO Templates (tp_name, tp_tertulia) VALUES
-	('Drinks', @tertuliaId),
-	('Snacks', @tertuliaId);
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo';
-INSERT INTO Templates (tp_name, tp_tertulia) VALUES
-	('Drinks', @tertuliaId);
-GO
-
--- Fill Tertulia Items Templates with items from Tertulia Items inventory
--- TEST 010
-DECLARE @templateId INTEGER, @tertuliaId INTEGER;
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Escolinha 72-77';
-SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Snacks');
-INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pão cereais (500g)'), 2),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Fiambre (500g)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Queijo Flamengo (500g)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pacotes Batata Frita (500g)'), 4),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Sortido de frutos secos (200g)'), 6),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Pacote de bolacha maria'), 2);
-SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Drinks');
-INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Coca-Cola (1lt)'), 2),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Sumol laranja (1lt)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 4),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Coca-Cola em lata (1)'), 6),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2);
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo';
-SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Drinks');
-INSERT INTO TemplatesCat (tc_template, tc_item, tc_quantity) VALUES 
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Cerveja (1lt)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Vinho Verde Branco (75cl)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Vinho Tinto Frutado (75cl)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Água Tónica (1lt)'), 2),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Gin (75cl)'), 1),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Copos de vidro'), 4),
-	(@templateId, dbo.fnGetItem_byTertuliaId(@tertuliaId, 'Guardanapos de papel (200g)'), 1);
-GO
-
--- Fill Event Checklist with Tertulia Template
--- TEST 011
-EXEC sp_buildEventsItems 'Tertulia do Tejo', '2016-09-04 13:00:00', 'Drinks';
-GO
-
--- Commit to handle items to a Tertulia event
--- TEST 012
-DECLARE @commitment INTEGER, @itemName VARCHAR(40);
-SET @itemName = 'Copos de vidro';
-EXEC @commitment = sp_assignChecklistItems 'GGLabs', 'Tertulia do Tejo', '2016-09-04 13:00:00', @itemName, 2;
-PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
-SET @itemName = 'Cerveja (1lt)';
-EXEC @commitment = sp_assignChecklistItems 'GGLabs', 'Tertulia do Tejo', '2016-09-04 13:00:00', @itemName, 2;
-PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
-GO
-
--- Post a message in a Tertulia
--- TEST 013
-EXEC sp_postNotification_byAlias 'GGLabs', 'Tertulia do Tejo', 'Announcement', 'My test 0post to a tertulia';
 GO

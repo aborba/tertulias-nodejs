@@ -11,7 +11,7 @@ module.exports = [
 
 	paths: {
 		// Lists
-		tertulias:    'tertulias',                             // [GP] My tertulias
+		tertulias:    'tertulias',                             // My tertulias
 		public:       'public',                                // Public tertulias
 		public_bytag: 'public/{tag}',                          // Public tertulias on a tag
 		members:      'tertulia/{tr}/members',                 // Tertulia's members
