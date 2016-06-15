@@ -76,6 +76,7 @@ module.exports = function (configuration) {
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
+	                    	console.log(elem);
 	                    	console.log(elem._links);
 	                    });
 	                    preparedStatement.unprepare();
