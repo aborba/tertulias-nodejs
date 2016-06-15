@@ -36,11 +36,11 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertuliaX;
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
 	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
-	    req.t_links = { edit: route_paths['edit'],
-	    	members: route_paths['members'],
-	    	messages: route_paths['messages'],
-	    	events: route_paths['events'],
-	    	nextevent: route_paths['nextevent'] };
+	    req.t_links = { edit: 'edit',
+	    	members: 'members',
+	    	messages: 'messages',
+	    	events: 'events',
+	    	nextevent: 'nextevent' };
 	    goQuery(req, res, next);
 	});
 
@@ -62,10 +62,8 @@ module.exports = function (configuration) {
 	                    recordset.forEach(function(elem) {
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
-	                    		console.log(req.t_links);
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-	                    	console.log(elem['_links']);
 	                    });
 	                    preparedStatement.unprepare();
 	                    res.type('application/json').json(recordset);
