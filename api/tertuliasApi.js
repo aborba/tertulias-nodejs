@@ -7,8 +7,6 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-console.log(route_paths.tertulia_defaultlocation);
-
 const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
 ' FROM Tertulias' +
 ' INNER JOIN Locations  ON tr_location = lo_id' +
