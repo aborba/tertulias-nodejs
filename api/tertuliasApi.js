@@ -21,6 +21,13 @@ const queryTertulias = 'SELECT DISTINCT' +
 ' INNER JOIN EnumValues ON mb_role = nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
+const queryScheduleMonthlyW = 'SELECT mw_id, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip' +
+' FROM MonthlyW' +
+' INNER JOIN Schedules  ON mw_schedule = sc_id' +
+' INNER JOIN Tertulias  ON sc_tertulia = tr_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
 var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
 
 module.exports = function (configuration) {
