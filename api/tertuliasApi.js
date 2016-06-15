@@ -21,16 +21,16 @@ const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_nam
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
-	' sc_type, E2.nv_name AS schedule, E2.nv_description AS description,' + // Schedule
+	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description,' + // Schedule
 	' tr_is_private, ' +
-	' E1.nv_name AS nv_name' + // Role
+	' _Member.nv_name AS nv_name' + // Role
 ' FROM Tertulias' +
 ' INNER JOIN Locations  ON tr_location = lo_id' +
 ' INNER JOIN Schedules  ON tr_schedule = sc_id' +
 ' INNER JOIN Members    ON mb_tertulia = tr_id' +
 ' INNER JOIN Users      ON mb_user = us_id' +
-' INNER JOIN EnumValues AS E1 ON mb_role = E1.nv_id' +
-' INNER JOIN EnumValues AS E2 ON sc_type = E2.nv_id' +
+' INNER JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
+' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
 ' AND tr_id = @tertulia';
 

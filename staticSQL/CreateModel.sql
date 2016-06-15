@@ -98,6 +98,7 @@ GO
 
 IF OBJECT_ID(N'dbo.Invitations') IS NOT NULL DROP TABLE Invitations;
 IF OBJECT_ID(N'dbo.fnCountOpenInvitations') IS NOT NULL DROP FUNCTION fnCountOpenInvitations;
+IF OBJECT_ID(N'dbo.ReadNotifications') IS NOT NULL DROP TABLE ReadNotifications;
 IF OBJECT_ID(N'dbo.Notifications') IS NOT NULL DROP TABLE Notifications;
 IF OBJECT_ID(N'dbo.Contributions') IS NOT NULL DROP TABLE Contributions;
 IF OBJECT_ID(N'dbo.EventsItems') IS NOT NULL DROP TABLE EventsItems;
@@ -107,7 +108,8 @@ IF OBJECT_ID(N'dbo.Items') IS NOT NULL DROP TABLE Items;
 IF OBJECT_ID(N'dbo.Events') IS NOT NULL DROP TABLE Events;
 IF OBJECT_ID(N'dbo.Members') IS NOT NULL DROP TABLE Members;
 IF OBJECT_ID(N'dbo.Users') IS NOT NULL DROP TABLE Users;
-DECLARE @constName VARCHAR(255); SELECT @constName = CONSTRAINT_NAME FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME='fk_location_tertulia';
+DECLARE @constName VARCHAR(255);
+SELECT @constName = CONSTRAINT_NAME FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME='fk_location_tertulia';
 IF @constName IS NOT NULL ALTER TABLE Locations DROP CONSTRAINT fk_location_tertulia;
 IF OBJECT_ID(N'dbo.Tertulias') IS NOT NULL DROP TABLE Tertulias;
 IF OBJECT_ID(N'dbo.Locations') IS NOT NULL DROP TABLE Locations;
@@ -152,7 +154,6 @@ CREATE TABLE EnumValues(
 );
 GO
 
--- See <TEST 03>
 CREATE TABLE Schedules(
 	sc_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, sc_type INTEGER NOT NULL
@@ -160,7 +161,6 @@ CREATE TABLE Schedules(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE Weekly(
 	wk_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, wk_schedule INTEGER NOT NULL
@@ -171,7 +171,6 @@ CREATE TABLE Weekly(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE MonthlyD(
 	md_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, md_schedule INTEGER NOT NULL
@@ -183,7 +182,6 @@ CREATE TABLE MonthlyD(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE MonthlyW(
 	mw_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, mw_schedule INTEGER NOT NULL
@@ -196,7 +194,6 @@ CREATE TABLE MonthlyW(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE YearlyD(
 	yd_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, yd_schedule INTEGER NOT NULL
@@ -207,7 +204,6 @@ CREATE TABLE YearlyD(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE YearlyW(
 	yw_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, yw_schedule INTEGER NOT NULL
@@ -220,7 +216,6 @@ CREATE TABLE YearlyW(
 );
 GO
 
--- See <TEST 0XX>
 CREATE TABLE YearlyM(
 	ym_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, ym_schedule INTEGER NOT NULL
@@ -233,7 +228,6 @@ CREATE TABLE YearlyM(
 );
 GO
 
--- See <TEST 02> <TEST 007>
 CREATE TABLE Locations(
 	lo_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, lo_name VARCHAR(40) NOT NULL
@@ -249,7 +243,6 @@ CREATE TABLE Locations(
 );
 GO
 
--- See <TEST 03> <TEST 007>
 CREATE TABLE Tertulias(
 	tr_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, tr_name VARCHAR(40) NOT NULL
@@ -264,7 +257,6 @@ CREATE TABLE Tertulias(
 );
 GO
 
--- See <TEST 01>
 CREATE TABLE Users(
 	us_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, us_sid VARCHAR(40) NOT NULL
@@ -279,7 +271,6 @@ CREATE TABLE Users(
 );
 GO
 
--- See <TEST 03>
 CREATE TABLE Members(
 	mb_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, mb_tertulia INTEGER NOT NULL
@@ -291,9 +282,6 @@ CREATE TABLE Members(
 );
 GO
 
--- See <TEST 007>
--- TODO: URI
--- TODO: Criar localização 0
 CREATE TABLE Events(
 	ev_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, ev_tertulia INTEGER NOT NULL
@@ -306,7 +294,6 @@ CREATE TABLE Events(
 );
 GO
 
--- See <TEST 008>
 CREATE TABLE Items(
 	it_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, it_name VARCHAR(40) NOT NULL
@@ -316,7 +303,6 @@ CREATE TABLE Items(
 );
 GO
 
--- See <TEST 009>
 CREATE TABLE Templates(
 	tp_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, tp_name VARCHAR(40) NOT NULL
@@ -326,7 +312,6 @@ CREATE TABLE Templates(
 );
 GO
 
--- See <TEST 010> <TEST 011>
 CREATE TABLE QuantifiedItems(
 	qi_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, qi_template INTEGER NOT NULL
@@ -338,7 +323,6 @@ CREATE TABLE QuantifiedItems(
 );
 GO
 
--- See <TEST 011> <TEST 012>
 CREATE TABLE EventsItems(
 	ei_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, ei_event INTEGER NOT NULL
@@ -350,8 +334,6 @@ CREATE TABLE EventsItems(
 );
 GO
 
--- See <TEST 012>
--- TODO: fk eventitem ; remover event, item
 CREATE TABLE Contributions(
 	ct_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, ct_user INTEGER NOT NULL
@@ -365,7 +347,6 @@ CREATE TABLE Contributions(
 );
 GO
 
--- See <TEST 013>
 CREATE TABLE Notifications(
 	no_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, no_tertulia INTEGER NOT NULL
@@ -380,7 +361,16 @@ CREATE TABLE Notifications(
 );
 GO
 
--- prever cancelamento
+CREATE TABLE ReadNotifications(
+	rn_id INTEGER IDENTITY(1,1) PRIMARY KEY
+	, rn_user INTEGER NOT NULL
+	, rn_notification INTEGER NOT NULL
+	, CONSTRAINT un_readnotifications_un UNIQUE (rn_user, rn_notification)
+	, CONSTRAINT fk_readnotifications_user FOREIGN KEY (rn_user) REFERENCES Users(us_id)
+	, CONSTRAINT fk_readnotifications_notification FOREIGN KEY (rn_notification) REFERENCES Notifications(no_id)
+);
+GO
+
 CREATE TABLE Invitations(
 	in_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, in_key VARCHAR(36) NOT NULL -- Ex: E5FD8BEF-94EB-4BF4-B85A-FAA4B1B5FE33
@@ -474,7 +464,6 @@ END;
 GO
 
 -- TODO: CHECK TERTULIAS
--- See <TEST 008> <TEST 009> <TEST 010> <TEST 012> <TEST 013>
 CREATE PROCEDURE sp_getId
 	@starter VARCHAR(10),
     @tableName SYSNAME,
@@ -502,7 +491,6 @@ GO
 --                                                                                   --
 ---------------------------------------------------------------------------------------
                                                                              
--- See <TEST 011>
 CREATE FUNCTION fnGetTemplate_byTertuliaId(@tertuliaId INTEGER, @templateName VARCHAR(40))
 RETURNS INTEGER
 AS 
@@ -514,7 +502,6 @@ BEGIN
 END;
 GO
 
--- See <TEST 03> <TEST 012> <TEST 013>
 CREATE FUNCTION fnGetUserId_byAlias(@alias VARCHAR(40))
 RETURNS INTEGER
 AS 
@@ -525,7 +512,6 @@ BEGIN
 END;
 GO
 
--- See <TEST 007>
 CREATE FUNCTION fnGetTertuliaLocation_byTertuliaId(@tertuliaId INTEGER)
 RETURNS INTEGER
 AS 
@@ -536,7 +522,6 @@ BEGIN
 END;
 GO
 
--- See <TEST 010> <TEST 012>
 CREATE FUNCTION fnGetItem_byTertuliaId(@tertuliaId INTEGER, @itemName VARCHAR(40))
 RETURNS INTEGER
 AS 
@@ -548,7 +533,6 @@ BEGIN
 END;
 GO
 
--- See <TEST 012>
 CREATE FUNCTION fnGetEvent_byTertuliaId(@tertuliaId INTEGER, @eventDate DATETIME)
 RETURNS INTEGER
 AS
@@ -572,7 +556,6 @@ GO
 --                                                                                                                                                  --
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- See <TEST 011>
 CREATE PROCEDURE sp_getEventIdTertuliaId
 	@tertuliaName VARCHAR(40), @eventDate DATETIME,
 	@eventId INTEGER OUTPUT, @tertuliaId INTEGER OUTPUT
@@ -585,7 +568,6 @@ END
 GO
 
 -- TODO: CHECK TERTULIAS
--- See <TEST 03>
 CREATE PROCEDURE sp_insertTertulia_MonthlyW
 	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userId INTEGER, 
@@ -636,7 +618,6 @@ END CATCH
 GO
 
 -- TODO: CHECK TERTULIAS
--- See <TEST 007>
 CREATE PROCEDURE sp_createEvent
 	@tertuliaName VARCHAR(40), 
 	@eventLocation VARCHAR(40),
@@ -657,7 +638,6 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 007>
 CREATE PROCEDURE sp_createEventDefaultLocation
 	@tertuliaName VARCHAR(40), 
 	@eventDate DATETIME
@@ -677,7 +657,6 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 011>
 CREATE PROCEDURE sp_buildEventsItems
 	@tertuliaName VARCHAR(40), 
 	@eventDate DATETIME, 
@@ -709,7 +688,6 @@ END CATCH
 GO
 
 -- Commit Event Checklist item to user
--- See <TEST 012>
 CREATE PROCEDURE sp_assignChecklistItems
 	@userAlias VARCHAR(40), 
 	@tertulianame VARCHAR(40), 
@@ -753,7 +731,6 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 013>
 CREATE PROCEDURE sp_postNotification
 	@userId INTEGER,
 	@tertuliaName VARCHAR(40), 
@@ -776,7 +753,6 @@ BEGIN CATCH
 END CATCH
 GO
 
--- See <TEST 013>
 CREATE PROCEDURE sp_postNotification_byAlias
 	@userAlias VARCHAR(40), 
 	@tertuliaName VARCHAR(40), 
