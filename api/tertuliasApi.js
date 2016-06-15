@@ -15,7 +15,9 @@ const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_nam
 ' (SELECT * FROM' +
 ' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events) AS a WHERE a.rank = 1) AS b' +
 ' ON ev_tertulia = tr_id' +
-' LEFT JOIN (SELECT no_tertulia, COUNT(*) AS no_count FROM Notifications GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
+' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications where no_id not in' +
+' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
+' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 const queryTertuliaX = 'SELECT DISTINCT' +

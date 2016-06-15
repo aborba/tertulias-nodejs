@@ -229,7 +229,19 @@ PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
 GO
 
 -- Post a message in a Tertulia
-DECLARE @userId INTEGER, @tertuliaId INTEGER;
-SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
 EXEC sp_postNotification_byAlias 'GGLabs', 'Tertulia do Tejo', 'Announcement', 'My test post to a tertulia';
+EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl', 'Announcement', 'Another test post to a tertulia';
+EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl', 'Announcement', 'And another test post to a tertulia';
+EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl', 'Announcement', 'Yet another test post to a tertulia';
 GO
+
+-- Mark Tertulia messages as read
+DECLARE @user INTEGER, @tertulia INTEGER, @notification INTEGER;
+SET @user = dbo.fnGetUserId_byAlias('GGLabs');
+EXEC @tertulia = sp_getId 'tr', 'Tertulias', 'Terças Ggl';
+SELECT @notification = no_id FROM Notifications WHERE no_tertulia = @tertulia AND no_message = 'Another test post to a tertulia';
+insert into readnotifications(rn_user, rn_notification) values (@user, @notification);
+SELECT @notification = no_id FROM Notifications WHERE no_tertulia = @tertulia AND no_message = 'And another test post to a tertulia';
+insert into readnotifications(rn_user, rn_notification) values (@user, @notification);
+SET @user = dbo.fnGetUserId_byAlias('aborba');
+insert into readnotifications(rn_user, rn_notification) values (@user, @notification);
