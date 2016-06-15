@@ -1,9 +1,8 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
-
-
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize = require('azure-mobile-apps/src/express/middleware/authorize');
+
 var sql = require('mssql');
 var util = require('../util');
 
@@ -32,6 +31,13 @@ var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
 
 module.exports = function (configuration) {
     var router = express.Router();
+    
+	var completeError = function(err, res) {
+	    if (err) {
+	        console.error(err);
+	        if (res) res.sendStatus(500);
+	    }
+	};
 
     router.get('/', (req, res, next) => {
 		req.selectedQuery = queryTertulias;
