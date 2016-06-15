@@ -7,8 +7,6 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-//var route_paths = require('../route_paths');
-
 console.log(route_paths.tertulia_defaultlocation);
 
 const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
@@ -29,7 +27,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
-	    goQuery(req, res, next);
+//	    goQuery(req, res, next);
 	});
 
     router.get('/:tertulia', (req, res, next) => {
@@ -73,4 +71,3 @@ module.exports = function (configuration) {
     return router;
 
 }
-
