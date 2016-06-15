@@ -9,7 +9,7 @@ var util = require('../util');
 const queryTertulias = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
-	' sc_type, E2.nv_name AS schedule, E2.nv_description AS description' + // Schedule
+	' sc_type, E2.nv_name AS schedule, E2.nv_description AS description,' + // Schedule
 	' tr_is_private, ' +
 	' E1.nv_name AS nv_name' + // Role
 ' FROM Tertulias' +
