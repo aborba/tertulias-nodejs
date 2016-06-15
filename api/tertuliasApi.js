@@ -58,7 +58,7 @@ module.exports = function (configuration) {
 	                    if (err) { completeError(err, res); return; }
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
-	                    	console.log(elem.tr_id;);
+	                    	console.log(elem.tr_id);
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
