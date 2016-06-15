@@ -7,7 +7,12 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-const queryTertulias = 'SELECT DISTINCT tr_id, tr_name, tr_subject, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, sc_recurrency, tr_is_private, nv_name' +
+const queryTertulias = 'SELECT DISTINCT' +
+	' tr_id, tr_name, tr_subject, ' + // Tertulia
+	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
+	' sc_recurrency, ' + // Schedule
+	' tr_is_private, ' +
+	' nv_name' + // Role
 ' FROM Tertulias' +
 ' INNER JOIN Locations  ON tr_location = lo_id' +
 ' INNER JOIN Schedules  ON tr_schedule = sc_id' +
@@ -51,14 +56,16 @@ module.exports = function (configuration) {
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
 	                    if (err) { completeError(err, res); return; }
+	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
+	                    	console.log(elem.tr_id;);
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
 	                    });
 	                    preparedStatement.unprepare();
-	                    res.type('application/json').json(recordset);
+	                    res.json(recordset);
 	                    next();
 	                }
 	            );
