@@ -9,7 +9,7 @@ var util = require('../util');
 const queryTertulias = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
-	' sc_type,' + // Schedule
+	' sc_type, E2.nv_name AS schedule, E2.nv_description AS description' + // Schedule
 	' tr_is_private, ' +
 	' E1.nv_name AS nv_name' + // Role
 ' FROM Tertulias' +
@@ -17,7 +17,8 @@ const queryTertulias = 'SELECT DISTINCT' +
 ' INNER JOIN Schedules  ON tr_schedule = sc_id' +
 ' INNER JOIN Members    ON mb_tertulia = tr_id' +
 ' INNER JOIN Users      ON mb_user = us_id' +
-' INNER JOIN EnumValues AS E1 ON mb_role = nv_id' +
+' INNER JOIN EnumValues AS E1 ON mb_role = E1.nv_id' +
+' INNER JOIN EnumValues AS E2 ON sc_type = E2.nv_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 const queryScheduleMonthlyW = 'SELECT mw_id, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip' +
