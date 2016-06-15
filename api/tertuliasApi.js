@@ -7,7 +7,7 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-var route_paths = require('../route_paths');
+//var route_paths = require('../route_paths');
 
 console.log(route_paths.tertulia_defaultlocation);
 
@@ -36,11 +36,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertuliaX;
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
 	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
-	    req.t_links = { edit: 'edit',
-	    	members: 'members',
-	    	messages: 'messages',
-	    	events: 'events',
-	    	nextevent: 'nextevent' };
+	    req.t_links = { edit: 'edit', members: 'members', messages: 'messages', events: 'events', nextevent: 'nextevent' };
 	    goQuery(req, res, next);
 	});
 
