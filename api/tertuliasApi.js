@@ -6,7 +6,8 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-const queryTertulias = 'SELECT DISTINCT' +
+/*
+const queryTertuliasZ = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' tr_is_private, ' +
 	' nv_name' + // Role
@@ -16,6 +17,19 @@ const queryTertulias = 'SELECT DISTINCT' +
 ' INNER JOIN Members    ON mb_tertulia = tr_id' +
 ' INNER JOIN Users      ON mb_user = us_id' +
 ' INNER JOIN EnumValues ON mb_role = nv_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
+*/
+
+const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_name, no_count' +
+' FROM Tertulias' +
+' INNER JOIN Members ON mb_tertulia = tr_id' +
+' INNER JOIN Enumvalues ON mb_role = nv_id' +
+' INNER JOIN Users ON mb_user = us_id' +
+' LEFT JOIN' +
+' (SELECT * FROM' +
+' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events) AS a WHERE a.rank = 1) AS b' +
+' ON ev_tertulia = tr_id' +
+' LEFT JOIN (SELECT no_tertulia, COUNT(*) AS no_count FROM Notifications GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 const queryTertuliasX = 'SELECT DISTINCT' +
