@@ -9,7 +9,7 @@ var util = require('../util');
 const queryTertulias = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
-	' sc_recurrency, ' + // Schedule
+	' sc_type, ' + // Schedule
 	' tr_is_private, ' +
 	' nv_name' + // Role
 ' FROM Tertulias' +
@@ -31,7 +31,7 @@ var queryTertuliaX = queryTertulias + ' AND tr_id = @tertulia';
 
 module.exports = function (configuration) {
     var router = express.Router();
-    
+
 	var completeError = function(err, res) {
 	    if (err) {
 	        console.error(err);
