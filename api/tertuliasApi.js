@@ -6,20 +6,6 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-/*
-const queryTertuliasZ = 'SELECT DISTINCT' +
-	' tr_id, tr_name, tr_subject, ' + // Tertulia
-	' tr_is_private, ' +
-	' nv_name' + // Role
-' FROM Tertulias' +
-' INNER JOIN Locations  ON tr_location = lo_id' +
-' INNER JOIN Schedules  ON tr_schedule = sc_id' +
-' INNER JOIN Members    ON mb_tertulia = tr_id' +
-' INNER JOIN Users      ON mb_user = us_id' +
-' INNER JOIN EnumValues ON mb_role = nv_id' +
-' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
-*/
-
 const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_name, no_count' +
 ' FROM Tertulias' +
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
@@ -32,7 +18,7 @@ const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_nam
 ' LEFT JOIN (SELECT no_tertulia, COUNT(*) AS no_count FROM Notifications GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
-const queryTertuliasX = 'SELECT DISTINCT' +
+const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
 	' sc_type, E2.nv_name AS schedule, E2.nv_description AS description,' + // Schedule
