@@ -185,6 +185,7 @@ console.log('middle');
 		        	name: 'MonthlyW'
 		        }, 
 		        function(err, recordset, affected) {
+		        	if (err) { completeError(err, res); return; }
 		        	console.log('done');
 	        		console.log(recordset);
 	            });
