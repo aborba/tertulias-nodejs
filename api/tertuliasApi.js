@@ -165,13 +165,8 @@ GO
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
 
-	    //console.log(sql);
-
-console.log('just before');
 		var connection = new sql.Connection(util.sqlConfiguration);
-console.log('middle');
 	    connection.connect(function(err) {
-			console.log('inside');
 	    	var selectedQuery = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
@@ -180,14 +175,10 @@ console.log('middle');
 	        preparedStatement.input('name', sql.NVarChar);
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
-		        preparedStatement.execute({
-		        	enumtype: 'Schedule',
-		        	name: 'MonthlyW'
-		        }, 
+		        preparedStatement.execute({ enumtype: 'Schedule', name: 'MonthlyW' },
 		        function(err, recordset, affected) {
 		        	if (err) { completeError(err, res); return; }
-		        	console.log('done');
-	        		console.log(recordset);
+	        		console.log(recordset[0].nv_id);
 	            });
 		    });
 
