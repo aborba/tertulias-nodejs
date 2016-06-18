@@ -109,6 +109,56 @@ module.exports = function (configuration) {
 	    });
 	}
 
+/*
+CREATE PROCEDURE sp_insertTertulia_MonthlyW
+	@name VARCHAR(40), @subject VARCHAR(80), 
+	@userId INTEGER, 
+	@weekDay VARCHAR(20), @weekNr INTEGER, 
+	@fromStart BIT, @skip INTEGER, 
+	@locationName VARCHAR(40),
+	@locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40),
+	@locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12),
+	@locationLongitude VARCHAR(12),
+	@isPrivate INTEGER
+AS
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
+BEGIN TRY
+	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
+
+	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyW');
+	EXEC @location = dbo.sp_getId 'lo', 'Locations', 'Dummy';
+
+	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
+
+	INSERT INTO Schedules (sc_type) VALUES (@scheduleType);
+	SET @schedule = SCOPE_IDENTITY();
+
+	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) 
+	VALUES (@schedule, @dow, @weekNr, @fromStart, @skip);
+
+    INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
+    VALUES (@name, @subject, @location, @schedule, @isPrivate);
+    SET @tertulia = SCOPE_IDENTITY();
+
+    INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia)
+    VALUES (@locationName, @locationAddress, @locationZip, @locationCountry, @locationLatitude, @locationLongitude, @tertulia);
+    SET @location = SCOPE_IDENTITY();
+
+    UPDATE Tertulias SET tr_location = @location WHERE tr_id = @tertulia;
+
+    SET @owner = dbo.fnGetEnum('Roles', 'owner');
+	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @owner);
+	COMMIT TRANSACTION tran_sp_insertTertulia_MonthlyW
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK TRANSACTION tran_sp_insertTertulia_MonthlyW
+END CATCH
+GO
+*/
 	var goPost = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
 	    var paramsT = req.paramsT;
@@ -116,6 +166,8 @@ module.exports = function (configuration) {
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
+	    	connection.beginTransaction();
+	    	connection.rollback();
 	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
