@@ -181,8 +181,8 @@ console.log('middle');
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
 		        preparedStatement.execute({
-		        	'enumtype': 'Schedule',
-		        	'name': 'MonthlyW'
+		        	enumtype: 'Schedule',
+		        	name: 'MonthlyW'
 		        }, 
 		        function(err, recordset, affected) {
 		        	console.log('done');
