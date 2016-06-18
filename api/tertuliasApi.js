@@ -176,13 +176,13 @@ console.log('middle');
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
-	        preparedStatement.input(enumtype, sql.NVarChar);
-	        preparedStatement.input(name, sql.NVarChar);
+	        preparedStatement.input('enumtype', sql.NVarChar);
+	        preparedStatement.input('name', sql.NVarChar);
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
 		        preparedStatement.execute({
-		        	enumtype: 'Schedule',
-		        	name: 'MonthlyW'
+		        	'enumtype': 'Schedule',
+		        	'name': 'MonthlyW'
 		        }, 
 		        function(err, recordset, affected) {
 		        	console.log('done');
