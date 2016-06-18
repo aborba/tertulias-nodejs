@@ -69,7 +69,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/', (req, res, next) => {
-		console.log(req.body);
+		//console.log(req.body);
 		goPost(req, res, next);
 		res.type('application/json')
 			.json({id: '1'});
@@ -165,10 +165,12 @@ GO
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
 
-	    console.log(sql);
-	    
-		var connection = new sql.Connection(util.sqlConfiguration);
-		var transaction = new sql.Transaction(connection);
+	    //console.log(sql);
+
+console.log('just before');
+		//var connection = new sql.Connection(util.sqlConfiguration);
+		var transaction = new sql.Transaction();
+console.log('middle');
 	    transaction.begin(function(err) {
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
@@ -212,6 +214,7 @@ GO
 	        });
 	    */
 	    });
+console.log('right after');
 	}
 
     return router;
