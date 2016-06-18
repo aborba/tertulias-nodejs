@@ -168,15 +168,14 @@ GO
 	    //console.log(sql);
 
 console.log('just before');
-		//var connection = new sql.Connection(util.sqlConfiguration);
-		var transaction = new sql.Transaction();
+		var connection = new sql.Connection(util.sqlConfiguration);
 console.log('middle');
-	    transaction.begin(function(err) {
+	    connection.connect(function(err) {
 			console.log('inside');
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
-	        var sqlRequest = new sql.Request(transaction);
-	        var preparedStatement = new sql.PreparedStatement(transaction);
+	        var sqlRequest = new sql.Request(connection);
+	        var preparedStatement = new sql.PreparedStatement(connection);
 	        preparedStatement.input(enumtype, sql.NVarChar);
 	        preparedStatement.input(name, sql.NVarChar);
 	        preparedStatement.execute({
@@ -188,8 +187,7 @@ console.log('middle');
         		console.log(json(recordset));
             });
 
-	    	transaction.rollback();
-	    	return;
+	    	next();
 		/*
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
 	        preparedStatement.prepare(selectedQuery, function(err) {
