@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
-	    goQuery(req, res, next);
+	    goGet(req, res, next);
 	});
 
     router.get('/:tertulia', (req, res, next) => {
@@ -65,18 +65,17 @@ module.exports = function (configuration) {
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
 	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
 	    req.t_links = { edit: 'edit', members: 'members', messages: 'messages', events: 'events', nextevent: 'nextevent' };
-	    goQuery(req, res, next);
+	    goGet(req, res, next);
 	});
 
 	router.post('/', (req, res, next) => {
-		console.log("in post");
 		console.log(req.body);
 		res.type('application/json')
-			.json({id: 1});
+			.json({id: '1'});
 		next();
 	})
 
-	var goQuery = function(req, res, next) {
+	var goGet = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
