@@ -178,6 +178,7 @@ GO
 	        	name: 'MonthlyW'
 	        }, 
 	        function(err, recordset, affected) {
+	        	console.log('done');
         		console.log(json(recordset));
             });
 
