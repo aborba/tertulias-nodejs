@@ -167,9 +167,22 @@ GO
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
 	    	connection.beginTransaction();
-	    	connection.rollback();
+	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
+	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
+	        preparedStatement.input(enumtype, sql.NVarChar);
+	        preparedStatement.input(name, sql.NVarChar);
+	        preparedStatement.execute({
+	        	enumtype: 'Schedule',
+	        	name: 'MonthlyW'
+	        }, 
+	        function(err, recordset, affected) {
+        		console.log(json(recordset));
+            });
+
+	    	connection.rollback();
+
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
