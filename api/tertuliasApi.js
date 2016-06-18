@@ -194,8 +194,26 @@ GO
 					        					{ enumtype: 'name', name: 'Dummy' },
 					        					function(err, recordset, affected) {
 					        						if (err) { completeError(err, res); return; }
-					        						console.log(recordset);
 					        						var dummyLocation = recordset[0].lo_id;
+								        			preparedStatement.unprepare();
+								        			preparedStatement = new sql.PreparedStatement(connection);
+								        			preparedStatement.input('scheduleType', sql.Int);
+								        			preparedStatement.prepare(
+								        				'INSERT INTO Schedules (sc_type) VALUES (@scheduleType)',
+								        				function(err) {
+									        				if (err) { completeError(err, res); return; }
+									        				preparedStatement.execute(
+									        					{ scheduleType: scheduleType },
+									        					function(err, recordset, affected) {
+									        						if (err) { completeError(err, res); return; }
+									        						console.log('recordset');
+									        						console.log(recordset);
+									        						console.log('affected');
+									        						console.log(affected);
+									        					}
+									        				);
+									        			}
+								        			);
 					        					}
 				        					);
 					        			}
