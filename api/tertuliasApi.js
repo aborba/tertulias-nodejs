@@ -83,7 +83,6 @@ module.exports = function (configuration) {
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
-	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
 	        preparedStatement.prepare(selectedQuery, function(err) {
@@ -167,27 +166,46 @@ GO
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
-	    	var selectedQuery = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
-	    	'WHERE nt_name = @enumtype AND nv_name = @name'
-	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
 	        preparedStatement.input('enumtype', sql.NVarChar);
 	        preparedStatement.input('name', sql.NVarChar);
-	        preparedStatement.prepare(selectedQuery, function(err) {
-	            if (err) { completeError(err, res); return; }
-		        preparedStatement.execute({ enumtype: 'Schedule', name: 'MonthlyW' },
-		        function(err, recordset, affected) {
-		        	if (err) { completeError(err, res); return; }
-		        	var scheduleType = recordset[0].nv_id;
-        			console.log(recordset);
-		        	preparedStatement.execute({ enumtype: 'WeekDays', name: 'Tuesday' },
-		        		function(err, recordset, affected) {
-		        			if (err) { completeError(err, res); return; }
-		        			var weekDay = recordset[0].nv_id;
-		        			console.log(recordset);
-		        		});
-	            });
-		    });
+	        preparedStatement.prepare(
+	        	'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
+	    		'WHERE nt_name = @enumtype AND nv_name = @name',
+				function(err) {
+		            if (err) { completeError(err, res); return; }
+			        preparedStatement.execute(
+			        	{ enumtype: 'Schedule', name: 'MonthlyW' },
+				        function(err, recordset, affected) {
+				        	if (err) { completeError(err, res); return; }
+				        	var scheduleType = recordset[0].nv_id;
+				        	preparedStatement.execute({ enumtype: 'WeekDays', name: 'Tuesday' },
+				        		function(err, recordset, affected) {
+				        			if (err) { completeError(err, res); return; }
+				        			var weekDay = recordset[0].nv_id;
+				        			preparedStatement.unprepare();
+				        			preparedStatement = new sql.PreparedStatement(connection);
+				        			preparedStatement.input('name', sql.NVarChar);
+				        			preparedStatement.prepare(
+				        				'SELECT lo_id FROM Locations WHERE lo_name = @name',
+				        				function(err) {
+					        				if (err) { completeError(err, res); return; }
+					        				preparedStatement.execute(
+					        					{ enumtype: 'name', name: 'Dummy' },
+					        					function(err, recordset, affected) {
+					        						if (err) { completeError(err, res); return; }
+					        						console.log(recordset);
+					        						var dummyLocation = recordset[0].lo_id;
+					        					}
+				        					);
+					        			}
+				        			);
+				        		}
+			        		);
+			            }
+		            );
+			    }
+		    );
 
 	    	next();
 		/*
