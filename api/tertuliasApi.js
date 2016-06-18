@@ -165,7 +165,10 @@ GO
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
 
-		var transaction = new sql.Transaction(util.sqlConfiguration);
+	    console.log(sql);
+	    
+		var connection = new sql.Connection(util.sqlConfiguration);
+		var transaction = new sql.Transaction(connection);
 	    transaction.begin(function(err) {
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
