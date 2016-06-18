@@ -186,7 +186,7 @@ console.log('middle');
 		        }, 
 		        function(err, recordset, affected) {
 		        	console.log('done');
-	        		console.log(json(recordset));
+	        		console.log(recordset);
 	            });
 		    });
 
