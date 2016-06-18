@@ -178,7 +178,13 @@ GO
 		        preparedStatement.execute({ enumtype: 'Schedule', name: 'MonthlyW' },
 		        function(err, recordset, affected) {
 		        	if (err) { completeError(err, res); return; }
-	        		console.log(recordset[0].nv_id);
+		        	var scheduleType = recordset[0].nv_id;
+		        	preparedStatement.execute({ enumtype: 'WeekDays', name: 'Tuesday' },
+		        		function(err, recordset, affected) {
+		        			if (err) { completeError(err, res); return; }
+		        			var weekDay = recordset[0].nv_id;
+		        			console.log(recordset[0].nv_id);
+		        		});
 	            });
 		    });
 
