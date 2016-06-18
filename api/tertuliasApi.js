@@ -174,8 +174,8 @@ console.log('middle');
 	    transaction.begin(function(err) {
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
-	        var sqlRequest = new sql.Request(connection);
-	        var preparedStatement = new sql.PreparedStatement(connection);
+	        var sqlRequest = new sql.Request(transaction);
+	        var preparedStatement = new sql.PreparedStatement(transaction);
 	        preparedStatement.input(enumtype, sql.NVarChar);
 	        preparedStatement.input(name, sql.NVarChar);
 	        preparedStatement.execute({
