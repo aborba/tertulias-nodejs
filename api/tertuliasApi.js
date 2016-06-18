@@ -178,14 +178,17 @@ console.log('middle');
 	        var preparedStatement = new sql.PreparedStatement(connection);
 	        preparedStatement.input(enumtype, sql.NVarChar);
 	        preparedStatement.input(name, sql.NVarChar);
-	        preparedStatement.execute({
-	        	enumtype: 'Schedule',
-	        	name: 'MonthlyW'
-	        }, 
-	        function(err, recordset, affected) {
-	        	console.log('done');
-        		console.log(json(recordset));
-            });
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+		        preparedStatement.execute({
+		        	enumtype: 'Schedule',
+		        	name: 'MonthlyW'
+		        }, 
+		        function(err, recordset, affected) {
+		        	console.log('done');
+	        		console.log(json(recordset));
+	            });
+		    });
 
 	    	next();
 		/*
