@@ -68,6 +68,11 @@ module.exports = function (configuration) {
 	    goQuery(req, res, next);
 	});
 
+	router.post('/', (req, res, next) => {
+		console.log(req.params);
+		next();
+	})
+
 	var goQuery = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
 	    var paramsT = req.paramsT;
