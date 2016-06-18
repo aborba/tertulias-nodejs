@@ -165,9 +165,8 @@ GO
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
 
-		var connection = new sql.Connection(util.sqlConfiguration);
-		console.log(connection.driver);
-	    connection.beginTransaction(function(err) {
+		var transaction = new sql.Transaction(util.sqlConfiguration);
+	    transaction.begin(function(err) {
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
@@ -183,9 +182,9 @@ GO
         		console.log(json(recordset));
             });
 
-	    	connection.rollback();
+	    	transaction.rollback();
 	    	return;
-
+		/*
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
@@ -208,6 +207,7 @@ GO
 	                }
 	            );
 	        });
+	    */
 	    });
 	}
 
