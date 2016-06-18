@@ -70,6 +70,9 @@ module.exports = function (configuration) {
 
 	router.post('/', (req, res, next) => {
 		console.log(req.params);
+		res.sendStatus(200)
+			.type('application/json')
+			.json({id: 1});
 		next();
 	})
 
