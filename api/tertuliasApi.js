@@ -166,8 +166,7 @@ GO
 	    var paramsV = req.paramsV;
 
 		var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	    	connection.beginTransaction();
+	    connection.beginTransaction(function(err) {
 	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
@@ -184,7 +183,8 @@ GO
             });
 
 	    	connection.rollback();
-
+	    	return;
+	    	
 	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
 	        preparedStatement.prepare(selectedQuery, function(err) {
 	            if (err) { completeError(err, res); return; }
