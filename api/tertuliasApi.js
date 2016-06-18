@@ -172,7 +172,7 @@ console.log('just before');
 console.log('middle');
 	    connection.connect(function(err) {
 			console.log('inside');
-	    	var SQL = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
+	    	var selectedQuery = 'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
 	    	'WHERE nt_name = @enumtype AND nv_name = @name'
 	        var sqlRequest = new sql.Request(connection);
 	        var preparedStatement = new sql.PreparedStatement(connection);
