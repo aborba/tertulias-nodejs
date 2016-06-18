@@ -70,7 +70,7 @@ module.exports = function (configuration) {
 
 	router.post('/', (req, res, next) => {
 		console.log("in post");
-		console.log(req);
+		console.log(req.body);
 		res.type('application/json')
 			.json({id: 1});
 		next();
