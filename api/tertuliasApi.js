@@ -89,13 +89,14 @@ module.exports = function (configuration) {
 			.input('isPrivate', sql.Int, req.body.tr_is_private)
 			.execute('sp_insertTertulia_MonthlyW')
 			.then(function(recordsets) {
-				console.dir(recordsets);
+				console.log(recordsets);
+				next();
 			}).catch(function(err) {
-				
+				console.log('catch 1');
 			});
 		})
 		.catch(function(err) {
-			
+			console.log('catch 2');
 		});
 
 		res.type('application/json')
