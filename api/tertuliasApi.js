@@ -69,7 +69,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/', (req, res, next) => {
-		//console.log(req.body);
+		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
