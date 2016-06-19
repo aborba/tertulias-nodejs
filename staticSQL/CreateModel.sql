@@ -81,6 +81,7 @@ IF OBJECT_ID(N'dbo.spAcceptInvitation') IS NOT NULL DROP PROCEDURE spAcceptInvit
 IF OBJECT_ID(N'dbo.spInvite') IS NOT NULL DROP PROCEDURE spInvite;
 IF OBJECT_ID(N'dbo.fnGetTemplate_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTemplate_byTertuliaId;
 IF OBJECT_ID(N'dbo.fnGetUserId_byAlias') IS NOT NULL DROP FUNCTION fnGetUserId_byAlias;
+IF OBJECT_ID(N'dbo.fnGetUserId_bySid') IS NOT NULL DROP FUNCTION fnGetUserId_bySid;
 IF OBJECT_ID(N'dbo.fnGetTertuliaLocation_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTertuliaLocation_byTertuliaId;
 IF OBJECT_ID(N'dbo.fnGetItem_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetItem_byTertuliaId;
 IF OBJECT_ID(N'dbo.fnGetEvent_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetEvent_byTertuliaId;
@@ -88,6 +89,7 @@ IF OBJECT_ID(N'dbo.sp_getId') IS NOT NULL DROP PROCEDURE sp_getId;
 IF OBJECT_ID(N'dbo.sp_getEventIdTertuliaId') IS NOT NULL DROP PROCEDURE sp_getEventIdTertuliaId;
 IF OBJECT_ID(N'dbo.sp_createEvent') IS NOT NULL DROP PROCEDURE sp_createEvent;
 IF OBJECT_ID(N'dbo.sp_createEventDefaultLocation') IS NOT NULL DROP PROCEDURE sp_createEventDefaultLocation;
+IF OBJECT_ID(N'dbo.sp_insertTertulia_MonthlyW_sid') IS NOT NULL DROP PROCEDURE sp_insertTertulia_MonthlyW_sid;
 IF OBJECT_ID(N'dbo.sp_insertTertulia_MonthlyW') IS NOT NULL DROP PROCEDURE sp_insertTertulia_MonthlyW;
 
 IF OBJECT_ID(N'dbo.sp_postNotification_byAlias') IS NOT NULL DROP PROCEDURE sp_postNotification_byAlias;
@@ -232,8 +234,9 @@ CREATE TABLE Locations(
 	lo_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, lo_name VARCHAR(40) NOT NULL
 	, lo_address VARCHAR(80)
-	, lo_zip VARCHAR(40)
-	, lo_country VARCHAR(40)
+	, lo_zip VARCHAR(10)
+	, lo_city VARCHAR(40)
+	, lo_country VARCHAR(20)
 	, lo_latitude VARCHAR(12)
 	, lo_longitude VARCHAR(12)
 	, lo_tertulia INTEGER NOT NULL
@@ -512,6 +515,16 @@ BEGIN
 END;
 GO
 
+CREATE FUNCTION fnGetUserId_bySid(@sid VARCHAR(40))
+RETURNS INTEGER
+AS 
+BEGIN
+	DECLARE @id INTEGER;
+	SELECT @id = us_id FROM Users WHERE us_sid = @sid;
+	RETURN @id;
+END;
+GO
+
 CREATE FUNCTION fnGetTertuliaLocation_byTertuliaId(@tertuliaId INTEGER)
 RETURNS INTEGER
 AS 
@@ -576,6 +589,7 @@ CREATE PROCEDURE sp_insertTertulia_MonthlyW
 	@locationName VARCHAR(40),
 	@locationAddress VARCHAR(80),
 	@locationZip VARCHAR(40),
+	@locationCity VARCHAR(40),
 	@locationCountry VARCHAR(40),
 	@locationLatitude VARCHAR(12),
 	@locationLongitude VARCHAR(12),
@@ -601,8 +615,8 @@ BEGIN TRY
     VALUES (@name, @subject, @location, @schedule, @isPrivate);
     SET @tertulia = SCOPE_IDENTITY();
 
-    INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia)
-    VALUES (@locationName, @locationAddress, @locationZip, @locationCountry, @locationLatitude, @locationLongitude, @tertulia);
+    INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia)
+    VALUES (@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry, @locationLatitude, @locationLongitude, @tertulia);
     SET @location = SCOPE_IDENTITY();
 
     UPDATE Tertulias SET tr_location = @location WHERE tr_id = @tertulia;
@@ -615,6 +629,33 @@ BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
 	ROLLBACK TRANSACTION tran_sp_insertTertulia_MonthlyW
 END CATCH
+GO
+
+CREATE PROCEDURE sp_insertTertulia_MonthlyW_sid
+	@name VARCHAR(40), @subject VARCHAR(80), 
+	@userSid INTEGER, 
+	@weekDay VARCHAR(20), @weekNr INTEGER, 
+	@fromStart BIT, @skip INTEGER, 
+	@locationName VARCHAR(40),
+	@locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40),
+	@locationCity VARCHAR(40),
+	@locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12),
+	@locationLongitude VARCHAR(12),
+	@isPrivate INTEGER
+AS
+BEGIN
+	DECLARE @userId INTEGER;
+	SET @userId = dbo.fnGetUserId_bySid(@userSid);
+
+	EXEC sp_insertTertulia_MonthlyW @name, @subject,
+		@userSid,
+		@weekDay, @weekNr, @fromStart, @skip,
+		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
+		@locationLatitude, @locationLongitude,
+		@isPrivate
+END
 GO
 
 -- TODO: CHECK TERTULIAS

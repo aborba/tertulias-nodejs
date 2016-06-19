@@ -75,7 +75,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('name', sql.NVarChar(40), req.body.tr_name)
 			.input('subject', sql.NVarChar(80), req.body.tr_subject)
-			.input('userId', sql.Int, 1)
+			.input('userId', sql.Int, req.azureMobile.user.id)
 			.input('weekDay', sql.NVarChar(20), 'Tuesday')
 			.input('weekNr', sql.Int, 1)
 			.input('fromStart', sql.BIT, 1)
@@ -87,7 +87,7 @@ module.exports = function (configuration) {
 			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
 			.input('isPrivate', sql.Int, req.body.tr_is_private ? 1 : 0)
-			.execute('sp_insertTertulia_MonthlyW')
+			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then(function(recordsets) {
 				console.log(recordsets);
 				next();
