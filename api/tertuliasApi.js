@@ -86,7 +86,7 @@ module.exports = function (configuration) {
 			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
-			.input('isPrivate', sql.Int, req.body.tr_is_private)
+			.input('isPrivate', sql.Int, req.body.tr_is_private ? 1 : 0)
 			.execute('sp_insertTertulia_MonthlyW')
 			.then(function(recordsets) {
 				console.log(recordsets);
