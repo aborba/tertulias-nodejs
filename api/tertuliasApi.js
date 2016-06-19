@@ -93,10 +93,12 @@ module.exports = function (configuration) {
 				next();
 			}).catch(function(err) {
 				console.log('catch 1');
+				console.log(err);
 			});
 		})
 		.catch(function(err) {
 			console.log('catch 2');
+			console.log(err);
 		});
 
 		res.type('application/json')
