@@ -70,7 +70,34 @@ module.exports = function (configuration) {
 
 	router.post('/', (req, res, next) => {
 		//console.log(req.body);
-		goPost(req, res, next);
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('name', sql.NVarChar(40), req.tr_name)
+			.input('subject', sql.NVarChar(80), req.tr_subject)
+			.input('userId', sql.Int, 1)
+			.input('weekDay', sql.NVarChar(20), 'Tuesday')
+			.input('weekNr', sql.Int, 1)
+			.input('fromStart', sql.BIT, 1)
+			.input('skip', sql.Int, 0)
+			.input('locationName', sql.NVarChar(40), req.lo_name)
+			.input('locationAddress', sql.NVarChar(80), req.lo_address)
+			.input('locationZip', sql.NVarChar(40), req.lo_zip)
+			.input('locationCountry', sql.NVarChar(40), req.lo_country)
+			.input('locationLatitude', sql.NVarChar(12), req.lo_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.lo_longitude)
+			.input('isPrivate', sql.Int, req.tr_is_private)
+			.execute('sp_insertTertulia_MonthlyW')
+			.then(function(recordsets) {
+				console.dir(recordsets);
+			}).catch(function(err) {
+				
+			});
+		})
+		.catch(function(err) {
+			
+		});
+
 		res.type('application/json')
 			.json({id: '1'});
 		next();
@@ -106,150 +133,6 @@ module.exports = function (configuration) {
 	                }
 	            );
 	        });
-	    });
-	}
-
-/*
-CREATE PROCEDURE sp_insertTertulia_MonthlyW
-	@name VARCHAR(40), @subject VARCHAR(80), 
-	@userId INTEGER, 
-	@weekDay VARCHAR(20), @weekNr INTEGER, 
-	@fromStart BIT, @skip INTEGER, 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@isPrivate INTEGER
-AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
-BEGIN TRY
-	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
-
-	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyW');
-	EXEC @location = dbo.sp_getId 'lo', 'Locations', 'Dummy';
-
-	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
-
-	INSERT INTO Schedules (sc_type) VALUES (@scheduleType);
-	SET @schedule = SCOPE_IDENTITY();
-
-	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) 
-	VALUES (@schedule, @dow, @weekNr, @fromStart, @skip);
-
-    INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
-    VALUES (@name, @subject, @location, @schedule, @isPrivate);
-    SET @tertulia = SCOPE_IDENTITY();
-
-    INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia)
-    VALUES (@locationName, @locationAddress, @locationZip, @locationCountry, @locationLatitude, @locationLongitude, @tertulia);
-    SET @location = SCOPE_IDENTITY();
-
-    UPDATE Tertulias SET tr_location = @location WHERE tr_id = @tertulia;
-
-    SET @owner = dbo.fnGetEnum('Roles', 'owner');
-	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @owner);
-	COMMIT TRANSACTION tran_sp_insertTertulia_MonthlyW
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_sp_insertTertulia_MonthlyW
-END CATCH
-GO
-*/
-	var goPost = function(req, res, next) {
-		var selectedQuery = req.selectedQuery;
-	    var paramsT = req.paramsT;
-	    var paramsV = req.paramsV;
-
-		var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	        var preparedStatement = new sql.PreparedStatement(connection);
-	        preparedStatement.input('enumtype', sql.NVarChar);
-	        preparedStatement.input('name', sql.NVarChar);
-	        preparedStatement.prepare(
-	        	'SELECT nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id '+
-	    		'WHERE nt_name = @enumtype AND nv_name = @name',
-				function(err) {
-		            if (err) { completeError(err, res); return; }
-			        preparedStatement.execute(
-			        	{ enumtype: 'Schedule', name: 'MonthlyW' },
-				        function(err, recordset, affected) {
-				        	if (err) { completeError(err, res); return; }
-				        	var scheduleType = recordset[0].nv_id;
-				        	preparedStatement.execute({ enumtype: 'WeekDays', name: 'Tuesday' },
-				        		function(err, recordset, affected) {
-				        			if (err) { completeError(err, res); return; }
-				        			var weekDay = recordset[0].nv_id;
-				        			preparedStatement.unprepare();
-				        			preparedStatement = new sql.PreparedStatement(connection);
-				        			preparedStatement.input('name', sql.NVarChar);
-				        			preparedStatement.prepare(
-				        				'SELECT lo_id FROM Locations WHERE lo_name = @name',
-				        				function(err) {
-					        				if (err) { completeError(err, res); return; }
-					        				preparedStatement.execute(
-					        					{ enumtype: 'name', name: 'Dummy' },
-					        					function(err, recordset, affected) {
-					        						if (err) { completeError(err, res); return; }
-					        						var dummyLocation = recordset[0].lo_id;
-								        			preparedStatement.unprepare();
-								        			preparedStatement = new sql.PreparedStatement(connection);
-								        			preparedStatement.input('scheduleType', sql.Int);
-								        			preparedStatement.prepare(
-								        				'INSERT INTO Schedules (sc_type) VALUES (@scheduleType)',
-								        				function(err) {
-									        				if (err) { completeError(err, res); return; }
-									        				preparedStatement.execute(
-									        					{ scheduleType: scheduleType },
-									        					function(err, recordset, affected) {
-									        						if (err) { completeError(err, res); return; }
-									        						console.log('recordset');
-									        						console.log(recordset);
-									        						console.log('affected');
-									        						console.log(affected);
-									        					}
-									        				);
-									        			}
-								        			);
-					        					}
-				        					);
-					        			}
-				        			);
-				        		}
-			        		);
-			            }
-		            );
-			    }
-		    );
-
-	    	next();
-		/*
-	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
-	        preparedStatement.prepare(selectedQuery, function(err) {
-	            if (err) { completeError(err, res); return; }
-	            preparedStatement.execute(paramsV, 
-	                function(err, recordset, affected) {
-	                    if (err) { completeError(err, res); return; }
-	                    res.type('application/json');
-	                    recordset.forEach(function(elem) {
-	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
-	                    	if (typeof req.t_links !== typeof undefined)
-	                			for (var key in req.t_links)
-	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-	                    	console.log(elem);
-	                    	console.log(elem._links);
-	                    });
-	                    preparedStatement.unprepare();
-	                    res.json(recordset);
-	                    next();
-	                }
-	            );
-	        });
-	    */
 	    });
 	}
 
