@@ -18,7 +18,7 @@ const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_nam
 ' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications where no_id not in' +
 ' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
-' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' ;
 
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
@@ -57,6 +57,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
+	    req.t_links = { details: { href: 'tertulias/:tertulia' } };
 	    goGet(req, res, next);
 	});
 
@@ -85,13 +86,17 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
+	                    	elem['_links'] = req.t_links.replace(/:tertulia/g, elem.tr_id);
+	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
 	                    	console.log(elem);
 	                    	console.log(elem._links);
+	                    	*/
 	                    });
+	                    console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    res.json(recordset);
 	                    next();
