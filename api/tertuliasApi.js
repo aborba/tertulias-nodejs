@@ -71,10 +71,14 @@ module.exports = function (configuration) {
 
     var x = function(o, pattern, replacement) {
     	for (var key in o) {
-    		if (typeof o.key === typeof object)
+    		if (typeof o.key === typeof object) {
+    			console.log('object');
     			o.key = x(o.key);
-    		else
+    		}
+    		else {
+    			console.log('no object');
     			o.key = o.key.replace(/:tertulia/g, replacement);
+    		}
     	}
     	return o;
     };
