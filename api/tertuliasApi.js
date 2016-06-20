@@ -96,7 +96,7 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = x(req.t_links, ':tertulias', elem.tr_id);
+	                    	elem['_links'] = x(req.t_links, ':tertulia', elem.tr_id);
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
