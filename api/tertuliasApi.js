@@ -74,7 +74,7 @@ module.exports = function (configuration) {
     		if (typeof o.key === typeof object)
     			o.key = x(o.key);
     		else
-    			o.key = o.key.replace(/pattern/g, replacement);
+    			o.key = o.key.replace(/:tertulia/g, replacement);
     	}
     	return o;
     };
