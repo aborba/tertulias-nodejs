@@ -68,6 +68,39 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
+	var goGet = function(req, res, next) {
+		var selectedQuery = req.selectedQuery;
+	    var paramsT = req.paramsT;
+	    var paramsV = req.paramsV;
+
+		var connection = new sql.Connection(util.sqlConfiguration);
+	    connection.connect(function(err) {
+	        var preparedStatement = new sql.PreparedStatement(connection);
+	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+	            preparedStatement.execute(paramsV, 
+	                function(err, recordset, affected) {
+	                    if (err) { completeError(err, res); return; }
+	                    res.type('application/json');
+	                    recordset.forEach(function(elem) {
+	                    	console.log(elem.tr_id);
+	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
+	                    	if (typeof req.t_links !== typeof undefined)
+	                			for (var key in req.t_links)
+	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
+	                    	console.log(elem);
+	                    	console.log(elem._links);
+	                    });
+	                    preparedStatement.unprepare();
+	                    res.json(recordset);
+	                    next();
+	                }
+	            );
+	        });
+	    });
+	}
+
 	router.post('/', (req, res, next) => {
 		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
@@ -105,39 +138,6 @@ module.exports = function (configuration) {
 			.json({id: '1'});
 		next();
 	})
-
-	var goGet = function(req, res, next) {
-		var selectedQuery = req.selectedQuery;
-	    var paramsT = req.paramsT;
-	    var paramsV = req.paramsV;
-
-		var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	        var preparedStatement = new sql.PreparedStatement(connection);
-	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
-	        preparedStatement.prepare(selectedQuery, function(err) {
-	            if (err) { completeError(err, res); return; }
-	            preparedStatement.execute(paramsV, 
-	                function(err, recordset, affected) {
-	                    if (err) { completeError(err, res); return; }
-	                    res.type('application/json');
-	                    recordset.forEach(function(elem) {
-	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
-	                    	if (typeof req.t_links !== typeof undefined)
-	                			for (var key in req.t_links)
-	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-	                    	console.log(elem);
-	                    	console.log(elem._links);
-	                    });
-	                    preparedStatement.unprepare();
-	                    res.json(recordset);
-	                    next();
-	                }
-	            );
-	        });
-	    });
-	}
 
     return router;
 

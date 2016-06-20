@@ -71,7 +71,8 @@ BEGIN TRY
 		, 0                                -- [skip]
 		, N'Restaurante Cave Real'         -- [locationName]
 		, N'Avenida 5 de Outubro 13'       -- [locationAddress]
-		, N'1050 Lisboa'                   -- [locationZip]
+		, N'1050'						   -- [locationZip]
+		, N'Lisboa'                   	   -- [locationCity]
 		, N'Portugal'                      -- [locationCountry]
 		, N'38.733541'                     -- [locationLatitude]
 		, N'-9.147056'                     -- [locationLongitude]
@@ -117,21 +118,21 @@ BEGIN TRY
 		N'Test with Tertúlia dos primos', N'Só Celoricos' -- [name], [subject]
 		, @UserId                               -- [userId]
 		, N'friday', 0 , 1 , 3                  -- [weekDay], [weekNr], [fromStart], [skip]
-		, N'Restaurante O Jacinto', N'Avenida Ventura Terra 2', N'1600-781 Lisboa', N'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
+		, N'Restaurante O Jacinto', N'Avenida Ventura Terra 2', N'1600-781', N'Lisboa', N'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
 		, N'38.758563', N'-9.167007'            -- [locationLatitude], [locationLongitude]
 		, 1;                                    -- [isPrivate]
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Test with Escolinha 72-77', N'Sempre em contato'            
 		, @UserId
 		, 'saturday', 0, 1, 10
-		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151 Lisboa', 'Portugal'
+		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal'
 		, '38.744912', '-9.145291'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Natais BS' , N'Mais um...'
 		, @UserId
 		, 'sunday', 0, 0, 51
-		, 'Avó Fernanda', N'Avenida Nações Unidas, 33, 2.ºDtº', N'1600-531 Lisboa', 'Portugal'
+		, 'Avó Fernanda', N'Avenida Nações Unidas, 33, 2.ºDtº', N'1600-531', N'Lisboa', 'Portugal'
 		, '38.764288', '-9.180429'
 		, 1;
 	SET @UserId = dbo.fnGetUserId_byAlias('TestUser')
@@ -139,28 +140,28 @@ BEGIN TRY
 		N'Test with Gulbenkian Música' , N''
 		, @UserId
 		, 'thursday', 1, 1, 3
-		, 'Restaurante Gardens', N'Rua Principal, S/N, Urbanização Quinta Alcoutins', N'1600-263 Lisboa', 'Portugal'
+		, 'Restaurante Gardens', N'Rua Principal, S/N, Urbanização Quinta Alcoutins', N'1600-263', N'Lisboa', 'Portugal'
 		, '38.776200', '-9.171391'
 		, 0;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with CALM', N'Ex MAC - Sempre só nós 8'
 		, @UserId
 		, 'friday' , 0, 0, 3
-		, 'Restaurante Taberna Gourmet', N'Rua Padre Américo 28', N'1600-548 Lisboa', 'Portugal'
+		, 'Restaurante Taberna Gourmet', N'Rua Padre Américo 28', N'1600-548', N'Lisboa', 'Portugal'
 		, '38.763603', '-9.180278'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with AtHere', N'Tipo RoBoTo'
 		, @UserId
 		, 'thursday', 0, 0, 5
-		, 'Pastelaria Zineira', N'Rua Principal, 444, Livramento', N'2765-383 Estoril', 'Portugal'
+		, 'Pastelaria Zineira', N'Rua Principal, 444, Livramento', N'2765-383', N'Estoril', 'Portugal'
 		, '38.713092', '-9.371864'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Test with Terças Ggl', N''
 		, @UserId
 		, 'tuesday', 0, 0, 0
-		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001 Lisboa', 'Portugal'
+		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001', N'Lisboa', 'Portugal'
 		, '38.737674', '-9.138564'
 		, 1;
 	ROLLBACK TRANSACTION tran_test
