@@ -73,7 +73,7 @@ module.exports = function (configuration) {
     	for (var key in o) {
     		if (typeof o.key === typeof object) {
     			console.log('object: ', o);
-    			o.key = x(o.key);
+    			o.key = x(o.key, pattern, replacement);
     		}
     		else {
     			console.log('no object: ', o);
