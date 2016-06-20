@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
-	    //req.t_links = '{ details: { href: 'tertulias/:tertulia' } }';
+	    req.t_links = '{ details: { href: 'tertulias/:tertulia' } }';
 	    goGet(req, res, next);
 	});
 
@@ -68,21 +68,6 @@ module.exports = function (configuration) {
 	    req.t_links = { edit: 'edit', members: 'members', messages: 'messages', events: 'events', nextevent: 'nextevent' };
 	    goGet(req, res, next);
 	});
-
-    var x = function(o, pattern, replacement) {
-    	for (var key in o) {
-    		if (typeof o.key === typeof object) {
-    			console.log('object before call: ', o);
-    			o.key = x(o.key, pattern, replacement);
-    			console.log('object: after call', o);
-    		}
-    		else {
-    			console.log('no object: ', o);
-    			o.key = o.key.replace(/:tertulia/g, replacement);
-    		}
-    	}
-    	return o;
-    };
 
 	var goGet = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
