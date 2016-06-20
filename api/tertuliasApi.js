@@ -69,21 +69,20 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
+    var x = function(o, pattern, replacement) {
+    	for (var key in o) {
+    		if (typeof o.key === typeof object)
+    			o.key = x(o.key);
+    		else
+    			o.key = o.key.replace(/pattern/g, replacement);
+    	}
+    	return o;
+    };
+
 	var goGet = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
-
-		Array.prototype.replaceValue = function(name, value, pattern, replacement) {
-			var array = $.map(this, function(v,i) {
-				var haystack = v[name];
-				var needle = new RegExp(value);
-				// check for string in haystack
-				// return the matched item if true, or null otherwise
-				return needle.test(haystack) ? v.replace(/pattern/g, replacement) : null;
-			});
-			return this;
-		};
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
@@ -97,15 +96,7 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = req.t_links;
-	                    	elem.replaceValue('href', ':tertulia', ':tertulia', elem.tr_id);
-	                    	/*
-	                    	if (typeof req.t_links.details !== typeof undefined) {
-	                    		var target = req.t_links.details.href.replace(/:tertulia/g, elem.tr_id);
-	                    		elem['_links'] = { details: { href: target } };
-			                    console.log(elem['_links']);
-	                    	}
-	                    	*/
+	                    	elem['_links'] = x(req.t_links, ':tertulias', elem.tr_id);
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
