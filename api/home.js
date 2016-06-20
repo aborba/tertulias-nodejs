@@ -3,6 +3,7 @@ var api = {
 		var routes = { "_links": {
 			"tertulias": { "href" : "/tertulias" } }
 		};
+		console.log(routes);
 		res.json(routes);
 		next();
     }
