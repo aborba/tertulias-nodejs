@@ -89,6 +89,7 @@ module.exports = function (configuration) {
 	                    	if (typeof req.t_links.details !== typeof undefined) {
 	                    		var target = req.t_links.details.href.replace(/:tertulia/g, elem.tr_id);
 	                    		elem['_links'] = { details: { href: target } };
+			                    console.log(elem['_links']);
 	                    	}
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
