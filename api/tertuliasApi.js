@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
-	    req.t_links = '{ details: { href: 'tertulias/:tertulia' } }';
+	    req.t_links = "{ details: { href: 'tertulias/:tertulia' } }";
 	    goGet(req, res, next);
 	});
 
