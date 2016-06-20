@@ -1,7 +1,7 @@
 var api = {
 	get: function (req, res, next) {
-		var routes = {
-			"tertulias": "/tertulias"
+		var routes = { "_links": {
+			"tertulias": { "href" : "/tertulias" } }
 		};
 		res.json(routes);
 		next();
