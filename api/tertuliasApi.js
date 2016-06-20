@@ -74,6 +74,17 @@ module.exports = function (configuration) {
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
 
+		Array.prototype.replaceValue = function(name, value, pattern, replacement) {
+			var array = $.map(this, function(v,i) {
+				var haystack = v[name];
+				var needle = new RegExp(value);
+				// check for string in haystack
+				// return the matched item if true, or null otherwise
+				return needle.test(haystack) ? v.replace(/pattern/g, replacement) : null;
+			});
+			return this;
+		};
+
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
 	        var preparedStatement = new sql.PreparedStatement(connection);
@@ -86,19 +97,23 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
+	                    	elem['_links'] = req.t_links;
+	                    	elem.replaceValue('href', ':tertulia', ':tertulia', elem.tr_id);
+	                    	/*
 	                    	if (typeof req.t_links.details !== typeof undefined) {
 	                    		var target = req.t_links.details.href.replace(/:tertulia/g, elem.tr_id);
 	                    		elem['_links'] = { details: { href: target } };
 			                    console.log(elem['_links']);
 	                    	}
+	                    	*/
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
 	                			for (var key in req.t_links)
 	                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
 	                    	console.log(elem);
-	                    	console.log(elem._links);
 	                    	*/
+	                    	console.log(elem._links);
 	                    });
 	                    console.log(recordset);
 	                    preparedStatement.unprepare();
