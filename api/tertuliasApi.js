@@ -65,7 +65,11 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertuliaX;
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
 	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
-	    req.t_links = { edit: 'edit', members: 'members', messages: 'messages', events: 'events', nextevent: 'nextevent' };
+	    req.t_links = '{ "edit": { "href": "tertulias/:tertulia/edit"' +
+	    	', "members": "tertulias/:tertulia/members"' +
+	    	', "messages": "tertulias/:tertulia/messages"' +
+	    	', "events": "tertulias/:tertulia/events"' +
+	    	', "nextevent": "tertulias/:tertulia/nextevent" }';
 	    goGet(req, res, next);
 	});
 
