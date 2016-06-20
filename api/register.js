@@ -1,8 +1,8 @@
 var util = require('../util');
 var sql = require('mssql');
 
-var querySelectId = 'SELECT id FROM Users WHERE sid=@sid;';
-var queryInsertSid = 'INSERT INTO Users (sid, alias, email, firstName, lastName, picture) values (@sid, @alias, @email, @firstName, @lastName, @picture);';
+var querySelectId = 'SELECT us_id FROM Users WHERE us_sid=@sid;';
+var queryInsertSid = 'INSERT INTO Users (us_sid, us_alias, us_email, us_firstName, us_lastName, us_picture) values (@sid, @alias, @email, @firstName, @lastName, @picture);';
 
 var tranDone = false;
 
