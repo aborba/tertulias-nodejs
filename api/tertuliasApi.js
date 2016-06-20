@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 		req.selectedQuery = queryTertulias;
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
-	    req.t_links = { details: { href: 'tertulias/:tertulia' } };
+	    req.t_links = '{ details: { href: 'tertulias/:tertulia' } }';
 	    goGet(req, res, next);
 	});
 
@@ -72,8 +72,9 @@ module.exports = function (configuration) {
     var x = function(o, pattern, replacement) {
     	for (var key in o) {
     		if (typeof o.key === typeof object) {
-    			console.log('object: ', o);
+    			console.log('object before call: ', o);
     			o.key = x(o.key, pattern, replacement);
+    			console.log('object: after call', o);
     		}
     		else {
     			console.log('no object: ', o);
@@ -100,7 +101,7 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = x(req.t_links, ':tertulia', elem.tr_id);
+	                    	elem['_links'] = req.t_links.replace(/:tertulia/g, elem.tr_id);
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
