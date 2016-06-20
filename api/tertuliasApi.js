@@ -22,7 +22,7 @@ const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_nam
 
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
-	' lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, ' + // Location
+	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
 	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description,' + // Schedule
 	' tr_is_private, ' +
 	' _Member.nv_name AS nv_name' + // Role

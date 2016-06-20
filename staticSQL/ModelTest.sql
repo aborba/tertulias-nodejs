@@ -78,21 +78,21 @@ BEGIN TRY
 		, N'-9.147056'                     -- [locationLongitude]
 		, 1;                               -- [isPrivate]
 	SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Test with Tertulia do Tejo';
-	INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
-		  (N'Pastelaria Mexicana',              N'Avenida Guerra Junqueiro 30C',                      N'1000-167 Lisboa',  'Portugal', '38.740117', '-9.136394', @tertulia)
-	--	, (N'Restaurante Cave Real',            N'Avenida 5 de Outubro 13',                           N'1050 Lisboa',      'Portugal', '38.733541', '-9.147056', @tertulia)
-		, (N'Restaurante Picanha',              N'Rua das Janelas Verdes 96',                         N'1200 Lisboa',      'Portugal', '38.705678', '-9.160624', @tertulia)
-		, (N'Restaurante EntreCopos',           N'Rua de Entrecampos, nº11',                          N'1000-151 Lisboa',  'Portugal', '38.744912', '-9.145291', @tertulia)
-		, (N'Lisboa Racket Center',             N'Rua Alferes Malheiro',                              N'1700 Lisboa',      'Portugal', '38.758372', '-9.134471', @tertulia)
-		, (N'Restaurante O Jacinto',            N'Avenida Ventura Terra 2',                           N'1600-781 Lisboa',  'Portugal', '38.758563', '-9.167007', @tertulia)
-		, (N'Restaurante Taberna Gourmet',      N'Rua Padre Américo 28',                              N'1600-548 Lisboa',  'Portugal', '38.763603', '-9.180278', @tertulia)
-		, (N'Café A Luz Ideal',                 N'Rua Gen. Schiappa Monteiro 2A',                     N'1600-155 Lisboa',  'Portugal', '38.754401', '-9.174995', @tertulia)
-		, (N'Restaurante Honorato - Telheiras', N'Rua Professor Francisco Gentil, Lote A, Telheiras', N'1600 Lisboa',      'Portugal', '38.760363', '-9.166720', @tertulia)
-		, (N'Restaurante Gardens',              N'Rua Principal, S/N, Urbanização Quinta Alcoutins',  N'1600-263 Lisboa',  'Portugal', '38.776200', '-9.171391', @tertulia)
-		, (N'Pastelaria Arcadas',               N'Rua Cidade de Lobito 282',                          N'1800-071 Lisboa',  'Portugal', '38.764007', '-9.112470', @tertulia)
-		, (N'Varsailles - Técnico',             N'Avenida Rovisco Pais 1',                            N'1049-001 Lisboa',  'Portugal', '38.737674', '-9.138564', @tertulia)
-		, (N'Pastelaria Zineira',               N'Rua Principal, 444, Livramento',                    N'2765-383 Estoril', 'Portugal', '38.713092', '-9.371864', @tertulia)
-		, (N'Avó Fernanda',                     N'Avenida Nações Unidas, 33, 2.ºDtº',                 N'1600-531 Lisboa',  'Portugal', '38.764288', '-9.180429', @tertulia);
+	INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
+		  (N'Pastelaria Mexicana',              N'Avenida Guerra Junqueiro 30C',                      N'1000-167', N'Lisboa',  'Portugal', '38.740117', '-9.136394', @tertulia)
+	--	, (N'Restaurante Cave Real',            N'Avenida 5 de Outubro 13',                           N'1050',     N'Lisboa',  'Portugal', '38.733541', '-9.147056', @tertulia)
+		, (N'Restaurante Picanha',              N'Rua das Janelas Verdes 96',                         N'1200',     N'Lisboa',  'Portugal', '38.705678', '-9.160624', @tertulia)
+		, (N'Restaurante EntreCopos',           N'Rua de Entrecampos, nº11',                          N'1000-151', N'Lisboa',  'Portugal', '38.744912', '-9.145291', @tertulia)
+		, (N'Lisboa Racket Center',             N'Rua Alferes Malheiro',                              N'1700',     N'Lisboa',  'Portugal', '38.758372', '-9.134471', @tertulia)
+		, (N'Restaurante O Jacinto',            N'Avenida Ventura Terra 2',                           N'1600-781', N'Lisboa',  'Portugal', '38.758563', '-9.167007', @tertulia)
+		, (N'Restaurante Taberna Gourmet',      N'Rua Padre Américo 28',                              N'1600-548', N'Lisboa',  'Portugal', '38.763603', '-9.180278', @tertulia)
+		, (N'Café A Luz Ideal',                 N'Rua Gen. Schiappa Monteiro 2A',                     N'1600-155', N'Lisboa',  'Portugal', '38.754401', '-9.174995', @tertulia)
+		, (N'Restaurante Honorato - Telheiras', N'Rua Professor Francisco Gentil, Lote A, Telheiras', N'1600',     N'Lisboa',  'Portugal', '38.760363', '-9.166720', @tertulia)
+		, (N'Restaurante Gardens',              N'Rua Principal, S/N, Urbanização Quinta Alcoutins',  N'1600-263', N'Lisboa',  'Portugal', '38.776200', '-9.171391', @tertulia)
+		, (N'Pastelaria Arcadas',               N'Rua Cidade de Lobito 282',                          N'1800-071', N'Lisboa',  'Portugal', '38.764007', '-9.112470', @tertulia)
+		, (N'Varsailles - Técnico',             N'Avenida Rovisco Pais 1',                            N'1049-001', N'Lisboa',  'Portugal', '38.737674', '-9.138564', @tertulia)
+		, (N'Pastelaria Zineira',               N'Rua Principal, 444, Livramento',                    N'2765-383', N'Estoril', 'Portugal', '38.713092', '-9.371864', @tertulia)
+		, (N'Avó Fernanda',                     N'Avenida Nações Unidas, 33, 2.ºDtº',                 N'1600-531', N'Lisboa',  'Portugal', '38.764288', '-9.180429', @tertulia);
 	ROLLBACK TRANSACTION tran_test
 END TRY
 BEGIN CATCH
@@ -188,12 +188,12 @@ BEGIN TRY
 		N'Test with Terças Ggl', N''         -- [name], [subject]
 		, @UserId                  -- [userId]
 		, N'tuesday', 0 , 0 , 0    -- [weekDay], [weekNr], [fromStart], [skip]
-		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001 Lisboa', 'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
+		, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001', N'Lisboa', 'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
 		, '38.737674', '-9.138564' -- [locationLatitude], [locationLongitude]
 		, 1;                       -- [isPrivate]
 	SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Test with Terças Ggl';
-	INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
-		(N'Lisboa Racket Center', N'Rua Alferes Malheiro', N'1700 Lisboa', 'Portugal', '38.758372', '-9.134471', @tertulia);
+	INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
+		(N'Lisboa Racket Center', N'Rua Alferes Malheiro', N'1700', N'Lisboa', 'Portugal', '38.758372', '-9.134471', @tertulia);
 	EXEC dbo.sp_createEvent 'Test with Terças Ggl', 'Lisboa Racket Center', '20160523 13:00:00';
 	EXEC dbo.sp_createEventDefaultLocation 'Test with Terças Ggl', '20160904 13:00:00';
 	ROLLBACK TRANSACTION tran_test
@@ -220,14 +220,14 @@ BEGIN TRY
 		N'Test with Escolinha 72-77', N'Sempre em contato'            
 		, @UserId
 		, N'saturday', 0, 1, 10
-		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151 Lisboa', 'Portugal'
+		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal'
 		, '38.744912', '-9.145291'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 	DECLARE @tertuliaId INTEGER;
@@ -277,14 +277,14 @@ BEGIN TRY
 		N'Test with Escolinha 72-77', N'Sempre em contato'            
 		, @UserId
 		, N'saturday', 0, 1, 10
-		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151 Lisboa', 'Portugal'
+		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal'
 		, '38.744912', '-9.145291'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 	DECLARE @tertuliaId INTEGER;
@@ -321,14 +321,14 @@ BEGIN TRY
 		N'Test with Escolinha 72-77', N'Sempre em contato'            
 		, @UserId
 		, N'saturday', 0, 1, 10
-		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151 Lisboa', 'Portugal'
+		, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal'
 		, '38.744912', '-9.145291'
 		, 1;
 	EXEC sp_insertTertulia_MonthlyW 
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 	EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Test with Escolinha 72-77';
@@ -416,7 +416,7 @@ BEGIN TRY
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 
@@ -476,7 +476,7 @@ BEGIN TRY
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 
@@ -543,7 +543,7 @@ BEGIN TRY
 		N'Test with Tertulia do Tejo', N'O que seria do Mundo sem nós!'
 		, @UserId
 		, N'friday', 2, 1, 0
-		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050 Lisboa', N'Portugal'
+		, N'Restaurante Cave Real', N'Avenida 5 de Outubro 13', N'1050', N'Lisboa', N'Portugal'
 		, N'38.733541', N'-9.147056'
 		, 1;
 
