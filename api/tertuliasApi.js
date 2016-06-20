@@ -94,12 +94,9 @@ module.exports = function (configuration) {
 	                    if (err) { completeError(err, res); return; }
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
-	                    	if (typeof req.t_links !== typeof undefined) {
+	                    	if (typeof req.t_links !== typeof undefined)
 		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
-		                    	console.log(JSON.stringify(elem['_links']));
-	                    	}
 	                    });
-	                    console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    res.json(recordset);
 	                    next();
