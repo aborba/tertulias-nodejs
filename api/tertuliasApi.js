@@ -66,7 +66,10 @@ module.exports = function (configuration) {
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
 	    req.paramsV = { sid: req.azureMobile.user.id, tertulia: req.params.tertulia };
 	    req.t_links = '{ ' +
+	    	'"self":      { "href": "tertulias/:tertulia" }, ' +
 	    	'"edit":      { "href": "tertulias/:tertulia/edit" }, ' +
+	    	'"location":  { "href": "tertulias/:tertulia/location" }, ' +
+	    	'"schedule":  { "href": "tertulias/:tertulia/schedule" }, ' +
 	    	'"members":   { "href": "tertulias/:tertulia/members" }, ' +
 	    	'"messages":  { "href": "tertulias/:tertulia/messages" }, ' +
 	    	'"events":    { "href": "tertulias/:tertulia/events" }, ' +
@@ -91,18 +94,9 @@ module.exports = function (configuration) {
 	                    if (err) { completeError(err, res); return; }
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
-	                    	console.log(elem.tr_id);
 	                    	if (typeof req.t_links !== typeof undefined) {
-	                    		console.log(req.t_links);
 		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
-		                    	/*
-		                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
-		                    	if (typeof req.t_links !== typeof undefined)
-		                			for (var key in req.t_links)
-		                				elem['_links'][key] = { href : 'tertulias/' + elem.tr_id + '/' + req.t_links[key]};
-		                    	console.log(elem);
-		                    	*/
-		                    	console.log(elem._links);
+		                    	console.log(JSON.stringify(elem['_links']));
 	                    	}
 	                    });
 	                    console.log(recordset);
