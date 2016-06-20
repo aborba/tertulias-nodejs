@@ -88,7 +88,7 @@ module.exports = function (configuration) {
 	                    	console.log(elem.tr_id);
 	                    	if (typeof req.t_links !== typeof undefined) {
 	                    		console.log(req.t_links);
-		                    	elem['_links'] = req.t_links.replace(/:tertulia/g, elem.tr_id);
+		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
 		                    	/*
 		                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 		                    	if (typeof req.t_links !== typeof undefined)
