@@ -86,7 +86,10 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
 	                    	console.log(elem.tr_id);
-	                    	elem['_links'] = req.t_links.replace(/:tertulia/g, elem.tr_id);
+	                    	if (typeof req.t_links.details !== typeof undefined) {
+	                    		var target = req.t_links.details.href.replace(/:tertulia/g, elem.tr_id);
+	                    		elem['_links'] = { details: { href: target } };
+	                    	}
 	                    	/*
 	                    	elem['_links'] = { self: { href : 'tertulias/' + elem.tr_id } };
 	                    	if (typeof req.t_links !== typeof undefined)
