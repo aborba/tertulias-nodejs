@@ -159,7 +159,6 @@ module.exports = function (configuration) {
 	}
 
 	router.post('/', (req, res, next) => {
-		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -180,11 +179,18 @@ module.exports = function (configuration) {
 			.input('isPrivate', sql.Int, req.body.tr_is_private ? 1 : 0)
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then(function(recordsets) {
-				console.log('Tertulia created.');
 				console.log(recordsets);
-				res.status(201)	// 201: Created
-					.type('application/json')
-					.json( { id: '1' } );
+				if (recordsets.length == 1) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return;
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return;
+				}
 				next();
 			})
 			.catch(function(err) {
