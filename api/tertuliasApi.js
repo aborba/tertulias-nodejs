@@ -165,7 +165,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('name', sql.NVarChar(40), req.body.tr_name)
 			.input('subject', sql.NVarChar(80), req.body.tr_subject)
-			.input('userId', sql.Int, req.azureMobile.user.id)
+			.input('userId', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('weekDay', sql.NVarChar(20), 'Tuesday')
 			.input('weekNr', sql.Int, 1)
 			.input('fromStart', sql.BIT, 1)
