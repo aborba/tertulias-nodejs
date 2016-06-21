@@ -650,7 +650,7 @@ BEGIN
 	SET @userId = dbo.fnGetUserId_bySid(@userSid);
 
 	EXEC sp_insertTertulia_MonthlyW @name, @subject,
-		@userSid,
+		@userId,
 		@weekDay, @weekNr, @fromStart, @skip,
 		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
 		@locationLatitude, @locationLongitude,

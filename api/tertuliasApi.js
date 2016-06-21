@@ -181,20 +181,20 @@ module.exports = function (configuration) {
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then(function(recordsets) {
 				console.log(recordsets);
+				res.type('application/json')
+					.json({id: '1'});
 				next();
 			}).catch(function(err) {
 				console.log('catch 1');
 				console.log(err);
-			});
+				next();
+		});
 		})
 		.catch(function(err) {
 			console.log('catch 2');
 			console.log(err);
+			next();
 		});
-
-		res.type('application/json')
-			.json({id: '1'});
-		next();
 	})
 
     return router;
