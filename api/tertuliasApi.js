@@ -184,7 +184,7 @@ module.exports = function (configuration) {
 				//console.log('r1: ' + recordsets[0][0][ErrorNumber]);
 				//console.log('r2: ' + recordsets[0][ErrorNumber]);
 				//console.log('r2: ' + recordsets[0]);
-				if (recordsets.length == 1) {
+				if (recordsets.length == 0) {
 					console.log('sending 201');
 					res.status(201)	// 201: Created
 						.type('application/json')
