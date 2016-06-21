@@ -178,14 +178,16 @@ module.exports = function (configuration) {
 			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
 			.input('isPrivate', sql.Int, req.body.tr_is_private ? 1 : 0)
 			.execute('sp_insertTertulia_MonthlyW_sid')
-			.then(function(recordsets) {
+			.then((recordsets) => {
 				console.log(recordsets);
 				if (recordsets.length == 1) {
+					console.log('sending 201');
 					res.status(201)	// 201: Created
 						.type('application/json')
 						.json( { result: 'Ok' } );
 					return;
 				} else {
+					console.log('sending 409');
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Duplicate' } );
