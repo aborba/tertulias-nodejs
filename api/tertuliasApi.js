@@ -36,6 +36,27 @@ const queryTertuliaX = 'SELECT DISTINCT' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
 ' AND tr_id = @tertulia';
 
+const queryPublicTertulias = 'SELECT ' +
+	' tr_id, tr_name, tr_subject, ' + // Tertulia
+	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
+	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description' + // Schedule
+' FROM Tertulias' +
+' INNER JOIN Locations  ON tr_location = lo_id' +
+' INNER JOIN Schedules  ON tr_schedule = sc_id' +
+' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
+' WHERE tr_is_cancelled = 0 AND tr_is_private = 0';
+
+const queryPublicTertuliaX = 'SELECT' +
+	' tr_id, tr_name, tr_subject, ' + // Tertulia
+	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
+	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description' + // Schedule
+' FROM Tertulias' +
+' INNER JOIN Locations  ON tr_location = lo_id' +
+' INNER JOIN Schedules  ON tr_schedule = sc_id' +
+' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
+' WHERE tr_is_cancelled = 0 AND tr_is_private = 0' +
+' AND tr_id = @tertulia';
+
 const queryScheduleMonthlyW = 'SELECT mw_id, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip' +
 ' FROM MonthlyW' +
 ' INNER JOIN Schedules  ON mw_schedule = sc_id' +
@@ -61,6 +82,12 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
+    router.get('/public', (req, res, next) => {
+		req.selectedQuery = queryPublicTertulias;
+	    req.t_links = '{ "details": { "href": "tertulias/public/:tertulia" } }';
+	    goGet(req, res, next);
+	});
+
     router.get('/:tertulia', (req, res, next) => {
 		req.selectedQuery = queryTertuliaX;
 	    req.paramsT = { sid: sql.NVarChar, tertulia: sql.NVarChar };
@@ -74,6 +101,31 @@ module.exports = function (configuration) {
 	    	'"messages":  { "href": "tertulias/:tertulia/messages" }, ' +
 	    	'"events":    { "href": "tertulias/:tertulia/events" }, ' +
 	    	'"nextevent": { "href": "tertulias/:tertulia/nextevent" } ' +
+    	'}';
+	    goGet(req, res, next);
+	});
+
+    router.get('/public/:tertulia', (req, res, next) => {
+		req.selectedQuery = queryPublicTertuliaX;
+	    req.paramsT = {};
+	    req.paramsV = {};
+	    req.t_links = '{ ' +
+	    	'"self":      { "href": "tertulias/public/:tertulia" }, ' +
+	    	'"subscribe": { "href": "tertulias/public/:tertulia/subscribe" }, ' +
+	    	'"location":  { "href": "tertulias/public/:tertulia/location" }, ' +
+	    	'"schedule":  { "href": "tertulias/public/:tertulia/schedule" }, ' +
+	    	'"events":    { "href": "tertulias/public/:tertulia/events" }, ' +
+	    	'"nextevent": { "href": "tertulias/public/:tertulia/nextevent" } ' +
+    	'}';
+	    goGet(req, res, next);
+	});
+
+    router.get('/public/:tertulia/subscribe', (req, res, next) => {
+		req.selectedQuery = queryTertuliaX;
+	    req.paramsT = {};
+	    req.paramsV = {};
+	    req.t_links = '{ ' +
+	    	'"self":      { "href": "tertulias/public/:tertulia/subscribe" } ' +
     	'}';
 	    goGet(req, res, next);
 	});
