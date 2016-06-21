@@ -180,15 +180,18 @@ module.exports = function (configuration) {
 			.input('isPrivate', sql.Int, req.body.tr_is_private ? 1 : 0)
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then(function(recordsets) {
+				console.log('Tertulia created.');
 				console.log(recordsets);
-				res.type('application/json')
-					.json({id: '1'});
+				res.status(201)	// 201: Created
+					.type('application/json')
+					.json( { id: '1' } );
 				next();
-			}).catch(function(err) {
+			})
+			.catch(function(err) {
 				console.log('catch 1');
 				console.log(err);
 				next();
-		});
+			});
 		})
 		.catch(function(err) {
 			console.log('catch 2');
