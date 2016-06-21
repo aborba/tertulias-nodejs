@@ -633,7 +633,7 @@ GO
 
 CREATE PROCEDURE sp_insertTertulia_MonthlyW_sid
 	@name VARCHAR(40), @subject VARCHAR(80), 
-	@userSid INTEGER, 
+	@userSid VARCHAR(40), 
 	@weekDay VARCHAR(20), @weekNr INTEGER, 
 	@fromStart BIT, @skip INTEGER, 
 	@locationName VARCHAR(40),

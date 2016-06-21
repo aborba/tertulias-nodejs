@@ -173,6 +173,7 @@ module.exports = function (configuration) {
 			.input('locationName', sql.NVarChar(40), req.body.lo_name)
 			.input('locationAddress', sql.NVarChar(80), req.body.lo_address)
 			.input('locationZip', sql.NVarChar(40), req.body.lo_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.lo_city)
 			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
