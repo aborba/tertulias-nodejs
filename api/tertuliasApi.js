@@ -180,9 +180,10 @@ module.exports = function (configuration) {
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
 				console.log(recordsets);
+				console.log('len: ' + recordsets.length);
 				//console.log('r1: ' + recordsets[0][0][ErrorNumber]);
 				//console.log('r2: ' + recordsets[0][ErrorNumber]);
-				console.log('r2: ' + recordsets[0]);
+				//console.log('r2: ' + recordsets[0]);
 				if (recordsets[0][0][ErrorNumber] == 1) {
 					console.log('sending 201');
 					res.status(201)	// 201: Created
