@@ -1,0 +1,1 @@
+cls & azure site log tail tertulias | more
