@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".TertuliaDetailsActivity">
+
+    <Button
+        android:id="@+id/tertuliaDetailsEventButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="onClickSubmitEvent"
+        android:text="@string/tertulia_details_event_button" />
+
+    <Button
+        android:id="@+id/tertuliaDetailsMessagesButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/tertuliaDetailsEventButtonLabel"
+        android:onClick="onClickSubmitMessages"
+        android:text="@string/tertulia_details_messages_button" />
+
+    <Button
+        android:id="@+id/tertuliaDetailsEditButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/tertuliaDetailsMessagesButtonLabel"
+        android:onClick="onClickSubmitEdit"
+        android:text="@string/tertulia_details_edit_button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/tertuliaDetailsEditButtonLabel"
+        android:onClick="onClickSubmitMembers"
+        android:text="@string/tertulia_details_members_button" />
+
+    <RelativeLayout
+        android:id="@+id/td_title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/tertuliaDetailsTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="80dp"
+            android:text="@string/tertulia_details_title" />
+
+        <TextView
+            android:id="@+id/tertuliaDetailsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/tertuliaDetailsTitleLabel"
+            android:singleLine="true" />
+
+
+        <TextView
+            android:id="@+id/tertuliaDetailsSubjectLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tertuliaDetailsTitleLabel"
+            android:text="@string/tertulia_details_subject" />
+
+        <TextView
+            android:id="@+id/tertuliaDetailsSubject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tertuliaDetailsTitle"
+            android:layout_below="@id/tertuliaDetailsTitle"
+            android:singleLine="true" />
+
+
+        <TextView
+            android:id="@+id/tertuliaDetailsLocationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tertuliaDetailsSubjectLabel"
+            android:text="@string/tertulia_details_location" />
+
+        <TextView
+            android:id="@+id/tertuliaDetailsLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tertuliaDetailsTitle"
+            android:layout_below="@id/tertuliaDetailsSubject"
+            android:singleLine="true" />
+
+
+        <TextView
+            android:id="@+id/tertuliaDetailsScheduleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tertuliaDetailsLocationLabel"
+            android:text="@string/tertulia_details_schedule" />
+
+        <TextView
+            android:id="@+id/tertuliaDetailsSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tertuliaDetailsTitle"
+            android:layout_below="@id/tertuliaDetailsLocation"
+            android:singleLine="true" />
+
+
+        <TextView
+            android:id="@+id/tertuliaDetailsRoleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tertuliaDetailsScheduleLabel"
+            android:text="@string/tertulia_details_role" />
+
+        <TextView
+            android:id="@+id/tertuliaDetailsRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tertuliaDetailsTitle"
+            android:layout_below="@id/tertuliaDetailsSchedule"
+            android:singleLine="true" />
+
+
+        <CheckBox
+            android:id="@+id/tertuliaDetailsPrivacy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tertuliaDetailsRoleLabel"
+            android:enabled="false"
+            android:text="@string/tertulia_details_private" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

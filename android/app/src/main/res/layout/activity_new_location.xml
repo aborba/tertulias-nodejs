@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".NewLocationActivity">
+
+    <Button
+        android:id="@+id/newLocationCreateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:onClick="onClickCreateLocation"
+        android:text="@string/new_location_submit_button" />
+
+    <Button
+        android:id="@+id/ntCancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@id/newLocationCreateButton"
+        android:onClick="onClickCancel"
+        android:text="@string/new_location_cancel_button" />
+
+    <TextView
+        android:id="@+id/newLocationNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tsLocationName"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="80dp"
+        android:singleLine="true"
+        android:text="@string/new_location_name_label" />
+
+    <EditText
+        android:id="@+id/newLocationName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_toEndOf="@id/newLocationNameLabel"
+        android:hint="@string/new_location_name_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/newLocationAddressLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/newTertuliaLocationAddress"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:singleLine="true"
+        android:text="@string/new_location_address_label" />
+
+    <EditText
+        android:id="@+id/newLocationAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tsLocationName"
+        android:layout_alignStart="@id/tsLocationName"
+        android:hint="@string/new_location_address_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/newLocationZipCountryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tsLocationZip"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:singleLine="true"
+        android:text="@string/new_location_zipcountry_label" />
+
+    <EditText
+        android:id="@+id/newLocationZip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newTertuliaLocationAddress"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_alignStart="@id/tsLocationName"
+        android:hint="@string/new_location_zip_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/tsLocationCountry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/newTertuliaLocationAddress"
+        android:layout_toEndOf="@id/tsLocationZip"
+        android:hint="@string/new_location_country_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <TextView
+        android:id="@+id/newLocationLatitudeLongitudeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tsLocationLatitude"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/newLocationZipCountryLabel"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:singleLine="true"
+        android:text="@string/new_location_coordinates_label" />
+
+    <EditText
+        android:id="@+id/newLocationLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tsLocationZip"
+        android:layout_marginEnd="10dp"
+        android:layout_alignStart="@id/tsLocationName"
+        android:hint="@string/new_location_latitude_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/tsLocationLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tsLocationZip"
+        android:layout_toEndOf="@id/tsLocationLatitude"
+        android:hint="@string/new_location_longitude_hint"
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
+
+</RelativeLayout>

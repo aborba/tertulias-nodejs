@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".SubscribeTeruliaActivity">
+
+    <Button
+        android:id="@+id/ts_OkButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="onClickSubmitSearch"
+        android:text="@string/subscribe_tertulia_search_button" />
+
+    <Button
+        android:id="@+id/ts_CancelButtonLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/ts_OkButtonLabel"
+        android:onClick="onClickCancelSearch"
+        android:text="@string/subscribe_tertulia_cancel_button" />
+
+    <RelativeLayout
+        android:id="@+id/ts_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/tsTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tsTitle"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="90sp"
+            android:singleLine="true"
+            android:text="@string/new_tertulia_name_label" />
+
+        <EditText
+            android:id="@+id/tsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@id/tsTitleLabel"
+            android:hint="@string/new_tertulia_title_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/tsLocationNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tsLocationName"
+            android:layout_below="@id/tsTitleLabel"
+            android:layout_marginEnd="80dp"
+            android:singleLine="true"
+            android:text="@string/new_tertulia_location_name_label" />
+
+        <EditText
+            android:id="@+id/tsLocationName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/tsTitle"
+            android:layout_below="@id/tsTitle"
+            android:hint="@string/new_tertulia_location_name_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/tsLocationZipCountryLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tsLocationZip"
+            android:layout_below="@id/tsLocationNameLabel"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:singleLine="true"
+            android:text="@string/new_tertulia_location_zipcountry_label" />
+
+        <EditText
+            android:id="@+id/tsLocationZip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/tsTitle"
+            android:layout_below="@id/tsLocationName"
+            android:layout_marginEnd="20sp"
+            android:hint="@string/new_tertulia_location_zip_hint"
+            android:imeOptions="actionNext"
+            android:inputType="phone"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/tsLocationCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tsLocationName"
+            android:layout_marginEnd="20sp"
+            android:layout_toEndOf="@id/tsLocationZip"
+            android:hint="@string/new_tertulia_location_city_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textCapWords"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/tsLocationCountry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tsLocationName"
+            android:layout_toEndOf="@id/tsLocationCity"
+            android:hint="@string/new_tertulia_location_country_hint"
+            android:imeOptions="actionNext"
+            android:inputType="textCapCharacters"
+            android:singleLine="true" />
+
+
+        <!-- Tertulia Location Lat & Lon -->
+
+        <TextView
+            android:id="@+id/tsLocationLatitudeLongitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tsLocationLatitude"
+            android:layout_below="@id/tsLocationZipCountryLabel"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:singleLine="true"
+            android:text="@string/new_tertulia_location_coordinates_label" />
+
+        <EditText
+            android:id="@+id/tsLocationLatitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/tsTitle"
+            android:layout_below="@id/tsLocationZip"
+            android:layout_marginEnd="10dp"
+            android:hint="@string/new_tertulia_location_coordinates_hint"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/tsLocationLongitude"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tsLocationZip"
+            android:layout_toEndOf="@id/tsLocationLatitude"
+            android:hint="@string/new_tertulia_location_coordinates_hint"
+            android:imeOptions="actionNext"
+            android:inputType="numberDecimal|numberSigned"
+            android:singleLine="true" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
