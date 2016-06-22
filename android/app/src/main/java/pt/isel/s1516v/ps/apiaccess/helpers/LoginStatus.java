@@ -1,9 +1,12 @@
 package pt.isel.s1516v.ps.apiaccess.helpers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+
+import com.google.common.base.Predicate;
 
 public class LoginStatus {
 
@@ -14,10 +17,16 @@ public class LoginStatus {
 
     private Context ctx;
     private ImageView view;
+    private Predicate predicate;
 
-    public LoginStatus(Context ctx, ImageView view) {
+    public LoginStatus(@NonNull Context ctx, ImageView view, @NonNull Predicate predicate) {
         this.ctx = ctx;
         this.view = view;
+        this.predicate = predicate;
+    }
+
+    public void update() {
+        set(predicate.apply(null));
     }
 
     public void set(boolean isLogin) { view.setVisibility(isLogin ? View.VISIBLE : View.INVISIBLE); }
