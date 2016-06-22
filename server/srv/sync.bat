@@ -1,4 +1,4 @@
 cls
 git add --all .
 git commit -m "x" .
-git push --all
+git push azure master
