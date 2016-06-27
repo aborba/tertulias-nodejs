@@ -12,7 +12,7 @@ const queryTertulias = 'SELECT' +
 ' tr_subject    AS subject,' +
 ' ev_targetdate AS nextEventDate,' +
 ' lo_name       AS nextEventLocation,' +
-' no_count      AS messages' +
+' no_count      AS messages,' +
 ' nv_name       AS role,' +
 ' FROM Tertulias' +
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
