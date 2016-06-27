@@ -89,8 +89,8 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		req.queryTertuliasPaged = queryTertulias;
-	    req.paramsT = { 'sid': sql.NVarChar, 'pageNr': sql.NVarChar, 'pageSize': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    req.paramsV = { 'sid': req.azureMobile.user.id, 'pageNr': '1', 'pageSize': '3' };
+	    req.paramsT = { 'sid': sql.NVarChar }; //, 'pageNr': sql.Int, 'pageSize': sql.Int }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.paramsV = { 'sid': req.azureMobile.user.id }; //, 'pageNr': 1, 'pageSize': 3 };
 	    req.t_links = '{ "details": { "href": "tertulias/:tertulia" } }';
 	    goGetTertulias(req, res, next);
 	});
