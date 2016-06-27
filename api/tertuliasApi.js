@@ -93,7 +93,7 @@ module.exports = function (configuration) {
 	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id };
 	    req.t_links = '{ "details": { "href": "tertulias/:tertulia" } }';
-	    goGet(req, res, next);
+	    goGetTertulias(req, res, next);
 	});
 
     router.get('/public', (req, res, next) => {
@@ -143,6 +143,35 @@ module.exports = function (configuration) {
     	'}';
 	    goGet(req, res, next);
 	});
+
+	var goGetTertulias = function(req, res, next) {
+		var selectedQuery = req.selectedQuery;
+	    var paramsT = req.paramsT;
+	    var paramsV = req.paramsV;
+
+		var connection = new sql.Connection(util.sqlConfiguration);
+	    connection.connect(function(err) {
+	        var preparedStatement = new sql.PreparedStatement(connection);
+	        for (var key in paramsT) preparedStatement.input(key, paramsT[key]);
+	        preparedStatement.prepare(selectedQuery, function(err) {
+	            if (err) { completeError(err, res); return; }
+	            preparedStatement.execute(paramsV, 
+	                function(err, recordset, affected) {
+	                    if (err) { completeError(err, res); return; }
+	                    res.type('application/json');
+	                    recordset.forEach(function(elem) {
+	                    	if (typeof req.t_links !== typeof undefined)
+		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
+	                    });
+	                    preparedStatement.unprepare();
+	                    console.log(recordset);
+	                    res.json(recordset);
+	                    next();
+	                }
+	            );
+	        });
+	    });
+	}
 
 	var goGet = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
