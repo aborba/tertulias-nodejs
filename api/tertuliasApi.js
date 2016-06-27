@@ -8,7 +8,7 @@ var util = require('../util');
 
 const queryTertulias = 'SELECT' +
 ' tr_id         AS id,' +
-' tr_name,      AS name' +
+' tr_name       AS name,' +
 ' tr_subject    AS subject,' +
 ' ev_targetdate AS nextEventDate,' +
 ' lo_name       AS nextEventLocation,' +
