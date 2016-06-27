@@ -29,10 +29,9 @@ const queryTertulias = 'SELECT' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
-const queryTertuliasPaged = 'SELECT * FROM (' + queryTertulias + ') AS TBL' +
+const queryTertuliasPaged = 'SELECT * FROM (' + queryTertulias + ') AS tbl' +
 ' ORDER BY nextEventDate DESC, name' +
-' OFFSET ((@page - 1) * @pageSize) ROWS FETCH NEXT @pagesize ROWS ONLY';
-
+' OFFSET ((@pageNr - 1) * @pageSize) ROWS FETCH NEXT @pageSize ROWS ONLY';
 
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
@@ -90,10 +89,10 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		req.selectedQuery = queryTertulias;
-	    req.paramsT = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    req.paramsV = { 'sid': req.azureMobile.user.id };
+	    req.paramsT = { 'sid': sql.NVarChar, 'pageNr': sql.Int, 'pageSize': sql.Int }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.paramsV = { 'sid': req.azureMobile.user.id, 'pageNr': 1, 'pageSize': 3 };
 	    req.t_links = '{ "details": { "href": "tertulias/:tertulia" } }';
-	    goGetTertulias(req, res, next);
+	    queryTertuliasPaged(req, res, next);
 	});
 
     router.get('/public', (req, res, next) => {
