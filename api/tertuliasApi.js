@@ -6,6 +6,8 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
+const defaultPageSize = 3;
+
 const queryTertulias = 'SELECT' +
 ' tr_id         AS id,' +
 ' tr_name       AS name,' +
@@ -88,9 +90,13 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
+    	var pageNr = 1;
+    	var pageSize = defaultPageSize;
 		req.selectedQuery = queryTertuliasPaged;
+		req.pageSize = pageSize;
+		req.pageNr = pageNr;
 	    req.paramsT = { 'sid': sql.NVarChar, 'pageNr': sql.Int, 'pageSize': sql.Int }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-	    req.paramsV = { 'sid': req.azureMobile.user.id, 'pageNr': 2, 'pageSize': 3 };
+	    req.paramsV = { 'sid': req.azureMobile.user.id, 'pageNr': pageNr, 'pageSize': pageSize };
 	    req.t_links = '{ "details": { "href": "tertulias/:tertulia" } }';
 	    goGetTertulias(req, res, next);
 	});
@@ -163,7 +169,41 @@ module.exports = function (configuration) {
 		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
 	                    });
 	                    preparedStatement.unprepare();
+	                    var result = {
+	                    	tertulias: recordset,
+	                    	page: {
+                    			offset: req.pageNr,
+                    			size: req.pageSize,
+                    			itemsCount: recordset.length
+	                    	},
+	                    	links: {
+	                    		self: {
+	                    			href: ''
+                    			},
+                    			add: {
+                    				tag: 'ADD_TERTULIA',
+                    				method: 'POST',
+	                    			href: ''
+                    			},
+								subscribe: {
+                    				tag: 'SUBSCRIBE_TERTULIA',
+                    				method: 'POST',
+	                    			href: ''
+                    			},
+								nextPage: {
+                    				tag: 'NEXT_PAGE',
+                    				method: 'GET',
+	                    			href: ''
+                    			},
+								previousPage: {
+                    				tag: 'PREVIOUS_PAGE',
+                    				method: 'GET',
+	                    			href: ''
+                    			},
+							}
+	                    };
 	                    console.log(recordset);
+	                    console.log(req);
 	                    res.json(recordset);
 	                    next();
 	                }
