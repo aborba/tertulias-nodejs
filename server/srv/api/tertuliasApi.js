@@ -6,19 +6,32 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-const queryTertulias = 'SELECT tr_id, tr_name, tr_subject, ev_targetdate, nv_name, no_count' +
+const queryTertulias = 'SELECT' +
+' tr_id         AS id,' +
+' tr_name,      AS name' +
+' tr_subject    AS subject,' +
+' ev_targetdate AS nextEventDate,' +
+' lo_name       AS nextEventLocation,' +
+' no_count      AS messages' +
+' nv_name       AS role,' +
 ' FROM Tertulias' +
 ' INNER JOIN Members ON mb_tertulia = tr_id' +
 ' INNER JOIN Enumvalues ON mb_role = nv_id' +
 ' INNER JOIN Users ON mb_user = us_id' +
 ' LEFT JOIN' +
 ' (SELECT * FROM' +
-' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events) AS a WHERE a.rank = 1) AS b' +
+' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events' +
+'  INNER JOIN Locations on ev_location = lo_id WHERE ev_targetdate > GETDATE()) AS a WHERE a.rank = 1) AS b' +
 ' ON ev_tertulia = tr_id' +
-' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications where no_id not in' +
-' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
+' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications WHERE no_id NOT IN' +
+' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id' +
+' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
-' WHERE tr_is_cancelled = 0 AND us_sid = @sid' ;
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
+
+const queryTertuliasPaged = 'SELECT * FROM (' + queryTertulias + ') AS TBL' +
+' ORDER BY nextEventDate DESC, name' +
+' OFFSET ((@page - 1) * @pageSize) ROWS FETCH NEXT @pagesize ROWS ONLY';
 
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia

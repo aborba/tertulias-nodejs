@@ -1,0 +1,2544 @@
+swagger: '2.0'
+info:
+  title: Tertulias
+  description: Recurrent meetings management
+  version: 1.0.0
+host: tertulias.azurewebsites.net
+schemes:
+  - https
+basePath: /api
+produces:
+  - application/json
+paths:
+  /tertulias:
+    get:
+      summary: Get My Tertulias List
+      description: >
+        The Get My Tertulias Lists endpoint returns summary information about the tertulias where the application user has subscribed.
+        The response includes a summrary on each Tertulia, namely the date and location of the next event, if any, and the user's membership role.
+      parameters:
+        - name: sid
+          in: header
+          description: User id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: An array of objects with summary info on each tertulia
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tertulia'
+        '401':
+          description: Unauthorized
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create Tertulia
+      description: >
+        The Tertulias Lists endpoint returns detailed information about the selected tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: values
+          in: body
+          description: Tertulia details
+          required: true
+          schema:
+            $ref: '#/definitions/TertuliaDetails'
+      tags:
+        - Tertulia
+      responses:
+        '201':
+          description: Tertulia created
+        '400':
+          description: Bad Request.
+          schema:
+            $ref: '#/definitions/Error'
+        '409':
+          description: Conflict. The tertulia name is already taken.
+          schema:
+            $ref: '#/definitions/Error'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}:
+    get:
+      summary: Tertulia details
+      description: >
+        The Tertulia Details endpoint returns a detailed description of the selected tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: Object with the selected tertulia details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/TertuliaDetails'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '410':
+          description: Gone
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia details
+      description: >
+        The Tertulia Details endpoint returns a detailed description of the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: An object with the Tertulia details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/TertuliaDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia details
+      description: >
+        The Tertulia Details endpoint returns a detailed description of the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: An object with the Tertulia details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/TertuliaDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/messages:
+    get:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/messages/{messageId}:
+    get:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: messageId
+          in: path
+          description: Message Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: messageId
+          in: path
+          description: Message Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/locations:
+    get:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Location
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Location
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/locations/{locationId}:
+    get:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: locationId
+          in: path
+          description: Location Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Location
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: locationId
+          in: path
+          description: Location Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Location
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: locationId
+          in: path
+          description: Location Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Location
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/members:
+    get:
+      summary: Tertulia members list
+      description: >
+        The Tertulia Members list endpoint returns a list of Users that are members of the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: An array of objects with the Tertulia's users membership, including user basic identification and membership type.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Member'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia members list
+      description: >
+        The Tertulia Members list endpoint returns a list of Users that are members of the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: An array of objects with the Tertulia's users membership, including user basic identification and membership type.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Member'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/members/{memberId}:
+    get:
+      summary: Tertulia member
+      description: >
+        The Tertulia Member endpoint returns a detailed description of the member.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Member Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: An array of objects with the Tertulia's users membership, including user basic identification and membership type.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Member'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia member
+      description: >
+        The Tertulia Member endpoint returns a detailed description of the member.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Member Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: An array of objects with the Tertulia's users membership, including user basic identification and membership type.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Member'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia member
+      description: >
+        The Tertulia Member endpoint returns a detailed description of the member.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Member Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: An array of objects with the Tertulia's users membership, including user basic identification and membership type.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Member'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/items:
+    get:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/items/{itemId}:
+    get:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/templates:
+    get:
+      summary: Tertulia templates list
+      description: >
+        The Tertulia Templates List endpoint returns a list of the templates associated with a tertulia that can be used to associate a set of items to a tertulia's event. A template is predefined list of items associated with quantities, targeted to ease the repetitive task of associating items while setting up events.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Template
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Template'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia templates list
+      description: >
+        The Tertulia Templates List endpoint returns a list of the templates associated with a tertulia that can be used to associate a set of items to a tertulia's event. A template is predefined list of items associated with quantities, targeted to ease the repetitive task of associating items while setting up events.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Template
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Template'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/templates/{templateId}:
+    get:
+      summary: Tertulia template
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Template
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia template
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Template
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia template
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Template
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/templates/{templateId}/items:
+    get:
+      summary: Tertulia template items list
+      description: >
+        The Tertulia Template Items List endpoint returns a list of the items associated with a tertulia's template. that can be associated to a tertulia's event. A tertulias template is predefined list of items associated with quantities, targeted to ease the repetitive task of associating items while setting up events.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Template Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia template items list
+      description: >
+        The Tertulia Template Items List endpoint returns a list of the items associated with a tertulia's template. that can be associated to a tertulia's event. A tertulias template is predefined list of items associated with quantities, targeted to ease the repetitive task of associating items while setting up events.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Template Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/templates/{templateId}/items/{itemId}:
+    get:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia item
+      description: >
+        The Tertulia Items item endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: templateId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events:
+    get:
+      summary: Tertulia events list
+      description: >
+        The Tertulia Events list endpoint returns a list of Events defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Event
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia events list
+      description: >
+        The Tertulia Events list endpoint returns a list of Events defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Event
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Event'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}:
+    get:
+      summary: Tertulia events details
+      description: >
+        The Tertulia Event Details endpoint returns a returns a detailed description of the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Event
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia events details
+      description: >
+        The Tertulia Event Details endpoint returns a returns a detailed description of the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Event
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia events details
+      description: >
+        The Tertulia Event Details endpoint returns a returns a detailed description of the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Event
+      responses:
+        '200':
+          description: An object with the event details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}/items:
+    get:
+      summary: Tertulia events items list
+      description: >
+        The Tertulia Event Items List endpoint returns a list of the items assigned to the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An array of items associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia events items list
+      description: >
+        The Tertulia Event Items List endpoint returns a list of the items assigned to the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An array of items associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}/items/{itemId}:
+    get:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}/contributions:
+    get:
+      summary: Tertulia events items list
+      description: >
+        The Tertulia Event Items List endpoint returns a list of the items assigned to the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An array of items associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia events items list
+      description: >
+        The Tertulia Event Items List endpoint returns a list of the items assigned to the event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An array of items associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Item'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}/contributions/{memberId}:
+    get:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/events/{eventId}/contributions/{memberId}/{itemId}:
+    get:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia items list
+      description: >
+        The Tertulia Items List endpoint returns a list of the items associated with a tertulia that can be associated to a tertulia's event.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: eventId
+          in: path
+          description: Event Id.
+          required: true
+          type: string
+          format: string
+        - name: memberId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+        - name: itemId
+          in: path
+          description: Item Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Item
+      responses:
+        '200':
+          description: An object with the item details
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/ItemDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/publicsearch:
+    get:
+      summary: Public Tertulias List
+      description: >
+        The Public Tertulias Lists endpoint returns information about the non-private Tertulias matching a search criteria.
+        The response includes the display name and other details about each public Tertulia, and lists the Tertulias in the proper
+        display order.
+        The search criteria is passed in the body as a set of pairs {name\:value}, where the values are filters to apply to the Tertulia fields. The names must match Tertulia fields.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+        - name: filter
+          in: body
+          description: Tertulia search filter parameters.
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tertulia'
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: An array of public Tertulias
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tertulia'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Public Tertulias List
+      description: >
+        The Public Tertulias Lists endpoint returns information about the non-private Tertulias matching a search criteria.
+        The response includes the display name and other details about each public Tertulia, and lists the Tertulias in the proper
+        display order.
+        The search criteria is passed in the body as a set of pairs {name\:value}, where the values are filters to apply to the Tertulia fields. The names must match Tertulia fields.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+        - name: filter
+          in: body
+          description: Tertulia search filter parameters.
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tertulia'
+      tags:
+        - Tertulia
+      responses:
+        '200':
+          description: An array of public Tertulias
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tertulia'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/invitations:
+    get:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Tertulia locations list
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Location'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tertulias/{tertuliaId}/invitations/{invitationId}:
+    get:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: invitationId
+          in: path
+          description: Message Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Tertulia location details
+      description: >
+        The Tertulia Locations list endpoint returns a list of Locations defined for the Tertulia.
+      parameters:
+        - name: sid
+          in: header
+          description: User id token.
+          required: true
+          type: string
+          format: string
+        - name: tertuliaId
+          in: path
+          description: Tertulia Id.
+          required: true
+          type: string
+          format: string
+        - name: invitationId
+          in: path
+          description: Message Id.
+          required: true
+          type: string
+          format: string
+      tags:
+        - Message
+      responses:
+        '200':
+          description: An array of objects with the locations associated with the Tertulia.
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/LocationDetails'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /me:
+    get:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /me/messages:
+    get:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: User Profile
+      description: >-
+        The User Profile endpoint returns information about the Uber user that
+        has authorized with the application.
+      tags:
+        - User
+      responses:
+        '200':
+          description: Profile information for a user
+          schema:
+            $ref: '#/definitions/Profile'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Tertulia:
+    type: object
+    properties:
+      tr_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific tertulia. For example, "Tertúlia do Tejo" will have a different
+          tr_id than "Tertúlia dos Primos".
+      tr_name:
+        type: string
+        description: Name of the Tertulia.
+      tr_subject:
+        type: string
+        description: Tertulia.
+  TertuliaDetails:
+    type: object
+    properties:
+      tr_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific tertulia. For example, "Tertúlia do Tejo" will have a different
+          tr_id than "Tertúlia dos Primos".
+      tr_name:
+        type: string
+        description: Name of the Tertulia.
+      tr_subject:
+        type: string
+        description: Tertulia.
+  Member:
+    type: object
+    properties:
+      mb_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific member. For example, in Tertulia "Tertúlia do Tejo" , "aborba" will have a different mb_id than "abs".
+      mb_user:
+        type: string
+        description: Id of the User.
+      us_alias:
+        type: string
+        description: User name alias.
+  Location:
+    type: object
+    properties:
+      lo_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific location.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+      lo_address:
+        type: string
+        description: Location street and number (e.g. "Rua Padre Américo, 31").
+      lo_zip:
+        type: string
+        description: Location zip code (e.g. "1600-531").
+      lo_city:
+        type: string
+        description: Location city name (e.g. "Lisboa").
+      lo_country:
+        type: string
+        description: Location country name (e.g. "Portugal").
+      lo_latitude:
+        type: string
+        description: Location latitude (e.g. "28.890988").
+      lo_longitude:
+        type: string
+        description: Location longitude (e.g. "-8.344565").
+  LocationDetails:
+    type: object
+    properties:
+      lo_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific location.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+      lo_address:
+        type: string
+        description: Location street and number (e.g. "Rua Padre Américo, 31").
+      lo_zip:
+        type: string
+        description: Location zip code (e.g. "1600-531").
+      lo_city:
+        type: string
+        description: Location city name (e.g. "Lisboa").
+      lo_country:
+        type: string
+        description: Location country name (e.g. "Portugal").
+      lo_latitude:
+        type: string
+        description: Location latitude (e.g. "28.890988").
+      lo_longitude:
+        type: string
+        description: Location longitude (e.g. "-8.344565").
+  Event:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+  EventDetails:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+      lo_address:
+        type: string
+        description: Location street and number (e.g. "Rua Padre Américo, 31").
+      lo_zip:
+        type: string
+        description: Location zip code (e.g. "1600-531").
+      lo_city:
+        type: string
+        description: Location city name (e.g. "Lisboa").
+      lo_country:
+        type: string
+        description: Location country name (e.g. "Portugal").
+      lo_latitude:
+        type: string
+        description: Location latitude (e.g. "28.890988").
+      lo_longitude:
+        type: string
+        description: Location longitude (e.g. "-8.344565").
+  Item:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+  ItemDetails:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+      lo_address:
+        type: string
+        description: Location street and number (e.g. "Rua Padre Américo, 31").
+      lo_zip:
+        type: string
+        description: Location zip code (e.g. "1600-531").
+      lo_city:
+        type: string
+        description: Location city name (e.g. "Lisboa").
+      lo_country:
+        type: string
+        description: Location country name (e.g. "Portugal").
+      lo_latitude:
+        type: string
+        description: Location latitude (e.g. "28.890988").
+      lo_longitude:
+        type: string
+        description: Location longitude (e.g. "-8.344565").
+  Template:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+  TemplateDetails:
+    type: object
+    properties:
+      ev_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      ev_date:
+        type: string
+        description: >-
+          Event scheduled date.
+      lo_id:
+        type: string
+        description: >-
+          Unique identifier representing a specific event.
+      lo_name:
+        type: string
+        description: Location name, such as "Restaurante Telheiras Gourmet".
+      lo_address:
+        type: string
+        description: Location street and number (e.g. "Rua Padre Américo, 31").
+      lo_zip:
+        type: string
+        description: Location zip code (e.g. "1600-531").
+      lo_city:
+        type: string
+        description: Location city name (e.g. "Lisboa").
+      lo_country:
+        type: string
+        description: Location country name (e.g. "Portugal").
+      lo_latitude:
+        type: string
+        description: Location latitude (e.g. "28.890988").
+      lo_longitude:
+        type: string
+        description: Location longitude (e.g. "-8.344565").
+  Profile:
+    type: object
+    properties:
+      first_name:
+        type: string
+        description: First name of the Uber user.
+      last_name:
+        type: string
+        description: Last name of the Uber user.
+      email:
+        type: string
+        description: Email address of the Uber user
+      picture:
+        type: string
+        description: Image URL of the Uber user.
+      promo_code:
+        type: string
+        description: Promo code of the Uber user.
+  Activity:
+    type: object
+    properties:
+      uuid:
+        type: string
+        description: Unique identifier for the activity
+  Activities:
+    type: object
+    properties:
+      offset:
+        type: integer
+        format: int32
+        description: Position in pagination.
+      limit:
+        type: integer
+        format: int32
+        description: Number of items to retrieve (100 max).
+      count:
+        type: integer
+        format: int32
+        description: Total number of items available.
+      history:
+        type: array
+        items:
+          $ref: '#/definitions/Activity'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
