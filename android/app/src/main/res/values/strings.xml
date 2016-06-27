@@ -21,6 +21,8 @@
     <string name="main_activity_logout_succeed_message">User signout succeeded.</string>
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
+    <string name="main_activity_no_network_title">Connection to the network unavailable</string>
+    <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
 
     <string name="title_activity_tertulia_details">Tertulia Details</string>
     <string name="tertulia_details_label">Tertulia Details</string>

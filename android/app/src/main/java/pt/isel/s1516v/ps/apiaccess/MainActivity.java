@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -216,7 +217,18 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         Util.longSnack(findViewById(android.R.id.content), alertMessage);
     }
 
+    private void alert(Context ctx, int title, int message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setMessage(message);
+        if (title > 0) builder.setTitle(title);
+        builder.create().show();
+    }
+
     private void request(Context ctx, String key, String httpMethod, FutureCallback<JsonElement> callback) {
+        if (!Util.isOnline(this)) {
+            alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
+            return;
+        }
+
         MobileServiceClient cli = Util.getMobileServiceClient(ctx);
         if (!baseRoutes.containsKey(key)) {
             Util.longToast(ctx, R.string.main_activity_server_error_exiting);
@@ -235,6 +247,11 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
     private void doLoginAndFetch(final Context ctx) {
         final MobileServiceClient cli = Util.getMobileServiceClient(this);
         loginStatus.update();
+
+        if (!Util.isOnline(this)) {
+            alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
+            return;
+        }
 
         if (Util.isSignedIn(ctx) || cli.isLoginInProgress()) {
             requestTertuliasList(MainActivity.this);

@@ -1,6 +1,8 @@
 package pt.isel.s1516v.ps.apiaccess.helpers;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.internal.Network;
 
 import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
@@ -96,6 +99,12 @@ public class Util {
 //        actionBar.setDisplayShowHomeEnabled(true);
 //        actionBar.setDisplayHomeAsUpEnabled(isSetupAsUpEnabled);
 //        actionBar.setDisplayUseLogoEnabled(true);
+    }
+
+    public static boolean isOnline(Context ctx) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     // region Private stuff
