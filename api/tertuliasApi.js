@@ -169,6 +169,7 @@ module.exports = function (configuration) {
 		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
 	                    });
 	                    preparedStatement.unprepare();
+	                    var source = "/tertulias";
 	                    var result = {
 	                    	tertulias: recordset,
 	                    	page: {
@@ -178,27 +179,27 @@ module.exports = function (configuration) {
 	                    	},
 	                    	links: {
 	                    		self: {
-	                    			href: ''
+	                    			href: source
                     			},
                     			add: {
                     				tag: 'ADD_TERTULIA',
                     				method: 'POST',
-	                    			href: ''
+	                    			href: source
                     			},
 								subscribe: {
                     				tag: 'SUBSCRIBE_TERTULIA',
                     				method: 'POST',
-	                    			href: ''
+	                    			href: source + '/publicsearch'
                     			},
 								nextPage: {
                     				tag: 'NEXT_PAGE',
                     				method: 'GET',
-	                    			href: ''
+	                    			href: '/tertulias/page/' + req.pageNr + 1
                     			},
 								previousPage: {
                     				tag: 'PREVIOUS_PAGE',
                     				method: 'GET',
-	                    			href: ''
+	                    			href: '/tertulias/page/' + req.pageNr - 1
                     			},
 							}
 	                    };
