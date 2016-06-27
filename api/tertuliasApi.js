@@ -35,6 +35,8 @@ const queryTertuliasPaged = 'SELECT * FROM (' + queryTertulias + ') AS tbl' +
 ' ORDER BY nextEventDate DESC, name' +
 ' OFFSET ((@pageNr - 1) * @pageSize) ROWS FETCH NEXT @pageSize ROWS ONLY';
 
+const queryTertuliasCount = 'SELECT COUNT(*) FROM (' + queryTertulias + ') AS tbl';
+
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
@@ -90,7 +92,7 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
-    	var pageNr = 1;
+    	var pageNr = 2;
     	var pageSize = defaultPageSize;
 		req.selectedQuery = queryTertuliasPaged;
 		req.pageSize = pageSize;
@@ -196,14 +198,16 @@ module.exports = function (configuration) {
                     				tag: 'NEXT_PAGE',
                     				method: 'GET',
 	                    			href: '/tertulias/page/' + (1 + req.pageNr)
-                    			},
-								previousPage: {
-                    				tag: 'PREVIOUS_PAGE',
-                    				method: 'GET',
-	                    			href: '/tertulias/page/' + (0 + req.pageNr - 1)
-                    			},
+                    			}
 							}
 	                    };
+	                    if (req.pageNr > 0) {
+	                    	result.links['previousPage'] = {
+	                    		tag: 'PREVIOUS_PAGE',
+	                    		method: 'GET',
+	                    		href: '/tertulias/page/' + (0 + req.pageNr - 1)
+	                    	};
+	                    }
 	                    console.log(result);
 	                    res.json(result);
 	                    next();
