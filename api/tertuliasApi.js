@@ -203,9 +203,8 @@ module.exports = function (configuration) {
                     			},
 							}
 	                    };
-	                    console.log(recordset);
-	                    console.log(req);
-	                    res.json(recordset);
+	                    console.log(result);
+	                    res.json(result);
 	                    next();
 	                }
 	            );
