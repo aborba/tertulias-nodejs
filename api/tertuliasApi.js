@@ -33,6 +33,7 @@ const queryTertuliasPaged = 'SELECT * FROM (' + queryTertulias + ') AS TBL' +
 ' ORDER BY nextEventDate DESC, name' +
 ' OFFSET ((@page - 1) * @pageSize) ROWS FETCH NEXT @pagesize ROWS ONLY';
 
+
 const queryTertuliaX = 'SELECT DISTINCT' +
 	' tr_id, tr_name, tr_subject, ' + // Tertulia
 	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
