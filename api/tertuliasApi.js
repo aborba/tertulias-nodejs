@@ -169,6 +169,7 @@ module.exports = function (configuration) {
 		                    	elem['_links'] = JSON.parse(req.t_links.replace(/:tertulia/g, elem.tr_id));
 	                    });
 	                    preparedStatement.unprepare();
+	                    console.log(recordset);
 	                    var result = {
 	                    	tertulias: recordset,
 	                    	page: {
