@@ -162,6 +162,7 @@ module.exports = function (configuration) {
 	            if (err) { completeError(err, res); return; }
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
+	                	req.Url.path="";
 	                    if (err) { completeError(err, res); return; }
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
