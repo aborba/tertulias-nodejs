@@ -194,12 +194,12 @@ module.exports = function (configuration) {
 								nextPage: {
                     				tag: 'NEXT_PAGE',
                     				method: 'GET',
-	                    			href: '/tertulias/page/' + req.pageNr + 1
+	                    			href: '/tertulias/page/' + (1 + req.pageNr)
                     			},
 								previousPage: {
                     				tag: 'PREVIOUS_PAGE',
                     				method: 'GET',
-	                    			href: '/tertulias/page/' + req.pageNr - 1
+	                    			href: '/tertulias/page/' + (0 + req.pageNr - 1)
                     			},
 							}
 	                    };
