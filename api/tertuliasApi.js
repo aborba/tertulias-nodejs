@@ -170,7 +170,7 @@ module.exports = function (configuration) {
 	                    });
 	                    preparedStatement.unprepare();
 	                    var source = "/tertulias";
-	                    // source = req.Url.path;
+	                    var source2 = req.Url;
 	                    console.log(req.Url);
 	                    var result = {
 	                    	tertulias: recordset,
