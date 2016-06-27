@@ -98,7 +98,7 @@ module.exports = function (configuration) {
 	    req.paramsT = { 'sid': sql.NVarChar, 'pageNr': sql.Int, 'pageSize': sql.Int }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.paramsV = { 'sid': req.azureMobile.user.id, 'pageNr': pageNr, 'pageSize': pageSize };
 	    req.t_links = '{ "details": { "href": "tertulias/:tertulia" } }';
-	    goGetTertulias2(req, res, next);
+	    goGetTertulias(req, res, next);
 	});
 
     router.get('/public', (req, res, next) => {
@@ -149,7 +149,7 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
-	var goGetTertulias2 = function(req, res, next) {
+	var goGetTertulias = function(req, res, next) {
 		var selectedQuery = req.selectedQuery;
 	    var paramsT = req.paramsT;
 	    var paramsV = req.paramsV;
@@ -162,7 +162,6 @@ module.exports = function (configuration) {
 	            if (err) { completeError(err, res); return; }
 	            preparedStatement.execute(paramsV, 
 	                function(err, recordset, affected) {
-	                	req.Url.path="";
 	                    if (err) { completeError(err, res); return; }
 	                    res.type('application/json');
 	                    recordset.forEach(function(elem) {
