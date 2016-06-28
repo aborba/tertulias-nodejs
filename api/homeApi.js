@@ -3,8 +3,6 @@ var express = require('express'),
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize = require('azure-mobile-apps/src/express/middleware/authorize');
 
-var util = require('../util');
-
 module.exports = function (configuration) {
     var router = express.Router();
 
@@ -16,7 +14,13 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
-    	res.json(results);
+		res.json( {
+			"links": [
+				{ "rel": "tertulias", "method": "GET", "href": "/tertulias" },
+				{ "rel": "registration", "method": "POST", "href": "/me" }
+			]}
+		);
+
     	next();
     });
 
