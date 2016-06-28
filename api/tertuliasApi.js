@@ -48,14 +48,14 @@ module.exports = function (configuration) {
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
 	    req.tertulias['links'] = '[ ' +
-			'{ rel: "self", method: "GET", href: "' + route + '" }, ' +
-			'{ rel: "create", method: "POST", href: "' + route + '" }, ' +
-			'{ rel: "searchPublic", method: "GET", href: "' + route + '/publicsearch" } ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+			'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
+			'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 		']';
 	    req.tertulias['itemLinks'] = '[ ' +
-			'{ rel: "self", method: "GET", href: "' + route + '/:tertulia" }, ' +
-			'{ rel: "update", method: "PUT", href: "' + route + '/:tertulia" }, ' +
-			'{ rel: "delete", method: "DELETE", href: "' + route + '/:tertulia" } ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '/:tertulia" }, ' +
+			'{ "rel": "update", "method": "PUT", "href": "' + route + '/:tertulia" }, ' +
+			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:tertulia" } ' +
 		']';
 	    goGet(req, res, next);
     	/*
