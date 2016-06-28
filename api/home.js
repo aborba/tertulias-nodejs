@@ -1,11 +1,9 @@
 var api = {
 	get: function (req, res, next) {
-		res.json({
-			"_links": {
-				"tertulias": { "href" : "/tertulias" },
-				"registration": { "href" : "/register" }
-			}
-		});
+		res.json( { "links": [
+			{ "rel": "tertulias", "method": "GET", "href": "/tertulias" },
+			{ "rel": "registration", "method": "POST", "href": "/me" }
+		] } );
 		next();
     }
 };

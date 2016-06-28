@@ -57,8 +57,6 @@ module.exports = function (configuration) {
 			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" } ' +
 		']';
 	    goGet(req, res, next);
-    	/*
-		*/
 	});
 
 	var goGet = function(req, res, next) {
@@ -102,9 +100,7 @@ module.exports = function (configuration) {
 	            );
 	        });
 	    });
-		/*
-	    */
-	}
+	};
 
     return router;
 
