@@ -6,6 +6,7 @@ util.nodeVersion();
 
 var express = require('express'),
     azureMobileApps = require('azure-mobile-apps'),
+    homeApi = require('./api/homeApi');
     tertuliasApi = require('./api/tertuliasApi');
 
 var app = express();
