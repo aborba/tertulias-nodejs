@@ -42,9 +42,9 @@ module.exports = function (configuration) {
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
 		console.log('VAMOS AQUI: 1');
-    	/*
 		req['tertulias'] = {};
 		console.log('VAMOS AQUI: 2');
+    	/*
 		req['route'] = route;
 		console.log('VAMOS AQUI: 3');
 		req['resultsTag'] = 'tertulias';
