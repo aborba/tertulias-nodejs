@@ -52,9 +52,9 @@ module.exports = function (configuration) {
 			'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 		']';
 	    req.tertulias['itemLinks'] = '[ ' +
-			'{ "rel": "self", "method": "GET", "href": "' + route + '/:tertulia" }, ' +
-			'{ "rel": "update", "method": "PUT", "href": "' + route + '/:tertulia" }, ' +
-			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:tertulia" } ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+			'{ "rel": "update", "method": "PUT", "href": "' + route + '/:id" }, ' +
+			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" } ' +
 		']';
 	    goGet(req, res, next);
     	/*
@@ -88,15 +88,13 @@ module.exports = function (configuration) {
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
 		                    recordset.forEach(function(elem) {
-								console.log(elem);
-		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.id));
-								console.log(elem.links);
+		                    	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
                     		});
 	                    };
 	                    preparedStatement.unprepare();
 	                    var results = {};
 	                    results[resultsTag] = recordset;
-	                    results['links'] = links;
+	                    results['links'] = JSON.parse(links);
 	                    console.log(results);
 	                    res.json(results);
 	                    next();
