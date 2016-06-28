@@ -41,23 +41,33 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
+		console.log('VAMOS AQUI: 1');
 		req.['tertulias'] = {};
+		console.log('VAMOS AQUI: 2');
 		req.['route'] = route;
+		console.log('VAMOS AQUI: 3');
 		req.['resultsTag'] = 'tertulias';
+		console.log('VAMOS AQUI: 4');
 		req.tertulias.['query'] = queryTertulias;
+		console.log('VAMOS AQUI: 5');
 	    req.tertulias.['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+		console.log('VAMOS AQUI: 6');
 	    req.tertulias.['paramsValues'] = { 'sid': req.azureMobile.user.id };
+		console.log('VAMOS AQUI: 7');
 	    req.tertulias.['links'] = '[ ' +
 			'{ rel: "self", method: "GET", href: "' + route + '" }, ' +
 			'{ rel: "create", method: "POST", href: "' + route + '" }, ' +
 			'{ rel: "searchPublic", method: "GET", href: "' + route + '/publicsearch" } ' +
 		']';
+		console.log('VAMOS AQUI: 8');
 	    req.tertulias.['itemLinks'] = '[ ' +
 			'{ rel: "self", method: "GET", href: "' + route + '/:tertulia" }, ' +
 			'{ rel: "update", method: "PUT", href: "' + route + '/:tertulia" }, ' +
 			'{ rel: "delete", method: "DELETE", href: "' + route + '/:tertulia" } ' +
 		']';
+		console.log('VAMOS AQUI: 9');
 	    goGet(req, res, next);
+		console.log('VAMOS AQUI: 10');
 	});
 
 	var goGet = function(req, res, next) {
