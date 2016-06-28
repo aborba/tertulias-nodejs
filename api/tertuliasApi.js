@@ -46,10 +46,9 @@ module.exports = function (configuration) {
 		console.log('VAMOS AQUI: 2');
 		req['route'] = route;
 		console.log('VAMOS AQUI: 3');
-    	/*
 		req['resultsTag'] = 'tertulias';
 		console.log('VAMOS AQUI: 4');
-		reqtertulias.['query'] = queryTertulias;
+		req.tertulias['query'] = queryTertulias;
 		console.log('VAMOS AQUI: 5');
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 		console.log('VAMOS AQUI: 6');
@@ -69,11 +68,11 @@ module.exports = function (configuration) {
 		console.log('VAMOS AQUI: 9');
 	    goGet(req, res, next);
 		console.log('VAMOS AQUI: 10');
+    	/*
 		*/
 	});
 
 	var goGet = function(req, res, next) {
-		/*
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 		var route = req.tertulias.route;
@@ -110,6 +109,7 @@ module.exports = function (configuration) {
 	            );
 	        });
 	    });
+		/*
 	    */
 	}
 
