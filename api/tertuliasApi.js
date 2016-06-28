@@ -95,10 +95,13 @@ module.exports = function (configuration) {
 	                    }
 						console.log('VAMOS AQUI: 7');
 	                    res.type('application/json');
-                    	if (typeof itemLinks !== typeof undefined)
+                    	if (typeof itemLinks !== typeof undefined) {
+							console.log(itemLinks);
 		                    recordset.forEach(function(elem) {
+								console.log(elem);
 		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.tr_id));
-	                    });
+                    		});
+	                    };
 	                    preparedStatement.unprepare();
 						console.log('VAMOS AQUI: 8');
 	                    var results = {};
