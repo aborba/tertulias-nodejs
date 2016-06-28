@@ -32,13 +32,6 @@ const queryTertulias = 'SELECT' +
 module.exports = function (configuration) {
     var router = express.Router();
 
-	var completeError = function(err, res) {
-	    if (err) {
-	        console.error(err);
-	        if (res) res.sendStatus(500);
-	    }
-	};
-
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
 		req['tertulias'] = {};
@@ -58,6 +51,13 @@ module.exports = function (configuration) {
 		']';
 	    goGet(req, res, next);
 	});
+
+	var completeError = function(err, res) {
+	    if (err) {
+	        console.error(err);
+	        if (res) res.sendStatus(500);
+	    }
+	};
 
 	var goGet = function(req, res, next) {
 		var query = req.tertulias.query;
