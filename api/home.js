@@ -1,9 +1,9 @@
 var api = {
 	get: function (req, res, next) {
-		res.json( {
+		res.json({
 			"_links": {
-				"GET_TERTULIAS": { "href" : "/tertulias" },
-				"POST_REGISTRATION": { "href" : "/register" }
+				"tertulias": { "href" : "/tertulias" },
+				"registration": { "href" : "/register" }
 			}
 		});
 		next();
