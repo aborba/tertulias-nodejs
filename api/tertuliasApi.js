@@ -42,8 +42,7 @@ module.exports = function (configuration) {
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
 		req['tertulias'] = {};
-		req['route'] = route;
-		req['resultsTag'] = 'tertulias';
+		req.tertulias['resultsTag'] = 'tertulias';
 		req.tertulias['query'] = queryTertulias;
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
@@ -63,37 +62,29 @@ module.exports = function (configuration) {
 	});
 
 	var goGet = function(req, res, next) {
-		console.log('VAMOS AQUI: 1');
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
-		var route = req.tertulias.route;
 	    var paramsTypes = req.tertulias.paramsTypes;
 	    var paramsValues = req.tertulias.paramsValues;
 	    var links = req.tertulias.links;
 	    var itemLinks = req.tertulias.itemLinks;
-		console.log('VAMOS AQUI: 2');
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
-			console.log('VAMOS AQUI: 3');
 	        var preparedStatement = new sql.PreparedStatement(connection);
 	        for (var key in paramsTypes)
 	        	preparedStatement.input(key, paramsTypes[key]);
-			console.log('VAMOS AQUI: 4');
 	        preparedStatement.prepare(query, function(err) {
 	            if (err) {
 	            	completeError(err, res);
 	            	return;
 	            }
-				console.log('VAMOS AQUI: 5');
 	            preparedStatement.execute(paramsValues, 
 	                function(err, recordset, affected) {
-						console.log('VAMOS AQUI: 6');
 	                    if (err) {
 	                    	completeError(err, res);
 	                    	return;
 	                    }
-						console.log('VAMOS AQUI: 7');
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
 							console.log(itemLinks);
@@ -103,10 +94,8 @@ module.exports = function (configuration) {
                     		});
 	                    };
 	                    preparedStatement.unprepare();
-						console.log('VAMOS AQUI: 8');
 	                    var results = {};
 	                    results[resultsTag] = recordset;
-						console.log('VAMOS AQUI: 9');
 	                    results['links'] = links;
 	                    console.log(results);
 	                    res.json(results);
