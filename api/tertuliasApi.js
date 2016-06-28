@@ -41,7 +41,7 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
-		console.log('VAMOS AQUI: 1');
+		console.log('VAMOS AQUI: 1A');
 		req['tertulias'] = {};
 		console.log('VAMOS AQUI: 2');
 		req['route'] = route;
