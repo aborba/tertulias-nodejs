@@ -40,6 +40,7 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
+    	/*
 		var route = '/tertulias';
 		console.log('VAMOS AQUI: 1');
 		req.['tertulias'] = {};
@@ -68,9 +69,11 @@ module.exports = function (configuration) {
 		console.log('VAMOS AQUI: 9');
 	    goGet(req, res, next);
 		console.log('VAMOS AQUI: 10');
+		*/
 	});
 
 	var goGet = function(req, res, next) {
+		/*
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 		var route = req.tertulias.route;
@@ -107,6 +110,7 @@ module.exports = function (configuration) {
 	            );
 	        });
 	    });
+	    */
 	}
 
     return router;
