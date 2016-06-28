@@ -44,9 +44,9 @@ module.exports = function (configuration) {
 		console.log('VAMOS AQUI: 1');
 		req['tertulias'] = {};
 		console.log('VAMOS AQUI: 2');
-    	/*
 		req['route'] = route;
 		console.log('VAMOS AQUI: 3');
+    	/*
 		req['resultsTag'] = 'tertulias';
 		console.log('VAMOS AQUI: 4');
 		reqtertulias.['query'] = queryTertulias;
