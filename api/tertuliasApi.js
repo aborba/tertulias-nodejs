@@ -87,10 +87,10 @@ module.exports = function (configuration) {
 	                    }
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
-							console.log(itemLinks);
 		                    recordset.forEach(function(elem) {
 								console.log(elem);
 		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.id));
+								console.log(elem.links);
                     		});
 	                    };
 	                    preparedStatement.unprepare();
