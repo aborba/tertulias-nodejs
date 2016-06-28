@@ -41,38 +41,29 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
-		console.log('VAMOS AQUI: 1A');
 		req['tertulias'] = {};
-		console.log('VAMOS AQUI: 2');
 		req['route'] = route;
-		console.log('VAMOS AQUI: 3');
 		req['resultsTag'] = 'tertulias';
-		console.log('VAMOS AQUI: 4');
 		req.tertulias['query'] = queryTertulias;
-		console.log('VAMOS AQUI: 5');
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
-		console.log('VAMOS AQUI: 6');
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
-		console.log('VAMOS AQUI: 7');
 	    req.tertulias['links'] = '[ ' +
 			'{ rel: "self", method: "GET", href: "' + route + '" }, ' +
 			'{ rel: "create", method: "POST", href: "' + route + '" }, ' +
 			'{ rel: "searchPublic", method: "GET", href: "' + route + '/publicsearch" } ' +
 		']';
-		console.log('VAMOS AQUI: 8');
 	    req.tertulias['itemLinks'] = '[ ' +
 			'{ rel: "self", method: "GET", href: "' + route + '/:tertulia" }, ' +
 			'{ rel: "update", method: "PUT", href: "' + route + '/:tertulia" }, ' +
 			'{ rel: "delete", method: "DELETE", href: "' + route + '/:tertulia" } ' +
 		']';
-		console.log('VAMOS AQUI: 9');
 	    goGet(req, res, next);
-		console.log('VAMOS AQUI: 10');
     	/*
 		*/
 	});
 
 	var goGet = function(req, res, next) {
+		console.log('VAMOS AQUI: 1');
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 		var route = req.tertulias.route;
@@ -80,27 +71,39 @@ module.exports = function (configuration) {
 	    var paramsValues = req.tertulias.paramsValues;
 	    var links = req.tertulias.links;
 	    var itemLinks = req.tertulias.itemLinks;
+		console.log('VAMOS AQUI: 2');
 
 		var connection = new sql.Connection(util.sqlConfiguration);
 	    connection.connect(function(err) {
+			console.log('VAMOS AQUI: 3');
 	        var preparedStatement = new sql.PreparedStatement(connection);
-	        for (var key in paramsTypes) preparedStatement.input(key, paramsTypes[key]);
+	        for (var key in paramsTypes)
+	        	preparedStatement.input(key, paramsTypes[key]);
+			console.log('VAMOS AQUI: 4');
 	        preparedStatement.prepare(query, function(err) {
-	            if (err) { completeError(err, res); return; }
+	            if (err) {
+	            	completeError(err, res);
+	            	return;
+	            }
+				console.log('VAMOS AQUI: 5');
 	            preparedStatement.execute(paramsValues, 
 	                function(err, recordset, affected) {
+						console.log('VAMOS AQUI: 6');
 	                    if (err) {
 	                    	completeError(err, res);
 	                    	return;
 	                    }
+						console.log('VAMOS AQUI: 7');
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined)
 		                    recordset.forEach(function(elem) {
 		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.tr_id));
 	                    });
 	                    preparedStatement.unprepare();
+						console.log('VAMOS AQUI: 8');
 	                    var results = {};
 	                    results[resultsTag] = recordset;
+						console.log('VAMOS AQUI: 9');
 	                    results['links'] = links;
 	                    console.log(results);
 	                    res.json(results);
