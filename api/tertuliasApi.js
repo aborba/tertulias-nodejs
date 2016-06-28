@@ -99,7 +99,7 @@ module.exports = function (configuration) {
 							console.log(itemLinks);
 		                    recordset.forEach(function(elem) {
 								console.log(elem);
-		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.tr_id));
+		                    	elem['links'] = JSON.parse(itemLinks.replace(/:tertulia/g, elem.id));
                     		});
 	                    };
 	                    preparedStatement.unprepare();
