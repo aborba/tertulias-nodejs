@@ -3,6 +3,8 @@ var express = require('express'),
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize = require('azure-mobile-apps/src/express/middleware/authorize');
 
+var util = require('../util');
+
 module.exports = function (configuration) {
     var router = express.Router();
 
@@ -20,7 +22,6 @@ module.exports = function (configuration) {
 				{ "rel": "registration", "method": "POST", "href": "/me" }
 			]}
 		);
-
     	next();
     });
 
