@@ -74,7 +74,6 @@ module.exports = function (configuration) {
 	router.get('/tertulias/:tr_id', (req, res, next) => {
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
-		/*
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulia';
 		req.tertulias['query'] = queryTertuliaDetails;
@@ -86,8 +85,7 @@ module.exports = function (configuration) {
 			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" } ' +
 		']';
 	    goGet(req, res, next);
-	    */
-	}
+	});
 
 	var completeError = function(err, res) {
 	    if (err) {
