@@ -58,6 +58,7 @@ module.exports = function (configuration) {
 		req.tertulias['query'] = queryTertulias;
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar };
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
+	    req.tertulias['jsonType'] = "array";
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 			'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
@@ -79,6 +80,7 @@ module.exports = function (configuration) {
 		req.tertulias['query'] = queryTertuliaDetails;
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'tertulia': sql.Int };
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'tertulia': tr_id };
+	    req.tertulias['jsonType'] = "object";
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 			'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
@@ -126,7 +128,10 @@ module.exports = function (configuration) {
 	                    };
 	                    preparedStatement.unprepare();
 	                    var results = {};
-	                    results[resultsTag] = recordset;
+	                    if (req.tertulias.jsonType == "array")
+	                    	results[resultsTag] = recordset;
+	                    else
+	                    	results[resultsTag] = recordset[0];
 	                    results['links'] = JSON.parse(links);
 	                    console.log(results);
 	                    res.json(results);
