@@ -30,11 +30,21 @@ const queryTertulias = 'SELECT' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 const queryTertuliaDetails = 'SELECT DISTINCT' +
-	' tr_id, tr_name, tr_subject, ' + // Tertulia
-	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
-	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description,' + // Schedule
-	' tr_is_private, ' +
-	' _Member.nv_name AS nv_name' + // Role
+	' tr_id                    AS id,' + // Tertulia
+	' tr_name                  AS name,' +
+	' tr_subject               AS subject,' +
+	' lo_name                  AS location,' + // Location
+	' lo_address               AS address,' +
+	' lo_zip                   AS zip,' +
+	' lo_city                  AS city,' +
+	' lo_country               AS country,' +
+	' lo_latitude              AS latitude,' +
+	' lo_longitude             AS longitude,' +
+	' sc_type                  AS scheduleId,' + // Schedule
+	' _Schedule.nv_name        AS scheduleName,' +
+	' _Schedule.nv_description AS scheduleDescription,' +
+	' tr_is_private            AS private, ' +  // Private
+	' _Member.nv_name          AS role' + // Role
 ' FROM Tertulias' +
 ' INNER JOIN Locations  ON tr_location = lo_id' +
 ' INNER JOIN Schedules  ON tr_schedule = sc_id' +
