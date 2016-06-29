@@ -29,6 +29,25 @@ const queryTertulias = 'SELECT' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
+const queryTertuliaDetails = 'SELECT DISTINCT' +
+	' tr_id, tr_name, tr_subject, ' + // Tertulia
+	' lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, ' + // Location
+	' sc_type, _Schedule.nv_name AS schedule, _Schedule.nv_description AS description,' + // Schedule
+	' tr_is_private, ' +
+	' _Member.nv_name AS nv_name' + // Role
+' FROM Tertulias' +
+' INNER JOIN Locations  ON tr_location = lo_id' +
+' INNER JOIN Schedules  ON tr_schedule = sc_id' +
+' INNER JOIN Members    ON mb_tertulia = tr_id' +
+' INNER JOIN Users      ON mb_user = us_id' +
+' INNER JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
+' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
+' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+' AND tr_id = @tertulia';
+
+/* { 'SQL types': {
+	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
+} } */
 module.exports = function (configuration) {
     var router = express.Router();
 
@@ -37,7 +56,7 @@ module.exports = function (configuration) {
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
 		req.tertulias['query'] = queryTertulias;
-	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar }; // String -> sql.NVarChar; Number -> sql.Int; Boolean -> sql.Bit; Date -> sql.DateTime; Buffer -> sql.VarBinary; sql.Table -> sql.TVP
+	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar };
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
@@ -51,6 +70,22 @@ module.exports = function (configuration) {
 		']';
 	    goGet(req, res, next);
 	});
+
+	router.get('/tertulias/:tr_id', (req, res, next) => {
+		var tr_id = req.params.tr_id;
+		var route = '/tertulias/' + tr_id;
+		req['tertulias'] = {};
+		req.tertulias['resultsTag'] = 'tertulia';
+		req.tertulias['query'] = queryTertuliaDetails;
+	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'tertulia': sql.Int };
+	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'tertulia': tr_id };
+	    req.tertulias['links'] = '[ ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+			'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
+			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" } ' +
+		']';
+	    goGet(req, res, next);
+	}
 
 	var completeError = function(err, res) {
 	    if (err) {
