@@ -71,7 +71,7 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
-	router.get('/tertulias/:tr_id', (req, res, next) => {
+	router.get('/:tr_id', (req, res, next) => {
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
 		req['tertulias'] = {};
