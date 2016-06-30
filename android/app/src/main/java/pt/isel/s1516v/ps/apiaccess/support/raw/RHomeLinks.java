@@ -16,14 +16,19 @@ public class RHomeLinks implements Parcelable {
     public final RHref registration;
 
     public RHomeLinks(RHref tertulias, RHref registration) {
-        this.tertulias = tertulias;
-        this.registration = registration;
+        this.tertulias = tertulias != null ? tertulias : new RHref("");
+        this.registration = registration != null ? registration : new RHref("");
     }
 
     public void exposeMap(HashMap<String, String> map) {
-        MainActivity.baseRoutes.put(TertuliasApi.GET_TERTULIAS, tertulias.href);
-        MainActivity.baseRoutes.put(TertuliasApi.POST_TERTULIAS, tertulias.href);
-        MainActivity.baseRoutes.put(TertuliasApi.POST_REGISTRATION, registration.href);
+        MainActivity.baseRoutes.put(TertuliasApi.GET_TERTULIAS, tertulias.getHref());
+        MainActivity.baseRoutes.put(TertuliasApi.POST_TERTULIAS, tertulias.getHref());
+        MainActivity.baseRoutes.put(TertuliasApi.POST_REGISTRATION, registration.getHref());
+    }
+
+    public void pasteIn(RHomeLinks in) {
+        tertulias.pasteIn(in.tertulias);
+        registration.pasteIn(in.registration);
     }
 
 // region Parcelable

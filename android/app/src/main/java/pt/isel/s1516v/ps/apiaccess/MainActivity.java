@@ -1,21 +1,22 @@
 package pt.isel.s1516v.ps.apiaccess;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.google.common.base.Predicate;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -28,26 +29,32 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUse
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import pt.isel.s1516v.ps.apiaccess.flow.GetHome;
+import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
+import pt.isel.s1516v.ps.apiaccess.flow.GetData;
+import pt.isel.s1516v.ps.apiaccess.flow.GetTertuliasCallback;
+import pt.isel.s1516v.ps.apiaccess.flow.LoginCallback;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.LoginStatus;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
-import pt.isel.s1516v.ps.apiaccess.support.raw.RHome;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiHome;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
 public class MainActivity extends AppCompatActivity implements TertuliasApi {
 
-    public static RHome rHome;
+    public static ApiHome apiHome = null;
     public static HashMap<String, String> baseRoutes = new HashMap<>();
 
     private final static String SAVED_TERTULIAS = "tertulias";
     private final static String SAVED_BASE_ROUTES = "baseRoutes";
-    private final static String API_HOME_END_POINT = "home";
+    private final static String API_HOME_END_POINT = "/";
 
     private ListView listView;
     private ArrayAdapter<Tertulia> listViewAdapter;
-    private Tertulia[] tertulias;
+    public static Tertulia[] tertulias;
     private MobileServiceUser mUser;
     private LoginStatus loginStatus = null;
 
@@ -55,28 +62,39 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (savedInstanceState != null) loadInstanceState(savedInstanceState);
-
-        Util.setupActionBar(this, R.string.title_activity_list_tertulias, false);
-
+        if (!Util.isConnectivityAvailable(this)) {
+            Util.alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
+            return;
+        }
         setupViews();
-
-        loginStatus = new LoginStatus(
-                this,
-                (ImageView) findViewById(R.id.mtl_authenticatedView),
-                new Predicate() {
-                    @Override
-                    public boolean apply(Object input) {
-                        return Util.getMobileServiceClient(MainActivity.this).getCurrentUser() == null;
-                    }
-                }
-        );
-
+        if (savedInstanceState != null) loadInstanceState(savedInstanceState);
         doLoginAndFetch(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.amm_login:
+                doLoginAndFetch(this);
+                return true;
+            case R.id.amm_logout:
+                doLogout(this);
+                return true;
+            case R.id.amm_reload:
+                requestTertuliasList(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -127,18 +145,6 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         startActivityForResult(intent, NewTertuliaActivity.REQUEST_CODE);
     }
 
-    public void onClickLogin(final View view) {
-        doLoginAndFetch(this);
-    }
-
-    public void onClickLogout(final View view) {
-        doLogout(this);
-    }
-
-    public void onClickRefresh(final View view) {
-        requestTertuliasList(this);
-    }
-
 //    endregion
 
 //     region Private Classes
@@ -153,13 +159,26 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             TertuliasArrayAdapter.ViewHolder viewHolder = (TertuliasArrayAdapter.ViewHolder) view.getTag();
-            HashMap<String, HashMap<String, String>> links = viewHolder.getLinks();
-            if (links == null || !links.containsKey("details") || !links.get("details").containsKey("href")) {
+            ApiLink[] links = viewHolder.getLinks();
+            boolean isAbort = false;
+            ApiLink selectedLink = null;
+            if (links == null || links.length == 0)
+                isAbort = true;
+            else {
+                isAbort = true;
+                for (ApiLink link : links)
+                    if (link.rel.equals("self")) {
+                        selectedLink = link;
+                        isAbort = false;
+                        break;
+                    }
+            }
+            if (isAbort) {
                 Util.longSnack(view, R.string.activity_list_tertulias_toast_no_details);
                 return;
             }
             Intent intent = new Intent(MainActivity.this, TertuliaDetailsActivity.class);
-            intent.putExtra(TertuliaDetailsActivity.SELF_LINK, links.get("details").get("href"));
+            intent.putExtra(TertuliaDetailsActivity.SELF_LINK, selectedLink);
             startActivity(intent);
         }
     }
@@ -200,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
 //     region Private Methods
 
     private void setupViews() {
+        Util.setupActionBar(this, R.string.title_activity_list_tertulias, false);
         listView = (ListView) findViewById(R.id.mtl_ListView);
         listViewAdapter = new TertuliasArrayAdapter(this, tertulias != null ? tertulias : new Tertulia[0]);
         listView.setOnItemClickListener(new PrivateListViewItemClickListener(listView));
@@ -217,91 +237,61 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         Util.longSnack(findViewById(android.R.id.content), alertMessage);
     }
 
-    private void alert(Context ctx, int title, int message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setMessage(message);
-        if (title > 0) builder.setTitle(title);
-        builder.create().show();
+    private void updateStatusAlert(Boolean isLogin, String alertMessage) {
+        loginStatus.set(isLogin);
+        Util.longSnack(findViewById(android.R.id.content), alertMessage);
     }
 
-    private void request(Context ctx, String key, String httpMethod, FutureCallback<JsonElement> callback) {
-        if (!Util.isOnline(this)) {
-            alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
+    private void request(Context ctx, String route, String httpMethod, FutureCallback<JsonElement> callback) {
+        if (route == null || httpMethod == null) {
+            Util.longSnack(((Activity) ctx).getWindow().getDecorView().findViewById(android.R.id.content),
+                    R.string.main_activity_server_error_exiting);
+            finish();
+        }
+        if (!Util.isConnectivityAvailable(this)) {
+            Util.alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
             return;
         }
 
         MobileServiceClient cli = Util.getMobileServiceClient(ctx);
-        if (!baseRoutes.containsKey(key)) {
-            Util.longToast(ctx, R.string.main_activity_server_error_exiting);
-            finish();
-        }
-        ListenableFuture<JsonElement> future = cli.invokeApi(baseRoutes.get(key), null, httpMethod, null);
+        ListenableFuture<JsonElement> future = cli.invokeApi(route, null, httpMethod, null);
         if (callback != null) Futures.addCallback(future, callback);
     }
 
     private void requestTertuliasList(Context ctx) {
-        request(ctx, GET_TERTULIAS, HTTP_GET, new TertuliasListCallback());
+        if (apiHome == null) {
+            Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
+            return;
+        }
+        request(ctx, apiHome.getRoute("tertulias"), apiHome.getMethod("tertulias"), new GetTertuliasCallback(ctx, listView, null, null));
     }
 
 //    region User session management
 
-    private void doLoginAndFetch(final Context ctx) {
+    private void requestLogin(final Context ctx, FutureCallback<MobileServiceUser> callback) {
         final MobileServiceClient cli = Util.getMobileServiceClient(this);
-        loginStatus.update();
-
-        if (!Util.isOnline(this)) {
-            alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
-            return;
-        }
+//        loginStatus.update();
 
         if (Util.isSignedIn(ctx) || cli.isLoginInProgress()) {
-            requestTertuliasList(MainActivity.this);
+            callback.onSuccess(cli.getCurrentUser());
             return;
         }
 
         Futures.addCallback(
-
                 cli.login(MobileServiceAuthenticationProvider.Google),
-
-                new FutureCallback<MobileServiceUser>() {
-
-                    @Override
-                    public void onFailure(Throwable e) {
-                        mUser = null;
-                        loginStatus.reset();
-                        updateStatusAlert(false, R.string.main_activity_login_failed_message);
-                    }
-
-                    @Override
-                    public void onSuccess(MobileServiceUser user) {
-                        mUser = user;
-
-                        MobileServiceClient cli = Util.getMobileServiceClient(MainActivity.this);
-                        ListenableFuture<JsonElement> future = cli.invokeApi(API_HOME_END_POINT, null, HTTP_GET, null);
-                        Futures.addCallback(future, new FutureCallback<JsonElement>() {
-                            @Override
-                            public void onFailure(Throwable e) {
-                                mUser = null;
-                                loginStatus.reset();
-                                updateStatusAlert(false, R.string.main_activity_login_failed_message);
-                            }
-
-                            @Override
-                            public void onSuccess(JsonElement result) {
-                                rHome = new Gson().fromJson(result, RHome.class);
-                                if (rHome == null) {
-                                    Util.longToast(MainActivity.this, R.string.main_activity_server_error_exiting);
-                                    finish();
-                                }
-                                rHome.exposeMap(baseRoutes);
-                                request(MainActivity.this, POST_REGISTRATION, HTTP_POST, null); // User registration
-                                requestTertuliasList(MainActivity.this);
-                            }
-                        });
-
-                        loginStatus.set(R.string.main_activity_login_succeed_message);
-                    }
-                }
+                callback
         );
+    }
+
+    private void doLoginAndFetch(final Context ctx) {
+        GetData<JsonElement> getTertulias = new GetData<>(ctx);
+        GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, listView, null, null);
+
+        GetHome getHome = new GetHome(ctx);
+        GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, "tertulias", getTertulias, getTertuliasCallback);
+
+        LoginCallback loginCallback = new LoginCallback(ctx, getHome, getHomeCallback);
+        requestLogin(ctx, loginCallback);
     }
 
     private void doLogout(Context ctx) {

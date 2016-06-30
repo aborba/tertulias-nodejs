@@ -1,14 +1,12 @@
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.Telephony;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.sub.Address;
-import pt.isel.s1516v.ps.apiaccess.support.domain.sub.Geolocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
 public class Location implements Parcelable {
 
@@ -24,11 +22,23 @@ public class Location implements Parcelable {
         geolocation = new Geolocation(rlocation);
     }
 
+    public Location(ApiTertuliaListItem apiTertuliaListItem) {
+        id = -1;
+        name = apiTertuliaListItem.eventLocation;
+    }
+
     public Location(RTertulia rtertulia) {
         id = rtertulia.locationId;
         name = rtertulia.locationName;
         address = new Address(rtertulia);
         geolocation = new Geolocation(rtertulia);
+    }
+
+    public Location(ApiTertuliaCore core) {
+        id = -1;
+        name = core.location;
+        address = new Address(core);
+        geolocation = new Geolocation(core);
     }
 
     @Override

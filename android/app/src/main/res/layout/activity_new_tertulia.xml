@@ -27,7 +27,7 @@
         android:text="@string/new_tertulia_cancel_button" />
 
 
-    <!-- Tertulia Title -->
+    <!-- ApiTertulia Title -->
 
     <TextView
         android:id="@+id/tsTitleLabel"
@@ -51,7 +51,7 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Subject -->
+    <!-- ApiTertulia Subject -->
 
     <TextView
         android:id="@+id/newTertuliaSubjectLabel"
@@ -75,9 +75,9 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Location -->
+    <!-- ApiTertulia Location -->
 
-    <!-- Tertulia Location Name -->
+    <!-- ApiTertulia Location Name -->
 
     <TextView
         android:id="@+id/tsLocationNameLabel"
@@ -101,7 +101,7 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Location Address -->
+    <!-- ApiTertulia Location Address -->
 
     <TextView
         android:id="@+id/newTertuliaLocationAddressLabel"
@@ -125,7 +125,7 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Location Zip & Country -->
+    <!-- ApiTertulia Location Zip & Country -->
 
     <TextView
         android:id="@+id/tsLocationZipCountryLabel"
@@ -173,7 +173,7 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Location Lat & Lon -->
+    <!-- ApiTertulia Location Lat & Lon -->
 
     <TextView
         android:id="@+id/tsLocationLatitudeLongitudeLabel"
@@ -209,7 +209,7 @@
         android:singleLine="true" />
 
 
-    <!-- Tertulia Schedule -->
+    <!-- ApiTertulia Schedule -->
 
     <TextView
         android:id="@+id/newTertuliaScheduleLabel"
@@ -232,7 +232,7 @@
         android:singleLine="true"
         android:textSize="18sp" />
 
-    <!-- Tertulia Privacy -->
+    <!-- ApiTertulia Privacy -->
 
     <CheckBox
         android:id="@+id/newTertuliaPrivacy"

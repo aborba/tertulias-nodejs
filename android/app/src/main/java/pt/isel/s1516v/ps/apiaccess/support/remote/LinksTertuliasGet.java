@@ -2,18 +2,18 @@ package pt.isel.s1516v.ps.apiaccess.support.remote;
 
 public class LinksTertuliasGet {
     @com.google.gson.annotations.SerializedName("self")
-    final SelfLink selfLink;
+    final ApiSelfLink apiSelfLink;
     @com.google.gson.annotations.SerializedName("add")
-    final Links add;
+    final ApiLink add;
     @com.google.gson.annotations.SerializedName("subscribe")
-    final Links subscribe;
+    final ApiLink subscribe;
     @com.google.gson.annotations.SerializedName("nextPAge")
-    final Links nextPage;
+    final ApiLink nextPage;
     @com.google.gson.annotations.SerializedName("previousPage")
-    final Links previousPage;
+    final ApiLink previousPage;
 
-    public LinksTertuliasGet(SelfLink selfLink, Links add, Links subscribe, Links nextPage, Links previousPage) {
-        this.selfLink = selfLink;
+    public LinksTertuliasGet(ApiSelfLink apiSelfLink, ApiLink add, ApiLink subscribe, ApiLink nextPage, ApiLink previousPage) {
+        this.apiSelfLink = apiSelfLink;
         this.add = add;
         this.subscribe = subscribe;
         this.nextPage = nextPage;

@@ -1,14 +1,12 @@
-package pt.isel.s1516v.ps.apiaccess.support.domain.sub;
+package pt.isel.s1516v.ps.apiaccess.support.domain;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import org.w3c.dom.Text;
-
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
 
 public class Address implements Parcelable {
 
@@ -29,6 +27,13 @@ public class Address implements Parcelable {
         zip = rtertulia.zip;
         city = rtertulia.city;
         country = rtertulia.country;
+    }
+
+    public Address(ApiTertuliaCore core) {
+        address = core.address;
+        zip = core.zip;
+        city = core.city;
+        country = core.country;
     }
 
     public Address(RLocation rlocation) {

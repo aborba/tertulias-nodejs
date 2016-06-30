@@ -9,9 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
 public class Tertulia implements Parcelable {
 
@@ -26,19 +29,53 @@ public class Tertulia implements Parcelable {
     public final boolean isPrivate;
     public final String role_type;
     public int messagesCount;
-    public final HashMap<String, HashMap<String, String>> links;
+    public ApiLink[] links;
+
+    public Tertulia(ApiTertuliaListItem apiTertuliaListItem) {
+        id = apiTertuliaListItem.id;
+        name = apiTertuliaListItem.name;
+        subject = apiTertuliaListItem.subject;
+        if (!TextUtils.isEmpty(apiTertuliaListItem.eventDate))
+            try {
+                apiTertuliaListItem.eventDate = apiTertuliaListItem.eventDate.replace('T', ' ').substring(0, 16 );
+                nextEventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(apiTertuliaListItem.eventDate);
+            } catch (ParseException e) {
+                nextEventDate = null;
+            }
+        location = new Location(apiTertuliaListItem);
+        scheduleType = null;
+        scheduleDescription = null;
+        isPrivate = true;
+        role_type = apiTertuliaListItem.role;
+        messagesCount = apiTertuliaListItem.messagesCount;
+        links = apiTertuliaListItem.links;
+    }
+
+    public Tertulia(ApiTertuliaCore core, ApiLink[] links) {
+        id = core.id;
+        name = core.name;
+        subject = core.subject;
+        nextEventDate = null;
+        location = new Location(core);
+        scheduleType = core.scheduleName;
+        scheduleDescription = core.scheduleDescription;
+        isPrivate = core.isPrivate;
+        role_type = core.role;
+        messagesCount = core.messagesCount;
+        this.links = links;
+    }
 
     public Tertulia(RTertulia rtertulia) {
         id = rtertulia.id;
         name = rtertulia.name;
         subject = rtertulia.subject;
         if (!TextUtils.isEmpty(rtertulia.event))
-        try {
-            rtertulia.event = rtertulia.event.replace('T', ' ').substring(0, 16 );
-            nextEventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(rtertulia.event);
-        } catch (ParseException e) {
-            nextEventDate = null;
-        }
+            try {
+                rtertulia.event = rtertulia.event.replace('T', ' ').substring(0, 16 );
+                nextEventDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(rtertulia.event);
+            } catch (ParseException e) {
+                nextEventDate = null;
+            }
         location = new Location(rtertulia);
         scheduleType = rtertulia.scheduleType;
         scheduleDescription = rtertulia.scheduleDescription;
@@ -76,7 +113,6 @@ public class Tertulia implements Parcelable {
         isPrivate = in.readByte() != 0;
         role_type = in.readString();
         messagesCount = in.readInt();
-        links = (HashMap<String, HashMap<String, String>>) in.readSerializable();
     }
 
     public static final Creator<Tertulia> CREATOR = new Creator<Tertulia>() {
@@ -107,7 +143,6 @@ public class Tertulia implements Parcelable {
         dest.writeByte((byte) (isPrivate ? 1 : 0));
         dest.writeString(role_type);
         dest.writeInt(messagesCount);
-        dest.writeSerializable(links);
     }
 
     // endregion

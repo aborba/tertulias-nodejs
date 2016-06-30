@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,49 +10,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="pt.isel.s1516v.ps.apiaccess.MainActivity">
 
-    <Button
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/mtl_newTertuliaButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/fab_margin"
         android:onClick="onClickNewTertulia"
-        android:text="@string/main_activity_create_tertulia_button_text" />
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#ff0000"
+        app:fabSize="normal" />
 
-    <Button
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/mtl_searchTertuliaButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/fab_margin"
         android:layout_toEndOf="@id/mtl_newTertuliaButton"
         android:onClick="onClickSearchTertulia"
-        android:text="@string/main_activity_search_tertulias_button_text" />
-
-    <Button
-        android:id="@+id/mtl_loginButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/mtl_searchTertuliaButton"
-        android:onClick="onClickLogin"
-        android:text="@string/main_activity_login_button_text" />
-
-    <Button
-        android:id="@+id/mtl_logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/mtl_loginButton"
-        android:onClick="onClickLogout"
-        android:text="@string/main_activity_logout_button_text" />
-
-    <Button
-        android:id="@+id/mtl_refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/mtl_logoutButton"
-        android:onClick="onClickRefresh"
-        android:text="@string/main_activity_refresh_button_text" />
+        android:src="@android:drawable/ic_menu_search"
+        app:backgroundTint="#006600"
+        app:fabSize="normal" />
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/mtl_authenticatedView"
@@ -60,7 +40,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="9sp"
         android:layout_marginLeft="5sp"
-        android:layout_toEndOf="@id/mtl_refreshButton"
+        android:layout_toEndOf="@id/mtl_searchTertuliaButton"
         android:src="@drawable/ic_verified_user_black_24dp"
         android:visibility="invisible" />
 

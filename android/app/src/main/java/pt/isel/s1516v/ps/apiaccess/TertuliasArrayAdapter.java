@@ -9,10 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
 public class TertuliasArrayAdapter extends ArrayAdapter<Tertulia> {
 
@@ -58,7 +58,7 @@ public class TertuliasArrayAdapter extends ArrayAdapter<Tertulia> {
                 eventLabel,
                 eventSeparator,
                 messageLabel;
-        private HashMap<String, HashMap<String, String>> links;
+        private ApiLink[] links;
 
         public ViewHolder(View ctx, Integer... viewIds) {
             int i = 0;
@@ -106,7 +106,7 @@ public class TertuliasArrayAdapter extends ArrayAdapter<Tertulia> {
             links = tertulia.links;
         }
 
-        public HashMap<String, HashMap<String, String>> getLinks() {
+        public ApiLink[] getLinks() {
             return links;
         }
     }

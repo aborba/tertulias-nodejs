@@ -1,8 +1,6 @@
 package pt.isel.s1516v.ps.apiaccess.support.remote;
 
-import java.util.HashMap;
-
-public class TertuliaItem {
+public class ApiTertuliaListItem {
 
     @com.google.gson.annotations.SerializedName("id")
     public String id;
@@ -18,8 +16,8 @@ public class TertuliaItem {
     public int messagesCount;
     @com.google.gson.annotations.SerializedName("role")
     public String role;
-    @com.google.gson.annotations.SerializedName("_links")
-    public HashMap<String, HashMap<String, String>> links;
+    @com.google.gson.annotations.SerializedName("links")
+    public ApiLink[] links;
 
     @Override
     public String toString() { return name; }
@@ -27,8 +25,8 @@ public class TertuliaItem {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        TertuliaItem other = (TertuliaItem) obj;
-        return obj instanceof TertuliaItem && other.id == this.id && other.name == this.name;
+        ApiTertuliaListItem other = (ApiTertuliaListItem) obj;
+        return obj instanceof ApiTertuliaListItem && other.id == this.id && other.name == this.name;
     }
 
 }

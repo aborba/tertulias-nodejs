@@ -6,11 +6,21 @@ import android.os.Parcelable;
 public class RHref implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("href")
-    public final String href;
+    private String href;
 
     public RHref(String value) {
         href = value;
     }
+
+    public String getHref() {
+        return href;
+    }
+
+    public void pasteIn(RHref in) {
+        href = in.getHref();
+    }
+
+    // region Parcelable
 
     protected RHref(Parcel in) {
         href = in.readString();
@@ -37,4 +47,6 @@ public class RHref implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(href);
     }
+
+    // endregion
 }

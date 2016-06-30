@@ -1,10 +1,11 @@
-package pt.isel.s1516v.ps.apiaccess.support.domain.sub;
+package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
 
 public class Geolocation implements Parcelable {
 
@@ -27,6 +28,10 @@ public class Geolocation implements Parcelable {
 
     public Geolocation(RLocation rlocation) {
         this(rlocation.latitude, rlocation.longitude);
+    }
+
+    public Geolocation(ApiTertuliaCore core) {
+        this(core.latitude, core.longitude);
     }
 
     // region Parcelable

@@ -1,5 +1,6 @@
 package pt.isel.s1516v.ps.apiaccess;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,15 +26,17 @@ import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
 public class TertuliaDetailsActivity extends AppCompatActivity implements TertuliasApi {
 
     public final static String SELF_LINK = "SELF_LINK";
-    private final static String METHOD = "GET";
     private final static String TERTULIA = "tertulia";
     private TextView titleView, subjectView, locationView, scheduleView, roleView;
     private CheckBox privacyView;
     private Tertulia tertulia;
+    private View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +48,20 @@ public class TertuliaDetailsActivity extends AppCompatActivity implements Tertul
 
         Util.setupActionBar(this, R.string.title_activity_tertulia_details, true);
 
-        String selfLink = getIntent().getStringExtra(SELF_LINK);
+        ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
         titleView = (TextView) findViewById(R.id.tertuliaDetailsTitle);
         subjectView = (TextView) findViewById(R.id.tertuliaDetailsSubject);
         locationView = (TextView) findViewById(R.id.tertuliaDetailsLocation);
         scheduleView = (TextView) findViewById(R.id.tertuliaDetailsSchedule);
         roleView = (TextView) findViewById(R.id.tertuliaDetailsRole);
         privacyView = (CheckBox) findViewById(R.id.tertuliaDetailsPrivacy);
+        rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+
 
         if (tertulia != null) paintUi(tertulia);
         else {
             MobileServiceClient cli = Util.getMobileServiceClient(this);
-            ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink, null, METHOD, null);
+            ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink.href, null, selfLink.method, null);
             Futures.addCallback(rTertuliasFuture, new TertuliaPresentation());
         }
     }
@@ -104,26 +109,22 @@ public class TertuliaDetailsActivity extends AppCompatActivity implements Tertul
         @Override
         public void onFailure(Throwable e) {
             Context ctx = TertuliaDetailsActivity.this;
-            Util.longToast(ctx, getEMsg(ctx, e.getMessage()));
+            Util.longSnack(rootView, getEMsg(ctx, e.getMessage()));
         }
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, Tertulia[]>(){
+            new AsyncTask<JsonElement, Void, Tertulia>(){
                 @Override
-                protected Tertulia[] doInBackground(JsonElement... params) {
-                    RTertulia[] rtertulias = new Gson().fromJson(params[0], RTertulia[].class);
-                    LinkedList<Tertulia> tertulias = new LinkedList<>();
-                    for (RTertulia rtertulia : rtertulias) {
-                        Tertulia tertulia = new Tertulia(rtertulia);
-                        tertulias.add(tertulia);
-                    }
-                    return tertulias.toArray(new Tertulia[tertulias.size()]);
+                protected Tertulia doInBackground(JsonElement... params) {
+                    ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
+                    tertulia = new Tertulia(apiTertulia.tertulia, apiTertulia.links);
+                    return tertulia;
                 }
 
                 @Override
-                protected void onPostExecute(Tertulia[] tertulias) {
-                    paintUi(tertulias[0]);
+                protected void onPostExecute(Tertulia tertulia) {
+                    paintUi(tertulia);
                 }
             }.execute(result);
         }

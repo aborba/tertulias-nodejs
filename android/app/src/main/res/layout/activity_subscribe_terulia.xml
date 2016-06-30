@@ -120,7 +120,7 @@
             android:singleLine="true" />
 
 
-        <!-- Tertulia Location Lat & Lon -->
+        <!-- ApiTertulia Location Lat & Lon -->
 
         <TextView
             android:id="@+id/tsLocationLatitudeLongitudeLabel"

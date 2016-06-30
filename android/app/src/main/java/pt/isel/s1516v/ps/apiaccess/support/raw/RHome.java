@@ -11,15 +11,19 @@ import pt.isel.s1516v.ps.apiaccess.support.domain.Location;
 
 public class RHome implements Parcelable {
 
-    @com.google.gson.annotations.SerializedName("_links")
+    @com.google.gson.annotations.SerializedName("links")
     public final RHomeLinks links;
 
     public RHome(RHomeLinks links) {
-        this.links = links;
+        this.links = links != null ? links : new RHomeLinks(null, null);
     }
 
     public void exposeMap(HashMap<String, String> map) {
         links.exposeMap(map);
+    }
+
+    public void pasteIn(RHome in) {
+        links.pasteIn(in.links);
     }
 
 // region Parcelable

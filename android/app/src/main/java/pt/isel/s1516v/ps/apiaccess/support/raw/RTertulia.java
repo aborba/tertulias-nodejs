@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+
 public class RTertulia {
 
     @com.google.gson.annotations.SerializedName("tr_id")
@@ -41,7 +43,7 @@ public class RTertulia {
     @com.google.gson.annotations.SerializedName("no_count")
     public int messagesTotal;
     @com.google.gson.annotations.SerializedName("_links")
-    public HashMap<String, HashMap<String, String>> links;
+    public ApiLink[] links;
 
     @Override
     public String toString() { return name; }

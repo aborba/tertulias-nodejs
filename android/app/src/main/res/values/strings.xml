@@ -13,6 +13,9 @@
     <string name="main_activity_edit_user_button_text">Edit User</string>
     <string name="main_activity_fetch_tertulias_button_text">Fetch</string>
     <string name="main_activity_fetch_members_button_text">Fetch Members</string>
+    <string name="main_activity_menu_login_text">Login</string>
+    <string name="main_activity_menu_logout_text">Logout</string>
+    <string name="main_activity_menu_reload_text">Reload</string>
     <string name="main_activity_user_unauthenticated_message">Authentication required.</string>
     <string name="main_activity_user_authenticated_message">User Authenticated.</string>
     <string name="main_activity_login_failed_message">User signin failed.</string>
@@ -21,6 +24,8 @@
     <string name="main_activity_logout_succeed_message">User signout succeeded.</string>
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
+    <string name="main_activity_root_path_not_found">Root path unreachable. Shame on us.</string>
+    <string name="main_activity_routes_undefined">No routes defined. Shame on us.</string>
     <string name="main_activity_no_network_title">Connection to the network unavailable</string>
     <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
 

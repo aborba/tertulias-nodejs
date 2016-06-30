@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -46,6 +47,18 @@ public class Util {
         Snackbar.make(ctx, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .show();
+    }
+
+    public static void alert(Context ctx, int title, int message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setMessage(message);
+        if (title > 0) builder.setTitle(title);
+        builder.create().show();
+    }
+
+    public static void alert(Context ctx, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setMessage(message);
+        if (title != null && title.length() > 0) builder.setTitle(title);
+        builder.create().show();
     }
 
     public static boolean isJson(String str) {
@@ -101,7 +114,7 @@ public class Util {
 //        actionBar.setDisplayUseLogoEnabled(true);
     }
 
-    public static boolean isOnline(Context ctx) {
+    public static boolean isConnectivityAvailable(Context ctx) {
         ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
