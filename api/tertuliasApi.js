@@ -99,6 +99,60 @@ module.exports = function (configuration) {
 	    goGet(req, res, next);
 	});
 
+	router.post('/', (req, res, next) => {
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('name', sql.NVarChar(40), req.body.name)
+			.input('subject', sql.NVarChar(80), req.body.subject)
+			.input('locationName', sql.NVarChar(40), req.body.location)
+			.input('locationAddress', sql.NVarChar(80), req.body.address)
+			.input('locationZip', sql.NVarChar(40), req.body.zip)
+			.input('locationCity', sql.NVarChar(40), req.body.city)
+			.input('locationCountry', sql.NVarChar(40), req.body.country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.longitude)
+			.input('weekDay', sql.NVarChar(20), 'Tuesday')
+			.input('weekNr', sql.Int, 1)
+			.input('fromStart', sql.BIT, 1)
+			.input('skip', sql.Int, 0)
+			.input('isPrivate', sql.Int, req.body.isPrivate ? 1 : 0)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.execute('sp_insertTertulia_MonthlyW_sid')
+			.then((recordsets) => {
+				console.log(recordsets);
+				console.log('len: ' + recordsets.length);
+				//console.log('r1: ' + recordsets[0][0][ErrorNumber]);
+				//console.log('r2: ' + recordsets[0][ErrorNumber]);
+				//console.log('r2: ' + recordsets[0]);
+				if (recordsets.length == 0) {
+					console.log('sending 201');
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return;
+				} else {
+					console.log('sending 409');
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return;
+				}
+				next();
+			})
+			.catch(function(err) {
+				console.log('catch 1');
+				console.log(err);
+				next();
+			});
+		})
+		.catch(function(err) {
+			console.log('catch 2');
+			console.log(err);
+			next();
+		});
+	});
+
 	var completeError = function(err, res) {
 	    if (err) {
 	        console.error(err);
