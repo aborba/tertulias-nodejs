@@ -23,7 +23,11 @@ var api = {
 						function(err, recordset, affected) {
 							if (err) { rollback500(err, res, tran); return; }
 							psSelectId.unprepare();
-							if (typeof recordset != 'undefined' && recordset[0] != null) { rollback200(res, tran); return; }
+							if (typeof recordset != 'undefined' && recordset[0] != null) {
+								console.log(recordset);
+								rollback200(res, tran);
+								return;
+							}
 							userName(req.azureMobile.user, function(userInfo) {
 								var psInsertSid = new sql.PreparedStatement(conn);
 								psInsertSid.input('sid', sql.NVarChar);
