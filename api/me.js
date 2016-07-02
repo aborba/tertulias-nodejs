@@ -89,17 +89,19 @@ var completeError = function(err, res) {
 var completetran = function(err, data) {
 	if (err) {
 		console.log(err);
-		if (!data) {
-			console.log('no data');
-			return;
-		}
-		if (!data.tranDone) {
-			data.tranDone = true;
-			if (data.action && util.isFunction(data.action)) data.action();
-			if (data.res && data.sendStatus && util.isFunction(data.res.sendStatus)) {
-				console.log('sending status ' + data.sendStatus);
-				data.res.sendStatus(data.sendStatus);
-			}
+		return;
+	}
+	if (!data) {
+		console.log('no data');
+		return;
+	}
+	if (!data.tranDone) {
+		data.tranDone = true;
+		if (data.action && util.isFunction(data.action))
+			data.action();
+		if (data.res && data.sendStatus && util.isFunction(data.res.sendStatus)) {
+			console.log('sending status ' + data.sendStatus);
+			data.res.sendStatus(data.sendStatus);
 		}
 	}
 }
