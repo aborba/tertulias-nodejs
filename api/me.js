@@ -24,8 +24,8 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							psSelectId.unprepare();
 							if (typeof recordset != 'undefined' && recordset[0] != null) {
-								console.log(recordset);
 								rollback200(res, tran);
+								next();
 								return;
 							}
 							userName(req.azureMobile.user, function(userInfo) {
