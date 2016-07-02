@@ -4,5 +4,5 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 public interface Futurizable<T> {
     ListenableFuture<T> getFuture();
-    ListenableFuture<T> getFuture(String route, String method);
+    //ListenableFuture<T> getFuture(String route, String method);
 }

@@ -3,57 +3,49 @@ package pt.isel.s1516v.ps.apiaccess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 
 import pt.isel.s1516v.ps.apiaccess.flow.GetHome;
 import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetData;
 import pt.isel.s1516v.ps.apiaccess.flow.GetTertuliasCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.LoginCallback;
-import pt.isel.s1516v.ps.apiaccess.helpers.Error;
+import pt.isel.s1516v.ps.apiaccess.flow.PostRegister;
+import pt.isel.s1516v.ps.apiaccess.flow.PostRegisterCallback;
 import pt.isel.s1516v.ps.apiaccess.helpers.LoginStatus;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
-import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiHome;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 
-public class MainActivity extends AppCompatActivity implements TertuliasApi {
+public class MainActivity extends Activity implements TertuliasApi {
 
-    public static ApiHome apiHome = null;
-    public static HashMap<String, String> baseRoutes = new HashMap<>();
+    public static ApiLinks apiHome = new ApiLinks(null);
+    public static ApiLinks apiLinks = null;
 
     private final static String SAVED_TERTULIAS = "tertulias";
-    private final static String SAVED_BASE_ROUTES = "baseRoutes";
-    private final static String API_HOME_END_POINT = "/";
+    private final static String API_ROOT_END_POINT = "/";
 
-    private ListView listView;
-    private ArrayAdapter<Tertulia> listViewAdapter;
+    private RecyclerView recyclerView;
+    private TertuliasArrayRvAdapter listViewAdapter;
     public static Tertulia[] tertulias;
     private MobileServiceUser mUser;
     private LoginStatus loginStatus = null;
@@ -71,13 +63,6 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         setupViews();
         if (savedInstanceState != null) loadInstanceState(savedInstanceState);
         doLoginAndFetch(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_main_menu, menu);
-        return true;
     }
 
     @Override
@@ -100,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case NewTertuliaActivity.REQUEST_CODE:
+            case NewTertuliaActivity.INTENT_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL) return;
                 requestTertuliasList(this);
                 break;
@@ -116,14 +101,11 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArray(SAVED_TERTULIAS, tertulias);
-        outState.putSerializable(SAVED_BASE_ROUTES, baseRoutes);
     }
 
     private void loadInstanceState(Bundle inState) {
         if (inState.containsKey(SAVED_TERTULIAS))
             tertulias = (Tertulia[]) inState.getParcelableArray(SAVED_TERTULIAS);
-        if (inState.containsKey(SAVED_BASE_ROUTES))
-            baseRoutes = (HashMap<String, String>) inState.getSerializable(SAVED_BASE_ROUTES);
     }
 
 //  endregion
@@ -131,113 +113,46 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
 //    region Click Handlers
 
     public void onClickNewTertulia(final View view) {
-        if (baseRoutes.containsKey(POST_TERTULIAS)) {
-            Intent intent = new Intent(this, NewTertuliaActivity.class);
-            intent.putExtra(NewTertuliaActivity.END_POINT_LABEL, baseRoutes.get(POST_TERTULIAS));
-            intent.putExtra(NewTertuliaActivity.MY_TERTULIAS, tertulias);
-            startActivityForResult(intent, NewTertuliaActivity.REQUEST_CODE);
+
+        if (apiLinks == null) {
+            Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
+            return;
         }
+        Intent intent = new Intent(this, NewTertuliaActivity.class);
+        intent.putExtra(NewTertuliaActivity.ROUTE_END_POINT_LABEL, apiLinks.getRoute(LINK_CREATE));
+        intent.putExtra(NewTertuliaActivity.ROUTE_METHOD_LABEL, apiLinks.getMethod(LINK_CREATE));
+        intent.putExtra(NewTertuliaActivity.MY_TERTULIAS, tertulias);
+        startActivityForResult(intent, NewTertuliaActivity.INTENT_REQUEST_CODE);
     }
 
     public void onClickSearchTertulia(final View view) {
+        /*
         Intent intent = new Intent(this, SubscribeTeruliaActivity.class);
-        intent.putExtra(NewTertuliaActivity.END_POINT_LABEL, API_HOME_END_POINT);
-        startActivityForResult(intent, NewTertuliaActivity.REQUEST_CODE);
+        intent.putExtra(NewTertuliaActivity.ROUTE_END_POINT_LABEL, API_HOME_END_POINT);
+        startActivityForResult(intent, NewTertuliaActivity.INTENT_REQUEST_CODE);
+        */
     }
 
 //    endregion
 
-//     region Private Classes
-
-    private class PrivateListViewItemClickListener implements AdapterView.OnItemClickListener {
-        final View view;
-
-        public PrivateListViewItemClickListener(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            TertuliasArrayAdapter.ViewHolder viewHolder = (TertuliasArrayAdapter.ViewHolder) view.getTag();
-            ApiLink[] links = viewHolder.getLinks();
-            boolean isAbort = false;
-            ApiLink selectedLink = null;
-            if (links == null || links.length == 0)
-                isAbort = true;
-            else {
-                isAbort = true;
-                for (ApiLink link : links)
-                    if (link.rel.equals("self")) {
-                        selectedLink = link;
-                        isAbort = false;
-                        break;
-                    }
-            }
-            if (isAbort) {
-                Util.longSnack(view, R.string.activity_list_tertulias_toast_no_details);
-                return;
-            }
-            Intent intent = new Intent(MainActivity.this, TertuliaDetailsActivity.class);
-            intent.putExtra(TertuliaDetailsActivity.SELF_LINK, selectedLink);
-            startActivity(intent);
-        }
-    }
-
-    private class TertuliasListCallback implements FutureCallback<JsonElement> {
-        @Override
-        public void onFailure(Throwable e) {
-            Context ctx = MainActivity.this;
-            Util.longToast(ctx, getEMsg(ctx, e.getMessage()));
-        }
-
-        @Override
-        public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, Tertulia[]>() {
-                @Override
-                protected Tertulia[] doInBackground(JsonElement... params) {
-                    RTertulia[] rtertulias = new Gson().fromJson(params[0], RTertulia[].class);
-                    LinkedList<Tertulia> tertulias = new LinkedList<>();
-                    for (RTertulia rtertulia : rtertulias) {
-                        Tertulia tertulia = new Tertulia(rtertulia);
-                        tertulias.add(tertulia);
-                    }
-                    return tertulias.toArray(new Tertulia[tertulias.size()]);
-                }
-
-                @Override
-                protected void onPostExecute(Tertulia[] tertulias) {
-                    MainActivity.this.tertulias = tertulias;
-                    ArrayAdapter<Tertulia> adapter = new TertuliasArrayAdapter(MainActivity.this, tertulias);
-                    listView.setAdapter(adapter);
-                }
-            }.execute(result);
-        }
-    }
-
-//     endregion
-
 //     region Private Methods
 
     private void setupViews() {
-        Util.setupActionBar(this, R.string.title_activity_list_tertulias, false);
-        listView = (ListView) findViewById(R.id.mtl_ListView);
-        listViewAdapter = new TertuliasArrayAdapter(this, tertulias != null ? tertulias : new Tertulia[0]);
-        listView.setOnItemClickListener(new PrivateListViewItemClickListener(listView));
-        listView.setAdapter(listViewAdapter);
-    }
-
-    private static String getEMsg(Context ctx, String msg) {
-        if (!Util.isJson(msg)) return msg;
-        Error error = new Gson().fromJson(msg, Error.class);
-        return error.getStatusCodeMessage(ctx);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.mtl_toolbar);
+        Util.setupToolBar(toolbar,
+                R.string.title_activity_list_tertulias,
+                R.string.title_activity_list_tertulias,
+                R.menu.activity_main_menu);
+        recyclerView = (RecyclerView) findViewById(R.id.mtl_RecyclerView);
+        listViewAdapter = new TertuliasArrayRvAdapter(this, tertulias != null ? tertulias : new Tertulia[0]);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(listViewAdapter);
+        listViewAdapter.notifyDataSetChanged();
     }
 
     private void updateStatusAlert(Boolean isLogin, int alertMessage) {
-        loginStatus.set(isLogin);
-        Util.longSnack(findViewById(android.R.id.content), alertMessage);
-    }
-
-    private void updateStatusAlert(Boolean isLogin, String alertMessage) {
         loginStatus.set(isLogin);
         Util.longSnack(findViewById(android.R.id.content), alertMessage);
     }
@@ -263,20 +178,17 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
             Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
             return;
         }
-        request(ctx, apiHome.getRoute("tertulias"), apiHome.getMethod("tertulias"), new GetTertuliasCallback(ctx, listView, null, null));
+        request(ctx, apiHome.getRoute("tertulias"), apiHome.getMethod("tertulias"), new GetTertuliasCallback(ctx, recyclerView, null, null));
     }
 
-//    region User session management
+    //    region User session management
 
     private void requestLogin(final Context ctx, FutureCallback<MobileServiceUser> callback) {
         final MobileServiceClient cli = Util.getMobileServiceClient(this);
-//        loginStatus.update();
-
         if (Util.isSignedIn(ctx) || cli.isLoginInProgress()) {
             callback.onSuccess(cli.getCurrentUser());
             return;
         }
-
         Futures.addCallback(
                 cli.login(MobileServiceAuthenticationProvider.Google),
                 callback
@@ -284,24 +196,22 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
     }
 
     private void doLoginAndFetch(final Context ctx) {
-        GetData<JsonElement> getTertulias = new GetData<>(ctx);
-        GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, listView, null, null);
+        GetData<JsonElement> getTertulias = new GetData<>(ctx, "tertulias", apiHome);
+        GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, recyclerView, null, null);
 
-        GetHome getHome = new GetHome(ctx);
-        GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, "tertulias", getTertulias, getTertuliasCallback);
+        GetData<JsonElement> postRegister = new GetData<>(ctx, "registration", apiHome);
+        PostRegisterCallback postRegisterCallback = new PostRegisterCallback(ctx, null, getTertulias, getTertuliasCallback);
 
-        LoginCallback loginCallback = new LoginCallback(ctx, getHome, getHomeCallback);
+        GetData<JsonElement> getHome = new GetData<>(ctx, API_ROOT_END_POINT, null);
+        GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, null, postRegister, postRegisterCallback);
+
+        LoginCallback loginCallback = new LoginCallback(ctx, null, getHome, getHomeCallback);
         requestLogin(ctx, loginCallback);
     }
 
     private void doLogout(Context ctx) {
-
-        loginStatus.update();
-
         Futures.addCallback(
-
                 Util.getMobileServiceClient(this).logout(),
-
                 new FutureCallback<MobileServiceUser>() {
                     @Override
                     public void onFailure(Throwable e) {
@@ -318,8 +228,8 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                                ArrayAdapter<Tertulia> adapter = new TertuliasArrayAdapter(MainActivity.this, tertulias);
-                                listView.setAdapter(adapter);
+                                listViewAdapter = new TertuliasArrayRvAdapter(MainActivity.this, tertulias != null ? tertulias : new Tertulia[0]);
+                                recyclerView.setAdapter(listViewAdapter);
                             }
                         };
                         Looper.prepare();
@@ -332,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements TertuliasApi {
         );
     }
 
-//    endregion
+    //    endregion
 
 //    endregion
 }

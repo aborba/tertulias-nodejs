@@ -20,12 +20,6 @@ public class RHomeLinks implements Parcelable {
         this.registration = registration != null ? registration : new RHref("");
     }
 
-    public void exposeMap(HashMap<String, String> map) {
-        MainActivity.baseRoutes.put(TertuliasApi.GET_TERTULIAS, tertulias.getHref());
-        MainActivity.baseRoutes.put(TertuliasApi.POST_TERTULIAS, tertulias.getHref());
-        MainActivity.baseRoutes.put(TertuliasApi.POST_REGISTRATION, registration.getHref());
-    }
-
     public void pasteIn(RHomeLinks in) {
         tertulias.pasteIn(in.tertulias);
         registration.pasteIn(in.registration);

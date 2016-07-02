@@ -18,10 +18,6 @@ public class RHome implements Parcelable {
         this.links = links != null ? links : new RHomeLinks(null, null);
     }
 
-    public void exposeMap(HashMap<String, String> map) {
-        links.exposeMap(map);
-    }
-
     public void pasteIn(RHome in) {
         links.pasteIn(in.links);
     }

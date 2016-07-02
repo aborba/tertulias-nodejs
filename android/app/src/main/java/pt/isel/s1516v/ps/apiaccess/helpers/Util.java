@@ -1,15 +1,21 @@
 package pt.isel.s1516v.ps.apiaccess.helpers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -38,9 +44,10 @@ public class Util {
     }
 
     public static void longSnack(View ctx, String message) {
-        Snackbar.make(ctx, message, Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .show();
+        Snackbar snackbar = Snackbar.make(ctx, message, Snackbar.LENGTH_LONG);
+        ((TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text))
+                .setTextColor(Color.WHITE);
+        snackbar.setAction("Action", null).show();
     }
 
     public static void longSnack(View ctx, int message) {
@@ -93,6 +100,29 @@ public class Util {
         return mClient;
     }
 
+    public static final int IGNORE = -1;
+
+    public static void setupToolBar(@NonNull Toolbar toolbar, int title, int subtitle, int menu) {
+        if (title != IGNORE) toolbar.setTitle(title);
+        if (subtitle != IGNORE) toolbar.setSubtitle(subtitle);
+        if (menu != IGNORE) toolbar.inflateMenu(menu);
+        toolbar.setLogo(R.mipmap.tertulias);
+    }
+
+    public static void setupToolBar(final Context ctx, @NonNull Toolbar toolbar, int title, int subtitle, int menu, boolean backBehaviour) {
+        setupToolBar(toolbar, title, subtitle, menu);
+        if (backBehaviour) {
+            Drawable backArrow = ResourcesCompat.getDrawable(ctx.getResources(), R.drawable.ic_arrow_back_black_24dp, null);
+            toolbar.setNavigationIcon(backArrow);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((Activity) ctx).finish();
+                }
+            });
+        }
+    }
+
     public static void setupActionBar(AppCompatActivity ctx, int title, boolean isSetupAsUpEnabled) {
         ActionBar actionBar = ctx.getSupportActionBar();
         assert actionBar != null;
@@ -109,13 +139,10 @@ public class Util {
         ctx.setSupportActionBar(toolbar);
         toolbar.setLogo(R.mipmap.tertulias);
         toolbar.setTitle(title);
-//        actionBar.setDisplayShowHomeEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(isSetupAsUpEnabled);
-//        actionBar.setDisplayUseLogoEnabled(true);
     }
 
     public static boolean isConnectivityAvailable(Context ctx) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(ctx.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
@@ -125,13 +152,11 @@ public class Util {
     private static boolean isJsonArray(String str) {
         if (!isMatch(str, "[", "]")) return false;
         String subStr = str.substring(1, str.length()-1);
-        if (isJsonObject(subStr)) return true;
-        return !subStr.contains(":");
+        return isJsonObject(subStr) || !subStr.contains(":");
     }
 
     private static boolean isJsonObject(String str) {
-        if (isMatch(str, "{", ":", "}")) return true;
-        return str.contains(":");
+        return isMatch(str, "{", ":", "}") || str.contains(":");
     }
 
     private static boolean isMatch(String... args) {

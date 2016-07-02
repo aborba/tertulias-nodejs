@@ -10,10 +10,18 @@ public interface TertuliasApi {
     String HTTP_PUT = HttpConstants.PutMethod;
 
     // Endpoints keys
-    String END_POINT_LABEL = "EndPoint";
+    String ROUTE_END_POINT_LABEL = "RouteEndPoint";
+    String ROUTE_METHOD_LABEL = "RouteMethod";
     String GET_TERTULIAS = "getTertulias";
     String POST_TERTULIAS = "postTertulias";
     String POST_REGISTRATION = "postRegistration";
+
+    // Links
+    String LINK_SELF = "self";
+    String LINK_CREATE = "create";
+    String LINK_UPDATE = "update";
+    String LINK_DELETE = "delete";
+
 
     // Activity Return Codes
     int NEW_TERTULIA_RETURN_CODE = 1;

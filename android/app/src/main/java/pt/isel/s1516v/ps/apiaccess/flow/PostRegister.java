@@ -8,13 +8,14 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 import com.microsoft.windowsazure.mobileservices.http.HttpConstants;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 
-public class GetHome implements Futurizable<JsonElement> {
+public class PostRegister implements Futurizable<JsonElement> {
     private final Context ctx;
-    private final String rel;
+    private String rel;
 
-    public GetHome(Context ctx, String rel) {
+    public PostRegister(Context ctx, String rel) {
         this.ctx = ctx;
         this.rel = rel;
     }
@@ -23,7 +24,7 @@ public class GetHome implements Futurizable<JsonElement> {
     public ListenableFuture<JsonElement> getFuture() {
         MobileServiceClient cli = Util.getMobileServiceClient(ctx);
         MobileServiceUser user = cli.getCurrentUser();
-        return cli.invokeApi(rel, null, HttpConstants.GetMethod, null);
+        return cli.invokeApi(MainActivity.apiHome.getRoute(rel), null, MainActivity.apiHome.getMethod(rel), null);
     }
 
 //    @Override

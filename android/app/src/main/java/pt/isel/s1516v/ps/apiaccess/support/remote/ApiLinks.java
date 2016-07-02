@@ -2,14 +2,14 @@ package pt.isel.s1516v.ps.apiaccess.support.remote;
 
 import java.util.HashMap;
 
-public class ApiHome {
+public class ApiLinks {
 
     @com.google.gson.annotations.SerializedName("links")
-    private final ApiLink[] links;
+    private ApiLink[] links;
     private HashMap<String, ApiLink> map;
     boolean isMapped = false;
 
-    public ApiHome(ApiLink[] links) {
+    public ApiLinks(ApiLink[] links) {
         this.links = links;
     }
 
@@ -18,13 +18,13 @@ public class ApiHome {
         StringBuilder sb = new StringBuilder();
         for (ApiLink link : links)
             sb.append(link.toString()).append(", ");
-        return sb.substring(0, sb.length() - 2).toString();
+        return sb.substring(0, sb.length() - 2);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof ApiHome)) return false;
-        ApiHome other = (ApiHome) obj;
+        if (obj == null || !(obj instanceof ApiLinks)) return false;
+        ApiLinks other = (ApiLinks) obj;
         for (ApiLink otherLink : other.links) {
             boolean isEqual = false;
             for (ApiLink link : links)
@@ -35,6 +35,16 @@ public class ApiHome {
             if (!isEqual) return false;
         }
         return true;
+    }
+
+    public void swap(ApiLink[] links) {
+        this.links = links;
+        isMapped = false;
+    }
+
+    public void swap(ApiLinks links) {
+        this.links = links.links;
+        isMapped = false;
     }
 
     public String getRoute(String tag) {

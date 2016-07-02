@@ -5,10 +5,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -29,7 +31,7 @@ import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
-public class TertuliaDetailsActivity extends AppCompatActivity implements TertuliasApi {
+public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public final static String SELF_LINK = "SELF_LINK";
     private final static String TERTULIA = "tertulia";
@@ -46,7 +48,9 @@ public class TertuliaDetailsActivity extends AppCompatActivity implements Tertul
         if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA))
             tertulia = savedInstanceState.getParcelable(TERTULIA);
 
-        Util.setupActionBar(this, R.string.title_activity_tertulia_details, true);
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.tda_toolbar),
+                R.string.title_activity_tertulia_details,
+                Util.IGNORE, Util.IGNORE, true);
 
         ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
         titleView = (TextView) findViewById(R.id.tertuliaDetailsTitle);
@@ -57,13 +61,13 @@ public class TertuliaDetailsActivity extends AppCompatActivity implements Tertul
         privacyView = (CheckBox) findViewById(R.id.tertuliaDetailsPrivacy);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
-
         if (tertulia != null) paintUi(tertulia);
         else {
             MobileServiceClient cli = Util.getMobileServiceClient(this);
             ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink.href, null, selfLink.method, null);
             Futures.addCallback(rTertuliasFuture, new TertuliaPresentation());
         }
+
     }
 
     @Override

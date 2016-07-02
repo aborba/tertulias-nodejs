@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiHome;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 
 public class GetHomeCallback implements FutureCallback<JsonElement> {
     final Context ctx;
@@ -38,14 +38,13 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
 
     @Override
     public void onSuccess(JsonElement result) {
-        MainActivity.apiHome = new Gson().fromJson(result, ApiHome.class);
-        ApiHome apiHome = MainActivity.apiHome;
+        MainActivity.apiHome.swap(new Gson().fromJson(result, ApiLinks.class));
         if (future != null) {
             if (futureCallback != null)
-                Futures.addCallback(future.getFuture(apiHome.getRoute(rel), apiHome.getMethod(rel)), futureCallback);
+                Futures.addCallback(future.getFuture(), futureCallback);
             else
                 try {
-                    future.getFuture(apiHome.getRoute(rel), apiHome.getMethod(rel)).get();
+                    future.getFuture().get();
                 } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
                     e.printStackTrace();
                 }
