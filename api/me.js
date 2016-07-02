@@ -24,35 +24,38 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							psSelectId.unprepare();
 							if (typeof recordset != 'undefined' && recordset[0] != null) {
+								console.log('User registered; Returning.');
 								rollback200(res, tran);
 								next();
-								return;
-							}
-							userName(req.azureMobile.user, function(userInfo) {
-								var psInsertSid = new sql.PreparedStatement(conn);
-								psInsertSid.input('sid', sql.NVarChar);
-								psInsertSid.input('alias', sql.NVarChar);
-								psInsertSid.input('email', sql.NVarChar);
-								psInsertSid.input('firstName', sql.NVarChar);
-								psInsertSid.input('lastName', sql.NVarChar);
-								psInsertSid.input('picture', sql.NVarChar);
-								psInsertSid.prepare(queryInsertSid, function(err) {
-									if (err) { rollback500(err, res, tran); return; }
-									psInsertSid.execute({
-											sid: req.azureMobile.user.id,
-											alias: userInfo.alias,
-											email: userInfo.email,
-											firstName: userInfo.firstName,
-											lastName: userInfo.lastName,
-											picture: userInfo.picture
-										}, function(err, recordset, affected) {
-											if (err) { rollback500(err, res, tran); return; }
-											commit200(res, tran);
-											psInsertSid.unprepare();
-										}
-									);
+							} else {
+								console.log('User not registered; Registering.');
+								userName(req.azureMobile.user, function(userInfo) {
+									var psInsertSid = new sql.PreparedStatement(conn);
+									psInsertSid.input('sid', sql.NVarChar);
+									psInsertSid.input('alias', sql.NVarChar);
+									psInsertSid.input('email', sql.NVarChar);
+									psInsertSid.input('firstName', sql.NVarChar);
+									psInsertSid.input('lastName', sql.NVarChar);
+									psInsertSid.input('picture', sql.NVarChar);
+									psInsertSid.prepare(queryInsertSid, function(err) {
+										if (err) { rollback500(err, res, tran); return; }
+										psInsertSid.execute({
+												sid: req.azureMobile.user.id,
+												alias: userInfo.alias,
+												email: userInfo.email,
+												firstName: userInfo.firstName,
+												lastName: userInfo.lastName,
+												picture: userInfo.picture
+											}, function(err, recordset, affected) {
+												if (err) { rollback500(err, res, tran); return; }
+												commit200(res, tran);
+												psInsertSid.unprepare();
+												next();
+											}
+										);
+									});
 								});
-							});
+							}
 						}
 					);
 				});
