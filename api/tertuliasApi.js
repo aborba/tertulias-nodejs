@@ -29,6 +29,22 @@ const queryTertulias = 'SELECT' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
+const queryPublicTertulias = 'SELECT' +
+' TOP 5' +
+' tr_id         AS id,' +
+' tr_name       AS name,' +
+' tr_subject    AS subject,' +
+' lo_name       AS location,' +
+//' lo_latitude   AS latitude,' +
+//' lo_longitude  AS longitude,' +
+//' lo_geography.STDistance('POINT(38.7762 -9.171391)') AS Distance' +
+' FROM Tertulias' +
+' INNER JOIN Locations ON tr_location = lo_id' +
+' WHERE tr_is_cancelled = 0' +
+' AND tr_is_private = 0' +
+' AND tr_id NOT IN (SELECT mb_tertulia FROM Tertulias INNER JOIN Members ON mb_tertulia = tr_id INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
+' ORDER BY lo_geography.STDistance(\'POINT(@latitude @longitude)\')';
+
 const queryTertuliaDetails = 'SELECT DISTINCT' +
 	' tr_id                    AS id,' + // Tertulia
 	' tr_name                  AS name,' +
@@ -87,7 +103,8 @@ module.exports = function (configuration) {
 		var route = '/tertulias';
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
-		req.tertulias['query'] = queryTertulias;
+		req.tertulias['query'] = queryPublicTertulias;
+		console.log(queryPublicTertulias);
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'latitude': sql.Int, 'longitude': sql.Int };
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'latitude': req.body.latitude, 'longitude': req.body.longitude };
 	    req.tertulias['jsonType'] = "array";
