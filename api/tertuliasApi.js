@@ -34,7 +34,7 @@ const queryPublicTertulias = 'SELECT' +
 ' tr_id         AS id,' +
 ' tr_name       AS name,' +
 ' tr_subject    AS subject,' +
-' lo_name       AS location,' +
+' lo_name       AS location' +
 //' lo_latitude   AS latitude,' +
 //' lo_longitude  AS longitude,' +
 //' lo_geography.STDistance('POINT(38.7762 -9.171391)') AS Distance' +
