@@ -104,10 +104,6 @@ module.exports = function (configuration) {
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
 		req.tertulias['query'] = queryPublicTertulias;
-		console.log(queryPublicTertulias);
-		console.log('sid: ' + req.azureMobile.user.id);
-		console.log('latitude: ' + req.query.latitude);
-		console.log('longitude: ' + req.query.longitude);
 	    req.tertulias['paramsTypes'] = {
 	    	'sid': sql.NVarChar
 	    	, 'query': sql.NVarChar
@@ -116,18 +112,15 @@ module.exports = function (configuration) {
 	    };
 	    var latitude = parseFloat(req.query.latitude);
 	    var longitude = parseFloat(req.query.longitude);
-	    console.log(latitude);
-	    console.log(longitude);
 	    req.tertulias['paramsValues'] = {
 	    	'sid': req.azureMobile.user.id
 	    	, 'query': req.query.query
 	    	, 'latitude': parseFloat(req.query.latitude)
 	    	, 'longitude': parseFloat(req.query.longitude)
 	    };
-	    console.log(req.tertulias.paramsValues);
 	    req.tertulias['jsonType'] = "array";
 	    req.tertulias['links'] = '[ ' +
-			'{ "rel": "self", "method": "GET", "href": "' + route + '" }' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" }' +
 		']';
 	    req.tertulias['itemLinks'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
@@ -138,7 +131,7 @@ module.exports = function (configuration) {
 
 	router.get('/:tr_id', (req, res, next) => {
 		var tr_id = req.params.tr_id;
-		
+
 		var route = '/tertulias/' + tr_id;
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulia';
@@ -177,11 +170,6 @@ module.exports = function (configuration) {
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
-				console.log(recordsets);
-				console.log('len: ' + recordsets.length);
-				//console.log('r1: ' + recordsets[0][0][ErrorNumber]);
-				//console.log('r2: ' + recordsets[0][ErrorNumber]);
-				//console.log('r2: ' + recordsets[0]);
 				if (recordsets.length == 0) {
 					console.log('sending 201');
 					res.status(201)	// 201: Created
@@ -218,7 +206,6 @@ module.exports = function (configuration) {
 	};
 
 	var goGet = function(req, res, next) {
-		console.log('in goget');
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 	    var paramsTypes = req.tertulias.paramsTypes;
@@ -246,6 +233,7 @@ module.exports = function (configuration) {
                     	if (typeof itemLinks !== typeof undefined) {
 		                    recordset.forEach(function(elem) {
 		                    	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+		                    	console.log(elem.links);
                     		});
 	                    };
 	                    preparedStatement.unprepare();
@@ -258,7 +246,6 @@ module.exports = function (configuration) {
 	                    console.log('got results');
 	                    console.log(results);
 	                    res.json(results);
-	                    // next();
 	                }
 	            );
 	        });
