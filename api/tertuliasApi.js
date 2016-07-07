@@ -108,6 +108,7 @@ module.exports = function (configuration) {
 		console.log('sid: ' + req.azureMobile.user.id);
 		console.log('latitude: ' + req.body.latitude);
 		console.log('longitude: ' + req.body.longitude);
+		console.log(req.body);
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'latitude': sql.Int, 'longitude': sql.Int };
 	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'latitude': req.body.latitude, 'longitude': req.body.longitude };
 	    req.tertulias['jsonType'] = "array";
