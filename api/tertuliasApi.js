@@ -77,7 +77,26 @@ module.exports = function (configuration) {
 	    req.tertulias['itemLinks'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 			'{ "rel": "update", "method": "PUT", "href": "' + route + '/:id" }, ' +
-			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" } ' +
+			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
+			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" } ' +
+		']';
+	    goGet(req, res, next);
+	});
+
+    router.get('/publicSearch', (req, res, next) => {
+		var route = '/tertulias';
+		req['tertulias'] = {};
+		req.tertulias['resultsTag'] = 'tertulias';
+		req.tertulias['query'] = queryTertulias;
+	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'latitude': sql.Int, 'longitude': sql.Int };
+	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'latitude': req.body.latitude, 'longitude': req.body.longitude };
+	    req.tertulias['jsonType'] = "array";
+	    req.tertulias['links'] = '[ ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '" }' +
+		']';
+	    req.tertulias['itemLinks'] = '[ ' +
+			'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+			'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
 		']';
 	    goGet(req, res, next);
 	});
@@ -94,7 +113,9 @@ module.exports = function (configuration) {
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 			'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
-			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" } ' +
+			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
+			'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" } ' +
+			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 		']';
 	    goGet(req, res, next);
 	});
