@@ -120,6 +120,7 @@ module.exports = function (configuration) {
 	    	, 'latitude': parseFloat(req.query.latitude)
 	    	, 'longitude': parseFloat(req.query.longitude)
 	    };
+	    console.log(req.tertulias.paramsValues);
 	    req.tertulias['jsonType'] = "array";
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }' +
