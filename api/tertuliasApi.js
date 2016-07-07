@@ -117,8 +117,8 @@ module.exports = function (configuration) {
 	    req.tertulias['paramsValues'] = {
 	    	'sid': req.azureMobile.user.id
 	    	, 'query': req.query.query
-	    	, 'latitude': req.query.latitude
-	    	, 'longitude': req.query.longitude
+	    	, 'latitude': parseFloat(req.query.latitude)
+	    	, 'longitude': parseFloat(req.query.longitude)
 	    };
 	    req.tertulias['jsonType'] = "array";
 	    req.tertulias['links'] = '[ ' +
