@@ -114,6 +114,10 @@ module.exports = function (configuration) {
 	    	, 'latitude': sql.Int
 	    	, 'longitude': sql.Int
 	    };
+	    var latitude = parseFloat(req.query.latitude);
+	    var longitude = parseFloat(req.query.longitude);
+	    console.log(latitude);
+	    console.log(longitude);
 	    req.tertulias['paramsValues'] = {
 	    	'sid': req.azureMobile.user.id
 	    	, 'query': req.query.query
