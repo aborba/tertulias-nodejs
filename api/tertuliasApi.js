@@ -217,6 +217,7 @@ module.exports = function (configuration) {
 	};
 
 	var goGet = function(req, res, next) {
+		console.log('in goget');
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 	    var paramsTypes = req.tertulias.paramsTypes;
