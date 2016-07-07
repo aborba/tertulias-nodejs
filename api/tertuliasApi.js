@@ -43,7 +43,7 @@ const queryPublicTertulias = 'SELECT' +
 ' WHERE tr_is_cancelled = 0' +
 ' AND tr_is_private = 0' +
 ' AND tr_id NOT IN (SELECT mb_tertulia FROM Tertulias INNER JOIN Members ON mb_tertulia = tr_id INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
-' ORDER BY lo_geography.STDistance(&apos;POINT(@latitude @longitude)&apos;)';
+' ORDER BY lo_geography.STDistance(\'POINT(38.126 -9.145)\')';
 
 const queryTertuliaDetails = 'SELECT DISTINCT' +
 	' tr_id                    AS id,' + // Tertulia
