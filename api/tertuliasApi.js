@@ -254,6 +254,7 @@ module.exports = function (configuration) {
 	                    else
 	                    	results[resultsTag] = recordset[0];
 	                    results['links'] = JSON.parse(links);
+	                    console.log('got results');
 	                    console.log(results);
 	                    res.json(results);
 	                    next();
