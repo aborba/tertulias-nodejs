@@ -106,11 +106,11 @@ module.exports = function (configuration) {
 		req.tertulias['query'] = queryPublicTertulias;
 		console.log(queryPublicTertulias);
 		console.log('sid: ' + req.azureMobile.user.id);
-		console.log('latitude: ' + req.body.latitude);
-		console.log('longitude: ' + req.body.longitude);
+		console.log('latitude: ' + req.params.latitude);
+		console.log('longitude: ' + req.params.longitude);
 		console.log(req.body);
 	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'latitude': sql.Int, 'longitude': sql.Int };
-	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'latitude': req.body.latitude, 'longitude': req.body.longitude };
+	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'latitude': req.params.latitude, 'longitude': req.params.longitude };
 	    req.tertulias['jsonType'] = "array";
 	    req.tertulias['links'] = '[ ' +
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }' +
