@@ -255,6 +255,7 @@ module.exports = function (configuration) {
 	                    else
 	                    	results[resultsTag] = recordset[0];
 						console.log('in GoGet 7');
+						console.log(links);
 	                    results['links'] = JSON.parse(links);
 						console.log('in GoGet 8');
 	                    console.log('got results');
