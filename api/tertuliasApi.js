@@ -148,7 +148,7 @@ module.exports = function (configuration) {
 			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 			'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
-			'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" } ' +
+			'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 		']';
 	    goGet(req, res, next);
