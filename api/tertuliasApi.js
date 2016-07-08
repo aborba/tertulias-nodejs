@@ -256,10 +256,13 @@ module.exports = function (configuration) {
 	                    	results[resultsTag] = recordset[0];
 						console.log('in GoGet 7');
 	                    results['links'] = JSON.parse(links);
-	                    console.log('got results');
-	                    console.log(results);
-	                    res.json(results);
 						console.log('in GoGet 8');
+	                    console.log('got results');
+						console.log('in GoGet 9');
+	                    console.log(results);
+						console.log('in GoGet 10');
+	                    res.json(results);
+						console.log('in GoGet 11');
 	                    return next();
 	                }
 	            );
