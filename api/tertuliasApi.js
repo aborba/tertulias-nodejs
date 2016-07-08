@@ -100,6 +100,7 @@ module.exports = function (configuration) {
 	});
 
     router.get('/publicSearch', (req, res, next) => {
+		console.log('in /publicsearch');
 		var route = '/tertulias';
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
@@ -130,6 +131,7 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/:tr_id', (req, res, next) => {
+		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
 
 		if (isNaN(tr_id))
@@ -257,6 +259,7 @@ module.exports = function (configuration) {
 	                    console.log('got results');
 	                    console.log(results);
 	                    res.json(results);
+						console.log('in GoGet 8');
 	                    return next();
 	                }
 	            );
