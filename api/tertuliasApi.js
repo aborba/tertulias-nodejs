@@ -244,16 +244,16 @@ module.exports = function (configuration) {
 	                    };
 	                    preparedStatement.unprepare();
 	                    var results = {};
+						console.log(recordset);
 	                    if (req.tertulias.jsonType == "array") {
 	                    	console.log("EXPECTING Array");
-							console.log(recordset);
 	                    	results[resultsTag] = recordset;
 	                    }
 	                    else {
 	                    	console.log("NOT EXPECTING Array");
-							console.log(recordset);
 	                    	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
 	                    }
+						console.log(results);
 	                    results['links'] = JSON.parse(links);
 	                    res.json(results);
 	                    return next();
