@@ -242,13 +242,18 @@ module.exports = function (configuration) {
 		                    	console.log(elem.links);
                     		});
 	                    };
-						console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    var results = {};
-	                    if (req.tertulias.jsonType == "array")
+	                    if (req.tertulias.jsonType == "array") {
+	                    	console.log("EXPECTING Array");
+							console.log(recordset);
 	                    	results[resultsTag] = recordset;
-	                    else
+	                    }
+	                    else {
+	                    	console.log("NOT EXPECTING Array");
+							console.log(recordset);
 	                    	results[resultsTag] = recordset[0];
+	                    }
 	                    results['links'] = JSON.parse(links);
 	                    res.json(results);
 	                    return next();
