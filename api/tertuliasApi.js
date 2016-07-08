@@ -253,9 +253,10 @@ module.exports = function (configuration) {
 	                    	console.log("NOT EXPECTING Array");
 	                    	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
 	                    }
-						console.log(results);
 	                    results['links'] = JSON.parse(links);
+						console.log(results);
 	                    res.json(results);
+	                    console.log(req);
 	                    return next();
 	                }
 	            );
