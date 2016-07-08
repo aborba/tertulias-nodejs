@@ -252,7 +252,7 @@ module.exports = function (configuration) {
 	                    else {
 	                    	console.log("NOT EXPECTING Array");
 							console.log(recordset);
-	                    	results[resultsTag] = recordset[0];
+	                    	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
 	                    }
 	                    results['links'] = JSON.parse(links);
 	                    res.json(results);
