@@ -224,13 +224,13 @@ module.exports = function (configuration) {
 	        preparedStatement.prepare(query, function(err) {
 	            if (err) {
 	            	completeError(err, res);
-	            	return;
+	            	return next();
 	            }
 	            preparedStatement.execute(paramsValues, 
 	                function(err, recordset, affected) {
 	                    if (err) {
 	                    	completeError(err, res);
-	                    	return;
+	                    	return next();
 	                    }
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
