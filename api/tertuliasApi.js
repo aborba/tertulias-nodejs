@@ -209,6 +209,7 @@ module.exports = function (configuration) {
 	};
 
 	var goGet = function(req, res, next) {
+		console.log('in GoGet');
 		var query = req.tertulias.query;
 		var resultsTag = req.tertulias.resultsTag;
 	    var paramsTypes = req.tertulias.paramsTypes;
@@ -217,21 +218,26 @@ module.exports = function (configuration) {
 	    var itemLinks = req.tertulias.itemLinks;
 
 		var connection = new sql.Connection(util.sqlConfiguration);
+		console.log('in GoGet 1');
 	    connection.connect(function(err) {
 	        var preparedStatement = new sql.PreparedStatement(connection);
+			console.log('in GoGet 2');
 	        for (var key in paramsTypes)
 	        	preparedStatement.input(key, paramsTypes[key]);
+			console.log('in GoGet 3');
 	        preparedStatement.prepare(query, function(err) {
 	            if (err) {
 	            	completeError(err, res);
 	            	return next();
 	            }
+        		console.log('in GoGet 4');
 	            preparedStatement.execute(paramsValues, 
 	                function(err, recordset, affected) {
 	                    if (err) {
 	                    	completeError(err, res);
 	                    	return next();
 	                    }
+						console.log('in GoGet 5');
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
 		                    recordset.forEach(function(elem) {
@@ -239,12 +245,14 @@ module.exports = function (configuration) {
 		                    	console.log(elem.links);
                     		});
 	                    };
+						console.log('in GoGet 6');
 	                    preparedStatement.unprepare();
 	                    var results = {};
 	                    if (req.tertulias.jsonType == "array")
 	                    	results[resultsTag] = recordset;
 	                    else
 	                    	results[resultsTag] = recordset[0];
+						console.log('in GoGet 7');
 	                    results['links'] = JSON.parse(links);
 	                    console.log('got results');
 	                    console.log(results);
