@@ -186,20 +186,20 @@ module.exports = function (configuration) {
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Duplicate' } );
-					return next();
+					return next('409');
 				}
 				next();
 			})
 			.catch(function(err) {
 				console.log('catch 1');
 				console.log(err);
-				next();
+				next(err);
 			});
 		})
 		.catch(function(err) {
 			console.log('catch 2');
 			console.log(err);
-			return next();
+			return next(err);
 		});
 	});
 
@@ -220,26 +220,21 @@ module.exports = function (configuration) {
 	    var itemLinks = req.tertulias.itemLinks;
 
 		var connection = new sql.Connection(util.sqlConfiguration);
-		console.log('in GoGet 1');
 	    connection.connect(function(err) {
 	        var preparedStatement = new sql.PreparedStatement(connection);
-			console.log('in GoGet 2');
 	        for (var key in paramsTypes)
 	        	preparedStatement.input(key, paramsTypes[key]);
-			console.log('in GoGet 3');
 	        preparedStatement.prepare(query, function(err) {
 	            if (err) {
 	            	completeError(err, res);
-	            	return next();
+	            	return next(err);
 	            }
-        		console.log('in GoGet 4');
 	            preparedStatement.execute(paramsValues, 
 	                function(err, recordset, affected) {
 	                    if (err) {
 	                    	completeError(err, res);
-	                    	return next();
+	                    	return next(err);
 	                    }
-						console.log('in GoGet 5');
 	                    res.type('application/json');
                     	if (typeof itemLinks !== typeof undefined) {
 		                    recordset.forEach(function(elem) {
@@ -247,7 +242,6 @@ module.exports = function (configuration) {
 		                    	console.log(elem.links);
                     		});
 	                    };
-						console.log('in GoGet 6');
 						console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    var results = {};
@@ -255,18 +249,8 @@ module.exports = function (configuration) {
 	                    	results[resultsTag] = recordset;
 	                    else
 	                    	results[resultsTag] = recordset[0];
-						console.log('in GoGet 7');
-						console.log(links);
-	                    var linksArray = JSON.parse(links);
-						console.log(linksArray);
-	                    results['links'] = linksArray;
-						console.log('in GoGet 8');
-	                    console.log('got results');
-						console.log('in GoGet 9');
-	                    console.log(results);
-						console.log('in GoGet 10');
+	                    results['links'] = JSON.parse(links);
 	                    res.json(results);
-						console.log('in GoGet 11');
 	                    return next();
 	                }
 	            );
