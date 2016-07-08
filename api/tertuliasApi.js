@@ -248,6 +248,7 @@ module.exports = function (configuration) {
                     		});
 	                    };
 						console.log('in GoGet 6');
+						console.log(recordset);
 	                    preparedStatement.unprepare();
 	                    var results = {};
 	                    if (req.tertulias.jsonType == "array")
