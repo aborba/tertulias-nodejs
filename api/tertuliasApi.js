@@ -30,7 +30,7 @@ const queryTertulias = 'SELECT' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
 const queryPublicTertulias = 'SELECT' +
-' TOP 5' +
+' TOP 25' +
 ' tr_id         AS id,' +
 ' tr_name       AS name,' +
 ' tr_subject    AS subject,' +
@@ -132,6 +132,9 @@ module.exports = function (configuration) {
 	router.get('/:tr_id', (req, res, next) => {
 		var tr_id = req.params.tr_id;
 
+		if (isNaN(tr_id))
+			return next();
+
 		var route = '/tertulias/' + tr_id;
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulia';
@@ -175,13 +178,13 @@ module.exports = function (configuration) {
 					res.status(201)	// 201: Created
 						.type('application/json')
 						.json( { result: 'Ok' } );
-					return;
+					return next();
 				} else {
 					console.log('sending 409');
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Duplicate' } );
-					return;
+					return next();
 				}
 				next();
 			})
@@ -194,7 +197,7 @@ module.exports = function (configuration) {
 		.catch(function(err) {
 			console.log('catch 2');
 			console.log(err);
-			next();
+			return next();
 		});
 	});
 
@@ -246,6 +249,7 @@ module.exports = function (configuration) {
 	                    console.log('got results');
 	                    console.log(results);
 	                    res.json(results);
+	                    return next();
 	                }
 	            );
 	        });
