@@ -203,14 +203,24 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('sid', sql.NVarChar, req.azureMobile.user.id)
 			.input('tr_id', sql.Int, req.params.tr_id)
-			.query('SELECT * WHERE @tr_id IN (SELECT mb_id FROM Members' +
+			.query('SELECT COUNT(*) AS TOTALS FROM Members' +
 				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
-				' INNER JOIN Users ON mb_user = us_id' +
-				' WHERE tr_is_cancelled = 0 AND us_sid <> @sid)')
+				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
 			.then((recordset) => {
 				console.log(recordset);
+				/*
+					.input('sid', sql.NVarChar, req.azureMobile.user.id)
+					.input('tr_id', sql.Int, req.params.tr_id)
+					.query('SELECT * FROM (SELECT mb_id FROM Members' +
+						' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
+						' INNER JOIN Users ON mb_user = us_id' +
+						' WHERE tr_is_cancelled = 0 AND us_sid <> @sid)')
+					.then((recordset) => {
+						console.log(recordset);
+						return next();
+					});
+				*/
 				return next();
 			})
 			.catch(function(err) {
