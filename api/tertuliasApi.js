@@ -206,7 +206,7 @@ module.exports = function (configuration) {
 			.query('SELECT mb_id FROM Members' +
 				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 				' INNER JOIN Users ON mb_user = us_id' +
-				' WHERE tr_cancelled = 0')
+				' WHERE tr_is_cancelled = 0')
 			.then((recordset) => {
 				console.log(recordset);
 				return next();
