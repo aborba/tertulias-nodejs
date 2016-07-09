@@ -210,6 +210,7 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				console.log(recordset[0]);
+				console.log(recordset[0].totals);
 				/*
 				if (recordset[0].countIds != 1) {
 					res end('409');
