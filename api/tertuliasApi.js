@@ -209,8 +209,10 @@ module.exports = function (configuration) {
 				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
 			.then((recordset) => {
 				if (recordset[0].countIds != 1) {
-					res.end('409');
-					return;
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
 				}
 				/*
 					.input('sid', sql.NVarChar, req.azureMobile.user.id)
