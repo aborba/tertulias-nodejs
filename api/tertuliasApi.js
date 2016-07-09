@@ -203,10 +203,11 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
+			.input('sid', sql.NVarChar, req.azureMobile.user.id)
 			.query('SELECT mb_id FROM Members' +
 				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 				' INNER JOIN Users ON mb_user = us_id' +
-				' WHERE tr_is_cancelled = 0')
+				' WHERE tr_is_cancelled = 0 AND us_sid = @sid')
 			.then((recordset) => {
 				console.log(recordset);
 				return next();
