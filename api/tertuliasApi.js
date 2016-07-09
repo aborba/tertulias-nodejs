@@ -208,15 +208,10 @@ module.exports = function (configuration) {
 				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
 			.then((recordset) => {
-				console.log(recordset);
-				console.log(recordset[0]);
-				console.log(recordset[0].totals);
-				/*
 				if (recordset[0].countIds != 1) {
-					res end('409');
+					res.end('409');
 					return;
 				}
-				*/
 				/*
 					.input('sid', sql.NVarChar, req.azureMobile.user.id)
 					.input('tr_id', sql.Int, req.params.tr_id)
