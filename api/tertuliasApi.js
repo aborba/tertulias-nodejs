@@ -203,6 +203,30 @@ module.exports = function (configuration) {
 		});
 	});
 
+	router.post('/:tr_id/subscribe', (req, res, next) => {
+
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.query('SELECT mb_id FROM Members' +
+				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
+				' INNER JOIN Users ON mb_user = us_id' +
+				' WHERE tr_cancelled = 0')
+			.then((recordset) => {
+				console.log(recordset);
+			})
+			.catch(function(err) {
+				console.log('catch1');
+				console.log(err);
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			console.log('catch');
+			console.log(err);
+			return next(err);
+		});
+	});
+
 	var completeError = function(err, res) {
 	    if (err) {
 	        console.error(err);
