@@ -204,11 +204,12 @@ module.exports = function (configuration) {
 	    .then(function() {
 			new sql.Request()
 			.input('tr_id', sql.Int, req.params.tr_id)
-			.query('SELECT COUNT(*) AS countIds FROM Members' +
+			.query('SELECT COUNT(*) AS totals FROM Members' +
 				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
 				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
 			.then((recordset) => {
 				console.log(recordset);
+				console.log(recordset[0]);
 				/*
 				if (recordset[0].countIds != 1) {
 					res end('409');
