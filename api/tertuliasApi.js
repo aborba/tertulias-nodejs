@@ -209,10 +209,12 @@ module.exports = function (configuration) {
 				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
 			.then((recordset) => {
 				console.log(recordset);
+				/*
 				if (recordset[0].countIds != 1) {
 					res end('409');
 					return;
 				}
+				*/
 				/*
 					.input('sid', sql.NVarChar, req.azureMobile.user.id)
 					.input('tr_id', sql.Int, req.params.tr_id)
