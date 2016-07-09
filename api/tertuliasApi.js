@@ -155,6 +155,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/', (req, res, next) => {
+		console.log('in /');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -176,13 +177,11 @@ module.exports = function (configuration) {
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
 				if (recordsets.length == 0) {
-					console.log('sending 201');
 					res.status(201)	// 201: Created
 						.type('application/json')
 						.json( { result: 'Ok' } );
 					return next();
 				} else {
-					console.log('sending 409');
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Duplicate' } );
@@ -191,19 +190,16 @@ module.exports = function (configuration) {
 				next();
 			})
 			.catch(function(err) {
-				console.log('catch 1');
-				console.log(err);
 				next(err);
 			});
 		})
 		.catch(function(err) {
-			console.log('catch 2');
-			console.log(err);
 			return next(err);
 		});
 	});
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
+		console.log('in /:tr_id/subscribe');
 
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
@@ -263,24 +259,16 @@ module.exports = function (configuration) {
                     	if (typeof itemLinks !== typeof undefined) {
 		                    recordset.forEach(function(elem) {
 		                    	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-		                    	console.log(elem.links);
                     		});
 	                    };
 	                    preparedStatement.unprepare();
 	                    var results = {};
-						console.log(recordset);
-	                    if (req.tertulias.jsonType == "array") {
-	                    	console.log("EXPECTING Array");
+	                    if (req.tertulias.jsonType == "array")
 	                    	results[resultsTag] = recordset;
-	                    }
-	                    else {
-	                    	console.log("NOT EXPECTING Array");
+	                    else
 	                    	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
-	                    }
 	                    results['links'] = JSON.parse(links);
-						console.log(results);
 	                    res.json(results);
-	                    console.log(req);
 	                    return next();
 	                }
 	            );
