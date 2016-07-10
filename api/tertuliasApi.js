@@ -148,7 +148,7 @@ module.exports = function (configuration) {
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
-
+		var route = '/tertulias/' + tr_id;
 		if (isNaN(tr_id))
 			return next();
 
@@ -184,6 +184,21 @@ module.exports = function (configuration) {
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
 				console.log(recordset);
+				var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
+						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
+						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
+						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
+					']';
+                res.type('application/json');
+                var results = {};
+            	results['tertulias'] = recordset[0];
+                results['links'] = JSON.parse(links);
+	    		console.log(results);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
 			})
 		});
 /*
