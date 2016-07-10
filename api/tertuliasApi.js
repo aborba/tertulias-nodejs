@@ -108,7 +108,19 @@ module.exports = function (configuration) {
 	    	.input('query', sql.NVarChar, req.query.query)
 	    	.input('latitude', sql.Int, parseFloat(req.query.latitude))
 	    	.input('longitude', sql.Int, parseFloat(req.query.longitude))
-	    	.query(queryPublicTertulias)
+	    	.query('SELECT TOP 25' +
+		    		' tr_id AS id,' +
+		    		' tr_name AS name,' +
+		    		' tr_subject AS subject,' +
+		    		' lo_name AS location' +
+	    		' FROM Tertulias' +
+	    			' INNER JOIN Locations ON tr_location = lo_id' +
+	    		' WHERE tr_is_cancelled = 0 AND tr_is_private = 0' +
+		    		' AND tr_id NOT IN' +
+		    			' (SELECT mb_tertulia FROM Tertulias' +
+		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
+		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
+				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(err, recordset, affected) {
 	    		console.log('err: ' + err);
 	    		console.log('affected: ' + affected);
