@@ -122,11 +122,11 @@ module.exports = function (configuration) {
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(err, recordset, affected) {
-	    		console.log('err: ' + err);
 	    		console.log('affected: ' + affected);
 	    		console.log('recordset:');
 	    		console.log(recordset);
 	    		if (err) {
+	    			console.log(err);
                 	completeError(err, res);
                 	return next(err);
                 }
@@ -284,6 +284,7 @@ module.exports = function (configuration) {
 
 	var completeError = function(err, res) {
 	    if (err) {
+	    	console.log("Error:");
 	        console.error(err);
 	        if (res) res.sendStatus(500);
 	    }
