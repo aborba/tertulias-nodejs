@@ -132,16 +132,24 @@ module.exports = function (configuration) {
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
 					']';
                 res.type('application/json');
+	    		console.log('recordset 1:');
+	    		console.log(recordset);
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
                 preparedStatement.unprepare();
+	    		console.log('recordset 2:');
+	    		console.log(recordset);
                 var results = {};
                 if (req.tertulias.jsonType == "array")
                 	results[resultsTag] = recordset;
                 else
                 	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
+	    		console.log('results:');
+	    		console.log(results);
                 results['links'] = JSON.parse(links);
+	    		console.log('results 1:');
+	    		console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
