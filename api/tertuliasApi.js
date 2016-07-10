@@ -135,8 +135,8 @@ module.exports = function (configuration) {
 	    		console.log('recordset 2:');
 	    		console.log(recordset);
                 var results = {};
-            	results[resultsTag] = recordset;
-//            	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
+            	results['tertulias'] = recordset;
+//            	results['tertulias'] = recordset.length == 0 ? {} : recordset[0];
 	    		console.log('results:');
 	    		console.log(results);
                 results['links'] = JSON.parse(links);
