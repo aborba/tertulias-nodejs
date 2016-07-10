@@ -193,7 +193,7 @@ module.exports = function (configuration) {
 					']';
                 res.type('application/json');
                 var results = {};
-            	results['tertulias'] = recordset;
+            	results['tertulia'] = recordset[0];
                 results['links'] = JSON.parse(links);
 	    		console.log(results);
                 res.json(results);
