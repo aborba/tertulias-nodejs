@@ -104,6 +104,7 @@ module.exports = function (configuration) {
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
+    		console.log(req.query);
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, req.query.query)
