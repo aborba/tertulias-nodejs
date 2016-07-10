@@ -143,6 +143,7 @@ module.exports = function (configuration) {
                 	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
                 results['links'] = JSON.parse(links);
                 res.json(results);
+                res.sendStatus(200);
                 return next();
             })
 	    });
