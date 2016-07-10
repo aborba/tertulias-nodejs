@@ -102,6 +102,7 @@ module.exports = function (configuration) {
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
 		var route = '/tertulias';
+		var point = '\'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')\'';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
     		console.log(req.query);
@@ -110,6 +111,7 @@ module.exports = function (configuration) {
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
 	    	.input('latitude', sql.NVarChar, req.query.latitude)
 	    	.input('longitude', sql.NVarChar, req.query.longitude)
+	    	.input('point', sql.NVarChar, point)
 	    	.query('SELECT TOP 25' +
 		    		' tr_id AS id,' +
 		    		' tr_name AS name,' +
@@ -123,7 +125,8 @@ module.exports = function (configuration) {
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
-				' ORDER BY lo_geography.STDistance(\'POINT( @latitude @longitude )\')')
+				' ORDER BY lo_geography.STDistance( @point )')
+				// ' ORDER BY lo_geography.STDistance(\'POINT( @latitude @longitude )\')')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
 	    	.then(function(recordset) {
                 var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
