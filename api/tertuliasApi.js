@@ -121,15 +121,9 @@ module.exports = function (configuration) {
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
-	    	.then(function(err, recordset, affected) {
-	    		console.log('affected: ' + affected);
+	    	.then(function(recordset) {
 	    		console.log('recordset:');
 	    		console.log(recordset);
-	    		if (err) {
-	    			console.log(err);
-                	completeError(err, res);
-                	return next(err);
-                }
                 var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" }' +
 					']'
