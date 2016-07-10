@@ -148,6 +148,7 @@ module.exports = function (configuration) {
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
+		console.log(tr_id);
 
 		if (isNaN(tr_id))
 			return next();
