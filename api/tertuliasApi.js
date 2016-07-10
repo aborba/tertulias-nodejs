@@ -101,6 +101,7 @@ module.exports = function (configuration) {
 
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
+		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -123,7 +124,7 @@ module.exports = function (configuration) {
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(recordset) {
 	    		console.log('testttt:');
-                var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
+                var links = '[ { rel: "self", method: "GET", href: "' + route + '/publicSearch" } ]';
 	    		console.log('test 1:');
                 var itemLinks = '[ ' +
             	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
