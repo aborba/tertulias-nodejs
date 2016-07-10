@@ -108,7 +108,7 @@ module.exports = function (configuration) {
     		console.log(req.query);
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.input('query', sql.NVarChar, req.query.query)
+	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
 	    	.input('latitude', sql.Float, parseFloat(req.query.latitude))
 	    	.input('longitude', sql.Int, parseFloat(req.query.longitude))
 	    	.query('SELECT TOP 25' +
@@ -118,7 +118,7 @@ module.exports = function (configuration) {
 		    		' lo_name AS location' +
 	    		' FROM Tertulias' +
 	    			' INNER JOIN Locations ON tr_location = lo_id' +
-	    		' WHERE tr_name LIKE \'%Francisco%\'' +
+	    		' WHERE tr_name LIKE @query' +
 	    			' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
