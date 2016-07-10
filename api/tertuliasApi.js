@@ -132,7 +132,9 @@ module.exports = function (configuration) {
             	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
 					']';
+	    		console.log('test 2:');
                 res.type('application/json');
+	    		console.log('test 3:');
 	    		console.log('recordset 1:');
 	    		console.log(recordset);
                 recordset.forEach(function(elem) {
