@@ -122,6 +122,7 @@ module.exports = function (configuration) {
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(recordset) {
+	    		console.log('test 1:');
 	    		console.log('recordset:');
 	    		console.log(recordset);
                 var links = '[ ' +
