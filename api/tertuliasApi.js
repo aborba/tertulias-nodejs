@@ -109,7 +109,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, req.query.query)
-	    	.input('latitude', sql.NVarChar, req.query.latitude)
+	    	.input('latitude', sql.Float, parseFloat(req.query.latitude))
 	    	.input('longitude', sql.Int, parseFloat(req.query.longitude))
 	    	.query('SELECT TOP 25' +
 		    		' tr_id AS id,' +
