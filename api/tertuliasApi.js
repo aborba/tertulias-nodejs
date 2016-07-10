@@ -103,6 +103,7 @@ module.exports = function (configuration) {
 		console.log('in /publicsearch');
 		var route = '/tertulias';
 		var point = '\'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')\'';
+		console.log(point);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
     		console.log(req.query);
