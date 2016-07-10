@@ -118,7 +118,7 @@ module.exports = function (configuration) {
 		    		' lo_name AS location' +
 	    		' FROM Tertulias' +
 	    			' INNER JOIN Locations ON tr_location = lo_id' +
-	    		' WHERE tr_name LIKE \'%@query%\'' +
+	    		' WHERE tr_name LIKE \'%Francisco%\'' +
 	    			' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
