@@ -176,9 +176,9 @@ module.exports = function (configuration) {
 				' FROM Tertulias' +
 					' INNER JOIN Locations ON tr_location = lo_id' +
 					' INNER JOIN Schedules ON tr_schedule = sc_id' +
-					' INNER JOIN Members ON mb_tertulia = tr_id' +
-					' INNER JOIN Users ON mb_user = us_id' +
-					' INNER JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
+					' LEFT JOIN Members ON mb_tertulia = tr_id' +
+					' LEFT JOIN Users ON mb_user = us_id' +
+					' LEFT JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
 					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
 				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR tr_is_private = 0)' +
 					' AND tr_id = @tertulia')
