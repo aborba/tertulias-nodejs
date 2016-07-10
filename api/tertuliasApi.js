@@ -101,6 +101,7 @@ module.exports = function (configuration) {
 
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
+		console.log(req.query.latitude);
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
