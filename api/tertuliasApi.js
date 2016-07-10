@@ -207,7 +207,12 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spSubscribe')
 			.then((recordset) => {
-				console.log(recordset);
+				console.log(recordset[0]);
+				if (recordset[0].equals("returnValue: 1")) {
+					res.sendStatus(200);
+				} else if (recordset[0].equals("returnValue: 0")) {
+					res.sendStatus(409);
+				}
 				return next();
 			})
 			.catch(function(err) {
