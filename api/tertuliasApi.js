@@ -203,29 +203,11 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('tr_id', sql.Int, req.params.tr_id)
-			.query('SELECT COUNT(*) AS totals FROM Members' +
-				' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
-				' WHERE tr_is_cancelled = 0 AND tr_is_private = 0 AND tr_id = @tr_id')
+			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.execute('spSubscribe')
 			.then((recordset) => {
-				if (recordset[0].countIds != 1) {
-					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-						.type('application/json')
-						.json( { result: 'Duplicate' } );
-					return next('409');
-				}
-				/*
-					.input('sid', sql.NVarChar, req.azureMobile.user.id)
-					.input('tr_id', sql.Int, req.params.tr_id)
-					.query('SELECT * FROM (SELECT mb_id FROM Members' +
-						' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
-						' INNER JOIN Users ON mb_user = us_id' +
-						' WHERE tr_is_cancelled = 0 AND us_sid <> @sid)')
-					.then((recordset) => {
-						console.log(recordset);
-						return next();
-					});
-				*/
+				console.log(recordset);
 				return next();
 			})
 			.catch(function(err) {
