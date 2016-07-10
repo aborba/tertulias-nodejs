@@ -109,7 +109,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
-	    	.input('latitude', sql.Float, parseFloat(req.query.latitude))
+	    	.input('latitude', sql.Int, parseFloat(req.query.latitude))
 	    	.input('longitude', sql.Int, parseFloat(req.query.longitude))
 	    	.query('SELECT TOP 25' +
 		    		' tr_id AS id,' +
@@ -124,7 +124,8 @@ module.exports = function (configuration) {
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
-				' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
+				' ORDER BY lo_geography.STDistance(\'POINT(@latitude @longitude)\')')
+				// ' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
 	    	.then(function(recordset) {
                 var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
                 var itemLinks = '[ ' +
