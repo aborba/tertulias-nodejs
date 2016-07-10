@@ -118,7 +118,8 @@ module.exports = function (configuration) {
 		    		' lo_name AS location' +
 	    		' FROM Tertulias' +
 	    			' INNER JOIN Locations ON tr_location = lo_id' +
-	    		' WHERE tr_is_cancelled = 0 AND tr_is_private = 0' +
+	    		' WHERE tr_name LIKE \'%@query%\'' +
+	    			' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
@@ -201,24 +202,6 @@ module.exports = function (configuration) {
                 return next();
 			})
 		});
-/*
-		var route = '/tertulias/' + tr_id;
-		console.log(route);
-		req['tertulias'] = {};
-		req.tertulias['resultsTag'] = 'tertulia';
-		req.tertulias['query'] = queryTertuliaDetails;
-	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar, 'tertulia': sql.Int };
-	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id, 'tertulia': tr_id };
-	    req.tertulias['jsonType'] = "object";
-	    req.tertulias['links'] = '[ ' +
-			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-			'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
-			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
-			'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
-			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
-		']';
-	    goGet(req, res, next);
-*/
 	});
 
 	router.post('/', (req, res, next) => {
