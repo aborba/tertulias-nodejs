@@ -101,6 +101,47 @@ module.exports = function (configuration) {
 
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('query', sql.NVarChar, req.query.query)
+	    	.input('latitude', sql.Int, parseFloat(req.query.latitude))
+	    	.input('longitude', sql.Int, parseFloat(req.query.longitude))
+	    	.query(queryPublicTertulias)
+	    	.then(function(err, recordset, affected) {
+	    		console.log('err: ' + err);
+	    		console.log('affected: ' + affected);
+	    		console.log('recordset:');
+	    		console.log(recordset);
+	    		if (err) {
+                	completeError(err, res);
+                	return next(err);
+                }
+                var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" }' +
+					']'
+                var itemLinks = '[ ' +
+            	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
+					']';
+                res.type('application/json');
+                recordset.forEach(function(elem) {
+                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+        		});
+                preparedStatement.unprepare();
+                var results = {};
+                if (req.tertulias.jsonType == "array")
+                	results[resultsTag] = recordset;
+                else
+                	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                return next();
+            })
+	    });
+	});
+/*
 		var route = '/tertulias';
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
@@ -129,6 +170,7 @@ module.exports = function (configuration) {
 		']';
 	    goGet(req, res, next);
 	});
+	*/
 
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
