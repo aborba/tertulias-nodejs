@@ -148,12 +148,47 @@ module.exports = function (configuration) {
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
-		console.log(tr_id);
 
 		if (isNaN(tr_id))
 			return next();
 
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('tertulia', sql.Int, tr_id)
+			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.query('SELECT' +
+					' tr_id AS id,' + // Tertulia
+					' tr_name AS name,' +
+					' tr_subject AS subject,' +
+					' lo_name AS location,' + // Location
+					' lo_address AS address,' +
+					' lo_zip AS zip,' +
+					' lo_city AS city,' +
+					' lo_country AS country,' +
+					' lo_latitude AS latitude,' +
+					' lo_longitude AS longitude,' +
+					' sc_type AS scheduleId,' + // Schedule
+					' _Schedule.nv_name AS scheduleName,' +
+					' _Schedule.nv_description AS scheduleDescription,' +
+					' tr_is_private AS private, ' +  // Private
+					' _Member.nv_name AS role' + // Role
+				' FROM Tertulias' +
+					' INNER JOIN Locations ON tr_location = lo_id' +
+					' INNER JOIN Schedules ON tr_schedule = sc_id' +
+					' INNER JOIN Members ON mb_tertulia = tr_id' +
+					' INNER JOIN Users ON mb_user = us_id' +
+					' INNER JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
+					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
+				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR tr_is_private = 0)' +
+					' AND tr_id = @tertulia')
+			.then(function(recordset) {
+				console.log(recordset);
+			})
+		});
+/*
 		var route = '/tertulias/' + tr_id;
+		console.log(route);
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulia';
 		req.tertulias['query'] = queryTertuliaDetails;
@@ -168,6 +203,7 @@ module.exports = function (configuration) {
 			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 		']';
 	    goGet(req, res, next);
+*/
 	});
 
 	router.post('/', (req, res, next) => {
