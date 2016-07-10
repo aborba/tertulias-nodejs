@@ -208,6 +208,7 @@ module.exports = function (configuration) {
 			.execute('spSubscribe')
 			.then((recordset) => {
 				console.log(recordset);
+				console.log(recordset.returnValue);
 				console.log(recordset[0]);
 				if (recordset[0].equals("returnValue: 1")) {
 					res.sendStatus(200);
