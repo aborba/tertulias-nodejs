@@ -123,7 +123,7 @@ module.exports = function (configuration) {
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(recordset) {
-                var links = '[ { rel: "self", method: "GET", href: "' + route + '/publicSearch" } ]';
+                var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
                 var itemLinks = '[ ' +
             	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
@@ -132,11 +132,8 @@ module.exports = function (configuration) {
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
-	    		console.log('recordset 2:');
-	    		console.log(recordset);
                 var results = {};
             	results['tertulias'] = recordset;
-//            	results['tertulias'] = recordset.length == 0 ? {} : recordset[0];
 	    		console.log('results:');
 	    		console.log(results);
                 results['links'] = JSON.parse(links);
