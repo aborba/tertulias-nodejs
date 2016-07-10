@@ -123,22 +123,15 @@ module.exports = function (configuration) {
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
 				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
 	    	.then(function(recordset) {
-	    		console.log('testttt:');
                 var links = '[ { rel: "self", method: "GET", href: "' + route + '/publicSearch" } ]';
-	    		console.log('test 1:');
                 var itemLinks = '[ ' +
             	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
 					']';
-	    		console.log('test 2:');
                 res.type('application/json');
-	    		console.log('test 3:');
-	    		console.log('recordset 1:');
-	    		console.log(recordset);
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
-                preparedStatement.unprepare();
 	    		console.log('recordset 2:');
 	    		console.log(recordset);
                 var results = {};
