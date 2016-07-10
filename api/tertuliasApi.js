@@ -121,7 +121,7 @@ module.exports = function (configuration) {
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
 		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
-				' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')')
+				' ORDER BY lo_geography.STDistance(\'POINT(' + @latitude + ' -9.1123113)\')')
 	    	.then(function(recordset) {
                 var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
                 var itemLinks = '[ ' +
@@ -134,11 +134,7 @@ module.exports = function (configuration) {
         		});
                 var results = {};
             	results['tertulias'] = recordset;
-	    		console.log('results:');
-	    		console.log(results);
                 results['links'] = JSON.parse(links);
-	    		console.log('results 1:');
-	    		console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
