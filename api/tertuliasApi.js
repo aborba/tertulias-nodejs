@@ -101,7 +101,6 @@ module.exports = function (configuration) {
 
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
-		console.log(req.query.latitude);
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
@@ -109,8 +108,8 @@ module.exports = function (configuration) {
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
-	    	.input('latitude', sql.Float, parseFloat(req.query.latitude))
-	    	.input('longitude', sql.Float, parseFloat(req.query.longitude))
+	    	.input('latitude', sql.NVarChar, req.query.latitude)
+	    	.input('longitude', sql.NVarChar, req.query.longitude)
 	    	.query('SELECT TOP 25' +
 		    		' tr_id AS id,' +
 		    		' tr_name AS name,' +
