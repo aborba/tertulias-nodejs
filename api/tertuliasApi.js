@@ -51,8 +51,8 @@ module.exports = function (configuration) {
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
-						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" } ' +
-						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" } ' +
+						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
+						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 	    		console.log(recordset);
