@@ -103,10 +103,8 @@ module.exports = function (configuration) {
 		console.log('in /publicsearch');
 		var route = '/tertulias';
 		var point = 'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')';
-		console.log(point);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
-    		console.log(req.query);
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
@@ -120,7 +118,7 @@ module.exports = function (configuration) {
 		    		' lo_name AS location' +
 	    		' FROM Tertulias' +
 	    			' INNER JOIN Locations ON tr_location = lo_id' +
-	    		' WHERE tr_name LIKE @query' +
+	    		' WHERE (tr_name LIKE @query OR tr_subject LIKE @query OR lo_name LIKE @query)' +
 	    			' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
@@ -142,7 +140,6 @@ module.exports = function (configuration) {
                 var results = {};
             	results['tertulias'] = recordset;
                 results['links'] = JSON.parse(links);
-	    		console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
@@ -188,7 +185,6 @@ module.exports = function (configuration) {
 				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR tr_is_private = 0)' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
-				console.log(recordset);
 				var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
@@ -200,7 +196,6 @@ module.exports = function (configuration) {
                 var results = {};
             	results['tertulia'] = recordset[0];
                 results['links'] = JSON.parse(links);
-	    		console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
@@ -261,7 +256,6 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spSubscribe')
 			.then((recordset) => {
-				console.log(recordset.returnValue);
 				if (recordset.returnValue = 1) {
 					res.sendStatus(200);
 				} else {
@@ -270,14 +264,10 @@ module.exports = function (configuration) {
 				return next();
 			})
 			.catch(function(err) {
-				console.log('catch1');
-				console.log(err);
 				next(err);
 			});
 		})
 		.catch(function(err) {
-			console.log('catch');
-			console.log(err);
 			return next(err);
 		});
 	});
