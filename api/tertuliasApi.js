@@ -13,7 +13,7 @@ module.exports = function (configuration) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
-		console.log('in GET /api/tertulias');
+		console.log('in GET /tertulias');
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
@@ -70,7 +70,7 @@ module.exports = function (configuration) {
     });
 
     router.get('/publicSearch', (req, res, next) => {
-		console.log('in GET /api/tertulias/publicsearch');
+		console.log('in GET /tertulias/publicsearch');
 		var route = '/tertulias';
 		var point = 'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')';
 	    sql.connect(util.sqlConfiguration)
@@ -118,7 +118,7 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/:tr_id', (req, res, next) => {
-		console.log('in GET /api/tertulias/:tr_id');
+		console.log('in GET /tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
 		if (isNaN(tr_id))
@@ -174,7 +174,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/', (req, res, next) => {
-		console.log('in POST /api/tertulias');
+		console.log('in POST /tertulias');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -218,7 +218,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
-		console.log('in POST /api/tertulias/:tr_id/subscribe');
+		console.log('in POST /tertulias/:tr_id/subscribe');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
