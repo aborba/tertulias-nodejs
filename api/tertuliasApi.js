@@ -42,12 +42,12 @@ module.exports = function (configuration) {
 				' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 				' WHERE tr_is_cancelled = 0 AND us_sid = @sid')
 	    	.then(function(recordset) {
-	    		console.log(recordset);
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
 						'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 					']';
+	    		console.log(links);
 			    var itemLinks = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '/:id" }, ' +
@@ -56,10 +56,13 @@ module.exports = function (configuration) {
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" } ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
+	    		console.log(itemLinks);
 				res.type('application/json');
+	    		console.log('aqui 1');
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
+	    		console.log('aqui 2');
                 var results = {};
             	results['tertulias'] = recordset;
                 results['links'] = JSON.parse(links);
