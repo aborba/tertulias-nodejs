@@ -112,6 +112,7 @@ module.exports = function (configuration) {
 		']';
 	    goGet(req, res, next);
 	});
+*/
 
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in /publicsearch');
@@ -160,7 +161,7 @@ module.exports = function (configuration) {
             })
 	    });
 	});
-*/
+
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
