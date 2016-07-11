@@ -6,29 +6,6 @@ var express = require('express'),
 var sql = require('mssql');
 var util = require('../util');
 
-const queryTertulias = 'SELECT' +
-' tr_id         AS id,' +
-' tr_name       AS name,' +
-' tr_subject    AS subject,' +
-' ev_targetdate AS nextEventDate,' +
-' lo_name       AS nextEventLocation,' +
-' no_count      AS messages,' +
-' nv_name       AS role ' +
-' FROM Tertulias' +
-' INNER JOIN Members ON mb_tertulia = tr_id' +
-' INNER JOIN Enumvalues ON mb_role = nv_id' +
-' INNER JOIN Users ON mb_user = us_id' +
-' LEFT JOIN' +
-' (SELECT * FROM' +
-' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events' +
-'  INNER JOIN Locations on ev_location = lo_id WHERE ev_targetdate > GETDATE()) AS a WHERE a.rank = 1) AS b' +
-' ON ev_tertulia = tr_id' +
-' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications WHERE no_id NOT IN' +
-' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id' +
-' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
-' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
-' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
-
 /* { 'SQL types': {
 	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
 } } */
@@ -36,6 +13,7 @@ module.exports = function (configuration) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
+		console.log('in GET /api/tertulias');
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
@@ -92,30 +70,8 @@ module.exports = function (configuration) {
 	    });
     });
 
-/*
-		req['tertulias'] = {};
-		req.tertulias['resultsTag'] = 'tertulias';
-		req.tertulias['query'] = queryTertulias;
-	    req.tertulias['paramsTypes'] = { 'sid': sql.NVarChar };
-	    req.tertulias['paramsValues'] = { 'sid': req.azureMobile.user.id };
-	    req.tertulias['jsonType'] = "array";
-	    req.tertulias['links'] = '[ ' +
-			'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-			'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
-			'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
-		']';
-	    req.tertulias['itemLinks'] = '[ ' +
-			'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
-			'{ "rel": "update", "method": "PUT", "href": "' + route + '/:id" }, ' +
-			'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
-			'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" } ' +
-		']';
-	    goGet(req, res, next);
-	});
-*/
-
     router.get('/publicSearch', (req, res, next) => {
-		console.log('in /publicsearch');
+		console.log('in GET /api/tertulias/publicsearch');
 		var route = '/tertulias';
 		var point = 'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')';
 	    sql.connect(util.sqlConfiguration)
@@ -163,7 +119,7 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/:tr_id', (req, res, next) => {
-		console.log('in /:tr_id');
+		console.log('in GET /api/tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
 		if (isNaN(tr_id))
@@ -219,7 +175,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/', (req, res, next) => {
-		console.log('in /');
+		console.log('in POST /api/tertulias');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -263,7 +219,7 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
-		console.log('in /:tr_id/subscribe');
+		console.log('in POST /api/tertulias/:tr_id/subscribe');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
