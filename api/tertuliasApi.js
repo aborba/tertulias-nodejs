@@ -47,7 +47,6 @@ module.exports = function (configuration) {
 						'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
 						'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 					']';
-	    		console.log(links);
 			    var itemLinks = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '/:id" }, ' +
@@ -56,6 +55,7 @@ module.exports = function (configuration) {
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" } ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
+	    		console.log(recordset);
 	    		console.log(itemLinks);
 				res.type('application/json');
 	    		console.log('aqui 1');
