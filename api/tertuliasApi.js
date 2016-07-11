@@ -71,9 +71,11 @@ module.exports = function (configuration) {
 					']';
 			    var itemLinks = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
-						'{ "rel": "update", "method": "PUT", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "update", "method": "PATCH", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" } ' +
+						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" } ' +
+						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
                 recordset.forEach(function(elem) {
@@ -82,6 +84,7 @@ module.exports = function (configuration) {
                 var results = {};
             	results['tertulias'] = recordset;
                 results['links'] = JSON.parse(links);
+                console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
