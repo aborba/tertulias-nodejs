@@ -87,6 +87,7 @@ module.exports = function (configuration) {
                 return next();
 	    	})
 	    });
+    });
 
 /*
 		req['tertulias'] = {};
