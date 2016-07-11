@@ -55,18 +55,13 @@ module.exports = function (configuration) {
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
-	    		console.log(recordset);
-	    		console.log(itemLinks);
 				res.type('application/json');
-	    		console.log('aqui 1');
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
-	    		console.log('aqui 2');
                 var results = {};
             	results['tertulias'] = recordset;
                 results['links'] = JSON.parse(links);
-                console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
