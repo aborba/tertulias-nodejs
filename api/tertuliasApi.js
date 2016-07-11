@@ -242,58 +242,38 @@ module.exports = function (configuration) {
 		});
 	});
 
+	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
+		console.log('in DELETE /tertulias/:tr_id/unsubscribe');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.execute('spUnsubscribe')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset.returnValue = 1) {
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
 	var completeError = function(err, res) {
 	    if (err) {
 	    	console.log("Error:");
 	        console.error(err);
 	        if (res) res.sendStatus(500);
 	    }
-	};
-
-	var goGet = function(req, res, next) {
-		console.log('in GoGet');
-		var query = req.tertulias.query;
-		var resultsTag = req.tertulias.resultsTag;
-	    var paramsTypes = req.tertulias.paramsTypes;
-	    var paramsValues = req.tertulias.paramsValues;
-	    var links = req.tertulias.links;
-	    var itemLinks = req.tertulias.itemLinks;
-
-		var connection = new sql.Connection(util.sqlConfiguration);
-	    connection.connect(function(err) {
-	        var preparedStatement = new sql.PreparedStatement(connection);
-	        for (var key in paramsTypes)
-	        	preparedStatement.input(key, paramsTypes[key]);
-	        preparedStatement.prepare(query, function(err) {
-	            if (err) {
-	            	completeError(err, res);
-	            	return next(err);
-	            }
-	            preparedStatement.execute(paramsValues, 
-	                function(err, recordset, affected) {
-	                    if (err) {
-	                    	completeError(err, res);
-	                    	return next(err);
-	                    }
-	                    res.type('application/json');
-                    	if (typeof itemLinks !== typeof undefined) {
-		                    recordset.forEach(function(elem) {
-		                    	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-                    		});
-	                    };
-	                    preparedStatement.unprepare();
-	                    var results = {};
-	                    if (req.tertulias.jsonType == "array")
-	                    	results[resultsTag] = recordset;
-	                    else
-	                    	results[resultsTag] = recordset.length == 0 ? {} : recordset[0];
-	                    results['links'] = JSON.parse(links);
-	                    res.json(results);
-	                    return next();
-	                }
-	            );
-	        });
-	    });
 	};
 
     return router;
