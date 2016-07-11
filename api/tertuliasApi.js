@@ -29,48 +29,6 @@ const queryTertulias = 'SELECT' +
 ' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 ' WHERE tr_is_cancelled = 0 AND us_sid = @sid';
 
-const queryPublicTertulias = 'SELECT' +
-' TOP 25' +
-' tr_id         AS id,' +
-' tr_name       AS name,' +
-' tr_subject    AS subject,' +
-' lo_name       AS location' +
-//' lo_latitude   AS latitude,' +
-//' lo_longitude  AS longitude,' +
-//' lo_geography.STDistance('POINT(38.7762 -9.171391)') AS Distance' +
-' FROM Tertulias' +
-' INNER JOIN Locations ON tr_location = lo_id' +
-' WHERE tr_is_cancelled = 0' +
-' AND tr_is_private = 0' +
-' AND tr_id NOT IN (SELECT mb_tertulia FROM Tertulias INNER JOIN Members ON mb_tertulia = tr_id INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
-' ORDER BY lo_geography.STDistance(\'POINT(38.7640613 -9.1123113)\')';
-
-const queryTertuliaDetails = 'SELECT DISTINCT' +
-	' tr_id                    AS id,' + // Tertulia
-	' tr_name                  AS name,' +
-	' tr_subject               AS subject,' +
-	' lo_name                  AS location,' + // Location
-	' lo_address               AS address,' +
-	' lo_zip                   AS zip,' +
-	' lo_city                  AS city,' +
-	' lo_country               AS country,' +
-	' lo_latitude              AS latitude,' +
-	' lo_longitude             AS longitude,' +
-	' sc_type                  AS scheduleId,' + // Schedule
-	' _Schedule.nv_name        AS scheduleName,' +
-	' _Schedule.nv_description AS scheduleDescription,' +
-	' tr_is_private            AS private, ' +  // Private
-	' _Member.nv_name          AS role' + // Role
-' FROM Tertulias' +
-' INNER JOIN Locations  ON tr_location = lo_id' +
-' INNER JOIN Schedules  ON tr_schedule = sc_id' +
-' INNER JOIN Members    ON mb_tertulia = tr_id' +
-' INNER JOIN Users      ON mb_user = us_id' +
-' INNER JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
-' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
-' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR tr_is_private = 0)' +
-' AND tr_id = @tertulia';
-
 /* { 'SQL types': {
 	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
 } } */
@@ -79,6 +37,58 @@ module.exports = function (configuration) {
 
     router.get('/', (req, res, next) => {
 		var route = '/tertulias';
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.query('SELECT' +
+					' tr_id         AS id,' +
+					' tr_name       AS name,' +
+					' tr_subject    AS subject,' +
+					' ev_targetdate AS nextEventDate,' +
+					' lo_name       AS nextEventLocation,' +
+					' no_count      AS messages,' +
+					' nv_name       AS role ' +
+				' FROM Tertulias' +
+					' INNER JOIN Members ON mb_tertulia = tr_id' +
+					' INNER JOIN Enumvalues ON mb_role = nv_id' +
+					' INNER JOIN Users ON mb_user = us_id' +
+					' LEFT JOIN' +
+						' (SELECT * FROM' +
+							' (SELECT RANK() OVER(PARTITION BY ev_tertulia ORDER BY ev_targetdate DESC) AS "rank", * FROM Events' +
+						' INNER JOIN Locations on ev_location = lo_id WHERE ev_targetdate > GETDATE()) AS a WHERE a.rank = 1) AS b' +
+							' ON ev_tertulia = tr_id' +
+						' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications WHERE no_id NOT IN' +
+							' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id' +
+						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
+				' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0 AND us_sid = @sid')
+	    	.then(function(recordset) {
+			    var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+						'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
+						'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
+					']';
+			    var itemLinks = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "update", "method": "PUT", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" } ' +
+					']';
+				res.type('application/json');
+                recordset.forEach(function(elem) {
+                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+        		});
+                var results = {};
+            	results['tertulias'] = recordset;
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+	    	})
+	    });
+
+/*
 		req['tertulias'] = {};
 		req.tertulias['resultsTag'] = 'tertulias';
 		req.tertulias['query'] = queryTertulias;
@@ -146,7 +156,7 @@ module.exports = function (configuration) {
             })
 	    });
 	});
-
+*/
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in /:tr_id');
 		var tr_id = req.params.tr_id;
