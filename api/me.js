@@ -12,7 +12,6 @@ var api = {
 		var route = '/me';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
-	    	console.log(req.azureMobile.user.id);
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.query('SELECT' +
@@ -24,7 +23,6 @@ var api = {
 				' FROM Users' +
 				' WHERE us_sid = @sid')
 	    	.then(function(recordset) {
-				console.log(recordset);
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "/me" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "/me" }, ' +
@@ -34,6 +32,7 @@ var api = {
                 var results = {};
             	results['me'] = recordset[0];
                 results['links'] = JSON.parse(links);
+				console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
