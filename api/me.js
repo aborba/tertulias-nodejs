@@ -13,10 +13,10 @@ var api = {
 			if (err) { completeError(err, res); return; }
 			var tran = new sql.Transaction(conn);
 			tran.begin(function(err) {
-				req.azureMobile.user.getIdentity().then(function(identity){
+				req.azureMobile.user.getIdentity()
+				.then(function(identity){
     				console.log(identity.google.claims.picture);
-			    	});
-			    });
+		    	});
 				if (err) { rollback500(err, res, tran); return; }
 				var sqlRequest = new sql.Request(tran);
 				var psSelectId = new sql.PreparedStatement(conn);
