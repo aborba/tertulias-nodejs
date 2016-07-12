@@ -12,13 +12,14 @@ var api = {
 		var route = '/me';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
+	    	console.log(req.azureMobile.user.id);
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.query('SELECT' +
-					' us_alias AS alias' +
-					' us_firstName AS firstName' +
-					' us_lastName AS lastName' +
-					' us_email AS email' +
+					' us_alias AS alias,' +
+					' us_firstName AS firstName,' +
+					' us_lastName AS lastName,' +
+					' us_email AS email,' +
 					' us_picture AS picture' +
 				' FROM Users' +
 				' WHERE us_sid = @sid')
