@@ -19,7 +19,7 @@ module.exports = function (configuration) {
 	    .then(function() {
 			new sql.Request()
 	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.query('SELECT' +
+	    	.query('SELECT ' +
 					' tr_id         AS id,' +
 					' tr_name       AS name,' +
 					' tr_subject    AS subject,' +
