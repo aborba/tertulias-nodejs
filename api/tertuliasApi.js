@@ -152,7 +152,13 @@ module.exports = function (configuration) {
 					' LEFT JOIN Users ON mb_user = us_id' +
 					' LEFT JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
 					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
-				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR tr_is_private = 0)' +
+				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR (tr_is_private = 0' +
+					' AND  tr_id NOT IN' +
+						' (SELECT tr_id' +
+						' FROM Tertulias' +
+							' INNER JOIN Members ON mb_tertulia = tr_id' +
+							' INNER JOIN Users ON mb_user = us_id' +
+						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
 				var links = '[ ' +
