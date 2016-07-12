@@ -41,7 +41,7 @@ var api = {
 										if (err) { rollback500(err, res, tran); return; }
 										psInsertSid.execute({
 												sid: req.azureMobile.user.id,
-												alias: userInfo.alias ? userInfo.alias : left(userInfo.email, 20),
+												alias: userInfo.alias ? userInfo.alias : userInfo.email.substring(0, 20),
 												email: userInfo.email,
 												firstName: userInfo.firstName,
 												lastName: userInfo.lastName,
