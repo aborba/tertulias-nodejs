@@ -1,16 +1,15 @@
-package pt.isel.s1516v.ps.apiaccess;
+package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -18,24 +17,22 @@ import android.widget.TextView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
-import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 
-public class NewTertuliaActivity extends AppCompatActivity implements TertuliasApi {
+public class NewTertuliaActivity extends Activity implements TertuliasApi {
 
-    public final static int INTENT_REQUEST_CODE = NEW_TERTULIA_RETURN_CODE;
+    public final static int REQUEST_CODE = NEW_TERTULIA_RETURN_CODE;
 
     public static final String MY_TERTULIAS = "MyTertulias";
     public static final String DATA_TITLE = "NewTertulia_Title";
@@ -50,6 +47,8 @@ public class NewTertuliaActivity extends AppCompatActivity implements TertuliasA
     public static final String DATA_SCHEDULE = "NewTertulia_Schedule";
     public static final String DATA_PRIVACY = "NewTertulia_Privacy";
 
+    private static final String APILINKS_KEY = LINK_CREATE;
+
     private String apiEndPoint, apiMethod;
     private EditText titleView, subjectView, locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView;
     private TextView scheduleView;
@@ -61,19 +60,21 @@ public class NewTertuliaActivity extends AppCompatActivity implements TertuliasA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tertulia);
 
-        Util.setupActionBar(this, R.string.title_activity_new_tertulia, true);
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.nt_toolbar),
+                R.string.title_activity_new_tertulia,
+                Util.IGNORE, Util.IGNORE, null, true);
 
-        titleView = (EditText) findViewById(R.id.tsTitle);
-        subjectView = (EditText) findViewById(R.id.newTertuliaSubject);
-        locationView = (EditText) findViewById(R.id.tsLocationName);
-        addressView = (EditText) findViewById(R.id.newTertuliaLocationAddress);
-        zipView = (EditText) findViewById(R.id.tsLocationZip);
-        cityView = (EditText) findViewById(R.id.tsLocationCity);
-        countryView = (EditText) findViewById(R.id.tsLocationCountry);
-        latitudeView = (EditText) findViewById(R.id.tsLocationLatitude);
-        longitudeView = (EditText) findViewById(R.id.tsLocationLongitude);
-        scheduleView = (TextView) findViewById(R.id.newTertuliaSchedule);
-        privacyView = (CheckBox) findViewById(R.id.newTertuliaPrivacy);
+        titleView = (EditText) findViewById(R.id.nt_Title);
+        subjectView = (EditText) findViewById(R.id.nt_Subject);
+        locationView = (EditText) findViewById(R.id.nt_LocationName);
+        addressView = (EditText) findViewById(R.id.nt_Address);
+        zipView = (EditText) findViewById(R.id.nt_Zip);
+        cityView = (EditText) findViewById(R.id.nt_City);
+        countryView = (EditText) findViewById(R.id.nt_Country);
+        latitudeView = (EditText) findViewById(R.id.nt_Latitude);
+        longitudeView = (EditText) findViewById(R.id.nt_Longitude);
+        scheduleView = (TextView) findViewById(R.id.nt_Schedule);
+        privacyView = (CheckBox) findViewById(R.id.nt_Privacy);
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
 
@@ -91,14 +92,16 @@ public class NewTertuliaActivity extends AppCompatActivity implements TertuliasA
             }
         });
 
-        apiEndPoint = getIntent().getStringExtra(ROUTE_END_POINT_LABEL);
-        apiMethod = getIntent().getStringExtra(ROUTE_METHOD_LABEL);
+        ApiLinks apiLinks = getIntent().getParcelableExtra(LINKS_LABEL);
+        apiEndPoint = apiLinks.getRoute(APILINKS_KEY);
+        apiMethod = apiLinks.getMethod(APILINKS_KEY);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             default:
+                Util.longSnack(findViewById(android.R.id.content), R.string.new_tertulia_toast_cancel);
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);

@@ -1,7 +1,9 @@
-package pt.isel.s1516v.ps.apiaccess;
+package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import pt.isel.s1516v.ps.apiaccess.R;
 
 public class MonthlywActivity extends AppCompatActivity {
 

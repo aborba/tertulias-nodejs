@@ -5,8 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -17,7 +15,6 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutionException;
 
 import pt.isel.s1516v.ps.apiaccess.MainActivity;
-import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayRvAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
@@ -68,7 +65,7 @@ public class GetTertuliasCallback implements FutureCallback<JsonElement> {
             protected Tertulia[] doInBackground(JsonElement... params) {
                 ApiTertuliasList apiTertuliasList = new Gson().fromJson(params[0], ApiTertuliasList.class);
                 LinkedList<Tertulia> tertulias = new LinkedList<>();
-                for (ApiTertuliaListItem apiTertuliaListItem : apiTertuliasList.apiTertuliaListItems) {
+                for (ApiTertuliaListItem apiTertuliaListItem : apiTertuliasList.items) {
                     Tertulia tertulia = new Tertulia(apiTertuliaListItem);
                     tertulias.add(tertulia);
                 }

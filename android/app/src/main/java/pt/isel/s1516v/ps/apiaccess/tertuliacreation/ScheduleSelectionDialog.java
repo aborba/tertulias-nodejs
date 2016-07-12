@@ -1,4 +1,4 @@
-package pt.isel.s1516v.ps.apiaccess;
+package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+
+import pt.isel.s1516v.ps.apiaccess.R;
 
 public class ScheduleSelectionDialog extends DialogFragment {
     @Override

@@ -1,8 +1,11 @@
 package pt.isel.s1516v.ps.apiaccess.support.remote;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.HashMap;
 
-public class ApiLinks {
+public class ApiLinks implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("links")
     private ApiLink[] links;
@@ -11,6 +14,10 @@ public class ApiLinks {
 
     public ApiLinks(ApiLink[] links) {
         this.links = links;
+    }
+
+    public boolean isEmpty() {
+        return links == null || links.length == 0;
     }
 
     @Override
@@ -68,4 +75,34 @@ public class ApiLinks {
         return map.get(tag);
     }
 
+    // region Parcelable
+
+    protected ApiLinks(Parcel in) {
+        links = in.createTypedArray(ApiLink.CREATOR);
+        isMapped = false;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedArray(links, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ApiLinks> CREATOR = new Creator<ApiLinks>() {
+        @Override
+        public ApiLinks createFromParcel(Parcel in) {
+            return new ApiLinks(in);
+        }
+
+        @Override
+        public ApiLinks[] newArray(int size) {
+            return new ApiLinks[size];
+        }
+    };
+
+    // endregion
 }

@@ -1,112 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="pt.isel.s1516v.ps.apiaccess.MonthlywActivity">
+    android:orientation="vertical"
+    tools:context=".tertuliacreation.MonthlywActivity">
 
-    <Button
-        android:id="@+id/newMonthlyWCreateButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:onClick="onClickCreateLocation"
-        android:text="@string/new_monthlyw_submit_button" />
-
-    <Button
-        android:id="@+id/newMonthlyWCancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/newMonthlyWCreateButton"
-        android:onClick="onClickCancel"
-        android:text="@string/new_monthlyw_cancel_button" />
-
-    <TextView
-        android:id="@+id/newMonthlywWeekdayLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/newMonthlywWeekday"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="80dp"
-        android:singleLine="true"
-        android:text="@string/new_monthlyw_weekday_label" />
-
-    <EditText
-        android:id="@+id/newMonthlywWeekday"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/mwa_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_toEndOf="@id/newMonthlywWeekdayLabel"
-        android:hint="@string/new_monthlyw_weekday_hint"
-        android:imeOptions="actionNext"
-        android:singleLine="true" />
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <TextView
-        android:id="@+id/newMonthlywWeeknrLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/newMonthlywWeeknr"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:singleLine="true"
-        android:text="@string/new_monthlyw_weeknr_label" />
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/mwa_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <EditText
-        android:id="@+id/newMonthlywWeeknr"
+    </android.support.design.widget.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <LinearLayout
+            android:id="@+id/mwa_title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/mwa_weekdayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginEnd="80dp"
+                android:labelFor="@+id/mwa_weekday"
+                android:singleLine="true"
+                android:text="@string/new_monthlyw_weekday_label" />
+
+            <EditText
+                android:id="@+id/mwa_weekday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:hint="@string/new_monthlyw_weekday_hint"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/mwa_weeknrLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:labelFor="@+id/mwa_weeknr"
+                android:singleLine="true"
+                android:text="@string/new_monthlyw_weeknr_label" />
+
+            <EditText
+                android:id="@+id/mwa_weeknr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_monthlyw_weeknr_hint"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/mwa_fromstartLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:labelFor="@+id/mwa_fromstart"
+                android:singleLine="true"
+                android:text="@string/new_monthlyw_fromstart_label" />
+
+            <EditText
+                android:id="@+id/mwa_fromstart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_monthlyw_fromstart_hint"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/mwa_skipLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:labelFor="@+id/mwa_skip"
+                android:singleLine="true"
+                android:text="@string/new_monthlyw_skip_label" />
+
+            <EditText
+                android:id="@+id/mwa_skip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/new_monthlyw_skip_hint"
+                android:imeOptions="actionDone"
+                android:singleLine="true" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/newMonthlywWeekday"
-        android:layout_alignStart="@id/newMonthlywWeekday"
-        android:hint="@string/new_monthlyw_weeknr_hint"
-        android:imeOptions="actionNext"
-        android:singleLine="true" />
+        android:background="@android:color/background_light"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/newMonthlywFromstartLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/newMonthlywFromstart"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:singleLine="true"
-        android:text="@string/new_monthlyw_fromstart_label" />
+        <Button
+            android:id="@+id/mwa_createButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickCreateLocation"
+            android:text="@string/new_monthlyw_submit_button" />
 
-    <EditText
-        android:id="@+id/newMonthlywFromstart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/newMonthlywWeeknr"
-        android:layout_alignStart="@id/newMonthlywWeekday"
-        android:hint="@string/new_monthlyw_fromstart_hint"
-        android:imeOptions="actionNext"
-        android:singleLine="true" />
+        <Button
+            android:id="@+id/mwa_cancelButton"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onClickCancel"
+            android:text="@string/new_monthlyw_cancel_button" />
 
-    <TextView
-        android:id="@+id/newMonthlywSkipLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/newMonthlywSkip"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:singleLine="true"
-        android:text="@string/new_monthlyw_skip_label" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/newMonthlywSkip"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/newMonthlywFromstart"
-        android:layout_alignStart="@id/newMonthlywWeekday"
-        android:hint="@string/new_monthlyw_skip_hint"
-        android:imeOptions="actionDone"
-        android:singleLine="true" />
-
-</RelativeLayout>
+</FrameLayout>

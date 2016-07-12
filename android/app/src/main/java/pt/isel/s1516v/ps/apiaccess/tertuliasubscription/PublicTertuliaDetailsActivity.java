@@ -1,4 +1,4 @@
-package pt.isel.s1516v.ps.apiaccess;
+package pt.isel.s1516v.ps.apiaccess.tertuliasubscription;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,14 +8,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.Api;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -23,42 +19,45 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 
-public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
+public class PublicTertuliaDetailsActivity extends Activity implements TertuliasApi {
 
-    public final static int REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
-    public final static String SELF_LINK = "SELF_LINK";
-    private final static String TERTULIA = "tertulia";
-    private TextView titleView, subjectView, locationView, scheduleView, roleView;
-    private CheckBox privacyView;
+    public final static int REQUEST_CODE = SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE;
+    public final static String SELF_LINK = LINK_SELF;
+    public final static String LINKS = LINKS_LABEL;
+    public final static String LINK_ACTION = LINK_SUBSCRIBE;
+    private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
+    private TextView titleView, subjectView, locationView, scheduleView;
     private Tertulia tertulia;
     private View rootView;
+
+    // region Activity Life Cycle
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tertulia_details);
+        setContentView(R.layout.activity_public_tertulia_details);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA))
-            tertulia = savedInstanceState.getParcelable(TERTULIA);
+        if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA_INSTANCE_STATE_LABEL))
+            tertulia = savedInstanceState.getParcelable(TERTULIA_INSTANCE_STATE_LABEL);
 
         Util.setupToolBar(this, (Toolbar) findViewById(R.id.tda_toolbar),
-                R.string.title_activity_tertulia_details,
+                R.string.title_activity_public_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 
         ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
-        titleView = (TextView) findViewById(R.id.tertuliaDetailsTitle);
-        subjectView = (TextView) findViewById(R.id.tertuliaDetailsSubject);
-        locationView = (TextView) findViewById(R.id.tertuliaDetailsLocation);
-        scheduleView = (TextView) findViewById(R.id.tertuliaDetailsSchedule);
-        roleView = (TextView) findViewById(R.id.tertuliaDetailsRole);
-        privacyView = (CheckBox) findViewById(R.id.tertuliaDetailsPrivacy);
+        titleView = (TextView) findViewById(R.id.ptda_title);
+        subjectView = (TextView) findViewById(R.id.ptda_subject);
+        locationView = (TextView) findViewById(R.id.ptda_location);
+        scheduleView = (TextView) findViewById(R.id.ptda_schedule);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
         if (tertulia != null) paintUi(tertulia);
@@ -73,7 +72,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (tertulia != null) {
-            outState.putParcelable(TERTULIA, tertulia);
+            outState.putParcelable(TERTULIA_INSTANCE_STATE_LABEL, tertulia);
         }
         super.onSaveInstanceState(outState);
     }
@@ -87,67 +86,48 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClickSubmitEvent(View view) {
-        Log.d("trt", "in onClickSubmitEvent");
-    }
-
-    public void onClickSubmitMessages(View view) {
-        Log.d("trt", "in onClickSubmitMessages");
-    }
-
-    public void onClickSubmitEdit(View view) {
-        Log.d("trt", "in onClickSubmitEdit");
-    }
-
-    public void onClickSubmitMembers(View view) {
-        Log.d("trt", "in onClickSubmitMembers");
-    }
-
-    public void onClickUnsubscribe(View view) {
-        if (tertulia.role_type.toLowerCase().equals("owner")) {
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.title_dialog_unsubscribe_public_tertulia)
-                    .setMessage(R.string.message_dialog_unsubscribe_public_tertulia_owner_warning)
-                    .setIcon(android.R.drawable.ic_lock_lock)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show();
-            return;
-        }
+    public void onSubscribeButtonClicked(View view) {
         new AlertDialog.Builder(this)
-                .setTitle(R.string.title_dialog_unsubscribe_public_tertulia)
-                .setMessage(R.string.message_dialog_unsubscribe_public_tertulia)
+                .setTitle(R.string.title_dialog_subscribe_public_tertulia)
+                .setMessage(R.string.message_dialog_subscribe_public_tertulia)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        for (ApiLink apiLink : tertulia.links) {
-                            if (apiLink.rel.equals(LINK_UNSUBSCRIBE)) {
-                                String apiEndPoint = apiLink.href;
-                                String apiMethod = apiLink.method;
-                                Futures.addCallback(Util.getMobileServiceClient(TertuliaDetailsActivity.this)
-                                                .invokeApi(apiEndPoint, null, apiMethod, null)
-                                        , new UnsubscriptionCallback(findViewById(android.R.id.content)));
-                                return;
+                        Parcelable[] parcelables = getIntent().getParcelableArrayExtra(LINKS);
+                        ApiLink[] apiLinks = new ApiLink[parcelables.length];
+                        for (int i = 0; i < parcelables.length; i++)
+                            apiLinks[i] = (ApiLink) parcelables[i];
+                        String apiEndPoint = null;
+                        String apiMethod = null;
+                        for (ApiLink apiLink : apiLinks)
+                            if (apiLink.rel.equals(LINK_ACTION)) {
+                                apiEndPoint = apiLink.href;
+                                apiMethod = apiLink.method;
+                                break;
                             }
+                        if (apiEndPoint == null || apiMethod.isEmpty()) {
+                            Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
+                            return;
                         }
-                        Util.longSnack(rootView, "Oops! Unsubscribe link not found."); // TODO: strings.xml
-                    }
-                })
+                        Futures.addCallback(Util.getMobileServiceClient(PublicTertuliaDetailsActivity.this)
+                                        .invokeApi(apiEndPoint, null, apiMethod, null)
+                                , new SubscriptionCallback(findViewById(android.R.id.content)));
+                    }})
                 .setNegativeButton(android.R.string.no, null)
                 .show();
     }
 
-    public class UnsubscriptionCallback implements FutureCallback<JsonElement> {
+    public class SubscriptionCallback implements FutureCallback<JsonElement> {
 
         final View rootView;
 
-        public UnsubscriptionCallback(View rootView) {
+        public SubscriptionCallback(View rootView) {
             this.rootView = rootView;
         }
 
         @Override
         public void onSuccess(JsonElement result) {
-            Util.longSnack(rootView, "Unsubscribed from Tertulia"); // TODO: strings.xml
             setResult(RESULT_SUCCESS);
             finish();
         }
@@ -155,7 +135,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         @Override
         public void onFailure(Throwable e) {
             Util.longSnack(rootView, e.getMessage());
-            Util.logd("Public tertulia unsubscription failed");
+            Util.logd("Public tertulia subscription failed");
             Util.logd(e.getMessage());
             setResult(RESULT_FAIL);
         }
@@ -170,7 +150,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     private class TertuliaPresentation implements FutureCallback<JsonElement> {
         @Override
         public void onFailure(Throwable e) {
-            Context ctx = TertuliaDetailsActivity.this;
+            Context ctx = PublicTertuliaDetailsActivity.this;
             Util.longSnack(rootView, getEMsg(ctx, e.getMessage()));
         }
 
@@ -196,14 +176,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         titleView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
         locationView.setText(tertulia.location.toString());
-        String scheduleText;
-        if (!TextUtils.isEmpty(tertulia.scheduleType)) {
-            scheduleText = tertulia.scheduleType;
-            if (!TextUtils.isEmpty(tertulia.scheduleDescription)) scheduleText += " - " + tertulia.scheduleDescription;
-        } else scheduleText = tertulia.scheduleDescription;
-        scheduleView.setText(scheduleText);
-        roleView.setText(tertulia.role_type);
-        privacyView.setChecked(tertulia.isPrivate);
+        Schedule schedule = tertulia.getSchedule();
+        scheduleView.setText(schedule == null ? "" : schedule.toString());
     }
 
 }

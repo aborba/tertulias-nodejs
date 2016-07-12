@@ -25,12 +25,12 @@ public class NewLocationActivity extends AppCompatActivity {
 
         Util.setupActionBar(this, R.string.title_activity_new_location, true);
 
-        nameView = (TextView) findViewById(R.id.tsLocationName);
-        addressView = (TextView) findViewById(R.id.newTertuliaLocationAddress);
-        zipView = (TextView) findViewById(R.id.tsLocationZip);
-        countryView = (TextView) findViewById(R.id.tsLocationCountry);
-        latitudeView = (TextView) findViewById(R.id.tsLocationLatitude);
-        longitudeView = (TextView) findViewById(R.id.tsLocationLongitude);
+        nameView = (TextView) findViewById(R.id.nt_LocationName);
+        addressView = (TextView) findViewById(R.id.nt_Address);
+        zipView = (TextView) findViewById(R.id.nt_Zip);
+        countryView = (TextView) findViewById(R.id.nt_Country);
+        latitudeView = (TextView) findViewById(R.id.nt_Latitude);
+        longitudeView = (TextView) findViewById(R.id.nt_Longitude);
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
     }

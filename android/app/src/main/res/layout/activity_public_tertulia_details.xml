@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".TertuliaDetailsActivity">
+    tools:context=".tertuliasubscription.PublicTertuliaDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/tda_appbar"
@@ -30,7 +30,7 @@
         android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
-            android:id="@+id/td_title_layout"
+            android:id="@+id/ptda_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -40,14 +40,14 @@
             android:paddingTop="@dimen/activity_vertical_margin">
 
             <TextView
-                android:id="@+id/tertuliaDetailsTitleLabel"
+                android:id="@+id/ptda_title_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/tertuliaDetailsTitle"
-                android:text="@string/tertulia_details_title" />
+                android:text="@string/public_tertulia_details_title" />
 
             <TextView
-                android:id="@+id/tertuliaDetailsTitle"
+                android:id="@+id/ptda_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -60,14 +60,14 @@
 
 
             <TextView
-                android:id="@+id/tertuliaDetailsSubjectLabel"
+                android:id="@+id/ptda_subject_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/tertuliaDetailsSubject"
-                android:text="@string/tertulia_details_subject" />
+                android:text="@string/public_tertulia_details_subject" />
 
             <TextView
-                android:id="@+id/tertuliaDetailsSubject"
+                android:id="@+id/ptda_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -80,14 +80,14 @@
 
 
             <TextView
-                android:id="@+id/tertuliaDetailsLocationLabel"
+                android:id="@+id/ptda_location_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/tertuliaDetailsLocation"
-                android:text="@string/tertulia_details_location" />
+                android:text="@string/public_tertulia_details_location" />
 
             <TextView
-                android:id="@+id/tertuliaDetailsLocation"
+                android:id="@+id/ptda_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -100,14 +100,14 @@
 
 
             <TextView
-                android:id="@+id/tertuliaDetailsScheduleLabel"
+                android:id="@+id/ptda_schedule_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:labelFor="@+id/tertuliaDetailsSchedule"
-                android:text="@string/tertulia_details_schedule" />
+                android:text="@string/public_tertulia_details_schedule" />
 
             <TextView
-                android:id="@+id/tertuliaDetailsSchedule"
+                android:id="@+id/ptda_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -115,49 +115,6 @@
                 android:paddingEnd="10dp"
                 android:paddingStart="10dp"
                 android:singleLine="false"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="18sp" />
-
-
-            <TextView
-                android:id="@+id/tertuliaDetailsRoleLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsRole"
-                android:text="@string/tertulia_details_role" />
-
-            <TextView
-                android:id="@+id/tertuliaDetailsRole"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:paddingEnd="10dp"
-                android:paddingStart="10dp"
-                android:singleLine="true"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="18sp" />
-
-
-            <TextView
-                android:id="@+id/tertuliaDetailsPrivacyLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsPrivacy"
-                android:text="@string/tertulia_details_private" />
-
-            <CheckBox
-                android:id="@+id/tertuliaDetailsPrivacy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="48sp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp"
-                android:enabled="false"
-                android:paddingEnd="5dp"
-                android:paddingStart="5dp"
-                android:singleLine="true"
-                android:text="@string/tertulia_details_private_hint"
                 android:textColor="@android:color/primary_text_light"
                 android:textSize="18sp" />
 
@@ -174,49 +131,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/tda_eventButton"
+            android:id="@+id/ptda_subscribe_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="onClickSubmitEvent"
-            android:text="@string/tertulia_details_event_button" />
-
-        <Button
-            android:id="@+id/tda_messagesButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickSubmitMessages"
-            android:text="@string/tertulia_details_messages_button" />
-
-        <Button
-            android:id="@+id/tda_editButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickSubmitEdit"
-            android:text="@string/tertulia_details_edit_button" />
-
-        <Button
-            android:id="@+id/tda_membersButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickSubmitMembers"
-            android:text="@string/tertulia_details_members_button" />
-
-        <Button
-            android:id="@+id/tda_unsubscribeButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="onClickUnsubscribe"
-            android:text="@string/tertulia_details_unsubscribe_button" />
+            android:onClick="onSubscribeButtonClicked"
+            android:text="@string/public_tertulia_details_subscribe_button" />
 
     </LinearLayout>
 

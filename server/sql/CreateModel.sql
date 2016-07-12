@@ -77,6 +77,8 @@ IF OBJECT_ID(N'dbo.spSetEnumI') IS NOT NULL DROP PROCEDURE spSetEnumI;
 IF OBJECT_ID(N'dbo.spSetEnumS') IS NOT NULL DROP PROCEDURE spSetEnumS;
 GO
 
+IF OBJECT_ID(N'spSubscribe') IS NOT NULL DROP PROCEDURE spSubscribe;
+IF OBJECT_ID(N'spSubscribe') IS NOT NULL DROP PROCEDURE spUnsubscribe;
 IF OBJECT_ID(N'dbo.spAcceptInvitation') IS NOT NULL DROP PROCEDURE spAcceptInvitation;
 IF OBJECT_ID(N'dbo.spInvite') IS NOT NULL DROP PROCEDURE spInvite;
 IF OBJECT_ID(N'dbo.fnGetTemplate_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTemplate_byTertuliaId;
@@ -237,8 +239,9 @@ CREATE TABLE Locations(
 	, lo_zip VARCHAR(10)
 	, lo_city VARCHAR(40)
 	, lo_country VARCHAR(20)
-	, lo_latitude VARCHAR(12)
-	, lo_longitude VARCHAR(12)
+	, lo_latitude FLOAT
+	, lo_longitude FLOAT
+	, lo_geography AS geography::STGeomFromText('POINT(' + convert(varchar(12),lo_latitude) + ' ' + convert(varchar(12),lo_longitude) + ')', 4326)
 	, lo_tertulia INTEGER NOT NULL
  	, CONSTRAINT un_location_nt UNIQUE (lo_name, lo_tertulia)
 	, CONSTRAINT un_location_ntll UNIQUE (lo_name, lo_tertulia, lo_latitude, lo_longitude)
@@ -557,6 +560,16 @@ BEGIN
 END
 GO
 
+CREATE FUNCTION fnIsPublic(@tertulia INTEGER)
+RETURNS INTEGER
+AS 
+BEGIN
+	DECLARE @totals INTEGER;
+	SELECT @totals = us_id FROM Tertulias WHERE isPrivate = 0 AND tr_id = @tertulia;
+	RETURN @totals;
+END;
+GO
+
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 --                                                                                                                                                  --
 --    #        #####  ####### ####### ######  ####### ######     ######  ######  #######  #####  ####### ######  #     # ######  #######  #####     --
@@ -843,6 +856,74 @@ BEGIN CATCH
 END CATCH
 GO
 
+CREATE PROCEDURE spSubscribe @sid VARCHAR(40), @tertulia INTEGER
+AS 
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_spSubscribe
+BEGIN TRY
+	DECLARE @totals INTEGER, @user INTEGER, @member INTEGER;
+
+	SELECT @totals = COUNT(*) FROM Tertulias WHERE tr_is_cancelled = 0 AND tr_is_private = 0;
+	IF (@totals = 0)
+	BEGIN
+		ROLLBACK TRANSACTION tran_spSubscribe
+		RAISERROR ('Tertulia is either cancelled or private.', -1, -1);
+		RETURN 0;
+	END
+
+	SET @user = dbo.fnGetUserId_bySid(@sid);
+
+	SELECT @totals = COUNT(*) FROM Tertulias
+	INNER JOIN Members ON mb_tertulia = tr_id
+	WHERE tr_is_cancelled = 0 AND tr_id = @tertulia AND mb_user = @user
+	IF (@totals = 1)
+	BEGIN
+		ROLLBACK TRANSACTION tran_spSubscribe
+		RAISERROR ('Duplicate subscription.', -1, -1);
+		RETURN 0;
+	END
+
+    SET @member = dbo.fnGetEnum('Roles', 'member');
+
+    INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @user, @member);
+    COMMIT;
+	RETURN 1;
+
+END TRY
+BEGIN CATCH
+	DECLARE @ErrorMessage NVARCHAR(4000);  
+	SELECT @ErrorMessage = ERROR_MESSAGE();
+	ROLLBACK TRANSACTION tran_spSubscribe;
+	RAISERROR (@ErrorMessage, -1, -1);
+	RETURN 0;
+END CATCH
+GO
+
+CREATE PROCEDURE spUnsubscribe @sid VARCHAR(40), @tertulia INTEGER
+AS 
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_spUnsubscribe
+BEGIN TRY
+
+	DECLARE @role INTEGER, @user INTEGER;
+
+    SET @role = dbo.fnGetEnum('Roles', 'owner');
+	SET @user = dbo.fnGetUserId_bySid(@sid);
+
+	DELETE FROM Members WHERE mb_user = @user AND mb_tertulia = @tertulia AND mb_role <> @role;
+	COMMIT;
+	RETURN 1;
+
+END TRY
+BEGIN CATCH
+	DECLARE @ErrorMessage NVARCHAR(4000);  
+	SELECT @ErrorMessage = ERROR_MESSAGE();
+	ROLLBACK TRANSACTION tran_spSubscribe;
+	RAISERROR (@ErrorMessage, -1, -1);
+	RETURN 0;
+END CATCH
+GO
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 --                                                                          --
@@ -911,8 +992,8 @@ SET @dummy = dbo.fnGetEnum('Dummy', 'dummy');
 INSERT INTO Schedules (sc_type) VALUES (@dummy);
 SET @schedule = SCOPE_IDENTITY();
 
-INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_country, lo_latitude, lo_longitude, lo_tertulia)
-VALUES ('Dummy', 'Dummy', 'Dummy', 'Dummy', 'Dummy', 'Dummy', @dummy);
+INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia)
+VALUES ('Dummy', 'Dummy', 'Dummy', 'Dummy', 'Dummy', 0, 0, @dummy);
 SET @location = SCOPE_IDENTITY();
 
 INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private, tr_is_cancelled)

@@ -1,14 +1,12 @@
 package pt.isel.s1516v.ps.apiaccess;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
@@ -96,7 +94,8 @@ public class TertuliasArrayRvAdapter extends RecyclerView.Adapter<TertuliasArray
                 }
                 Intent intent = new Intent(ctx, TertuliaDetailsActivity.class);
                 intent.putExtra(TertuliaDetailsActivity.SELF_LINK, selectedLink);
-                ctx.startActivity(intent);
+                intent.putExtra(TertuliaDetailsActivity.LINKS_LABEL, holder.links);
+                ctx.startActivityForResult(intent, TertuliaDetailsActivity.REQUEST_CODE);
             }
         });
     }

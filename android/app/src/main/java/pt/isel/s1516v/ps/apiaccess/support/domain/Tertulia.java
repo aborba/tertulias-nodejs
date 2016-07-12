@@ -7,12 +7,10 @@ import android.text.TextUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 

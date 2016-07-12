@@ -10,6 +10,7 @@ public interface TertuliasApi {
     String HTTP_PUT = HttpConstants.PutMethod;
 
     // Endpoints keys
+    String LINKS_LABEL = "Links";
     String ROUTE_END_POINT_LABEL = "RouteEndPoint";
     String ROUTE_METHOD_LABEL = "RouteMethod";
     String GET_TERTULIAS = "getTertulias";
@@ -21,11 +22,15 @@ public interface TertuliasApi {
     String LINK_CREATE = "create";
     String LINK_UPDATE = "update";
     String LINK_DELETE = "delete";
-
+    String LINK_SEARCHPUBLIC = "searchPublic";
+    String LINK_SUBSCRIBE = "subscribe";
+    String LINK_UNSUBSCRIBE = "unsubscribe";
 
     // Activity Return Codes
     int NEW_TERTULIA_RETURN_CODE = 1;
-    int SUBSCRIBE_TERTULIA_RETURN_CODE = 2;
+    int SEARCH_PUBLIC_TERTULIA_RETURN_CODE = 2;
+    int SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE = 3;
+    int TERTULIA_DETAILS_RETURN_CODE = 4;
 
     // Activity Result Codes
     int RESULT_SUCCESS = 1;

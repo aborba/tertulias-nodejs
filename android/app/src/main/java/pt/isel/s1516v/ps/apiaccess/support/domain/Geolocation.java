@@ -18,8 +18,8 @@ public class Geolocation implements Parcelable {
     }
 
     public Geolocation(String latitude, String longitude) {
-        this.latitude = Double.parseDouble(latitude);
-        this.longitude = Double.parseDouble(longitude);
+        this.latitude = Double.parseDouble(latitude == null ? "0" : latitude);
+        this.longitude = Double.parseDouble(longitude == null ? "0" : longitude);
     }
 
     public Geolocation(RTertulia rtertulia) {

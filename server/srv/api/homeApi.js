@@ -16,7 +16,6 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
-    	console.log('in homeApi');
 		res.json( {
 			"links": [
 				{ "rel": "tertulias", "method": "GET", "href": "/tertulias" },

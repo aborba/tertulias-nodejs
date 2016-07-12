@@ -6,6 +6,8 @@
         android:minSdkVersion="8"
         android:targetSdkVersion="18" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -19,6 +21,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main_activity"
@@ -29,24 +32,46 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".NewTertuliaActivity"
+            android:name=".tertuliacreation.NewTertuliaActivity"
             android:label="@string/title_activity_new_tertulia" />
+
         <activity
             android:name=".TertuliaDetailsActivity"
             android:label="@string/title_activity_new_tertulia"
-            android:parentActivityName=".NewTertuliaActivity" />
+            android:parentActivityName=".tertuliacreation.NewTertuliaActivity" />
+
         <activity
             android:name=".NewLocationActivity"
             android:label="@string/title_activity_new_location"
-            android:parentActivityName=".NewTertuliaActivity">
+            android:parentActivityName=".tertuliacreation.NewTertuliaActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="pt.isel.s1516v.ps.apiaccess.NewTertuliaActivity" />
+                android:value=".tertuliacreation.NewTertuliaActivity" />
         </activity>
+
         <activity android:name=".EditUserProfileActivity" />
-        <activity android:name=".MonthlywActivity" />
-        <activity android:name=".SubscribeTeruliaActivity"></activity>
+
+        <activity android:name=".tertuliacreation.MonthlywActivity" />
+
+        <activity
+            android:name=".tertuliasubscription.SearchPublicTertuliaActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+
+        <activity
+            android:name=".tertuliasubscription.PublicTertuliaDetailsActivity"
+            android:label="@string/title_activity_public_tertulia_details"
+            android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
+
+        <activity android:name=".InvitationActivity"></activity>
     </application>
 
 </manifest>

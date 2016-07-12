@@ -6,4 +6,6 @@ public interface Schedule {
 
     Date nextEvent();
 
+    String toString();
+
 }
