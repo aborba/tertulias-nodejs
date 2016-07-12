@@ -23,9 +23,10 @@ var api = {
 				' FROM Users' +
 				' WHERE us_sid = @sid')
 	    	.then(function(recordset) {
+				console.log(recordset);
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "/me" }, ' +
-						'{ "rel": "update", "method": "PATCH", "href": "/me" } ' +
+						'{ "rel": "update", "method": "PATCH", "href": "/me" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "/me" } ' +
 					']';
 				res.type('application/json');
