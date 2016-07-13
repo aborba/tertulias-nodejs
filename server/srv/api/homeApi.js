@@ -19,7 +19,8 @@ module.exports = function (configuration) {
 		res.json( {
 			"links": [
 				{ "rel": "tertulias", "method": "GET", "href": "/tertulias" },
-				{ "rel": "registration", "method": "POST", "href": "/me" }
+				{ "rel": "registration", "method": "POST", "href": "/me" },
+				{ "rel": "me", "method": "GET", "href": "/me" }
 			]}
 		);
     	next();

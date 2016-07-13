@@ -7,6 +7,39 @@ var queryInsertSid = 'INSERT INTO Users (us_sid, us_alias, us_email, us_firstNam
 var tranDone = false;
 
 var api = {
+	get: function (req, res, next) {
+		console.log('in GET /me');
+		var route = '/me';
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.query('SELECT' +
+					' us_alias AS alias,' +
+					' us_firstName AS firstName,' +
+					' us_lastName AS lastName,' +
+					' us_email AS email,' +
+					' us_picture AS picture' +
+				' FROM Users' +
+				' WHERE us_sid = @sid')
+	    	.then(function(recordset) {
+			    var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "/me" }, ' +
+						'{ "rel": "update", "method": "PATCH", "href": "/me" }, ' +
+						'{ "rel": "delete", "method": "DELETE", "href": "/me" } ' +
+					']';
+				res.type('application/json');
+                var results = {};
+            	results['me'] = recordset[0];
+                results['links'] = JSON.parse(links);
+				console.log(results);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+	    	})
+	    });
+	},
+
 	post: function (req, res, next) {
 		var conn = new sql.Connection(util.sqlConfiguration);
 		conn.connect(function(err) {
@@ -41,7 +74,7 @@ var api = {
 										if (err) { rollback500(err, res, tran); return; }
 										psInsertSid.execute({
 												sid: req.azureMobile.user.id,
-												alias: userInfo.alias,
+												alias: userInfo.alias ? userInfo.alias : userInfo.email.substring(0, 20),
 												email: userInfo.email,
 												firstName: userInfo.firstName,
 												lastName: userInfo.lastName,

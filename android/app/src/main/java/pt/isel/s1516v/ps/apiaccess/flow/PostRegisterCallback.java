@@ -31,12 +31,6 @@ public class PostRegisterCallback implements FutureCallback<JsonElement> {
     }
 
     @Override
-    public void onFailure(Throwable t) {
-        String message = t.getMessage();
-        Util.longSnack(rootView, message);
-    }
-
-    @Override
     public void onSuccess(JsonElement result) {
         if (future != null) {
             if (futureCallback != null)
@@ -48,5 +42,11 @@ public class PostRegisterCallback implements FutureCallback<JsonElement> {
                     e.printStackTrace();
                 }
         }
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        String message = t.getMessage();
+        Util.longSnack(rootView, message);
     }
 }

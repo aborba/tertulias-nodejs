@@ -34,6 +34,22 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
     }
 
     @Override
+    public void onSuccess(JsonElement result) {
+        isRetryingForTokenExpired = false;
+        MainActivity.apiHome.swap(new Gson().fromJson(result, ApiLinks.class));
+        if (future != null) {
+            if (futureCallback != null)
+                Futures.addCallback(future.getFuture(), futureCallback);
+            else
+                try {
+                    future.getFuture().get();
+                } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    @Override
     public void onFailure(Throwable t) {
         if (!isRetryingForTokenExpired) {
             isRetryingForTokenExpired = true;
@@ -48,21 +64,5 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
         }
         String message = t.getMessage();
         Util.longSnack(rootView, message);
-    }
-
-    @Override
-    public void onSuccess(JsonElement result) {
-        isRetryingForTokenExpired = false;
-        MainActivity.apiHome.swap(new Gson().fromJson(result, ApiLinks.class));
-        if (future != null) {
-            if (futureCallback != null)
-                Futures.addCallback(future.getFuture(), futureCallback);
-            else
-                try {
-                    future.getFuture().get();
-                } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
-                    e.printStackTrace();
-                }
-        }
     }
 }

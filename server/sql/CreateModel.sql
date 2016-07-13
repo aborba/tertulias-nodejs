@@ -78,7 +78,7 @@ IF OBJECT_ID(N'dbo.spSetEnumS') IS NOT NULL DROP PROCEDURE spSetEnumS;
 GO
 
 IF OBJECT_ID(N'spSubscribe') IS NOT NULL DROP PROCEDURE spSubscribe;
-IF OBJECT_ID(N'spSubscribe') IS NOT NULL DROP PROCEDURE spUnsubscribe;
+IF OBJECT_ID(N'spUnsubscribe') IS NOT NULL DROP PROCEDURE spUnsubscribe;
 IF OBJECT_ID(N'dbo.spAcceptInvitation') IS NOT NULL DROP PROCEDURE spAcceptInvitation;
 IF OBJECT_ID(N'dbo.spInvite') IS NOT NULL DROP PROCEDURE spInvite;
 IF OBJECT_ID(N'dbo.fnGetTemplate_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTemplate_byTertuliaId;
@@ -87,6 +87,7 @@ IF OBJECT_ID(N'dbo.fnGetUserId_bySid') IS NOT NULL DROP FUNCTION fnGetUserId_byS
 IF OBJECT_ID(N'dbo.fnGetTertuliaLocation_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTertuliaLocation_byTertuliaId;
 IF OBJECT_ID(N'dbo.fnGetItem_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetItem_byTertuliaId;
 IF OBJECT_ID(N'dbo.fnGetEvent_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetEvent_byTertuliaId;
+IF OBJECT_ID(N'dbo.fnIsPublic') IS NOT NULL DROP FUNCTION fnIsPublic;
 IF OBJECT_ID(N'dbo.sp_getId') IS NOT NULL DROP PROCEDURE sp_getId;
 IF OBJECT_ID(N'dbo.sp_getEventIdTertuliaId') IS NOT NULL DROP PROCEDURE sp_getEventIdTertuliaId;
 IF OBJECT_ID(N'dbo.sp_createEvent') IS NOT NULL DROP PROCEDURE sp_createEvent;
@@ -99,6 +100,8 @@ IF OBJECT_ID(N'dbo.sp_postNotification') IS NOT NULL DROP PROCEDURE sp_postNotif
 IF OBJECT_ID(N'dbo.sp_buildEventsItems') IS NOT NULL DROP PROCEDURE sp_buildEventsItems;
 IF OBJECT_ID(N'dbo.sp_assignChecklistItems') IS NOT NULL DROP PROCEDURE sp_assignChecklistItems;
 GO
+
+IF OBJECT_ID(N'dbo.trLogUserInsert') IS NOT NULL DROP TRIGGER trLogUserInsert;
 
 IF OBJECT_ID(N'dbo.Invitations') IS NOT NULL DROP TABLE Invitations;
 IF OBJECT_ID(N'dbo.fnCountOpenInvitations') IS NOT NULL DROP FUNCTION fnCountOpenInvitations;
@@ -124,6 +127,7 @@ IF OBJECT_ID(N'dbo.MonthlyW') IS NOT NULL DROP TABLE MonthlyW;
 IF OBJECT_ID(N'dbo.MonthlyD') IS NOT NULL DROP TABLE MonthlyD;
 IF OBJECT_ID(N'dbo.Weekly') IS NOT NULL DROP TABLE Weekly;
 IF OBJECT_ID(N'dbo.Schedules') IS NOT NULL DROP TABLE Schedules;
+IF OBJECT_ID(N'dbo.Logs') IS NOT NULL DROP TABLE Logs;
 IF OBJECT_ID(N'dbo.EnumValues') IS NOT NULL DROP TABLE EnumValues;
 IF OBJECT_ID(N'dbo.EnumTypes') IS NOT NULL DROP TABLE EnumTypes;
 GO
@@ -155,6 +159,15 @@ CREATE TABLE EnumValues(
 	, nv_value INTEGER DEFAULT 0
 	, CONSTRAINT un_enumvalue_name UNIQUE (nv_type, nv_name)
 	, CONSTRAINT fk_enumvalue_type FOREIGN KEY (nv_type) REFERENCES EnumTypes(nt_id)
+);
+GO
+
+CREATE TABLE Logs(
+	lg_id INTEGER IDENTITY(1,1) PRIMARY KEY
+	, lg_type INTEGER NOT NULL
+	, lg_refid INTEGER NOT NULL
+	, lg_timestamp DATETIME NOT NULL DEFAULT GETDATE()
+	, CONSTRAINT fk_reference_type FOREIGN KEY (lg_type) REFERENCES EnumTypes(nt_id)
 );
 GO
 
@@ -564,9 +577,9 @@ CREATE FUNCTION fnIsPublic(@tertulia INTEGER)
 RETURNS INTEGER
 AS 
 BEGIN
-	DECLARE @totals INTEGER;
-	SELECT @totals = us_id FROM Tertulias WHERE isPrivate = 0 AND tr_id = @tertulia;
-	RETURN @totals;
+	DECLARE @is_private INTEGER;
+	SELECT @is_private = tr_is_private FROM Tertulias WHERE tr_id = @tertulia;
+	RETURN @is_private;
 END;
 GO
 
@@ -924,6 +937,26 @@ BEGIN CATCH
 END CATCH
 GO
 
+CREATE TRIGGER trLogUserInsert
+	ON Users
+	AFTER INSERT
+AS
+BEGIN
+BEGIN TRANSACTION tran_log_user_creation WITH MARK
+BEGIN TRY
+	DECLARE @type INTEGER, @user INTEGER;
+	SELECT @user = us_id FROM INSERTED;
+	SELECT @type = nt_id FROM EnumTypes WHERE nt_name = 'Users';
+	INSERT INTO Logs (lg_type, lg_refid) VALUES (@type, @user);
+	COMMIT TRANSACTION tran_log_user_creation
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK TRANSACTION tran_log_user_creation
+END CATCH
+END
+GO
+
 ------------------------------------------------------------------------------
 ------------------------------------------------------------------------------
 --                                                                          --
@@ -940,6 +973,9 @@ GO
 
 -- DummyStuff
 EXEC spSetEnumI N'Dummy', N'dummy', 0;
+
+-- For Logging
+INSERT INTO EnumTypes (nt_name) values ('Users');
 
 -- WeekDays
 EXEC spSetEnumI N'WeekDays', N'sunday',    1;

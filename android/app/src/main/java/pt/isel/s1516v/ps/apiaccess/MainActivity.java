@@ -3,6 +3,7 @@ package pt.isel.s1516v.ps.apiaccess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.widget.ImageView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -22,6 +24,7 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUse
 
 import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetData;
+import pt.isel.s1516v.ps.apiaccess.flow.GetMeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetTertuliasCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.LoginCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.PostRegisterCallback;
@@ -41,6 +44,7 @@ public class MainActivity extends Activity implements TertuliasApi {
     private final static String SAVED_TERTULIAS = "tertulias";
     private final static String API_ROOT_END_POINT = "/";
 
+    private ImageView userImage;
     private RecyclerView recyclerView;
     private TertuliasArrayRvAdapter listViewAdapter;
     public static Tertulia[] tertulias;
@@ -58,6 +62,8 @@ public class MainActivity extends Activity implements TertuliasApi {
             return;
         }
         setupViews();
+        userImage = (ImageView) findViewById(R.id.mtl_user_picture);
+//        userImage.setImageResource(R.drawable.ic_arrow_back_black_24dp);
 
         if (savedInstanceState != null) loadInstanceState(savedInstanceState);
         doLoginAndFetch(this);
@@ -194,9 +200,9 @@ public class MainActivity extends Activity implements TertuliasApi {
                 cli.login(MobileServiceAuthenticationProvider.Google),
                 new FutureCallback<MobileServiceUser>() {
                     @Override
-                    public void onSuccess(MobileServiceUser result) {
+                    public void onSuccess(MobileServiceUser user) {
                         Util.unlockOrientation(MainActivity.this);
-                        callback.onSuccess(result);
+                        callback.onSuccess(user);
                     }
 
                     @Override
@@ -212,8 +218,11 @@ public class MainActivity extends Activity implements TertuliasApi {
         GetData<JsonElement> getTertulias = new GetData<>(ctx, "tertulias", apiHome);
         GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, recyclerView, null, null);
 
+        GetData<JsonElement> getMe = new GetData<>(ctx, "me", apiHome);
+        GetMeCallback getMeCallback = new GetMeCallback(ctx, null, getTertulias, getTertuliasCallback, userImage);
+
         GetData<JsonElement> postRegister = new GetData<>(ctx, "registration", apiHome);
-        PostRegisterCallback postRegisterCallback = new PostRegisterCallback(ctx, null, getTertulias, getTertuliasCallback);
+        PostRegisterCallback postRegisterCallback = new PostRegisterCallback(ctx, null, getMe, getMeCallback);
 
         GetData<JsonElement> getHome = new GetData<>(ctx, API_ROOT_END_POINT, null);
         GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, null, postRegister, postRegisterCallback);
@@ -226,10 +235,6 @@ public class MainActivity extends Activity implements TertuliasApi {
         Futures.addCallback(
                 Util.getMobileServiceClient(this).logout(),
                 new FutureCallback<MobileServiceUser>() {
-                    @Override
-                    public void onFailure(Throwable e) {
-                        updateStatusAlert(LoginStatus.SIGNED_IN, R.string.main_activity_logout_failed_message);
-                    }
 
                     @Override
                     public void onSuccess(MobileServiceUser user) {
@@ -241,6 +246,7 @@ public class MainActivity extends Activity implements TertuliasApi {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
+                                userImage.setVisibility(View.INVISIBLE);
                                 listViewAdapter = new TertuliasArrayRvAdapter(MainActivity.this, tertulias != null ? tertulias : new Tertulia[0]);
                                 recyclerView.setAdapter(listViewAdapter);
                             }
@@ -250,6 +256,11 @@ public class MainActivity extends Activity implements TertuliasApi {
                         mainHandler.post(runnable);
 
                         loginStatus.reset(R.string.main_activity_logout_succeed_message);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable e) {
+                        updateStatusAlert(LoginStatus.SIGNED_IN, R.string.main_activity_logout_failed_message);
                     }
                 }
         );

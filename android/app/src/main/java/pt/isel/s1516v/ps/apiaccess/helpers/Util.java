@@ -7,6 +7,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
@@ -43,8 +45,12 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUse
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.squareup.okhttp.OkHttpClient;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -302,6 +308,25 @@ public class Util {
         }
         return t;
     }
+
+    // region Fetch
+
+    public static final Bitmap getBitMap(String urlString) throws IOException {
+        return getBitMap(new URL(urlString));
+    }
+
+    public static final Bitmap getBitMap(URL url) throws IOException {
+        HttpURLConnection _httpURLConnection = null;
+        try {
+            _httpURLConnection = (HttpURLConnection) url.openConnection();
+            InputStream _inputStream = _httpURLConnection.getInputStream();
+            return BitmapFactory.decodeStream(_inputStream);
+        } finally {
+            if (_httpURLConnection != null) _httpURLConnection.disconnect();
+        }
+    }
+
+    // endregion
 
     // region Private stuff
 

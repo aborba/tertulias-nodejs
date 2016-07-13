@@ -32,7 +32,7 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/tertulias_app"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="none" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/mtl_toolbar"
@@ -44,6 +44,14 @@
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
+
+    <ImageView
+        android:id="@+id/mtl_user_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:paddingRight="44dp"
+        app:layout_anchor="@id/mtl_appbar"
+        app:layout_anchorGravity="top|right|end" />
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
