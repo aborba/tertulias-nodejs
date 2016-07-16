@@ -1,9 +1,8 @@
-package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
+package pt.isel.s1516v.ps.apiaccess.tertuliaedition;
 
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.Toolbar;
@@ -15,33 +14,29 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import java.util.Locale;
-
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.*;
+import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleSelectionDialog;
 
-public class NewTertuliaActivity extends Activity implements TertuliasApi {
+public class EditTertuliaActivity extends Activity implements TertuliasApi {
 
-    public final static int REQUEST_CODE = NEW_TERTULIA_RETURN_CODE;
+    public final static int REQUEST_CODE = EDIT_TERTULIA_RETURN_CODE;
+    public final static String SELF_LINK = LINK_SELF;
+    public final static String LINKS = LINKS_LABEL;
+    public final static String LINK_ACTION = LINK_UPDATE;
 
     public static final String MY_TERTULIAS = "MyTertulias";
     public static final String DATA_TITLE = "NewTertulia_Title";
@@ -62,36 +57,29 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
     private EditText titleView, subjectView, locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView;
     private TextView scheduleView;
     private CheckBox privacyView;
-    private String[] spinnerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_tertulia);
+        setContentView(R.layout.activity_edit_tertulia);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.nt_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.et_toolbar),
                 R.string.title_activity_new_tertulia,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        titleView = (EditText) findViewById(R.id.nt_Title);
-        subjectView = (EditText) findViewById(R.id.nt_Subject);
-        locationView = (EditText) findViewById(R.id.nt_LocationName);
-        addressView = (EditText) findViewById(R.id.nt_Address);
-        zipView = (EditText) findViewById(R.id.nt_Zip);
-        cityView = (EditText) findViewById(R.id.nt_City);
-        countryView = (EditText) findViewById(R.id.nt_Country);
-        latitudeView = (EditText) findViewById(R.id.nt_Latitude);
-        longitudeView = (EditText) findViewById(R.id.nt_Longitude);
-        scheduleView = (TextView) findViewById(R.id.nt_Schedule);
-        privacyView = (CheckBox) findViewById(R.id.nt_Privacy);
+        titleView = (EditText) findViewById(R.id.et_title);
+        subjectView = (EditText) findViewById(R.id.et_subject);
+        locationView = (EditText) findViewById(R.id.et_locationName);
+        addressView = (EditText) findViewById(R.id.et_address);
+        zipView = (EditText) findViewById(R.id.et_zip);
+        cityView = (EditText) findViewById(R.id.et_city);
+        countryView = (EditText) findViewById(R.id.et_country);
+        latitudeView = (EditText) findViewById(R.id.et_latitude);
+        longitudeView = (EditText) findViewById(R.id.et_longitude);
+        scheduleView = (TextView) findViewById(R.id.et_schedule);
+        privacyView = (CheckBox) findViewById(R.id.et_privacy);
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
-
-        spinnerData = new String[]{"Weekly", "Monthly", "MonthlyW", "Yearly", "YearlyW"};
-        /*
-        ArrayAdapter<String> scheduleAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerData);
-        scheduleView.setAdapter(scheduleAdapter);
-        */
 
         scheduleView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +92,11 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
         ApiLinks apiLinks = getIntent().getParcelableExtra(LINKS_LABEL);
         apiEndPoint = apiLinks.getRoute(APILINKS_KEY);
         apiMethod = apiLinks.getMethod(APILINKS_KEY);
+
+        Futures.addCallback(Util.getMobileServiceClient(this)
+                        .invokeApi(apiEndPoint, null, apiMethod, null)
+                , new EditCallback(findViewById(android.R.id.content)));
+
     }
 
     @Override
@@ -131,16 +124,7 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
         outState.putString(DATA_PRIVACY, privacyView.getText().toString());
     }
 
-    public void onClickUsePicker(View view) {
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(builder.build(this), PICK_PLACE_RETURN_CODE);
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onClickCreateTertulia(View view) {
+    public void onClickUpdateTertulia(View view) {
         String value = latitudeView.getText().toString();
         Double latitude = Double.parseDouble(TextUtils.isEmpty(value) ? "0" : value);
         value = longitudeView.getText().toString();
@@ -215,13 +199,14 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
                 throw new IllegalArgumentException();
         }
 
+
         Futures.addCallback(Util.getMobileServiceClient(this)
-                        .invokeApi(apiEndPoint, postParameters)
-                , new Callback(findViewById(android.R.id.content)));
+                .invokeApi(apiEndPoint, postParameters)
+            , new UpdateCallback(findViewById(android.R.id.content)));
     }
 
     private boolean isNameValid(String name) {
-        if (TextUtils.isEmpty(name)) return false;
+        if (TextUtils.isEmpty(name) ) return false;
         name = name.toLowerCase();
         Parcelable[] tertulias = getIntent().getParcelableArrayExtra(MY_TERTULIAS);
         for (Parcelable tertulia : tertulias) {
@@ -238,53 +223,56 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
         finish();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case PICK_PLACE_RETURN_CODE:
-                if (resultCode == RESULT_FAIL)
-                    return;
-                Place place = PlacePicker.getPlace(data, this);
-                if (place == null)
-                    return;
-                locationView.setText(place.getName());
-                Address address = new Address(place.getAddress().toString());
-                addressView.setText(address.address);
-                zipView.setText(address.zip);
-                cityView.setText(address.city);
-                countryView.setText(address.country);
-                latitudeView.setText(String.format(Locale.getDefault(), "%.6f", place.getLatLng().latitude));
-                longitudeView.setText(String.format(Locale.getDefault(), "%.6f", place.getLatLng().longitude));
-                break;
-            default:
-                throw new UnsupportedOperationException();
-        }
-    }
-
     // region Private Classes
 
-    public class Callback implements FutureCallback<JsonElement> {
+    public class EditCallback implements FutureCallback<JsonElement> {
         private View view;
 
-        public Callback(View view) {
+        public EditCallback(View view) {
             this.view = view;
-        }
-
-        @Override
-        public void onFailure(Throwable e) {
-            Util.longSnack(view, getEMsg(NewTertuliaActivity.this, e.getMessage()));
-            Util.logd("New tertulia creation failed");
-            Util.logd(e.getMessage());
-            setResult(RESULT_FAIL);
-            finish();
         }
 
         @Override
         public void onSuccess(JsonElement result) {
             Util.longSnack(view, R.string.new_tertulia_toast_success);
-            Util.logd("New tertulia created");
+            Util.logd("Tertulia data retrieved"); // TODO: strings
             Util.logd(result.toString());
             setResult(RESULT_SUCCESS);
+            finish();
+        }
+
+        @Override
+        public void onFailure(Throwable e) {
+            Util.longSnack(view, getEMsg(EditTertuliaActivity.this, e.getMessage()));
+            Util.logd("Tertulia details retrieval failed"); // TODO: strings
+            Util.logd(e.getMessage());
+            setResult(RESULT_FAIL);
+            finish();
+        }
+    }
+
+    public class UpdateCallback implements FutureCallback<JsonElement> {
+        private View view;
+
+        public UpdateCallback(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void onSuccess(JsonElement result) {
+            Util.longSnack(view, R.string.new_tertulia_toast_success);
+            Util.logd("Tertulia updated"); // TODO: strings
+            Util.logd(result.toString());
+            setResult(RESULT_SUCCESS);
+            finish();
+        }
+
+        @Override
+        public void onFailure(Throwable e) {
+            Util.longSnack(view, getEMsg(EditTertuliaActivity.this, e.getMessage()));
+            Util.logd("Tertulia update failed"); // TODO: strings
+            Util.logd(e.getMessage());
+            setResult(RESULT_FAIL);
             finish();
         }
     }
@@ -318,13 +306,11 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi {
     // region Private Static Methods
 
     private static void restoreTextViewState(Bundle savedInstanceState, TextView textView, String key) {
-        if (savedInstanceState.containsKey(key))
-            textView.setText(savedInstanceState.getString(key));
+        if (savedInstanceState.containsKey(key)) textView.setText(savedInstanceState.getString(key));
     }
 
     private static void restoreTextViewState(Bundle savedInstanceState, Spinner spinner, String key) {
-        if (savedInstanceState.containsKey(key))
-            spinner.setSelection(savedInstanceState.getInt(key));
+        if (savedInstanceState.containsKey(key)) spinner.setSelection(savedInstanceState.getInt(key));
     }
 
     // endregion

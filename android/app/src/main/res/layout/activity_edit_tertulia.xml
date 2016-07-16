@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".tertuliacreation.NewTertuliaActivity">
+    tools:context=".tertuliaedition.EditTertuliaActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/nt_appbar"
+        android:id="@+id/et_appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/nt_toolbar"
+            android:id="@+id/et_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -39,7 +39,7 @@
             <!-- ApiTertulia Title -->
 
             <TextView
-                android:id="@+id/nt_TitleLabel"
+                android:id="@+id/et_titleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="90sp"
@@ -47,7 +47,7 @@
                 android:text="@string/new_tertulia_name_label" />
 
             <EditText
-                android:id="@+id/nt_Title"
+                android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/new_tertulia_title_hint"
@@ -59,7 +59,7 @@
             <!-- ApiTertulia Subject -->
 
             <TextView
-                android:id="@+id/nt_SubjectLabel"
+                android:id="@+id/et_subjectLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="80dp"
@@ -67,7 +67,7 @@
                 android:text="@string/new_tertulia_subject_label" />
 
             <EditText
-                android:id="@+id/nt_Subject"
+                android:id="@+id/et_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/new_tertulia_subject_hint"
@@ -80,15 +80,8 @@
 
             <!-- ApiTertulia Location Name -->
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClick="onClickUsePicker"
-                android:text="@string/new_tertulia_map_button_label" />
-
             <TextView
-                android:id="@+id/nt_NameLabel"
+                android:id="@+id/et_locationNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="80dp"
@@ -96,7 +89,7 @@
                 android:text="@string/new_tertulia_location_name_label" />
 
             <EditText
-                android:id="@+id/nt_LocationName"
+                android:id="@+id/et_locationName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/new_tertulia_location_name_hint"
@@ -108,7 +101,7 @@
             <!-- ApiTertulia Location Address -->
 
             <TextView
-                android:id="@+id/nt_AddressLabel"
+                android:id="@+id/et_addressLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -116,7 +109,7 @@
                 android:text="@string/new_tertulia_location_address_label" />
 
             <EditText
-                android:id="@+id/nt_Address"
+                android:id="@+id/et_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/new_tertulia_location_address_hint"
@@ -128,7 +121,7 @@
             <!-- ApiTertulia Location Zip & Country -->
 
             <TextView
-                android:id="@+id/nt_ZipCountryLabel"
+                android:id="@+id/et_zipCountryLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -141,7 +134,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/nt_Zip"
+                    android:id="@+id/et_zip"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20sp"
@@ -152,7 +145,7 @@
                     android:singleLine="true" />
 
                 <EditText
-                    android:id="@+id/nt_City"
+                    android:id="@+id/et_city"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -162,7 +155,7 @@
                     android:singleLine="true" />
 
                 <EditText
-                    android:id="@+id/nt_Country"
+                    android:id="@+id/et_country"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -177,7 +170,7 @@
             <!-- ApiTertulia Location Lat & Lon -->
 
             <TextView
-                android:id="@+id/nt_LatitudeLongitudeLabel"
+                android:id="@+id/et_latitudeLongitudeLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -190,7 +183,7 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/nt_Latitude"
+                    android:id="@+id/et_latitude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
@@ -200,7 +193,7 @@
                     android:singleLine="true" />
 
                 <EditText
-                    android:id="@+id/nt_Longitude"
+                    android:id="@+id/et_longitude"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="@string/new_tertulia_location_coordinates_hint"
@@ -213,7 +206,7 @@
             <!-- ApiTertulia Schedule -->
 
             <TextView
-                android:id="@+id/nt_ScheduleLabel"
+                android:id="@+id/et_scheduleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
@@ -221,7 +214,7 @@
                 android:singleLine="true" />
 
             <TextView
-                android:id="@+id/nt_Schedule"
+                android:id="@+id/et_schedule"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5sp"
@@ -233,13 +226,12 @@
             <!-- ApiTertulia Privacy -->
 
             <CheckBox
-                android:id="@+id/nt_Privacy"
+                android:id="@+id/et_privacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="48sp"
                 android:layout_marginStart="20sp"
                 android:layout_marginTop="6sp"
-                android:checked="true"
                 android:hint="@string/new_tertulia_privacy_label"
                 android:textSize="18sp" />
 
@@ -256,16 +248,16 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/nt_CreateButton"
+            android:id="@+id/et_editButton"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="onClickCreateTertulia"
-            android:text="@string/new_tertulia_submit_button" />
+            android:onClick="onClickUpdateTertulia"
+            android:text="@string/edit_tertulia_update_button" />
 
         <Button
-            android:id="@+id/nt_CancelButton"
+            android:id="@+id/et_cancelButton"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

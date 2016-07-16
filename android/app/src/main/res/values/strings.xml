@@ -28,6 +28,7 @@
     <string name="main_activity_routes_undefined">No routes defined. Shame on us.</string>
     <string name="main_activity_no_network_title">Connection to the network unavailable</string>
     <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
+    <string name="main_activity_no_tertulias">You are not subscribed to any tertulia. Use the buttons bellow to either create one or to search for a public tertulia to subscribe.</string>
 
     <string name="title_activity_tertulia_details">Tertulia Details</string>
     <string name="tertulia_details_label">Tertulia Details</string>
@@ -50,6 +51,7 @@
     <string name="new_tertulia_title_hint">Enter the Tertulia title</string>
     <string name="new_tertulia_subject_label">Subject</string>
     <string name="new_tertulia_subject_hint">Describe the Tertulia in one sentence</string>
+    <string name="new_tertulia_map_button_label">Map Lookup</string>
     <string name="new_tertulia_location_name_label">"Location"</string>
     <string name="new_tertulia_location_name_hint">"Name of the place"</string>
     <string name="new_tertulia_location_address_label">"Address"</string>
@@ -64,7 +66,7 @@
     <string name="new_tertulia_location_range_units_hint">"Km"</string>
     <string name="new_tertulia_schedule_label">Schedule</string>
     <string name="new_tertulia_schedule_hint">Choose</string>
-    <string name="new_tertulia_privacy_label">Privacy</string>
+    <string name="new_tertulia_privacy_label">Private Tertulia</string>
     <string name="new_tertulia_submit_button">Create</string>
     <string name="new_tertulia_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_cancel_button">Cancel</string>
@@ -80,6 +82,9 @@
     <string name="new_tertulia_toast_cancel">Tertulia creation cancelled</string>
     <string name="new_tertulia_toast_invalid_name">Tertulia name must be defined and unique.</string>
 
+    <string name="title_activity_edit_tertulia">Edit Tertulia</string>
+    <string name="edit_tertulia_update_button">Update</string>
+
     <string name="title_activity_search_public_tertulia">"Search Public Tertulia"</string>
     <string name="search_public_tertulia_name_label">By Title</string>
     <string name="search_public_tertulia_location_label">By Location</string>
@@ -89,6 +94,7 @@
     <string name="search_public_tertulia_search_button">Search</string>
     <string name="search_public_tertulia_cancel_button">Cancel</string>
     <string name="search_public_tertulia_search_hint">Search</string>
+    <string name="search_public_tertulia_empty_list">No matches found</string>
 
     <string name="title_dialog_subscribe_public_tertulia">"Subscribe Public Tertulia"</string>
     <string name="message_dialog_subscribe_public_tertulia">"Do you really want to subscribe to this tertulia?"</string>

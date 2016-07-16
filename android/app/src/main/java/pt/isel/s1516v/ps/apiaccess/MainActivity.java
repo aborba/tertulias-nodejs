@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -46,6 +50,8 @@ public class MainActivity extends Activity implements TertuliasApi {
 
     private ImageView userImage;
     private RecyclerView recyclerView;
+    private TextView emptyView;
+    private ProgressBar progressBar;
     private TertuliasArrayRvAdapter listViewAdapter;
     public static Tertulia[] tertulias;
     private MobileServiceUser mUser;
@@ -63,10 +69,13 @@ public class MainActivity extends Activity implements TertuliasApi {
         }
         setupViews();
         userImage = (ImageView) findViewById(R.id.mtl_user_picture);
+        progressBar = (ProgressBar) findViewById(R.id.mtl_progressbar);
+        emptyView = (TextView) findViewById(R.id.mtl_empty_view);
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
 //        userImage.setImageResource(R.drawable.ic_arrow_back_black_24dp);
 
         if (savedInstanceState != null) loadInstanceState(savedInstanceState);
-        doLoginAndFetch(this);
+        doLoginAndFetch(this, progressBar);
     }
 
     @Override
@@ -139,7 +148,7 @@ public class MainActivity extends Activity implements TertuliasApi {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.amm_login:
-                                doLoginAndFetch(MainActivity.this);
+                                doLoginAndFetch(MainActivity.this, progressBar);
                                 return true;
                             case R.id.amm_logout:
                                 doLogout(MainActivity.this);
@@ -159,7 +168,8 @@ public class MainActivity extends Activity implements TertuliasApi {
     }
 
     private void updateStatusAlert(Boolean isLogin, int alertMessage) {
-        loginStatus.set(isLogin);
+        if (loginStatus != null)
+            loginStatus.set(isLogin);
         Util.longSnack(findViewById(android.R.id.content), alertMessage);
     }
 
@@ -184,7 +194,8 @@ public class MainActivity extends Activity implements TertuliasApi {
             Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
             return;
         }
-        request(ctx, apiHome.getRoute("tertulias"), apiHome.getMethod("tertulias"), new GetTertuliasCallback(ctx, recyclerView, null, null));
+        progressBar.setVisibility(View.VISIBLE);
+        request(ctx, apiHome.getRoute("tertulias"), apiHome.getMethod("tertulias"), new GetTertuliasCallback(ctx, recyclerView, emptyView, progressBar, null, null));
     }
 
     //    region User session management
@@ -214,9 +225,10 @@ public class MainActivity extends Activity implements TertuliasApi {
         );
     }
 
-    private void doLoginAndFetch(Context ctx) {
+    private void doLoginAndFetch(Context ctx, ProgressBar progressBar) {
+        progressBar.setVisibility(View.VISIBLE);
         GetData<JsonElement> getTertulias = new GetData<>(ctx, "tertulias", apiHome);
-        GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, recyclerView, null, null);
+        GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, recyclerView, emptyView, progressBar, null, null);
 
         GetData<JsonElement> getMe = new GetData<>(ctx, "me", apiHome);
         GetMeCallback getMeCallback = new GetMeCallback(ctx, null, getTertulias, getTertuliasCallback, userImage);
@@ -255,7 +267,8 @@ public class MainActivity extends Activity implements TertuliasApi {
                         Handler mainHandler = new Handler(Looper.getMainLooper());
                         mainHandler.post(runnable);
 
-                        loginStatus.reset(R.string.main_activity_logout_succeed_message);
+                        if (loginStatus != null)
+                            loginStatus.reset(R.string.main_activity_logout_succeed_message);
                     }
 
                     @Override

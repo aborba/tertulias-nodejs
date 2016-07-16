@@ -66,6 +66,8 @@ public class ApiLinks implements Parcelable {
         if (!isMapped) {
             if (map == null)
                 map = new HashMap<>();
+            if (links == null)
+                return null;
             for (ApiLink link : links)
                 map.put(link.rel, link);
             isMapped = true;

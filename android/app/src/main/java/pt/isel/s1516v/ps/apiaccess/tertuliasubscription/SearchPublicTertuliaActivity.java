@@ -18,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -51,7 +53,9 @@ public class SearchPublicTertuliaActivity extends Activity
     private static final int REQUEST_LOCATION = 2;
 
     private SearchView searchView;
+    private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    private TextView emptyView;
     private PublicTertuliaArrayAdapter viewAdapter;
     private PublicTertulia[] publicTertulias;
 
@@ -70,8 +74,10 @@ public class SearchPublicTertuliaActivity extends Activity
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
 
+        progressBar = (ProgressBar) findViewById(R.id.ts_progressbar);
         searchView = (SearchView) findViewById(R.id.ts_search);
         searchView.setSubmitButtonEnabled(true);
+        emptyView = (TextView) findViewById(R.id.ts_empty_view);
 
         Util.setupToolBar(this, (Toolbar) findViewById(R.id.ts_toolbar),
                 R.string.title_activity_search_public_tertulia,
@@ -242,6 +248,14 @@ public class SearchPublicTertuliaActivity extends Activity
                     PublicTertuliaArrayAdapter viewAdapter = new PublicTertuliaArrayAdapter(SearchPublicTertuliaActivity.this,
                             publicTerulias != null ? publicTerulias : new PublicTertulia[0]);
                     recyclerView.setAdapter(viewAdapter);
+                    if (publicTerulias == null || publicTerulias.length == 0) {
+                        recyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                    } else {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }.execute(result);
             setResult(RESULT_SUCCESS);
@@ -265,6 +279,7 @@ public class SearchPublicTertuliaActivity extends Activity
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (searchView != null && query != null)
                 searchView.setQuery(query, false);
+            progressBar.setVisibility(View.VISIBLE);
             requestSearch(query);
         }
     }

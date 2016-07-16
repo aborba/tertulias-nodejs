@@ -31,6 +31,22 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <ProgressBar
+        android:id="@+id/ts_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_marginTop="-28dp"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/ts_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="@string/search_public_tertulia_empty_list" />
+
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

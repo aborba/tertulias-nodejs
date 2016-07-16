@@ -22,6 +22,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDkSDomP2ZKLPumUj-KtnjGnjeCVLPgvrQ"/>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main_activity"
@@ -38,18 +42,13 @@
             android:label="@string/title_activity_new_tertulia" />
 
         <activity
+            android:name=".tertuliaedition.EditTertuliaActivity"
+            android:label="@string/title_activity_edit_tertulia" />
+
+        <activity
             android:name=".TertuliaDetailsActivity"
             android:label="@string/title_activity_new_tertulia"
             android:parentActivityName=".tertuliacreation.NewTertuliaActivity" />
-
-        <activity
-            android:name=".NewLocationActivity"
-            android:label="@string/title_activity_new_location"
-            android:parentActivityName=".tertuliacreation.NewTertuliaActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".tertuliacreation.NewTertuliaActivity" />
-        </activity>
 
         <activity android:name=".EditUserProfileActivity" />
 
@@ -71,7 +70,11 @@
             android:label="@string/title_activity_public_tertulia_details"
             android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
 
-        <activity android:name=".InvitationActivity"></activity>
+        <activity android:name=".InvitationActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>
