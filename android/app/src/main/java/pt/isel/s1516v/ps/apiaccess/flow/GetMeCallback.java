@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayRvAdapter;
+import pt.isel.s1516v.ps.apiaccess.helpers.CircleTransform;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiMe;
@@ -49,7 +50,7 @@ public class GetMeCallback implements FutureCallback<JsonElement> {
         ApiMe apiMe = new Gson().fromJson(result, ApiMe.class);
         Util.logd(apiMe.me.picture);
         if (apiMe.me.picture != null) {
-            Picasso.with(ctx).load(apiMe.me.picture).into(faceView);
+            Picasso.with(ctx).load(apiMe.me.picture).transform(new CircleTransform()).into(faceView);
             faceView.setVisibility(View.VISIBLE);
         }
 

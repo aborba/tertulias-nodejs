@@ -43,7 +43,7 @@
                 android:id="@+id/ptda_title_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsTitle"
+                android:labelFor="@+id/tda_Title"
                 android:text="@string/public_tertulia_details_title" />
 
             <TextView
@@ -63,7 +63,7 @@
                 android:id="@+id/ptda_subject_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsSubject"
+                android:labelFor="@+id/tda_Subject"
                 android:text="@string/public_tertulia_details_subject" />
 
             <TextView
@@ -83,7 +83,7 @@
                 android:id="@+id/ptda_location_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsLocation"
+                android:labelFor="@+id/tda_LocationName"
                 android:text="@string/public_tertulia_details_location" />
 
             <TextView
@@ -103,7 +103,7 @@
                 android:id="@+id/ptda_schedule_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tertuliaDetailsSchedule"
+                android:labelFor="@+id/tda_Schedule"
                 android:text="@string/public_tertulia_details_schedule" />
 
             <TextView

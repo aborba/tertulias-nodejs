@@ -25,20 +25,27 @@
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
     <string name="main_activity_root_path_not_found">Root path unreachable. Shame on us.</string>
-    <string name="main_activity_routes_undefined">No routes defined. Shame on us.</string>
+    <string name="main_activity_routes_undefined">No routes defined yet. Still working...</string>
     <string name="main_activity_no_network_title">Connection to the network unavailable</string>
     <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
     <string name="main_activity_no_tertulias">You are not subscribed to any tertulia. Use the buttons bellow to either create one or to search for a public tertulia to subscribe.</string>
+    <string-array name="main_activity_drawer_list_items">
+        <item>Login</item>
+        <item>Logout</item>
+        <item>Refresh List</item>
+    </string-array>
 
     <string name="title_activity_tertulia_details">Tertulia Details</string>
     <string name="tertulia_details_label">Tertulia Details</string>
     <string name="tertulia_details_title">Title</string>
+    <string name="tertulia_details_undefined_coordinates">Can not display map, coordinates not defined.</string>
     <string name="tertulia_details_subject">Subject</string>
     <string name="tertulia_details_location">Default Location</string>
     <string name="tertulia_details_schedule">Schedule</string>
     <string name="tertulia_details_role">My Role</string>
-    <string name="tertulia_details_private">Privacy</string>
-    <string name="tertulia_details_private_hint">is private</string>
+    <string name="tertulia_details_map_button_label">Map View</string>
+    <string name="tertulia_details_private">Type</string>
+    <string name="tertulia_details_private_hint">Private Tertulia</string>
     <string name="tertulia_details_event_button">Event</string>
     <string name="tertulia_details_messages_button">Messages</string>
     <string name="tertulia_details_edit_button">Edit</string>
@@ -65,12 +72,21 @@
     <string name="new_tertulia_location_range_hint">"range"</string>
     <string name="new_tertulia_location_range_units_hint">"Km"</string>
     <string name="new_tertulia_schedule_label">Schedule</string>
-    <string name="new_tertulia_schedule_hint">Choose</string>
-    <string name="new_tertulia_privacy_label">Private Tertulia</string>
+    <string name="new_tertulia_schedule_button_label">Select Schedule</string>
+    <string name="new_tertulia_schedule_hint">No schedule selected</string>
+    <string name="new_tertulia_privacy_label">Type</string>
+    <string name="new_tertulia_privacy_hint">Private Tertulia</string>
     <string name="new_tertulia_submit_button">Create</string>
     <string name="new_tertulia_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_next_button">Next</string>
+    <string-array name="new_tertulia_dialog_monthlyw_tostring" formatted="false">
+        <item>"MonthlyW schedule selected. The Tertulia events shall occur "</item>
+        <item>monthly</item>
+        <item>"every %s"</item>
+        <item>", on %s of the %s"</item>
+        <item>" counting from the end of the month"</item>
+    </string-array>
     <string-array name="new_tertulia_dialog_schedules">
         <item>Weekly</item>
         <item>Monthly/day</item>
@@ -81,6 +97,7 @@
     <string name="new_tertulia_toast_success">Tertulia created</string>
     <string name="new_tertulia_toast_cancel">Tertulia creation cancelled</string>
     <string name="new_tertulia_toast_invalid_name">Tertulia name must be defined and unique.</string>
+    <string name="new_tertulia_toast_schedule_creation_cancelled">Schedule creation cancelled.</string>
 
     <string name="title_activity_edit_tertulia">Edit Tertulia</string>
     <string name="edit_tertulia_update_button">Update</string>
@@ -134,11 +151,95 @@
     <string name="new_monthlyw_weekday_hint">"Select"</string>
     <string name="new_monthlyw_weeknr_label">"Week of the month"</string>
     <string name="new_monthlyw_weeknr_hint">"0-4"</string>
-    <string name="new_monthlyw_fromstart_label">"Count from start"</string>
-    <string name="new_monthlyw_fromstart_hint">"Count from start"</string>
+    <string name="new_monthlyw_fromend_label">"Count weeks from the end of the month"</string>
+    <string name="new_monthlyw_fromend_hint">"Count weeks from the end of the month"</string>
     <string name="new_monthlyw_skip_label">"Repeat every"</string>
     <string name="new_monthlyw_skip_units_label">"months"</string>
     <string name="new_monthlyw_skip_hint">"1-12"</string>
+
+    <string name="title_activity_new_weekly">"Weekly Schedule"</string>
+    <string-array name="new_weekly_tostring" formatted="false">
+        <item>"Weekly schedule selected. The Tertulia events shall occur "</item>
+        <item>weekly</item>
+        <item>"every %s"</item>
+        <item>", on %ss"</item>
+    </string-array>
+    <string-array name="new_weekly_skip">
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>3 weeks</item>
+        <item>4 weeks</item>
+        <item>6 weeks</item>
+    </string-array>
+
+    <string name="title_activity_new_monthly">"Monthly Schedule"</string>
+    <string name="new_monthly_day_label">"Day of the month"</string>
+    <string name="new_monthly_day_hint">"[1-31]"</string>
+    <string name="new_monthly_fromend_label">"Count days from the end of the month"</string>
+    <string-array name="new_monthly_daynr">
+        <item>" 1<sup>st</sup> day"</item>
+        <item>" 2<sup>nd</sup> day"</item>
+        <item>" 3<sup>rd</sup> day"</item>
+        <item>" 4<sup>th</sup> day"</item>
+        <item>" 5<sup>th</sup> day"</item>
+        <item>" 6<sup>th</sup> day"</item>
+        <item>" 7<sup>th</sup> day"</item>
+        <item>" 8<sup>th</sup> day"</item>
+        <item>" 9<sup>th</sup> day"</item>
+        <item>10<sup>th</sup> day</item>
+        <item>11<sup>st</sup> day</item>
+        <item>12<sup>nd</sup> day</item>
+        <item>13<sup>rd</sup> day</item>
+        <item>14<sup>th</sup> day</item>
+        <item>15<sup>th</sup> day</item>
+        <item>16<sup>th</sup> day</item>
+        <item>17<sup>th</sup> day</item>
+        <item>18<sup>th</sup> day</item>
+        <item>19<sup>th</sup> day</item>
+        <item>20<sup>th</sup> day</item>
+        <item>21<sup>st</sup> day</item>
+        <item>22<sup>nd</sup> day</item>
+        <item>23<sup>rd</sup> day</item>
+        <item>24<sup>th</sup> day</item>
+        <item>25<sup>th</sup> day</item>
+        <item>26<sup>th</sup> day</item>
+        <item>27<sup>th</sup> day</item>
+        <item>28<sup>th</sup> day</item>
+        <item>29<sup>th</sup> day</item>
+        <item>30<sup>th</sup> day</item>
+        <item>31<sup>st</sup> day</item>
+    </string-array>
+    <string-array name="new_monthly_skip">
+        <item>1 month</item>
+        <item>2 months</item>
+        <item>3 months</item>
+        <item>4 months</item>
+        <item>6 months</item>
+    </string-array>
+    <string-array name="new_monthly_tostring" formatted="false">
+        <item>"Monthly schedule selected. The Tertulia events shall occur "</item>
+        <item>monthly</item>
+        <item>"every %s"</item>
+        <item>", on the %s"</item>
+        <item>" counting from the end of the month"</item>
+    </string-array>
+    <string name="new_monthly_verify_day_toast">"The value must be between 1 and 31"</string>
+
+    <string-array name="new_monthlyw_weekday">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
+    <string-array name="new_monthlyw_weeknr">
+        <item>1<sup>st</sup> week</item>
+        <item>2<sup>nd</sup> week</item>
+        <item>3<sup>rd</sup> week</item>
+        <item>4<sup>th</sup> week</item>
+    </string-array>
 
     <string name="title_edit_user_profile">Profile Edit</string>
     <string name="edit_user_profile_alias">User Alias</string>
@@ -164,5 +265,6 @@
     <string name="semicolon">;</string>
     <string name="semicolon_spacer">; </string>
     <string name="title_activity_demo">demo</string>
+    <string name="message_not_available_yet">"Functionality not available yet."</string>
 
 </resources>

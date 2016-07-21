@@ -25,6 +25,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
@@ -99,6 +100,11 @@ public class Util {
         builder.create().show();
     }
 
+    public static void lockPortrait(Context ctx) {
+        ((Activity) ctx).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        lockOrientation(ctx);
+    }
+
     public static void lockOrientation(Context ctx) {
         int screenOrientation;
         int rotation = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
@@ -123,10 +129,8 @@ public class Util {
     public static String getAuthenticationToken(MobileServiceClient cli) {
         if (cli == null)
             return null;
-        MobileServiceUser usr = cli.getCurrentUser();
-        if (usr == null)
-            return null;
-        return usr.getAuthenticationToken();
+        MobileServiceUser mobileServiceUser = cli.getCurrentUser();
+        return mobileServiceUser == null ? null : mobileServiceUser.getAuthenticationToken();
     }
 
     public static boolean isTokenValid(String token, int withinMillis) {
@@ -145,7 +149,7 @@ public class Util {
             case 3:
                 jwt += "="; break;
             default:
-                throw new RuntimeException("Invalid base64url string.");
+                throw new IllegalArgumentException("Invalid base64url string.");
         }
         String payloadString = new String(Base64.decode(jwt, Base64.DEFAULT));
         JwtPayload payload = new Gson().fromJson(payloadString, JwtPayload.class);
@@ -288,6 +292,10 @@ public class Util {
         MobileServiceClient cli = Util.getMobileServiceClient(ctx);
         ListenableFuture<JsonElement> future = cli.invokeApi(route, null, httpMethod, null);
         if (callback != null) Futures.addCallback(future, callback);
+    }
+
+    public static double string2Double(String value) {
+        return Double.parseDouble(TextUtils.isEmpty(value) ? "0.0" : value);
     }
 
     public static String getEMsg(Context ctx, String msg) {

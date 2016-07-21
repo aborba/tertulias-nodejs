@@ -2,6 +2,7 @@ package pt.isel.s1516v.ps.apiaccess.support.remote;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 
@@ -55,19 +56,21 @@ public class ApiLinks implements Parcelable {
     }
 
     public String getRoute(String tag) {
-        return getLink(tag).href;
+        ApiLink link = getLink(tag);
+        return link == null ? null : link.href;
     }
 
     public String getMethod(String tag) {
-        return getLink(tag).method;
+        ApiLink link = getLink(tag);
+        return link == null ? null : link.method;
     }
 
     private ApiLink getLink(String tag) {
         if (!isMapped) {
-            if (map == null)
-                map = new HashMap<>();
             if (links == null)
                 return null;
+            if (map == null)
+                map = new HashMap<>();
             for (ApiLink link : links)
                 map.put(link.rel, link);
             isMapped = true;

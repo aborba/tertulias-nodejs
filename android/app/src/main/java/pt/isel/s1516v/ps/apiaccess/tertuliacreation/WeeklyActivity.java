@@ -9,9 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
-import android.widget.ToggleButton;
 
 import java.util.Date;
 
@@ -19,40 +17,39 @@ import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
-public class MonthlywActivity extends Activity implements Schedule, TertuliasApi {
+public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
 
-    public final static int REQUEST_CODE = MONTHLYW_RETURN_CODE;
+    public final static int REQUEST_CODE = WEEKLY_RETURN_CODE;
 
-    private final static String MONTHLYW_KEY = "MonthlyW_Key";
+    private final static String WEEKLY_KEY = "Weekly_Key";
 
-    private ToggleButton fromEndVw;
-    private CrUiMonthlyW crMonthlyW;
+    private CrUiWeekly crWeekly;
 
     // region Activity LifeCycle
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_monthlyw);
+        setContentView(R.layout.activity_weekly);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.mwa_toolbar),
-                R.string.title_activity_new_monthlyw,
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.wa_toolbar),
+                R.string.title_activity_new_weekly,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        crMonthlyW = savedInstanceState != null ?
-                    (CrUiMonthlyW) savedInstanceState.getParcelable(MONTHLYW_KEY) :
-                    new CrUiMonthlyW(-1, -1, true, -1);
+        crWeekly = savedInstanceState != null ?
+                    (CrUiWeekly) savedInstanceState.getParcelable(WEEKLY_KEY) :
+                    new CrUiWeekly(-1, -1);
 
-        setupSpinner(this, (Spinner) findViewById(R.id.mwa_weekDay),
+        setupSpinner(this, (Spinner) findViewById(R.id.wa_weekDay),
                 R.array.new_monthlyw_weekday,
                 android.R.layout.simple_spinner_dropdown_item,
                 android.R.layout.simple_spinner_item,
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.weekDayNr = position;
+                        crWeekly.weekDayNr = position;
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -60,51 +57,25 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 }
         );
 
-        setupSpinner(this, (Spinner) findViewById(R.id.mwa_weekNr),
-                R.array.new_monthlyw_weeknr,
+        setupSpinner(this, (Spinner) findViewById(R.id.wa_skip),
+                R.array.new_weekly_skip,
                 android.R.layout.simple_spinner_dropdown_item,
                 android.R.layout.simple_spinner_item,
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.weekNr = position;
+                        crWeekly.skip = position;
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
                     }
                 }
         );
-
-        setupSpinner(this, (Spinner) findViewById(R.id.mwa_skip),
-                R.array.new_monthly_skip,
-                android.R.layout.simple_spinner_dropdown_item,
-                android.R.layout.simple_spinner_item,
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.skip = position;
-                    }
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                    }
-                }
-        );
-
-        fromEndVw = (ToggleButton) findViewById(R.id.mwa_fromend);
-        fromEndVw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    crMonthlyW.isFromStart = false;
-                } else {
-                    crMonthlyW.isFromStart = true;
-                }
-            }
-        });
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MONTHLYW_KEY, crMonthlyW);
+        outState.putParcelable(WEEKLY_KEY, crWeekly);
         super.onSaveInstanceState(outState);
     }
 
@@ -114,8 +85,8 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
 
     public void onClickCreateSchedule(View view) {
         Intent intent = new Intent();
-        intent.putExtra("type", MONTHLYW);
-        intent.putExtra("result", crMonthlyW);
+        intent.putExtra("type", WEEKLY);
+        intent.putExtra("result", crWeekly);
         setResult(RESULT_SUCCESS, intent);
         finish();
     }

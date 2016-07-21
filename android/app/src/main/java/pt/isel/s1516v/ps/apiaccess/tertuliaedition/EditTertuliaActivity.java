@@ -15,6 +15,9 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.gson.Gson;
@@ -122,6 +125,15 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi {
         outState.putString(DATA_LONGITUDEVIEW, longitudeView.getText().toString());
         outState.putString(DATA_SCHEDULE, scheduleView.getText().toString());
         outState.putString(DATA_PRIVACY, privacyView.getText().toString());
+    }
+
+    public void onClickMapLookup(View view) {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(this), PICK_PLACE_RETURN_CODE);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onClickUpdateTertulia(View view) {

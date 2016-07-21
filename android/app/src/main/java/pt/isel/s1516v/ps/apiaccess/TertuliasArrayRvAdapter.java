@@ -15,6 +15,7 @@ import java.util.Locale;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.tertuliadetails.TertuliaDetailsActivity;
 
 public class TertuliasArrayRvAdapter extends RecyclerView.Adapter<TertuliasArrayRvAdapter.ViewHolder> {
 

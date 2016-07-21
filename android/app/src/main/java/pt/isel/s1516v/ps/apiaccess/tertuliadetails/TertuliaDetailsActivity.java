@@ -1,11 +1,10 @@
-package pt.isel.s1516v.ps.apiaccess;
+package pt.isel.s1516v.ps.apiaccess.tertuliadetails;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -15,7 +14,11 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -23,20 +26,21 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 
 public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public final static int REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
     public final static String SELF_LINK = "SELF_LINK";
     private final static String TERTULIA = "tertulia";
-    private TextView titleView, subjectView, locationView, scheduleView, roleView;
-    private CheckBox privacyView;
+    private TextView titleView, subjectView, roleView, locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView, scheduleView;
+    private CheckBox isPrivateView;
     private Tertulia tertulia;
     private View rootView;
 
@@ -53,12 +57,18 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 Util.IGNORE, Util.IGNORE, null, true);
 
         ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
-        titleView = (TextView) findViewById(R.id.tertuliaDetailsTitle);
-        subjectView = (TextView) findViewById(R.id.tertuliaDetailsSubject);
-        locationView = (TextView) findViewById(R.id.tertuliaDetailsLocation);
-        scheduleView = (TextView) findViewById(R.id.tertuliaDetailsSchedule);
-        roleView = (TextView) findViewById(R.id.tertuliaDetailsRole);
-        privacyView = (CheckBox) findViewById(R.id.tertuliaDetailsPrivacy);
+        titleView = (TextView) findViewById(R.id.tda_Title);
+        subjectView = (TextView) findViewById(R.id.tda_Subject);
+        roleView = (TextView) findViewById(R.id.tda_Role);
+        locationView = (TextView) findViewById(R.id.tda_LocationName);
+        addressView = (TextView) findViewById(R.id.tda_Address);
+        zipView = (TextView) findViewById(R.id.tda_Zip);
+        cityView = (TextView) findViewById(R.id.tda_City);
+        countryView = (TextView) findViewById(R.id.tda_Country);
+        latitudeView = (TextView) findViewById(R.id.tda_Latitude);
+        longitudeView = (TextView) findViewById(R.id.tda_Longitude);
+        scheduleView = (TextView) findViewById(R.id.tda_Schedule);
+        isPrivateView = (CheckBox) findViewById(R.id.tda_IsPrivate);
         rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
         if (tertulia != null) paintUi(tertulia);
@@ -85,6 +95,23 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClickMapLookup(View view) {
+        try {
+            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+            String latitude = latitudeView.getText().toString();
+            String longitude = longitudeView.getText().toString();
+            if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)) {
+                Util.longSnack(view, R.string.tertulia_details_undefined_coordinates);
+                return;
+            }
+            LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+            builder.setLatLngBounds(new LatLngBounds(latLng, latLng));
+            startActivity(builder.build(this));
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onClickSubmitEvent(View view) {
@@ -176,7 +203,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, Tertulia>(){
+            new AsyncTask<JsonElement, Void, Tertulia>() {
                 @Override
                 protected Tertulia doInBackground(JsonElement... params) {
                     ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
@@ -199,11 +226,12 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         String scheduleText;
         if (!TextUtils.isEmpty(tertulia.scheduleType)) {
             scheduleText = tertulia.scheduleType;
-            if (!TextUtils.isEmpty(tertulia.scheduleDescription)) scheduleText += " - " + tertulia.scheduleDescription;
+            if (!TextUtils.isEmpty(tertulia.scheduleDescription))
+                scheduleText += " - " + tertulia.scheduleDescription;
         } else scheduleText = tertulia.scheduleDescription;
         scheduleView.setText(scheduleText);
         roleView.setText(tertulia.role_type);
-        privacyView.setChecked(tertulia.isPrivate);
+        isPrivateView.setChecked(tertulia.isPrivate);
     }
 
 }

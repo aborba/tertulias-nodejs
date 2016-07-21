@@ -75,8 +75,35 @@
                 android:inputType="textCapSentences"
                 android:singleLine="true" />
 
+            <!-- ApiTertulia Privacy -->
+
+            <TextView
+                android:id="@+id/et_privacyLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="80dp"
+                android:singleLine="true"
+                android:text="@string/new_tertulia_privacy_label" />
+
+            <CheckBox
+                android:id="@+id/et_privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="48sp"
+                android:layout_marginStart="20sp"
+                android:layout_marginTop="6sp"
+                android:checked="true"
+                android:hint="@string/new_tertulia_privacy_hint"
+                android:textSize="18sp" />
 
             <!-- ApiTertulia Location -->
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onClickMapLookup"
+                android:text="@string/new_tertulia_map_button_label" />
 
             <!-- ApiTertulia Location Name -->
 
@@ -213,6 +240,13 @@
                 android:hint="@string/new_tertulia_schedule_label"
                 android:singleLine="true" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onClickSelectSchedule"
+                android:text="@string/new_tertulia_schedule_button_label" />
+
             <TextView
                 android:id="@+id/et_schedule"
                 android:layout_width="wrap_content"
@@ -221,18 +255,6 @@
                 android:layout_marginTop="6sp"
                 android:hint="@string/new_tertulia_schedule_hint"
                 android:singleLine="true"
-                android:textSize="18sp" />
-
-            <!-- ApiTertulia Privacy -->
-
-            <CheckBox
-                android:id="@+id/et_privacy"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="48sp"
-                android:layout_marginStart="20sp"
-                android:layout_marginTop="6sp"
-                android:hint="@string/new_tertulia_privacy_label"
                 android:textSize="18sp" />
 
         </LinearLayout>

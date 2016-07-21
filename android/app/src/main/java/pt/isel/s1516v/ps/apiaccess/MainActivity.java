@@ -3,18 +3,22 @@ package pt.isel.s1516v.ps.apiaccess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +29,7 @@ import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.squareup.picasso.Picasso;
 
 import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetData;
@@ -35,6 +40,7 @@ import pt.isel.s1516v.ps.apiaccess.flow.PostRegisterCallback;
 import pt.isel.s1516v.ps.apiaccess.helpers.LoginStatus;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.NewTertuliaActivity;
+import pt.isel.s1516v.ps.apiaccess.tertuliadetails.TertuliaDetailsActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.SearchPublicTertuliaActivity;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
@@ -42,10 +48,14 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 
 public class MainActivity extends Activity implements TertuliasApi {
 
+    private DrawerLayout drawerLayout;
+    private ListView drawerList;
+    private static String[] menuTitles;
+
     public static ApiLinks apiHome = new ApiLinks(null);
     public static ApiLinks apiLinks = new ApiLinks(null);
 
-    private final static String SAVED_TERTULIAS = "tertulias";
+    private final static String TERTULIAS_KEY = "tertulias";
     private final static String API_ROOT_END_POINT = "/";
 
     private ImageView userImage;
@@ -63,18 +73,49 @@ public class MainActivity extends Activity implements TertuliasApi {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (menuTitles == null)
+            menuTitles = getResources().getStringArray(R.array.main_activity_drawer_list_items);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = (ListView) findViewById(R.id.planets_list);
+        drawerList.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, menuTitles));
+        drawerList.setOnItemClickListener(new ListView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 0: // Login
+                        doLoginAndFetch(MainActivity.this, progressBar);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        break;
+                    case 1: // Logout
+                        doLogout(MainActivity.this);
+                        break;
+                    case 2: // Refresh
+                        requestTertuliasList(MainActivity.this);
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        break;
+                    default:
+                }
+            }
+        });
+
         if (!Util.isConnectivityAvailable(this)) {
             Util.alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
             return;
         }
         setupViews();
         userImage = (ImageView) findViewById(R.id.mtl_user_picture);
+        if (!Util.isSignedIn(this))
+            Picasso.with(this).load(R.mipmap.tertulias).into(userImage);
+
         progressBar = (ProgressBar) findViewById(R.id.mtl_progressbar);
         emptyView = (TextView) findViewById(R.id.mtl_empty_view);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
-//        userImage.setImageResource(R.drawable.ic_arrow_back_black_24dp);
 
-        if (savedInstanceState != null) loadInstanceState(savedInstanceState);
+        loadInstanceState(savedInstanceState);
+
         doLoginAndFetch(this, progressBar);
     }
 
@@ -98,12 +139,20 @@ public class MainActivity extends Activity implements TertuliasApi {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArray(SAVED_TERTULIAS, tertulias);
+        outState.putParcelableArray(TERTULIAS_KEY, tertulias);
     }
 
     private void loadInstanceState(Bundle inState) {
-        if (inState.containsKey(SAVED_TERTULIAS))
-            tertulias = (Tertulia[]) inState.getParcelableArray(SAVED_TERTULIAS);
+        if (inState == null || !inState.containsKey(TERTULIAS_KEY))
+            return;
+        Parcelable[] parcelables = inState.getParcelableArray(TERTULIAS_KEY);
+        if (parcelables == null) {
+            tertulias = new Tertulia[0];
+            return;
+        }
+        tertulias = new Tertulia[parcelables.length];
+        for (int i = 0; i < parcelables.length; i++)
+            tertulias[i] = (Tertulia) parcelables[i];
     }
 
 //  endregion
@@ -143,24 +192,37 @@ public class MainActivity extends Activity implements TertuliasApi {
         Util.setupToolBar(toolbar,
                 R.string.title_activity_list_tertulias,
                 R.string.title_activity_list_tertulias,
-                R.menu.activity_main_menu, new Toolbar.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.amm_login:
-                                doLoginAndFetch(MainActivity.this, progressBar);
-                                return true;
-                            case R.id.amm_logout:
-                                doLogout(MainActivity.this);
-                                return true;
-                            case R.id.amm_reload:
-                                requestTertuliasList(MainActivity.this);
-                                return true;
-                            default:
-                                return false;
-                            }
-                    }
-                });
+                Util.IGNORE, // R.menu.activity_main_menu,
+                null
+//                new Toolbar.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.amm_login:
+//                                doLoginAndFetch(MainActivity.this, progressBar);
+//                                return true;
+//                            case R.id.amm_logout:
+//                                doLogout(MainActivity.this);
+//                                return true;
+//                            case R.id.amm_reload:
+//                                requestTertuliasList(MainActivity.this);
+//                                return true;
+//                            default:
+//                                return false;
+//                            }
+//                    }
+//                }
+ );
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START))
+                    return;
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
         recyclerView = (RecyclerView) findViewById(R.id.mtl_RecyclerView);
         listViewAdapter = new TertuliasArrayRvAdapter(this, tertulias != null ? tertulias : new Tertulia[0]);
         Util.setupAdapter(this, recyclerView, listViewAdapter);
@@ -243,7 +305,7 @@ public class MainActivity extends Activity implements TertuliasApi {
         requestLogin(ctx, loginCallback);
     }
 
-    private void doLogout(Context ctx) {
+    private void doLogout(final Context ctx) {
         Futures.addCallback(
                 Util.getMobileServiceClient(this).logout(),
                 new FutureCallback<MobileServiceUser>() {
@@ -258,7 +320,8 @@ public class MainActivity extends Activity implements TertuliasApi {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                                userImage.setVisibility(View.INVISIBLE);
+                                Picasso.with(ctx).load(R.mipmap.tertulias).into(userImage);
+//                                userImage.setVisibility(View.INVISIBLE);
                                 listViewAdapter = new TertuliasArrayRvAdapter(MainActivity.this, tertulias != null ? tertulias : new Tertulia[0]);
                                 recyclerView.setAdapter(listViewAdapter);
                             }
