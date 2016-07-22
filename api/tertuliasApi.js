@@ -179,25 +179,111 @@ module.exports = function (configuration) {
 		});
 	});
 
-	router.post('/', (req, res, next) => {
-		console.log('in POST /tertulias');
+	router.post('/weekly', (req, res, next) => {
+		console.log('in POST /tertulias/weekly');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('name', sql.NVarChar(40), req.body.name)
-			.input('subject', sql.NVarChar(80), req.body.subject)
-			.input('locationName', sql.NVarChar(40), req.body.location)
-			.input('locationAddress', sql.NVarChar(80), req.body.address)
-			.input('locationZip', sql.NVarChar(40), req.body.zip)
-			.input('locationCity', sql.NVarChar(40), req.body.city)
-			.input('locationCountry', sql.NVarChar(40), req.body.country)
-			.input('locationLatitude', sql.NVarChar(12), req.body.latitude)
-			.input('locationLongitude', sql.NVarChar(12), req.body.longitude)
-			.input('weekDay', sql.NVarChar(20), 'Tuesday')
-			.input('weekNr', sql.Int, 1)
-			.input('fromStart', sql.BIT, 1)
-			.input('skip', sql.Int, 0)
-			.input('isPrivate', sql.Int, req.body.isPrivate ? 1 : 0)
+			.input('name', sql.NVarChar(40), req.body.tr_name)
+			.input('subject', sql.NVarChar(80), req.body.tr_subject)
+			.input('locationName', sql.NVarChar(40), req.body.lo_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.lo_address)
+			.input('locationZip', sql.NVarChar(40), req.body.lo_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.lo_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
+			.input('weekDay', sql.NVarChar(20), req.body.sc_weekDay)
+			.input('skip', sql.Int, sc_skip)
+			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.execute('sp_insertTertulia_Weekly_sid')
+			// .execute('sp_insertTertulia_MonthlyW_sid')
+			.then((recordsets) => {
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/monthly', (req, res, next) => {
+		console.log('in POST /tertulias/monthly');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('name', sql.NVarChar(40), req.body.tr_name)
+			.input('subject', sql.NVarChar(80), req.body.tr_subject)
+			.input('locationName', sql.NVarChar(40), req.body.lo_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.lo_address)
+			.input('locationZip', sql.NVarChar(40), req.body.lo_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.lo_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
+			.input('dayNr', sql.Int, req.body.sc_dayNr)
+			.input('fromStart', sql.BIT, req.body.sc_fromStart ? 1 : 0)
+			.input('skip', sql.Int, sc_skip)
+			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.execute('sp_insertTertulia_Monthly_sid')
+			.then((recordsets) => {
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/monthlyw', (req, res, next) => {
+		console.log('in POST /tertulias/monthlyw');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('name', sql.NVarChar(40), req.body.tr_name)
+			.input('subject', sql.NVarChar(80), req.body.tr_subject)
+			.input('locationName', sql.NVarChar(40), req.body.lo_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.lo_address)
+			.input('locationZip', sql.NVarChar(40), req.body.lo_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.lo_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
+			.input('weekDay', sql.NVarChar(20), req.body.sc_weekDay)
+			.input('weekNr', sql.Int, req.body.sc_weekNr)
+			.input('fromStart', sql.BIT, req.body.sc_fromStart ? 1 : 0)
+			.input('skip', sql.Int, sc_skip)
+			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
