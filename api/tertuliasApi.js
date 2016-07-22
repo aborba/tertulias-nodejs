@@ -44,7 +44,11 @@ module.exports = function (configuration) {
 	    	.then(function(recordset) {
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-						'{ "rel": "create", "method": "POST", "href": "' + route + '" }, ' +
+						'{ "rel": "create_weekly", "method": "POST", "href": "' + route + '/weekly" }, ' +
+						'{ "rel": "create_monthly", "method": "POST", "href": "' + route + '/monthly" }, ' +
+						'{ "rel": "create_monthlyw", "method": "POST", "href": "' + route + '/monthlyw" }, ' +
+						'{ "rel": "create_yearly", "method": "POST", "href": "' + route + '/yearly" }, ' +
+						'{ "rel": "create_yearlyw", "method": "POST", "href": "' + route + '/yearlyw" }, ' +
 						'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 					']';
 			    var itemLinks = '[ ' +
