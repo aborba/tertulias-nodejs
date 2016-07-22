@@ -240,7 +240,7 @@ module.exports = function (configuration) {
 			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
-			.input('dayNr', sql.Int, req.body.sc_dayNr)
+			.input('dom', sql.Int, req.body.sc_dayNr)
 			.input('fromStart', sql.BIT, req.body.sc_fromStart ? 1 : 0)
 			.input('skip', sql.Int, req.body.sc_skip)
 			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
