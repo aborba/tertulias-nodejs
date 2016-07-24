@@ -158,7 +158,7 @@ module.exports = function (configuration) {
                 return next();
 			})
 		});
-	}
+	});
 
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in GET /tertulias/:tr_id');
