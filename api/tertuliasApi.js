@@ -121,6 +121,45 @@ module.exports = function (configuration) {
 	    });
 	});
 
+	router.get('/:tr_id/weekly', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/weekly');
+		var tr_id = req.params.tr_id;
+		var route = '/tertulias/' + tr_id + "/weekly";
+		if (isNaN(tr_id))
+			return next();
+
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('tertulia', sql.Int, tr_id)
+			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.query('SELECT' +
+					' wk_id AS id,' +
+					' wk_schedule AS scheduleId,' +
+					' wk_dow AS dow,' +
+					' wk_skip AS skip' +
+				' FROM Weekly' +
+					' INNER JOIN Schedules ON wk_schedule = sc_id' +
+					' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+				' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
+					' AND tr_id = @tertulia')
+			.then(function(recordset) {
+				var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
+						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" } ' +
+					']';
+                res.type('application/json');
+                var results = {};
+            	results['weekly'] = recordset[0];
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+			})
+		});
+	}
+
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in GET /tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
@@ -202,7 +241,6 @@ module.exports = function (configuration) {
 			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_Weekly_sid')
-			// .execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
 				if (recordsets.length == 0) {
 					res.status(201)	// 201: Created
