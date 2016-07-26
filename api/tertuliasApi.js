@@ -178,6 +178,7 @@ module.exports = function (configuration) {
 				req.results = results;
 				switch(results['tertulia'].scheduleName) {
 					case 'Weekly':
+						console.log('in weekly');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
 							new sql.Request()
@@ -194,6 +195,7 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['schedule'] = recordset[0];
+								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
 				                res.sendStatus(200);
@@ -202,6 +204,7 @@ module.exports = function (configuration) {
 						});
 						break;
 					case 'Monthly':
+						console.log('in monthly');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
 							new sql.Request()
@@ -219,6 +222,7 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['schedule'] = recordset[0];
+								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
 				                res.sendStatus(200);
@@ -227,6 +231,7 @@ module.exports = function (configuration) {
 						});
 						break;
 					case 'MonthlyW':
+						console.log('in monthlyw');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
 							new sql.Request()
@@ -245,6 +250,7 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['schedule'] = recordset[0];
+								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
 				                res.sendStatus(200);
@@ -252,6 +258,12 @@ module.exports = function (configuration) {
 							})
 						});
 						break;
+					default:
+						res.status(404)	// 404: NOT Found
+						.type('application/json')
+						.json( { result: 'Not Found' } );
+					return next('409');
+
 				}
 			})
 		});
