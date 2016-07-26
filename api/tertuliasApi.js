@@ -262,7 +262,7 @@ module.exports = function (configuration) {
 						res.status(404)	// 404: NOT Found
 						.type('application/json')
 						.json( { result: 'Not Found' } );
-					return next('409');
+					return next('404');
 
 				}
 			})
