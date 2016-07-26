@@ -130,6 +130,7 @@ module.exports = function (configuration) {
 
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
+			console.log('In place 1');
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
 			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
@@ -165,6 +166,7 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
+				console.log('In place 2');
                 var results = {};
             	results['tertulia'] = recordset[0];
 				var links = '[ ' +
