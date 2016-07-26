@@ -27,9 +27,9 @@ import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
 
 public class MonthlyActivity extends Activity implements Schedule, TertuliasApi {
 
-    public final static int REQUEST_CODE = MONTHLY_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = MONTHLY_RETURN_CODE;
 
-    private final static String MONTHLY_KEY = "Monthly_Key";
+    private final static String INSTANCE_KEY_MONTHLY = "monthly";
 
     private EditText dayVw;
     private ToggleButton fromEndVw;
@@ -47,7 +47,7 @@ public class MonthlyActivity extends Activity implements Schedule, TertuliasApi 
                 Util.IGNORE, Util.IGNORE, null, true);
 
         crMonthly = savedInstanceState != null ?
-                    (CrUiMonthly) savedInstanceState.getParcelable(MONTHLY_KEY) :
+                    (CrUiMonthly) savedInstanceState.getParcelable(INSTANCE_KEY_MONTHLY) :
                     new CrUiMonthly(-1, true, -1);
 
         dayVw = (EditText) findViewById(R.id.ma_day);
@@ -109,7 +109,7 @@ public class MonthlyActivity extends Activity implements Schedule, TertuliasApi 
         String dayNr = dayVw.getText().toString();
         if (dayNr != null)
             crMonthly.dayNr = Integer.parseInt(dayNr);
-        outState.putParcelable(MONTHLY_KEY, crMonthly);
+        outState.putParcelable(INSTANCE_KEY_MONTHLY, crMonthly);
         super.onSaveInstanceState(outState);
     }
 

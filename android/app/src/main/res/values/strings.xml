@@ -97,7 +97,10 @@
     <string name="new_tertulia_toast_success">Tertulia created</string>
     <string name="new_tertulia_toast_cancel">Tertulia creation cancelled</string>
     <string name="new_tertulia_toast_invalid_name">Tertulia name must be defined and unique.</string>
+    <string name="new_tertulia_toast_no_schedule_selected">No schedule selected.</string>
     <string name="new_tertulia_toast_schedule_creation_cancelled">Schedule creation cancelled.</string>
+
+    <string name="title_activity_place_presentation">Place Location</string>
 
     <string name="title_activity_edit_tertulia">Edit Tertulia</string>
     <string name="edit_tertulia_update_button">Update</string>

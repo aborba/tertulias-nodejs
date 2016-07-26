@@ -27,7 +27,7 @@ import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiCreateTertuliaWeekly;
@@ -36,7 +36,7 @@ import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleSelectionDialog;
 
 public class EditTertuliaActivity extends Activity implements TertuliasApi {
 
-    public final static int REQUEST_CODE = EDIT_TERTULIA_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = EDIT_TERTULIA_RETURN_CODE;
     public final static String SELF_LINK = LINK_SELF;
     public final static String LINKS = LINKS_LABEL;
     public final static String LINK_ACTION = LINK_UPDATE;
@@ -222,8 +222,8 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi {
         name = name.toLowerCase();
         Parcelable[] tertulias = getIntent().getParcelableArrayExtra(MY_TERTULIAS);
         for (Parcelable tertulia : tertulias) {
-            String s = ((Tertulia) tertulia).name;
-            if (((Tertulia) tertulia).name.toLowerCase().equals(name))
+            String s = ((ReadTertulia) tertulia).name;
+            if (((ReadTertulia) tertulia).name.toLowerCase().equals(name))
                 return false;
         }
         return true;

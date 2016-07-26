@@ -13,16 +13,16 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.TertuliaDetailsActivity;
 
 public class TertuliasArrayRvAdapter extends RecyclerView.Adapter<TertuliasArrayRvAdapter.ViewHolder> {
 
     private Activity ctx;
-    private Tertulia[] tertulias;
+    private ReadTertulia[] tertulias;
 
-    public TertuliasArrayRvAdapter(Activity ctx, Tertulia[] tertulias) {
+    public TertuliasArrayRvAdapter(Activity ctx, ReadTertulia[] tertulias) {
         this.ctx = ctx;
         this.tertulias = tertulias;
     }
@@ -44,7 +44,7 @@ public class TertuliasArrayRvAdapter extends RecyclerView.Adapter<TertuliasArray
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Tertulia tertulia = tertulias[position];
+        ReadTertulia tertulia = tertulias[position];
         holder.tertuliaName.setText(tertulia.name);
         holder.tertuliaSubject.setText(tertulia.subject);
         String nextEventStr = "";
@@ -96,7 +96,7 @@ public class TertuliasArrayRvAdapter extends RecyclerView.Adapter<TertuliasArray
                 Intent intent = new Intent(ctx, TertuliaDetailsActivity.class);
                 intent.putExtra(TertuliaDetailsActivity.SELF_LINK, selectedLink);
                 intent.putExtra(TertuliaDetailsActivity.LINKS_LABEL, holder.links);
-                ctx.startActivityForResult(intent, TertuliaDetailsActivity.REQUEST_CODE);
+                ctx.startActivityForResult(intent, TertuliaDetailsActivity.ACTIVITY_REQUEST_CODE);
             }
         });
     }

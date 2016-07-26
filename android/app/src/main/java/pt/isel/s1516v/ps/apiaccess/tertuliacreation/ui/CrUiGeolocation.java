@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 
@@ -12,14 +13,24 @@ public class CrUiGeolocation implements Parcelable {
     public final double latitude, longitude;
     public final boolean isLatitude, isLongitude;
 
-    public CrUiGeolocation(EditText latitudeView, EditText longitudeView) {
-        String value = latitudeView.getText().toString();
-        isLatitude = !TextUtils.isEmpty(value);
-        latitude = Util.string2Double(value);
+    public CrUiGeolocation(Double latitude, boolean isLatitude, Double longitude, boolean isLongitude) {
+        this.latitude = latitude;
+        this.isLatitude = isLatitude;
+        this.longitude = longitude;
+        this.isLongitude = isLongitude;
+    }
 
-        value = longitudeView.getText().toString();
-        isLongitude = !TextUtils.isEmpty(value);
-        longitude = Util.string2Double(value);
+    public CrUiGeolocation(Double latitude, Double longitude) {
+        this(latitude, true, longitude, true);
+    }
+
+    public CrUiGeolocation(String latitude, String longitude) {
+        this(Util.string2Double(latitude), !TextUtils.isEmpty(latitude),
+                Util.string2Double(longitude), !TextUtils.isEmpty(longitude));
+    }
+
+    public CrUiGeolocation(TextView latitude, TextView longitude) {
+        this(latitude.getText().toString(), longitude.getText().toString());
     }
 
     public void updateViews(EditText latitudeView, EditText longitudeView) {

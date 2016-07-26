@@ -21,9 +21,9 @@ import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
 public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
 
-    public final static int REQUEST_CODE = WEEKLY_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = WEEKLY_RETURN_CODE;
 
-    private final static String WEEKLY_KEY = "Weekly_Key";
+    private final static String INSTANCE_KEY_WEEKLY = "weekly";
 
     private CrUiWeekly crWeekly;
 
@@ -39,7 +39,7 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
                 Util.IGNORE, Util.IGNORE, null, true);
 
         crWeekly = savedInstanceState != null ?
-                    (CrUiWeekly) savedInstanceState.getParcelable(WEEKLY_KEY) :
+                    (CrUiWeekly) savedInstanceState.getParcelable(INSTANCE_KEY_WEEKLY) :
                     new CrUiWeekly(-1, -1);
 
         setupSpinner(this, (Spinner) findViewById(R.id.wa_weekDay),
@@ -75,7 +75,7 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(WEEKLY_KEY, crWeekly);
+        outState.putParcelable(INSTANCE_KEY_WEEKLY, crWeekly);
         super.onSaveInstanceState(outState);
     }
 

@@ -46,7 +46,7 @@ public class SearchPublicTertuliaActivity extends Activity
         , GoogleApiClient.ConnectionCallbacks
         , GoogleMap.OnMyLocationButtonClickListener {
 
-    public final static int REQUEST_CODE = SEARCH_PUBLIC_TERTULIA_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = SEARCH_PUBLIC_TERTULIA_RETURN_CODE;
     public static final String DATA_SEARCH = "SubscribeTertulia_Search";
 
     private static final String APILINKS_KEY = LINK_SEARCHPUBLIC;
@@ -128,7 +128,7 @@ public class SearchPublicTertuliaActivity extends Activity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PublicTertuliaDetailsActivity.REQUEST_CODE) {
+        if (requestCode == PublicTertuliaDetailsActivity.ACTIVITY_REQUEST_CODE) {
             View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
             if (resultCode == RESULT_SUCCESS) {
                 Util.longSnack(rootView, R.string.public_tertulia_details_subscribe_success);

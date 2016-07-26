@@ -50,6 +50,11 @@
             android:label="@string/title_activity_new_tertulia"
             android:parentActivityName=".tertuliacreation.NewTertuliaActivity" />
 
+        <activity
+            android:name=".tertuliadetails.PlacePresentationActivity"
+            android:label="@string/title_activity_place_presentation"
+            android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity" />
+
         <activity android:name=".EditUserProfileActivity" />
 
         <activity android:name=".tertuliacreation.WeeklyActivity" />

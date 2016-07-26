@@ -2,24 +2,29 @@ package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
+import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
 
 public class Geolocation implements Parcelable {
 
-    public final double latitude;
-    public final double longitude;
+    public final double latitude, longitude;
+    public final boolean isLatitude, isLongitude;
 
     public Geolocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+        isLatitude = isLongitude = true;
     }
 
     public Geolocation(String latitude, String longitude) {
-        this.latitude = Double.parseDouble(latitude == null ? "0" : latitude);
-        this.longitude = Double.parseDouble(longitude == null ? "0" : longitude);
+        isLatitude = !TextUtils.isEmpty(latitude);
+        this.latitude = Util.string2Double(latitude);
+        isLongitude = !TextUtils.isEmpty(longitude);
+        this.longitude = Util.string2Double(longitude);
     }
 
     public Geolocation(RTertulia rtertulia) {
@@ -34,11 +39,21 @@ public class Geolocation implements Parcelable {
         this(core.latitude, core.longitude);
     }
 
+    public String getLatitude() {
+        return isLatitude ? String.valueOf(latitude) : "";
+    }
+
+    public String getLongitude() {
+        return isLongitude ? String.valueOf(longitude) : "";
+    }
+
     // region Parcelable
 
     protected Geolocation(Parcel in) {
         latitude = in.readDouble();
+        isLatitude = in.readByte() != 0;
         longitude = in.readDouble();
+        isLongitude = in.readByte() != 0;
     }
 
     public static final Creator<Geolocation> CREATOR = new Creator<Geolocation>() {
@@ -61,7 +76,9 @@ public class Geolocation implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(latitude);
+        dest.writeByte((byte) (isLatitude ? 1 : 0));
         dest.writeDouble(longitude);
+        dest.writeByte((byte) (isLongitude ? 1 : 0));
     }
 
     // endregion

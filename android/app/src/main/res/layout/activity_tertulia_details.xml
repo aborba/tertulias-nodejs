@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,13 +24,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/tda_title_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
-            android:id="@+id/tda_title_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -115,6 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10sp"
                 android:layout_marginTop="6sp"
+                android:layout_marginBottom="16dp"
                 android:enabled="false"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_private_hint"
@@ -123,143 +124,142 @@
 
             <!-- ApiTertulia Location -->
 
-            <!-- ApiTertulia Location Name -->
-
-            <TextView
-                android:id="@+id/tda_LocationNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_LocationName"
-                android:singleLine="true"
-                android:text="@string/tertulia_details_location" />
-
-            <TextView
-                android:id="@+id/tda_LocationName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingEnd="10dp"
-                android:paddingStart="10dp"
-                android:singleLine="false"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="18sp" />
-
-            <!-- ApiTertulia Location Address -->
-
-            <TextView
-                android:id="@+id/tda_AddressLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Address"
-                android:singleLine="true"
-                android:text="@string/new_tertulia_location_address_label" />
-
-            <TextView
-                android:id="@+id/tda_Address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingEnd="10dp"
-                android:paddingStart="10dp"
-                android:singleLine="false"
-                android:textColor="@android:color/primary_text_light"
-                android:textSize="18sp" />
-
-            <!-- ApiTertulia Location Zip, City & Country -->
-
-            <TextView
-                android:id="@+id/tda_ZipCityCountryLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_ZipCityCountryLayout"
-                android:singleLine="true"
-                android:text="@string/new_tertulia_location_zipcountry_label" />
-
             <LinearLayout
-                android:id="@+id/tda_ZipCityCountryLayout"
+                android:id="@+id/tda_locationLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <!-- ApiTertulia Location Name -->
 
                 <TextView
-                    android:id="@+id/tda_Zip"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/primary_text_light"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tda_City"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/primary_text_light"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/tda_Country"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
-                    android:singleLine="true"
-                    android:textColor="@android:color/primary_text_light"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
-
-            <!-- ApiTertulia Location Lat & Lon -->
-
-            <TextView
-                android:id="@+id/tda_LatitudeLongitudeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_LatitudeLongitudeLayout"
-                android:singleLine="true"
-                android:text="@string/new_tertulia_location_coordinates_label" />
-
-            <LinearLayout
-                android:id="@+id/tda_LatitudeLongitudeLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tda_Latitude"
+                    android:id="@+id/tda_LocationNameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="10dp"
-                    android:paddingStart="10dp"
+                    android:labelFor="@+id/tda_LocationName"
                     android:singleLine="true"
-                    android:textColor="@android:color/primary_text_light"
-                    android:textSize="18sp" />
+                    android:text="@string/tertulia_details_location" />
 
                 <TextView
-                    android:id="@+id/tda_Longitude"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tda_LocationName"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:paddingEnd="10dp"
                     android:paddingStart="10dp"
-                    android:singleLine="true"
+                    android:singleLine="false"
                     android:textColor="@android:color/primary_text_light"
                     android:textSize="18sp" />
 
-                <Button
+                <!-- ApiTertulia Location Address -->
+
+                <TextView
+                    android:id="@+id/tda_AddressLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="16dp"
-                    android:layout_weight="0.5"
-                    android:onClick="onClickMapLookup"
-                    android:text="@string/tertulia_details_map_button_label" />
+                    android:labelFor="@+id/tda_Address"
+                    android:singleLine="true"
+                    android:text="@string/new_tertulia_location_address_label" />
+
+                <TextView
+                    android:id="@+id/tda_Address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:singleLine="false"
+                    android:textColor="@android:color/primary_text_light"
+                    android:textSize="18sp" />
+
+                <!-- ApiTertulia Location Zip, City & Country -->
+
+                <TextView
+                    android:id="@+id/tda_ZipCityCountryLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/tda_ZipCityCountryLayout"
+                    android:singleLine="true"
+                    android:text="@string/new_tertulia_location_zipcountry_label" />
+
+                <LinearLayout
+                    android:id="@+id/tda_ZipCityCountryLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tda_Zip"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/primary_text_light"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tda_City"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/primary_text_light"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tda_Country"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/primary_text_light"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
+
+                <!-- ApiTertulia Location Lat & Lon -->
+
+                <TextView
+                    android:id="@+id/tda_LatitudeLongitudeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/tda_LatitudeLongitudeLayout"
+                    android:singleLine="true"
+                    android:text="@string/new_tertulia_location_coordinates_label" />
+
+                <LinearLayout
+                    android:id="@+id/tda_LatitudeLongitudeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tda_Latitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/primary_text_light"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/tda_Longitude"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:paddingEnd="10dp"
+                        android:paddingStart="10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/primary_text_light"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -286,7 +286,21 @@
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/tda_mapLookupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:onClick="onClickMapLookup"
+        android:src="@android:drawable/ic_dialog_map"
+        android:tint="#FFFFFF"
+        app:backgroundTint="#006600"
+        app:fabSize="mini"
+        app:layout_anchor="@id/tda_LocationName"
+        app:layout_anchorGravity="center_vertical|end" />
 
     <LinearLayout
         style="?android:attr/buttonBarStyle"
@@ -343,4 +357,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -11,15 +11,15 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
-public class TertuliasArrayAdapter extends ArrayAdapter<Tertulia> {
+public class TertuliasArrayAdapter extends ArrayAdapter<ReadTertulia> {
 
     private Activity ctx;
-    private Tertulia[] tertulias;
+    private ReadTertulia[] tertulias;
 
-    public TertuliasArrayAdapter(Activity ctx, Tertulia[] tertulias) {
+    public TertuliasArrayAdapter(Activity ctx, ReadTertulia[] tertulias) {
         super(ctx, -1, tertulias);
         this.ctx = ctx;
         this.tertulias = tertulias;
@@ -72,7 +72,7 @@ public class TertuliasArrayAdapter extends ArrayAdapter<Tertulia> {
             messageLabel = (TextView) ctx.findViewById(viewIds[i]);
         }
 
-        public void updateViews(Tertulia tertulia) {
+        public void updateViews(ReadTertulia tertulia) {
             tertuliaName.setText(tertulia.name);
 
             if (TextUtils.isEmpty(tertulia.subject)) tertuliaSubject.setVisibility(View.INVISIBLE);

@@ -3,6 +3,9 @@ package pt.isel.s1516v.ps.apiaccess.tertuliadetails;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -11,7 +14,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -28,21 +30,21 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
+import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
+import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 
 public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
-    public final static int REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
     public final static String SELF_LINK = "SELF_LINK";
     private final static String TERTULIA = "tertulia";
-    private TextView titleView, subjectView, roleView, locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView, scheduleView;
-    private CheckBox isPrivateView;
-    private Tertulia tertulia;
-    private View rootView;
+    DtUiManager uiManager;
+    private ReadTertulia tertulia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,26 +54,21 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA))
             tertulia = savedInstanceState.getParcelable(TERTULIA);
 
+        uiManager = new DtUiManager(this,
+                R.id.tda_Title, R.id.tda_Subject,
+                R.id.tda_Role,
+                R.id.tda_LocationName, R.id.tda_Address, R.id.tda_Zip, R.id.tda_City, R.id.tda_Country,
+                R.id.tda_Latitude, R.id.tda_Longitude,
+                R.id.tda_Schedule,
+                R.id.tda_IsPrivate);
+
         Util.setupToolBar(this, (Toolbar) findViewById(R.id.tda_toolbar),
                 R.string.title_activity_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 
         ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
-        titleView = (TextView) findViewById(R.id.tda_Title);
-        subjectView = (TextView) findViewById(R.id.tda_Subject);
-        roleView = (TextView) findViewById(R.id.tda_Role);
-        locationView = (TextView) findViewById(R.id.tda_LocationName);
-        addressView = (TextView) findViewById(R.id.tda_Address);
-        zipView = (TextView) findViewById(R.id.tda_Zip);
-        cityView = (TextView) findViewById(R.id.tda_City);
-        countryView = (TextView) findViewById(R.id.tda_Country);
-        latitudeView = (TextView) findViewById(R.id.tda_Latitude);
-        longitudeView = (TextView) findViewById(R.id.tda_Longitude);
-        scheduleView = (TextView) findViewById(R.id.tda_Schedule);
-        isPrivateView = (CheckBox) findViewById(R.id.tda_IsPrivate);
-        rootView = getWindow().getDecorView().findViewById(android.R.id.content);
 
-        if (tertulia != null) paintUi(tertulia);
+        if (tertulia != null) uiManager.present(tertulia);
         else {
             MobileServiceClient cli = Util.getMobileServiceClient(this);
             ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink.href, null, selfLink.method, null);
@@ -98,20 +95,21 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     public void onClickMapLookup(View view) {
-        try {
-            PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            String latitude = latitudeView.getText().toString();
-            String longitude = longitudeView.getText().toString();
-            if (TextUtils.isEmpty(latitude) || TextUtils.isEmpty(longitude)) {
-                Util.longSnack(view, R.string.tertulia_details_undefined_coordinates);
-                return;
-            }
-            LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-            builder.setLatLngBounds(new LatLngBounds(latLng, latLng));
-            startActivity(builder.build(this));
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            e.printStackTrace();
+        if (!uiManager.isGeo()) {
+            Util.longSnack(view, R.string.tertulia_details_undefined_coordinates);
+            return;
         }
+
+        String snippet = String.format("%s, %s\n(%s6, %s6)",
+                uiManager.addressView.getText().toString(),
+                uiManager.cityView.getText().toString(),
+                uiManager.getLatitudeData(), uiManager.getLongitudeData());
+        Intent intent = new Intent(this, PlacePresentationActivity.class);
+        intent.putExtra(PlacePresentationActivity.INTENT_LATITUDE, GeoPosition.getLatitude(uiManager));
+        intent.putExtra(PlacePresentationActivity.INTENT_LONGITUDE, GeoPosition.getLongitude(uiManager));
+        intent.putExtra(PlacePresentationActivity.INTENT_LABEL, uiManager.locationView.getText().toString());
+        intent.putExtra(PlacePresentationActivity.INTENT_SNIPPET, snippet);
+        startActivity(intent);
     }
 
     public void onClickSubmitEvent(View view) {
@@ -157,7 +155,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                                 return;
                             }
                         }
-                        Util.longSnack(rootView, "Oops! Unsubscribe link not found."); // TODO: strings.xml
+                        Util.longSnack(uiManager.getRootView(), "Oops! Unsubscribe link not found."); // TODO: strings.xml
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
@@ -194,44 +192,54 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         return error.getStatusCodeMessage(ctx);
     }
 
-    private class TertuliaPresentation implements FutureCallback<JsonElement> {
+    private class FetchSchedule implements FutureCallback<JsonElement> {
         @Override
         public void onFailure(Throwable e) {
             Context ctx = TertuliaDetailsActivity.this;
-            Util.longSnack(rootView, getEMsg(ctx, e.getMessage()));
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
         }
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, Tertulia>() {
+            new AsyncTask<JsonElement, Void, ReadTertulia>() {
                 @Override
-                protected Tertulia doInBackground(JsonElement... params) {
+                protected ReadTertulia doInBackground(JsonElement... params) {
                     ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
-                    tertulia = new Tertulia(apiTertulia.tertulia, apiTertulia.links);
+                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
                     return tertulia;
                 }
 
                 @Override
-                protected void onPostExecute(Tertulia tertulia) {
-                    paintUi(tertulia);
+                protected void onPostExecute(ReadTertulia tertulia) {
+                    uiManager.present(tertulia);
                 }
             }.execute(result);
         }
     }
 
-    private void paintUi(Tertulia tertulia) {
-        titleView.setText(tertulia.name);
-        subjectView.setText(tertulia.subject);
-        locationView.setText(tertulia.location.toString());
-        String scheduleText;
-        if (!TextUtils.isEmpty(tertulia.scheduleType)) {
-            scheduleText = tertulia.scheduleType;
-            if (!TextUtils.isEmpty(tertulia.scheduleDescription))
-                scheduleText += " - " + tertulia.scheduleDescription;
-        } else scheduleText = tertulia.scheduleDescription;
-        scheduleView.setText(scheduleText);
-        roleView.setText(tertulia.role_type);
-        isPrivateView.setChecked(tertulia.isPrivate);
+    private class TertuliaPresentation implements FutureCallback<JsonElement> {
+        @Override
+        public void onFailure(Throwable e) {
+            Context ctx = TertuliaDetailsActivity.this;
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
+        }
+
+        @Override
+        public void onSuccess(JsonElement result) {
+            new AsyncTask<JsonElement, Void, ReadTertulia>() {
+                @Override
+                protected ReadTertulia doInBackground(JsonElement... params) {
+                    ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
+                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
+                    return tertulia;
+                }
+
+                @Override
+                protected void onPostExecute(ReadTertulia tertulia) {
+                    uiManager.present(tertulia);
+                }
+            }.execute(result);
+        }
     }
 
 }

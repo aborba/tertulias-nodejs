@@ -23,9 +23,9 @@ import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 
 public class MonthlywActivity extends Activity implements Schedule, TertuliasApi {
 
-    public final static int REQUEST_CODE = MONTHLYW_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = MONTHLYW_RETURN_CODE;
 
-    private final static String MONTHLYW_KEY = "MonthlyW_Key";
+    private final static String INSTANCE_KEY_MONTHLYW = "monthlyw";
 
     private ToggleButton fromEndVw;
     private CrUiMonthlyW crMonthlyW;
@@ -42,7 +42,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 Util.IGNORE, Util.IGNORE, null, true);
 
         crMonthlyW = savedInstanceState != null ?
-                    (CrUiMonthlyW) savedInstanceState.getParcelable(MONTHLYW_KEY) :
+                    (CrUiMonthlyW) savedInstanceState.getParcelable(INSTANCE_KEY_MONTHLYW) :
                     new CrUiMonthlyW(-1, -1, true, -1);
 
         setupSpinner(this, (Spinner) findViewById(R.id.mwa_weekDay),
@@ -104,7 +104,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MONTHLYW_KEY, crMonthlyW);
+        outState.putParcelable(INSTANCE_KEY_MONTHLYW, crMonthlyW);
         super.onSaveInstanceState(outState);
     }
 

@@ -1,5 +1,10 @@
 package pt.isel.s1516v.ps.apiaccess.support.remote;
 
+import android.content.Context;
+
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
+
 public class ApiCreateTertuliaMonthlyW extends ApiCreateTertulia {
 
     @com.google.gson.annotations.SerializedName("weekday")
@@ -25,6 +30,14 @@ public class ApiCreateTertuliaMonthlyW extends ApiCreateTertulia {
         this.weekNr = weekNr;
         this.fromStart = fromStart;
         this.skip = skip;
+    }
+
+    public ApiCreateTertuliaMonthlyW(Context ctx, CrUiTertulia crUiTertulia, CrUiMonthlyW crUiMonthlyW) {
+        this(crUiTertulia.name, crUiTertulia.subject,
+                crUiTertulia.crUiLocation.name, crUiTertulia.crUiLocation.address.address, crUiTertulia.crUiLocation.address.zip, crUiTertulia.crUiLocation.address.city, crUiTertulia.crUiLocation.address.country,
+                String.valueOf(crUiTertulia.crUiLocation.geo.latitude), String.valueOf(crUiTertulia.crUiLocation.geo.longitude),
+                crUiMonthlyW.getWeekDay(ctx), crUiMonthlyW.weekNr, crUiMonthlyW.isFromStart, crUiMonthlyW.skip,
+                crUiTertulia.isPrivate);
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class CrUiAddress implements Parcelable {
 
@@ -12,11 +13,18 @@ public class CrUiAddress implements Parcelable {
     public final String city;
     public final String country;
 
-    public CrUiAddress(EditText addressView, EditText zipView, EditText cityView, EditText countryView) {
-        address = addressView.getText().toString();
-        zip = zipView.getText().toString();
-        city = cityView.getText().toString();
-        country = countryView.getText().toString();
+    public CrUiAddress(String address, String zip, String city, String country) {
+        this.address = address;
+        this.zip = zip;
+        this.city = city;
+        this.country = country;
+    }
+
+    public CrUiAddress(TextView addressView, TextView zipView, TextView cityView, TextView countryView) {
+        this(addressView.getText().toString(),
+                zipView.getText().toString(),
+                cityView.getText().toString(),
+                countryView.getText().toString());
     }
 
     public CrUiAddress(String fullAddress) {

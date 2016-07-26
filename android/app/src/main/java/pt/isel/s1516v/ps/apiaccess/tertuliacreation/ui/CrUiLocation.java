@@ -3,6 +3,7 @@ package pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class CrUiLocation implements Parcelable {
 
@@ -10,8 +11,15 @@ public class CrUiLocation implements Parcelable {
     public CrUiAddress address;
     public CrUiGeolocation geo;
 
-    public CrUiLocation(EditText locationView, EditText addressView, EditText zipView, EditText cityView, EditText countryView,
-                        EditText latitudeView, EditText longitudeView) {
+    public CrUiLocation(String locationView, String addressView, String zipView, String cityView, String countryView,
+                        String latitudeView, String longitudeView) {
+        name = locationView;
+        address = new CrUiAddress(addressView, zipView, cityView, countryView);
+        geo = new CrUiGeolocation(latitudeView, longitudeView);
+    }
+
+    public CrUiLocation(TextView locationView, TextView addressView, TextView zipView, TextView cityView, TextView countryView,
+                        TextView latitudeView, TextView longitudeView) {
         name = locationView.getText().toString();
         address = new CrUiAddress(addressView, zipView, cityView, countryView);
         geo = new CrUiGeolocation(latitudeView, longitudeView);

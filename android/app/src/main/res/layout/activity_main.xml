@@ -144,7 +144,7 @@
             android:layout_marginTop="12dp" />
 
         <ListView
-            android:id="@+id/planets_list"
+            android:id="@+id/menu_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

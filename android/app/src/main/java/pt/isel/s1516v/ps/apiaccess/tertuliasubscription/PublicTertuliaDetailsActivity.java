@@ -24,19 +24,19 @@ import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Tertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
 
 public class PublicTertuliaDetailsActivity extends Activity implements TertuliasApi {
 
-    public final static int REQUEST_CODE = SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE;
     public final static String SELF_LINK = LINK_SELF;
     public final static String LINKS = LINKS_LABEL;
     public final static String LINK_ACTION = LINK_SUBSCRIBE;
     private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
     private TextView titleView, subjectView, locationView, scheduleView;
-    private Tertulia tertulia;
+    private ReadTertulia tertulia;
     private View rootView;
 
     // region Activity Life Cycle
@@ -156,23 +156,23 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, Tertulia>(){
+            new AsyncTask<JsonElement, Void, ReadTertulia>(){
                 @Override
-                protected Tertulia doInBackground(JsonElement... params) {
+                protected ReadTertulia doInBackground(JsonElement... params) {
                     ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
-                    tertulia = new Tertulia(apiTertulia.tertulia, apiTertulia.links);
+                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
                     return tertulia;
                 }
 
                 @Override
-                protected void onPostExecute(Tertulia tertulia) {
+                protected void onPostExecute(ReadTertulia tertulia) {
                     paintUi(tertulia);
                 }
             }.execute(result);
         }
     }
 
-    private void paintUi(Tertulia tertulia) {
+    private void paintUi(ReadTertulia tertulia) {
         titleView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
         locationView.setText(tertulia.location.toString());

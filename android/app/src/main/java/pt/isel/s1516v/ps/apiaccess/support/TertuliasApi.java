@@ -20,6 +20,11 @@ public interface TertuliasApi {
     // Links
     String LINK_SELF = "self";
     String LINK_CREATE = "create";
+    String LINK_CREATE_WEEKLY = "create_weekly";
+    String LINK_CREATE_MONTHLY = "create_monthly";
+    String LINK_CREATE_MONTHLYW = "create_monthlyw";
+    String LINK_CREATE_YEARLY = "create_yearly";
+    String LINK_CREATE_YEARLYW = "create_yearlyw";
     String LINK_UPDATE = "update";
     String LINK_DELETE = "delete";
     String LINK_SEARCHPUBLIC = "searchPublic";

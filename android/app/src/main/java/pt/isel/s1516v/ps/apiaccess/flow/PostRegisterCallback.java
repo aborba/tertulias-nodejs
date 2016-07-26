@@ -49,4 +49,5 @@ public class PostRegisterCallback implements FutureCallback<JsonElement> {
         String message = t.getMessage();
         Util.longSnack(rootView, message);
     }
+
 }

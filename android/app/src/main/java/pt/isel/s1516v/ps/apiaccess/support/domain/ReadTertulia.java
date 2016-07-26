@@ -14,7 +14,7 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
-public class Tertulia implements Parcelable {
+public class ReadTertulia implements Parcelable {
 
     public final String id;
     public final String name;
@@ -29,7 +29,7 @@ public class Tertulia implements Parcelable {
     public int messagesCount;
     public ApiLink[] links;
 
-    public Tertulia(ApiTertuliaListItem apiTertuliaListItem) {
+    public ReadTertulia(ApiTertuliaListItem apiTertuliaListItem) {
         id = apiTertuliaListItem.id;
         name = apiTertuliaListItem.name;
         subject = apiTertuliaListItem.subject;
@@ -49,7 +49,7 @@ public class Tertulia implements Parcelable {
         links = apiTertuliaListItem.links;
     }
 
-    public Tertulia(ApiTertuliaCore core, ApiLink[] links) {
+    public ReadTertulia(ApiTertuliaCore core, ApiLink[] links) {
         id = core.id;
         name = core.name;
         subject = core.subject;
@@ -63,7 +63,7 @@ public class Tertulia implements Parcelable {
         this.links = links;
     }
 
-    public Tertulia(RTertulia rtertulia) {
+    public ReadTertulia(RTertulia rtertulia) {
         id = rtertulia.id;
         name = rtertulia.name;
         subject = rtertulia.subject;
@@ -94,13 +94,13 @@ public class Tertulia implements Parcelable {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        Tertulia other = (Tertulia) obj;
-        return obj instanceof Tertulia && other.id == this.id && other.name == this.name;
+        ReadTertulia other = (ReadTertulia) obj;
+        return obj instanceof ReadTertulia && other.id == this.id && other.name == this.name;
     }
 
     // region Parcelable
 
-    protected Tertulia(Parcel in) {
+    protected ReadTertulia(Parcel in) {
         id = in.readString();
         name = in.readString();
         subject = in.readString();
@@ -113,15 +113,15 @@ public class Tertulia implements Parcelable {
         messagesCount = in.readInt();
     }
 
-    public static final Creator<Tertulia> CREATOR = new Creator<Tertulia>() {
+    public static final Creator<ReadTertulia> CREATOR = new Creator<ReadTertulia>() {
         @Override
-        public Tertulia createFromParcel(Parcel in) {
-            return new Tertulia(in);
+        public ReadTertulia createFromParcel(Parcel in) {
+            return new ReadTertulia(in);
         }
 
         @Override
-        public Tertulia[] newArray(int size) {
-            return new Tertulia[size];
+        public ReadTertulia[] newArray(int size) {
+            return new ReadTertulia[size];
         }
     };
 

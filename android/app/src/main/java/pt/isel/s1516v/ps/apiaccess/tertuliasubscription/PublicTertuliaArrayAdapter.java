@@ -62,7 +62,7 @@ public class PublicTertuliaArrayAdapter extends RecyclerView.Adapter<PublicTertu
                 Intent intent = new Intent(ctx, PublicTertuliaDetailsActivity.class);
                 intent.putExtra(PublicTertuliaDetailsActivity.SELF_LINK, selectedLink);
                 intent.putExtra(PublicTertuliaDetailsActivity.LINKS, publicTertulia.links);
-                ctx.startActivityForResult(intent, PublicTertuliaDetailsActivity.REQUEST_CODE);
+                ctx.startActivityForResult(intent, PublicTertuliaDetailsActivity.ACTIVITY_REQUEST_CODE);
             }
         });
     }

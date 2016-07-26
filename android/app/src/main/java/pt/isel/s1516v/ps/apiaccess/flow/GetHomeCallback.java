@@ -65,4 +65,5 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
         String message = t.getMessage();
         Util.longSnack(rootView, message);
     }
+
 }

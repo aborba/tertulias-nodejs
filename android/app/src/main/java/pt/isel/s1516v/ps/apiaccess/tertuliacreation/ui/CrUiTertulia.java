@@ -18,16 +18,26 @@ public class CrUiTertulia implements Parcelable {
     public final int scheduleType;
     public final CrUiSchedule crUiSchedule;
 
-    public CrUiTertulia(EditText titleView, EditText subjectView,
-                        EditText locationView, EditText addressView, EditText zipView, EditText cityView, EditText countryView, EditText latitudeView, EditText longitudeView,
+    public CrUiTertulia(String name, String subject,
+                        CrUiLocation crUiLocation,
                         int scheduleType, CrUiSchedule crUiSchedule,
-                        CheckBox privacyView) {
-        name = titleView.getText().toString();
-        subject = subjectView.getText().toString();
-        isPrivate = privacyView.isChecked();
-        crUiLocation = new CrUiLocation(locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView);
+                        boolean isPrivate) {
+        this.name = name;
+        this.subject = subject;
+        this.crUiLocation = crUiLocation;
         this.scheduleType = scheduleType;
         this.crUiSchedule = crUiSchedule;
+        this.isPrivate = isPrivate;
+    }
+
+    public CrUiTertulia(TextView titleView, TextView subjectView,
+                        TextView locationView, TextView addressView, TextView zipView, TextView cityView, TextView countryView, TextView latitudeView, TextView longitudeView,
+                        int scheduleType, CrUiSchedule crUiSchedule,
+                        CheckBox privacyView) {
+        this(titleView.getText().toString(), subjectView.getText().toString(),
+                new CrUiLocation(locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView),
+                scheduleType, crUiSchedule,
+                privacyView.isChecked());
     }
 
     public void updateViews(EditText titleView, EditText subjectView,
