@@ -201,9 +201,8 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['schedule'] = recordset[0];
-				                res.type('application/json');
-				            	results['tertulia'] = recordset[0];
 				            	console.log(results);
+				                res.type('application/json');
 				                res.json(results);
 				                res.sendStatus(200);
 				                return next();
