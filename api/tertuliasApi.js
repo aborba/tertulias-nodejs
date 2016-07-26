@@ -203,7 +203,7 @@ module.exports = function (configuration) {
 							})
 						});
 						break;
-					case 'Monthly':
+					case 'MonthlyD':
 						console.log('in monthly');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
