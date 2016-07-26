@@ -121,45 +121,6 @@ module.exports = function (configuration) {
 	    });
 	});
 
-	router.get('/:tr_id/weekly', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/weekly');
-		var tr_id = req.params.tr_id;
-		var route = '/tertulias/' + tr_id + "/weekly";
-		if (isNaN(tr_id))
-			return next();
-
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('tertulia', sql.Int, tr_id)
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
-			.query('SELECT' +
-					' wk_id AS id,' +
-					' wk_schedule AS scheduleId,' +
-					' wk_dow AS dow,' +
-					' wk_skip AS skip' +
-				' FROM Weekly' +
-					' INNER JOIN Schedules ON wk_schedule = sc_id' +
-					' INNER JOIN Tertulias ON tr_schedule = sc_id' +
-				' WHERE tr_is_cancelled = 0 AND us_sid = @sid' +
-					' AND tr_id = @tertulia')
-			.then(function(recordset) {
-				var links = '[ ' +
-						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
-						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" } ' +
-					']';
-                res.type('application/json');
-                var results = {};
-            	results['weekly'] = recordset[0];
-                results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-			})
-		});
-	});
-
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in GET /tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
@@ -169,6 +130,7 @@ module.exports = function (configuration) {
 
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
+			console.log('In place 1');
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
 			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
@@ -176,6 +138,8 @@ module.exports = function (configuration) {
 					' tr_id AS id,' + // Tertulia
 					' tr_name AS name,' +
 					' tr_subject AS subject,' +
+					' tr_is_private AS isPrivate, ' +  // Privacy
+					' _Member.nv_name AS role,' + // Role
 					' lo_name AS location,' + // Location
 					' lo_address AS address,' +
 					' lo_zip AS zip,' +
@@ -183,11 +147,9 @@ module.exports = function (configuration) {
 					' lo_country AS country,' +
 					' lo_latitude AS latitude,' +
 					' lo_longitude AS longitude,' +
-					' sc_type AS scheduleId,' + // Schedule
+					' tr_schedule AS schedule,' +  // Schedule
 					' _Schedule.nv_name AS scheduleName,' +
-					' _Schedule.nv_description AS scheduleDescription,' +
-					' tr_is_private AS private, ' +  // Private
-					' _Member.nv_name AS role' + // Role
+					' _Schedule.nv_description AS scheduleDescription' +
 				' FROM Tertulias' +
 					' INNER JOIN Locations ON tr_location = lo_id' +
 					' INNER JOIN Schedules ON tr_schedule = sc_id' +
@@ -196,7 +158,7 @@ module.exports = function (configuration) {
 					' LEFT JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
 					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
 				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR (tr_is_private = 0' +
-					' AND  tr_id NOT IN' +
+					' AND tr_id NOT IN' +
 						' (SELECT tr_id' +
 						' FROM Tertulias' +
 							' INNER JOIN Members ON mb_tertulia = tr_id' +
@@ -204,6 +166,9 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
+				console.log('In place 2');
+                var results = {};
+            	results['tertulia'] = recordset[0];
 				var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
@@ -211,13 +176,41 @@ module.exports = function (configuration) {
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
-                res.type('application/json');
-                var results = {};
-            	results['tertulia'] = recordset[0];
                 results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
+				req.results = results;
+				console.log('In place');
+				console.log(results);
+				console.log('In place');
+				switch(results['tertulia'].scheduleName) {
+					case 'MonthlyW':
+					    sql.connect(util.sqlConfiguration)
+					    .then(function() {
+							new sql.Request()
+							.input('schedule', sql.Int, recordset[0].schedule)
+							.input('tertulia', sql.Int, recordset[0].id)
+							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							.query('SELECT' +
+									' mw_id AS id,' +
+									' mw_dow AS weekday,' +
+									' mw_weeknr AS weeknr,' +
+									' mw_is_fromstart AS isFromStart,' +
+									' mw_skip AS skip' +
+								' FROM MonthlyW' +
+									' INNER JOIN Schedules ON mw_schedule = sc_id' +
+									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+								' WHERE tr_schedule = @schedule')
+							.then(function(recordset) {
+								results['schedule'] = recordset[0];
+				                res.type('application/json');
+				            	results['tertulia'] = recordset[0];
+				            	console.log(results);
+				                res.json(results);
+				                res.sendStatus(200);
+				                return next();
+							})
+						});
+						break;
+				}
 			})
 		});
 	});
