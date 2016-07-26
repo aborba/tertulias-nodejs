@@ -194,7 +194,7 @@ module.exports = function (configuration) {
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
-								results['schedule'] = recordset[0];
+								results['weekly'] = recordset[0];
 								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
@@ -221,7 +221,7 @@ module.exports = function (configuration) {
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
-								results['schedule'] = recordset[0];
+								results['monthly'] = recordset[0];
 								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
@@ -249,7 +249,7 @@ module.exports = function (configuration) {
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
-								results['schedule'] = recordset[0];
+								results['monthlyw'] = recordset[0];
 								console.log(results);
 				                res.type('application/json');
 				                res.json(results);
