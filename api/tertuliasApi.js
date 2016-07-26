@@ -130,7 +130,6 @@ module.exports = function (configuration) {
 
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
-			console.log('In place 1');
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
 			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
@@ -166,7 +165,6 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
-				console.log('In place 2');
                 var results = {};
             	results['tertulia'] = recordset[0];
 				var links = '[ ' +
@@ -178,10 +176,56 @@ module.exports = function (configuration) {
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
-				console.log('In place');
-				console.log(results);
-				console.log('In place');
 				switch(results['tertulia'].scheduleName) {
+					case 'Weekly':
+					    sql.connect(util.sqlConfiguration)
+					    .then(function() {
+							new sql.Request()
+							.input('schedule', sql.Int, recordset[0].schedule)
+							.input('tertulia', sql.Int, recordset[0].id)
+							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							.query('SELECT' +
+									' wk_id AS id,' +
+									' wk_dow AS weekday,' +
+									' wk_skip AS skip' +
+								' FROM Weekly' +
+									' INNER JOIN Schedules ON wk_schedule = sc_id' +
+									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+								' WHERE tr_schedule = @schedule')
+							.then(function(recordset) {
+								results['schedule'] = recordset[0];
+				                res.type('application/json');
+				                res.json(results);
+				                res.sendStatus(200);
+				                return next();
+							})
+						});
+						break;
+					case 'Monthly':
+					    sql.connect(util.sqlConfiguration)
+					    .then(function() {
+							new sql.Request()
+							.input('schedule', sql.Int, recordset[0].schedule)
+							.input('tertulia', sql.Int, recordset[0].id)
+							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							.query('SELECT' +
+									' md_id AS id,' +
+									' md_dom AS daynr,' +
+									' md_is_fromstart AS isFromStart,' +
+									' md_skip AS skip' +
+								' FROM MonthlyD' +
+									' INNER JOIN Schedules ON md_schedule = sc_id' +
+									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+								' WHERE tr_schedule = @schedule')
+							.then(function(recordset) {
+								results['schedule'] = recordset[0];
+				                res.type('application/json');
+				                res.json(results);
+				                res.sendStatus(200);
+				                return next();
+							})
+						});
+						break;
 					case 'MonthlyW':
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
@@ -201,7 +245,6 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['schedule'] = recordset[0];
-				            	console.log(results);
 				                res.type('application/json');
 				                res.json(results);
 				                res.sendStatus(200);
