@@ -176,6 +176,9 @@ module.exports = function (configuration) {
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
+				console.log('In place');
+				console.log(results);
+				console.log('In place');
 				switch(results['tertulia'].scheduleName) {
 					case 'MonthlyW':
 					    sql.connect(util.sqlConfiguration)
