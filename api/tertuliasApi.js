@@ -259,6 +259,7 @@ module.exports = function (configuration) {
 						});
 						break;
 					default:
+						console.log(results['tertulia'].scheduleName);
 						res.status(404)	// 404: NOT Found
 						.type('application/json')
 						.json( { result: 'Not Found' } );
