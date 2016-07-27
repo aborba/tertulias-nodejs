@@ -68,7 +68,7 @@ public class MaUiManager extends UiManager {
     // region UiManager
 
     @Override
-    public boolean isGeoData() {
+    public boolean isGeoCapability() {
         return false;
     }
 
@@ -78,8 +78,18 @@ public class MaUiManager extends UiManager {
     }
 
     @Override
+    public boolean isLatitude() {
+        return false;
+    }
+
+    @Override
     public String getLatitudeData() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isLongitude() {
+        return false;
     }
 
     @Override

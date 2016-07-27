@@ -80,11 +80,24 @@
     <string name="new_tertulia_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_next_button">Next</string>
+    <string-array name="new_tertulia_dialog_weekly_tostring" formatted="false">
+        <item>"Weekly schedule selected. The Tertulia events shall occur "</item>
+        <item>weekly</item>
+        <item>"every %d weeks"</item>
+        <item>", on %s"</item>
+    </string-array>
+    <string-array name="new_tertulia_dialog_monthly_tostring" formatted="false">
+        <item>"Monthly schedule selected. The Tertulia events shall occur "</item>
+        <item>monthly</item>
+        <item>"every %d months"</item>
+        <item>", on the %d%s day"</item>
+        <item>" counting from the end of the month"</item>
+    </string-array>
     <string-array name="new_tertulia_dialog_monthlyw_tostring" formatted="false">
         <item>"MonthlyW schedule selected. The Tertulia events shall occur "</item>
         <item>monthly</item>
-        <item>"every %s"</item>
-        <item>", on %s of the %s"</item>
+        <item>"every %d months"</item>
+        <item>", on %s of the %d week"</item>
         <item>" counting from the end of the month"</item>
     </string-array>
     <string-array name="new_tertulia_dialog_schedules">
@@ -179,38 +192,38 @@
     <string name="new_monthly_day_label">"Day of the month"</string>
     <string name="new_monthly_day_hint">"[1-31]"</string>
     <string name="new_monthly_fromend_label">"Count days from the end of the month"</string>
-    <string-array name="new_monthly_daynr">
-        <item>" 1<sup>st</sup> day"</item>
-        <item>" 2<sup>nd</sup> day"</item>
-        <item>" 3<sup>rd</sup> day"</item>
-        <item>" 4<sup>th</sup> day"</item>
-        <item>" 5<sup>th</sup> day"</item>
-        <item>" 6<sup>th</sup> day"</item>
-        <item>" 7<sup>th</sup> day"</item>
-        <item>" 8<sup>th</sup> day"</item>
-        <item>" 9<sup>th</sup> day"</item>
-        <item>10<sup>th</sup> day</item>
-        <item>11<sup>st</sup> day</item>
-        <item>12<sup>nd</sup> day</item>
-        <item>13<sup>rd</sup> day</item>
-        <item>14<sup>th</sup> day</item>
-        <item>15<sup>th</sup> day</item>
-        <item>16<sup>th</sup> day</item>
-        <item>17<sup>th</sup> day</item>
-        <item>18<sup>th</sup> day</item>
-        <item>19<sup>th</sup> day</item>
-        <item>20<sup>th</sup> day</item>
-        <item>21<sup>st</sup> day</item>
-        <item>22<sup>nd</sup> day</item>
-        <item>23<sup>rd</sup> day</item>
-        <item>24<sup>th</sup> day</item>
-        <item>25<sup>th</sup> day</item>
-        <item>26<sup>th</sup> day</item>
-        <item>27<sup>th</sup> day</item>
-        <item>28<sup>th</sup> day</item>
-        <item>29<sup>th</sup> day</item>
-        <item>30<sup>th</sup> day</item>
-        <item>31<sup>st</sup> day</item>
+    <string-array name="new_monthly_day_suffix">
+        <item>st</item>
+        <item>nd</item>
+        <item>rd</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>st</item>
+        <item>nd</item>
+        <item>rd</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>st</item>
+        <item>nd</item>
+        <item>rd</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>th</item>
+        <item>st</item>
     </string-array>
     <string-array name="new_monthly_skip">
         <item>1 month</item>

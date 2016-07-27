@@ -73,12 +73,12 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
         subjectView = (EditText) findViewById(R.id.nta_Subject);
         locationView = (EditText) findViewById(R.id.nta_LocationName);
         addressView = (EditText) findViewById(R.id.nta_Address);
-        zipView = (EditText) findViewById(R.id.tda_Zip);
-        cityView = (EditText) findViewById(R.id.tda_City);
-        countryView = (EditText) findViewById(R.id.tda_Country);
-        latitudeView = (EditText) findViewById(R.id.tda_Latitude);
-        longitudeView = (EditText) findViewById(R.id.tda_Longitude);
-        scheduleView = (TextView) findViewById(R.id.tda_Schedule);
+        zipView = (EditText) findViewById(R.id.tda_zip);
+        cityView = (EditText) findViewById(R.id.tda_city);
+        countryView = (EditText) findViewById(R.id.tda_country);
+        latitudeView = (EditText) findViewById(R.id.tda_latitude);
+        longitudeView = (EditText) findViewById(R.id.tda_longitude);
+        scheduleView = (TextView) findViewById(R.id.tda_schedule);
         privacyView = (CheckBox) findViewById(R.id.nta_IsPrivate);
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);

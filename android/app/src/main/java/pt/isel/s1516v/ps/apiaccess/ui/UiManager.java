@@ -31,11 +31,15 @@ public abstract class UiManager {
         return rootView;
     }
 
-    public abstract boolean isGeoData();
+    public abstract boolean isGeoCapability();
 
     public abstract boolean isGeo();
 
+    public abstract boolean isLatitude();
+
     public abstract String getLatitudeData();
+
+    public abstract boolean isLongitude();
 
     public abstract String getLongitudeData();
 

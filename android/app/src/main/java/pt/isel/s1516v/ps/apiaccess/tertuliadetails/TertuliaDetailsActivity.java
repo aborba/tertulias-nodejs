@@ -4,23 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -28,39 +19,56 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import java.util.EnumMap;
+
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 
 public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public final static int ACTIVITY_REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
-    public final static String SELF_LINK = "SELF_LINK";
-    private final static String TERTULIA = "tertulia";
+    public final static String SELF_LINK = LINK_SELF;
+    private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
     DtUiManager uiManager;
     private ReadTertulia tertulia;
+
+    // region Activity Life Cycle
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tertulia_details);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA))
-            tertulia = savedInstanceState.getParcelable(TERTULIA);
+        if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA_INSTANCE_STATE_LABEL))
+            tertulia = savedInstanceState.getParcelable(TERTULIA_INSTANCE_STATE_LABEL);
 
-        uiManager = new DtUiManager(this,
-                R.id.tda_Title, R.id.tda_Subject,
-                R.id.tda_Role,
-                R.id.tda_LocationName, R.id.tda_Address, R.id.tda_Zip, R.id.tda_City, R.id.tda_Country,
-                R.id.tda_Latitude, R.id.tda_Longitude,
-                R.id.tda_Schedule,
-                R.id.tda_IsPrivate);
+        EnumMap<DtUiManager.UIRESOURCE, Integer> viewsMap = DtUiManager.getDictionary();
+        viewsMap.put(DtUiManager.UIRESOURCE.TITLE, R.id.tda_title);
+        viewsMap.put(DtUiManager.UIRESOURCE.SUBJECT, R.id.tda_subject);
+        viewsMap.put(DtUiManager.UIRESOURCE.ROLE, R.id.tda_role);
+        viewsMap.put(DtUiManager.UIRESOURCE.LOCATION, R.id.tda_locationName);
+        viewsMap.put(DtUiManager.UIRESOURCE.ADDRESS, R.id.tda_address);
+        viewsMap.put(DtUiManager.UIRESOURCE.ZIP, R.id.tda_zip);
+        viewsMap.put(DtUiManager.UIRESOURCE.CITY, R.id.tda_city);
+        viewsMap.put(DtUiManager.UIRESOURCE.COUNTRY, R.id.tda_country);
+        viewsMap.put(DtUiManager.UIRESOURCE.LATITUDE, R.id.tda_latitude);
+        viewsMap.put(DtUiManager.UIRESOURCE.LONGITUDE, R.id.tda_longitude);
+        viewsMap.put(DtUiManager.UIRESOURCE.SCHEDULE, R.id.tda_schedule);
+        viewsMap.put(DtUiManager.UIRESOURCE.PRIVACY, R.id.tda_isPrivate);
+        uiManager = new DtUiManager(this, viewsMap);
 
         Util.setupToolBar(this, (Toolbar) findViewById(R.id.tda_toolbar),
                 R.string.title_activity_tertulia_details,
@@ -68,7 +76,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
         ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
 
-        if (tertulia != null) uiManager.present(tertulia);
+        if (tertulia != null) uiManager.set(tertulia);
         else {
             MobileServiceClient cli = Util.getMobileServiceClient(this);
             ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink.href, null, selfLink.method, null);
@@ -80,7 +88,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (tertulia != null) {
-            outState.putParcelable(TERTULIA, tertulia);
+            outState.putParcelable(TERTULIA_INSTANCE_STATE_LABEL, tertulia);
         }
         super.onSaveInstanceState(outState);
     }
@@ -100,15 +108,14 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
             return;
         }
 
-        String snippet = String.format("%s, %s\n(%s6, %s6)",
-                uiManager.addressView.getText().toString(),
-                uiManager.cityView.getText().toString(),
-                uiManager.getLatitudeData(), uiManager.getLongitudeData());
         Intent intent = new Intent(this, PlacePresentationActivity.class);
         intent.putExtra(PlacePresentationActivity.INTENT_LATITUDE, GeoPosition.getLatitude(uiManager));
         intent.putExtra(PlacePresentationActivity.INTENT_LONGITUDE, GeoPosition.getLongitude(uiManager));
-        intent.putExtra(PlacePresentationActivity.INTENT_LABEL, uiManager.locationView.getText().toString());
-        intent.putExtra(PlacePresentationActivity.INTENT_SNIPPET, snippet);
+        intent.putExtra(PlacePresentationActivity.INTENT_LABEL, uiManager.getTextViewValue(DtUiManager.UIRESOURCE.LOCATION));
+        intent.putExtra(PlacePresentationActivity.INTENT_SNIPPET, String.format("%s, %s",
+                uiManager.getTextViewValue(DtUiManager.UIRESOURCE.ADDRESS),
+                uiManager.getTextViewValue(DtUiManager.UIRESOURCE.CITY))
+        );
         startActivity(intent);
     }
 
@@ -204,14 +211,14 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
             new AsyncTask<JsonElement, Void, ReadTertulia>() {
                 @Override
                 protected ReadTertulia doInBackground(JsonElement... params) {
-                    ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
+                    ApiReadTertulia apiTertulia = new Gson().fromJson(params[0], ApiReadTertulia.class);
                     tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
                     return tertulia;
                 }
 
                 @Override
                 protected void onPostExecute(ReadTertulia tertulia) {
-                    uiManager.present(tertulia);
+                    uiManager.set(tertulia);
                 }
             }.execute(result);
         }
@@ -229,17 +236,37 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
             new AsyncTask<JsonElement, Void, ReadTertulia>() {
                 @Override
                 protected ReadTertulia doInBackground(JsonElement... params) {
-                    ApiTertulia apiTertulia = new Gson().fromJson(params[0], ApiTertulia.class);
+                    ApiReadTertulia apiTertulia = new Gson().fromJson(params[0], ApiReadTertulia.class);
                     tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
+                    if (tertulia.scheduleType != null) {
+                        switch (tertulia.scheduleType) {
+                            case "Weekly":
+                                ApiReadTertuliaWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiReadTertuliaWeekly.class);
+                                tertulia = new ReadWeekly(apiReadTertuliaWeekly);
+                                break;
+                            case "MonthlyD":
+                                ApiReadTertuliaMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiReadTertuliaMonthly.class);
+                                tertulia = new ReadMonthly(apiReadTertuliaMonthly);
+                                break;
+                            case "MonthlyW":
+                                ApiReadTertuliaMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiReadTertuliaMonthlyW.class);
+                                tertulia = new ReadMonthlyW(apiReadTertuliaMonthlyW);
+                                break;
+                            case "Yearly":
+                            case "YearlW":
+                                break;
+                            default:
+                                throw new IllegalArgumentException();
+                        }
+                    }
                     return tertulia;
                 }
 
                 @Override
                 protected void onPostExecute(ReadTertulia tertulia) {
-                    uiManager.present(tertulia);
+                    uiManager.set(tertulia);
                 }
             }.execute(result);
         }
     }
-
 }

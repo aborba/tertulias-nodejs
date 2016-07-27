@@ -1,12 +1,12 @@
 package pt.isel.s1516v.ps.apiaccess.support.remote;
 
-public class ApiTertulia {
+public class ApiReadTertulia {
     @com.google.gson.annotations.SerializedName("tertulia")
-    public final ApiTertuliaCore tertulia;
+    public final ApiReadTertuliaCore tertulia;
     @com.google.gson.annotations.SerializedName("links")
     public final ApiLink[] links;
 
-    public ApiTertulia(ApiTertuliaCore tertulia, ApiLink[] links) {
+    public ApiReadTertulia(ApiReadTertuliaCore tertulia, ApiLink[] links) {
         this.tertulia = tertulia;
         this.links = links;
     }

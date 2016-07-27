@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaCore;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
 public class NewLocation implements Parcelable {
@@ -34,7 +34,7 @@ public class NewLocation implements Parcelable {
         geolocation = new Geolocation(rtertulia);
     }
 
-    public NewLocation(ApiTertuliaCore core) {
+    public NewLocation(ApiReadTertuliaCore core) {
         id = -1;
         name = core.location;
         address = new Address(core);

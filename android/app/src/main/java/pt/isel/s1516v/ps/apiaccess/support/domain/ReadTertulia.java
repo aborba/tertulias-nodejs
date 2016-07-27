@@ -11,7 +11,7 @@ import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaCore;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
 public class ReadTertulia implements Parcelable {
@@ -23,11 +23,26 @@ public class ReadTertulia implements Parcelable {
     public Date nextEventDate;
     public final String scheduleType;
     public String scheduleDescription;
-    private Schedule schedule;
+    public Schedule schedule;
     public final boolean isPrivate;
     public final String role_type;
     public int messagesCount;
     public ApiLink[] links;
+
+    public ReadTertulia(String id, String name, String subject, Location location, Date nextEventDate, String scheduleType, String scheduleDescription, Schedule schedule, boolean isPrivate, String role_type, int messagesCount, ApiLink[] links) {
+        this.id = id;
+        this.name = name;
+        this.subject = subject;
+        this.location = location;
+        this.nextEventDate = nextEventDate;
+        this.scheduleType = scheduleType;
+        this.scheduleDescription = scheduleDescription;
+        this.schedule = schedule;
+        this.isPrivate = isPrivate;
+        this.role_type = role_type;
+        this.messagesCount = messagesCount;
+        this.links = links;
+    }
 
     public ReadTertulia(ApiTertuliaListItem apiTertuliaListItem) {
         id = apiTertuliaListItem.id;
@@ -49,7 +64,7 @@ public class ReadTertulia implements Parcelable {
         links = apiTertuliaListItem.links;
     }
 
-    public ReadTertulia(ApiTertuliaCore core, ApiLink[] links) {
+    public ReadTertulia(ApiReadTertuliaCore core, ApiLink[] links) {
         id = core.id;
         name = core.name;
         subject = core.subject;

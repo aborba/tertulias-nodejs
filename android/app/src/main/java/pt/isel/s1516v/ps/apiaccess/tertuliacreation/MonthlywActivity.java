@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -29,6 +32,10 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
 
     private ToggleButton fromEndVw;
     private CrUiMonthlyW crMonthlyW;
+
+    public MonthlywActivity() {
+        super();
+    }
 
     // region Activity LifeCycle
 
@@ -134,6 +141,34 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
     public Date nextEvent() {
         return null;
     }
+
+    // endregion
+
+    // region Parcelable
+
+    protected MonthlywActivity(Parcel in) {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+    }
+
+    public static final Creator<MonthlywActivity> CREATOR = new Parcelable.Creator<MonthlywActivity>() {
+        @Override
+        public MonthlywActivity createFromParcel(Parcel in) {
+            return new MonthlywActivity(in);
+        }
+
+        @Override
+        public MonthlywActivity[] newArray(int size) {
+            return new MonthlywActivity[size];
+        }
+    };
 
     // endregion
 

@@ -1,6 +1,6 @@
 package pt.isel.s1516v.ps.apiaccess.support.remote;
 
-public class ApiTertuliaCore {
+public class ApiReadTertuliaCore {
 
     @com.google.gson.annotations.SerializedName("id")
     public final String id;
@@ -35,11 +35,11 @@ public class ApiTertuliaCore {
     @com.google.gson.annotations.SerializedName("messages")
     public final int messagesCount;
 
-    public ApiTertuliaCore(String id, String name, String subject,
-                           String location, String address, String zip, String city, String country,
-                           String latitude, String longitude,
-                           int scheduleId, String scheduleName, String scheduleDescription,
-                           boolean isPrivate, String role, int messagesCount) {
+    public ApiReadTertuliaCore(String id, String name, String subject,
+                               String location, String address, String zip, String city, String country,
+                               String latitude, String longitude,
+                               int scheduleId, String scheduleName, String scheduleDescription,
+                               boolean isPrivate, String role, int messagesCount) {
         this.id = id;
         this.name = name;
         this.subject = subject;
@@ -64,8 +64,8 @@ public class ApiTertuliaCore {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        ApiTertuliaCore other = (ApiTertuliaCore) obj;
-        return obj instanceof ApiTertuliaCore && other.id == this.id && other.name == this.name;
+        ApiReadTertuliaCore other = (ApiReadTertuliaCore) obj;
+        return obj instanceof ApiReadTertuliaCore && other.id == this.id && other.name == this.name;
     }
 
 }

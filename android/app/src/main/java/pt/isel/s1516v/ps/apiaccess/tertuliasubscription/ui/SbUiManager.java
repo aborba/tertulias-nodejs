@@ -1,4 +1,4 @@
-package pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui;
+package pt.isel.s1516v.ps.apiaccess.tertuliasubscription.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,32 +10,28 @@ import android.widget.TextView;
 import java.util.EnumMap;
 
 import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
-public class DtUiManager extends UiManager {
+public class SbUiManager extends UiManager {
 
     public enum UIRESOURCE {
         TITLE, SUBJECT,
-        ROLE,
         LOCATION, ADDRESS, ZIP, CITY, COUNTRY, LATITUDE, LONGITUDE,
-        SCHEDULE,
-        PRIVACY
+        SCHEDULE
     }
 
     private final EnumMap<UIRESOURCE, Integer> uiResources;
     private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
     private boolean isViewsSet;
 
-    private TextView titleView, subjectView, roleView,
+    private TextView titleView, subjectView,
             locationView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView,
             scheduleView;
-    private CheckBox isPrivateView;
 
-    public DtUiManager(Context ctx, EnumMap<UIRESOURCE, Integer> uiResources) {
+    public SbUiManager(Context ctx, EnumMap<UIRESOURCE, Integer> uiResources) {
         super(ctx);
         this.uiResources = uiResources;
     }
@@ -122,8 +118,6 @@ public class DtUiManager extends UiManager {
         uiViews.put(UIRESOURCE.TITLE, titleView);
         subjectView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.SUBJECT));
         uiViews.put(UIRESOURCE.SUBJECT, subjectView);
-        roleView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.ROLE));
-        uiViews.put(UIRESOURCE.ROLE, roleView);
         locationView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.LOCATION));
         uiViews.put(UIRESOURCE.LOCATION, locationView);
         addressView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.ADDRESS));
@@ -140,8 +134,6 @@ public class DtUiManager extends UiManager {
         uiViews.put(UIRESOURCE.LONGITUDE, longitudeView);
         scheduleView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.SCHEDULE));
         uiViews.put(UIRESOURCE.SCHEDULE, scheduleView);
-        isPrivateView = (CheckBox) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.PRIVACY));
-        uiViews.put(UIRESOURCE.PRIVACY, isPrivateView);
         isViewsSet = true;
     }
 
@@ -156,9 +148,9 @@ public class DtUiManager extends UiManager {
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
         String scheduleText;
-        if (tertulia instanceof ReadWeekly || tertulia instanceof ReadMonthly || tertulia instanceof ReadMonthlyW)
+        if (tertulia instanceof ReadWeekly || tertulia instanceof ReadMonthly) {
             scheduleText = tertulia.toString();
-        else {
+        } else {
             if (!TextUtils.isEmpty(tertulia.scheduleType)) {
                 scheduleText = tertulia.scheduleType;
                 if (!TextUtils.isEmpty(tertulia.scheduleDescription))
@@ -166,8 +158,6 @@ public class DtUiManager extends UiManager {
             } else scheduleText = tertulia.scheduleDescription;
         }
         scheduleView.setText(scheduleText);
-        roleView.setText(tertulia.role_type);
-        isPrivateView.setChecked(tertulia.isPrivate);
     }
 
     // endregion

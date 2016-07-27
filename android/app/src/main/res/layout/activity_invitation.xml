@@ -47,7 +47,7 @@
                 android:id="@+id/ia_TitleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Title"
+                android:labelFor="@+id/tda_title"
                 android:text="@string/tertulia_details_title" />
 
             <TextView

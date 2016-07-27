@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -34,6 +37,10 @@ public class MonthlyActivity extends Activity implements Schedule, TertuliasApi 
     private EditText dayVw;
     private ToggleButton fromEndVw;
     private CrUiMonthly crMonthly;
+
+    private MonthlyActivity() {
+        super();
+    }
 
     // region Activity LifeCycle
 
@@ -144,6 +151,33 @@ public class MonthlyActivity extends Activity implements Schedule, TertuliasApi 
         return null;
     }
 
+    // endregion
+
+    // region Parcelable
+
+    protected MonthlyActivity(Parcel in) {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+    }
+
+    public static final Creator<MonthlyActivity> CREATOR = new Parcelable.Creator<MonthlyActivity>() {
+        @Override
+        public MonthlyActivity createFromParcel(Parcel in) {
+            return new MonthlyActivity(in);
+        }
+
+        @Override
+        public MonthlyActivity[] newArray(int size) {
+            return new MonthlyActivity[size];
+        }
+    };
     // endregion
 
     // region Private Static Methods

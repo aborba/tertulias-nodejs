@@ -3,12 +3,9 @@ package pt.isel.s1516v.ps.apiaccess.helpers;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 
 import android.location.LocationListener;
@@ -22,7 +19,7 @@ public class GeoPosition {
     private static double lat, lng;
 
     public static double getLatitude(UiManager uiManager) {
-        if (!uiManager.isGeoData())
+        if (!uiManager.isGeoCapability())
             throw new IllegalArgumentException();
         if (!uiManager.isGeo())
             throw new IllegalStateException();
@@ -30,7 +27,7 @@ public class GeoPosition {
     }
 
     public static double getLongitude(UiManager uiManager) {
-        if (!uiManager.isGeoData())
+        if (!uiManager.isGeoCapability())
             throw new IllegalArgumentException();
         if (!uiManager.isGeo())
             throw new IllegalStateException();
@@ -38,7 +35,7 @@ public class GeoPosition {
     }
 
     public static LatLng getLatLng(UiManager uiManager) {
-        if (!uiManager.isGeoData())
+        if (!uiManager.isGeoCapability())
             throw new IllegalArgumentException();
         return new LatLng(getLatitude(uiManager), getLongitude(uiManager));
     }

@@ -42,15 +42,15 @@
             <!-- ApiTertulia Title -->
 
             <TextView
-                android:id="@+id/tda_TitleLabel"
+                android:id="@+id/tda_titleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Title"
+                android:labelFor="@+id/tda_title"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_title" />
 
             <TextView
-                android:id="@+id/tda_Title"
+                android:id="@+id/tda_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingEnd="10dp"
@@ -62,15 +62,15 @@
             <!-- ApiTertulia Subject -->
 
             <TextView
-                android:id="@+id/tda_SubjectLabel"
+                android:id="@+id/tda_subjectLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Subject"
+                android:labelFor="@+id/tda_subject"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_subject" />
 
             <TextView
-                android:id="@+id/tda_Subject"
+                android:id="@+id/tda_subject"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingEnd="10dp"
@@ -82,15 +82,15 @@
             <!-- ApiTertulia Role -->
 
             <TextView
-                android:id="@+id/tda_RoleLabel"
+                android:id="@+id/tda_roleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Role"
+                android:labelFor="@+id/tda_role"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_role" />
 
             <TextView
-                android:id="@+id/tda_Role"
+                android:id="@+id/tda_role"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingEnd="10dp"
@@ -102,15 +102,15 @@
             <!-- ApiTertulia Privacy -->
 
             <TextView
-                android:id="@+id/tda_IsPrivateLabel"
+                android:id="@+id/tda_isPrivateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_IsPrivate"
+                android:labelFor="@+id/tda_isPrivate"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_private" />
 
             <CheckBox
-                android:id="@+id/tda_IsPrivate"
+                android:id="@+id/tda_isPrivate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10sp"
@@ -133,15 +133,15 @@
                 <!-- ApiTertulia Location Name -->
 
                 <TextView
-                    android:id="@+id/tda_LocationNameLabel"
+                    android:id="@+id/tda_locationNameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tda_LocationName"
+                    android:labelFor="@+id/tda_locationName"
                     android:singleLine="true"
                     android:text="@string/tertulia_details_location" />
 
                 <TextView
-                    android:id="@+id/tda_LocationName"
+                    android:id="@+id/tda_locationName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="10dp"
@@ -153,15 +153,15 @@
                 <!-- ApiTertulia Location Address -->
 
                 <TextView
-                    android:id="@+id/tda_AddressLabel"
+                    android:id="@+id/tda_addressLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tda_Address"
+                    android:labelFor="@+id/tda_address"
                     android:singleLine="true"
                     android:text="@string/new_tertulia_location_address_label" />
 
                 <TextView
-                    android:id="@+id/tda_Address"
+                    android:id="@+id/tda_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingEnd="10dp"
@@ -173,21 +173,21 @@
                 <!-- ApiTertulia Location Zip, City & Country -->
 
                 <TextView
-                    android:id="@+id/tda_ZipCityCountryLabel"
+                    android:id="@+id/tda_zipCityCountryLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tda_ZipCityCountryLayout"
+                    android:labelFor="@+id/tda_zipCityCountryLayout"
                     android:singleLine="true"
                     android:text="@string/new_tertulia_location_zipcountry_label" />
 
                 <LinearLayout
-                    android:id="@+id/tda_ZipCityCountryLayout"
+                    android:id="@+id/tda_zipCityCountryLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tda_Zip"
+                        android:id="@+id/tda_zip"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -198,7 +198,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tda_City"
+                        android:id="@+id/tda_city"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -209,7 +209,7 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tda_Country"
+                        android:id="@+id/tda_country"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -224,24 +224,23 @@
                 <!-- ApiTertulia Location Lat & Lon -->
 
                 <TextView
-                    android:id="@+id/tda_LatitudeLongitudeLabel"
+                    android:id="@+id/tda_latitudeLongitudeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:labelFor="@+id/tda_LatitudeLongitudeLayout"
+                    android:labelFor="@+id/tda_latitudeLongitudeLayout"
                     android:singleLine="true"
                     android:text="@string/new_tertulia_location_coordinates_label" />
 
                 <LinearLayout
-                    android:id="@+id/tda_LatitudeLongitudeLayout"
+                    android:id="@+id/tda_latitudeLongitudeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tda_Latitude"
+                        android:id="@+id/tda_latitude"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:paddingEnd="10dp"
                         android:paddingStart="10dp"
                         android:singleLine="true"
@@ -249,10 +248,9 @@
                         android:textSize="18sp" />
 
                     <TextView
-                        android:id="@+id/tda_Longitude"
+                        android:id="@+id/tda_longitude"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:paddingEnd="10dp"
                         android:paddingStart="10dp"
                         android:singleLine="true"
@@ -266,15 +264,15 @@
             <!-- ApiTertulia Schedule -->
 
             <TextView
-                android:id="@+id/tda_ScheduleLabel"
+                android:id="@+id/tda_scheduleLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:labelFor="@+id/tda_Schedule"
+                android:labelFor="@+id/tda_schedule"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_schedule" />
 
             <TextView
-                android:id="@+id/tda_Schedule"
+                android:id="@+id/tda_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="64dp"
@@ -299,7 +297,7 @@
         android:tint="#FFFFFF"
         app:backgroundTint="#006600"
         app:fabSize="mini"
-        app:layout_anchor="@id/tda_LocationName"
+        app:layout_anchor="@id/tda_locationName"
         app:layout_anchorGravity="center_vertical|end" />
 
     <LinearLayout

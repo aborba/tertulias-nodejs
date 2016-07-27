@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +29,10 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
     private final static String INSTANCE_KEY_WEEKLY = "weekly";
 
     private CrUiWeekly crWeekly;
+
+    public WeeklyActivity() {
+        super();
+    }
 
     // region Activity LifeCycle
 
@@ -105,6 +112,36 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
     public Date nextEvent() {
         return null;
     }
+
+    // endregion
+
+    // region Parcelable
+
+    protected WeeklyActivity(Parcel in) {
+        crWeekly = in.readParcelable(CrUiWeekly.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeParcelable(crWeekly, flags);
+    }
+
+    public static final Creator<WeeklyActivity> CREATOR = new Parcelable.Creator<WeeklyActivity>() {
+        @Override
+        public WeeklyActivity createFromParcel(Parcel in) {
+            return new WeeklyActivity(in);
+        }
+
+        @Override
+        public WeeklyActivity[] newArray(int size) {
+            return new WeeklyActivity[size];
+        }
+    };
 
     // endregion
 
