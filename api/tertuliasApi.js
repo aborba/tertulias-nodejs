@@ -178,9 +178,7 @@ module.exports = function (configuration) {
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
-				console.log(recordset);
-				console.log(recordset['tertulia'].scheduleName);
-				switch(results['tertulia'].scheduleName) {
+				switch(results['tertulia'].schedule_name) {
 					case 'Weekly':
 						console.log('in weekly');
 					    sql.connect(util.sqlConfiguration)
@@ -190,9 +188,9 @@ module.exports = function (configuration) {
 							.input('tertulia', sql.Int, recordset[0].id)
 							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
-									' wk_id AS id,' +
-									' wk_dow AS weekday,' +
-									' wk_skip AS skip' +
+									' wk_id' +   ' AS sc_id,' +
+									' wk_dow' +  ' AS sc_weekday,' +
+									' wk_skip' + ' AS sc_skip' +
 								' FROM Weekly' +
 									' INNER JOIN Schedules ON wk_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
@@ -216,10 +214,10 @@ module.exports = function (configuration) {
 							.input('tertulia', sql.Int, recordset[0].id)
 							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
-									' md_id AS id,' +
-									' md_dom AS daynr,' +
-									' md_is_fromstart AS isFromStart,' +
-									' md_skip AS skip' +
+									' md_id' +           ' AS sc_id,' +
+									' md_dom' +          ' AS sc_daynr,' +
+									' md_is_fromstart' + ' AS sc_isfromstart,' +
+									' md_skip' +         ' AS sc_skip' +
 								' FROM MonthlyD' +
 									' INNER JOIN Schedules ON md_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
@@ -243,11 +241,11 @@ module.exports = function (configuration) {
 							.input('tertulia', sql.Int, recordset[0].id)
 							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
-									' mw_id AS id,' +
-									' mw_dow AS weekday,' +
-									' mw_weeknr AS weeknr,' +
-									' mw_is_fromstart AS isFromStart,' +
-									' mw_skip AS skip' +
+									' mw_id' +           ' AS sc_id,' +
+									' mw_dow' +          ' AS sc_weekday,' +
+									' mw_weeknr' +       ' AS sc_weeknr,' +
+									' mw_is_fromstart' + ' AS sc_isfromstart,' +
+									' mw_skip' +         ' AS sc_skip' +
 								' FROM MonthlyW' +
 									' INNER JOIN Schedules ON mw_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
