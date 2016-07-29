@@ -128,6 +128,8 @@ module.exports = function (configuration) {
 		if (isNaN(tr_id))
 			return next();
 
+		console.log('still in GET /tertulias/:tr_id');
+
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
