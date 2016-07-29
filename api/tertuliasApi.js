@@ -128,8 +128,6 @@ module.exports = function (configuration) {
 		if (isNaN(tr_id))
 			return next();
 
-		console.log('still in GET /tertulias/:tr_id');
-
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -169,6 +167,7 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
+				console.log(recordset);
                 var results = {};
             	results['tertulia'] = recordset[0];
 				var links = '[ ' +
