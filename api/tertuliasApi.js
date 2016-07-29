@@ -178,6 +178,7 @@ module.exports = function (configuration) {
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
+				console.log("Schedule name: " + results['tertulia'].schedule_name);
 				switch(results['tertulia'].schedule_name) {
 					case 'Weekly':
 						console.log('in weekly');
@@ -261,12 +262,11 @@ module.exports = function (configuration) {
 						});
 						break;
 					default:
-						console.log(results['tertulia'].scheduleName);
+						console.log(results['tertulia'].schedule_name);
 						res.status(404)	// 404: NOT Found
 						.type('application/json')
 						.json( { result: 'Not Found' } );
-					return next('404');
-
+						return next('404');
 				}
 			})
 		});
