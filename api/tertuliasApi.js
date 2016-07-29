@@ -167,7 +167,6 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @sid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
-				console.log(recordset);
                 var results = {};
             	results['tertulia'] = recordset[0];
 				var links = '[ ' +
@@ -179,6 +178,8 @@ module.exports = function (configuration) {
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
+				console.log(recordset);
+				console.log(recordset['tertulia'].scheduleName);
 				switch(results['tertulia'].scheduleName) {
 					case 'Weekly':
 						console.log('in weekly');
