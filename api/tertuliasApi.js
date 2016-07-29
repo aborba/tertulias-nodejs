@@ -134,10 +134,10 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, tr_id)
 			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 			.query('SELECT' +
-					' tr_id' +                    ' AS terulia_id,' +          // Tertulia
-					' tr_name' +                  ' AS terulia_name,' +
-					' tr_subject' +               ' AS terulia_subject,' +
-					' tr_is_private' +            ' AS terulia_isprivate, ' +  // Privacy
+					' tr_id' +                    ' AS tertulia_id,' +          // Tertulia
+					' tr_name' +                  ' AS tertulia_name,' +
+					' tr_subject' +               ' AS tertulia_subject,' +
+					' tr_is_private' +            ' AS tertulia_isprivate, ' +  // Privacy
 					' mb_role' +                  ' AS role_id,' +             // Role
 					' _Member.nv_name' +          ' AS role_name,' +
 					' tr_location' +              ' AS location_id,' +         // Location
