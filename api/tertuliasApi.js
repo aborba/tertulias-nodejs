@@ -185,9 +185,9 @@ module.exports = function (configuration) {
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
 							new sql.Request()
-							.input('schedule', sql.Int, recordset[0].schedule)
-							.input('tertulia', sql.Int, recordset[0].id)
-							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							.input('schedule', sql.Int, recordset[0].schedule_id)
+							// .input('tertulia', sql.Int, recordset[0].tertulia_id)
+							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
 									' wk_id' +   ' AS sc_id,' +
 									' wk_dow' +  ' AS sc_weekday,' +
@@ -211,9 +211,9 @@ module.exports = function (configuration) {
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
 							new sql.Request()
-							.input('schedule', sql.Int, recordset[0].schedule)
-							.input('tertulia', sql.Int, recordset[0].id)
-							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							.input('schedule', sql.Int, recordset[0].schedule_id)
+							// .input('tertulia', sql.Int, recordset[0].tertulia_id)
+							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
 									' md_id' +           ' AS sc_id,' +
 									' md_dom' +          ' AS sc_daynr,' +
@@ -240,7 +240,7 @@ module.exports = function (configuration) {
 							new sql.Request()
 							.input('schedule', sql.Int, recordset[0].schedule_id)
 							//.input('tertulia', sql.Int, recordset[0].tertulia_id)
-							.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
 									' mw_id' +           ' AS sc_id,' +
 									' mw_dow' +          ' AS sc_weekday,' +
