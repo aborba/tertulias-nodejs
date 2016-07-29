@@ -314,50 +314,101 @@ module.exports = function (configuration) {
 		});
 	});
 
-	router.patch('/:tr_id/weekly', (req, res, next) => {
-		console.log('in PATCH /tertulias/:tr_id/weekly');
+	router.patch('/:tr_id', (req, res, next) => {
+		console.log('in PATCH /tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
 		if (isNaN(tr_id))
 			return next();
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('tertuliaId', sql.Int, tr_id)
-			.input('name', sql.NVarChar(40), req.body.tr_name)
-			.input('subject', sql.NVarChar(80), req.body.tr_subject)
-			.input('locationName', sql.NVarChar(40), req.body.lo_name)
-			.input('locationAddress', sql.NVarChar(80), req.body.lo_address)
-			.input('locationZip', sql.NVarChar(40), req.body.lo_zip)
-			.input('locationCity', sql.NVarChar(40), req.body.lo_city)
-			.input('locationCountry', sql.NVarChar(40), req.body.lo_country)
-			.input('locationLatitude', sql.NVarChar(12), req.body.lo_latitude)
-			.input('locationLongitude', sql.NVarChar(12), req.body.lo_longitude)
-			.input('weekDay', sql.NVarChar(20), req.body.sc_weekDay)
-			.input('skip', sql.Int, req.body.sc_skip)
-			.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.execute('sp_insertTertulia_Weekly_sid')
-			.then((recordsets) => {
-				if (recordsets.length == 0) {
-					res.status(201)	// 201: Created
-						.type('application/json')
-						.json( { result: 'Ok' } );
-					return next();
-				} else {
-					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-						.type('application/json')
-						.json( { result: 'Duplicate' } );
-					return next('409');
-				}
-				next();
-			})
-			.catch(function(err) {
-				next(err);
-			});
-		})
-		.catch(function(err) {
-			return next(err);
-		});
+		switch (req.body.schedule_name.toLowerCase()) {
+			case "weekly":
+			    sql.connect(util.sqlConfiguration)
+			    .then(function() {
+					new sql.Request()
+					.input('tertuliaId', sql.Int, tr_id)
+					.input('name', sql.NVarChar(40), req.body.tertulia_name)
+					.input('subject', sql.NVarChar(80), req.body.tertulia_subject)
+					.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
+					.input('locationName', sql.NVarChar(40), req.body.location_name)
+					.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+					.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+					.input('locationCity', sql.NVarChar(40), req.body.location_city)
+					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+					.input('weekDay', sql.NVarChar(20), req.body.schedule_weekday)
+					.input('skip', sql.Int, req.body.sc_skip)
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+					.execute('sp_updateTertulia_Weekly_sid')
+					.then((recordsets) => {
+						if (recordsets.length == 0) {
+							res.status(201)	// 201: Created
+								.type('application/json')
+								.json( { result: 'Ok' } );
+							return next();
+						} else {
+							res.status(422)	// 422: Unprocessable Entity, 409: Conflict (WebDAV; RFC 4918)
+								.type('application/json')
+								.json( { result: 'Duplicate' } );
+							return next('422');
+						}
+						next();
+					})
+					.catch(function(err) {
+						next(err);
+					});
+				})
+				.catch(function(err) {
+					return next(err);
+				});
+				break;
+			case "monthly":
+			    sql.connect(util.sqlConfiguration)
+			    .then(function() {
+					new sql.Request()
+					.input('tertuliaId', sql.Int, tr_id)
+					.input('name', sql.NVarChar(40), req.body.tertulia_name)
+					.input('subject', sql.NVarChar(80), req.body.tertulia_subject)
+					.input('locationName', sql.NVarChar(40), req.body.location_name)
+					.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+					.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+					.input('locationCity', sql.NVarChar(40), req.body.location_city)
+					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+					.input('weekDay', sql.NVarChar(20), req.body.schedule_weekday)
+					.input('skip', sql.Int, req.body.sc_skip)
+					.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+					.execute('sp_insertTertulia_Weekly_sid')
+					.then((recordsets) => {
+						if (recordsets.length == 0) {
+							res.status(201)	// 201: Created
+								.type('application/json')
+								.json( { result: 'Ok' } );
+							return next();
+						} else {
+							res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+								.type('application/json')
+								.json( { result: 'Duplicate' } );
+							return next('409');
+						}
+						next();
+					})
+					.catch(function(err) {
+						next(err);
+					});
+				})
+				.catch(function(err) {
+					return next(err);
+				});
+				break;
+			case "monthlyw":
+				break;
+			case "yearly":
+				break;
+			case "yearlyw":
+				break;
+		}
 	});
 
 	router.post('/monthly', (req, res, next) => {
