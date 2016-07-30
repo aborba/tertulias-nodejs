@@ -324,6 +324,7 @@ module.exports = function (configuration) {
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
 					.input('name', sql.NVarChar(40), req.body.tertulia_name)
 					.input('subject', sql.NVarChar(80), req.body.tertulia_subject)
@@ -337,7 +338,6 @@ module.exports = function (configuration) {
 					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
 					.input('weekDay', sql.NVarChar(20), req.body.schedule_weekday)
 					.input('skip', sql.Int, req.body.sc_skip)
-					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.execute('sp_updateTertulia_Weekly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
