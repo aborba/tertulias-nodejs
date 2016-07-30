@@ -316,6 +316,7 @@ module.exports = function (configuration) {
 
 	router.patch('/:tr_id', (req, res, next) => {
 		console.log('in PATCH /tertulias/:tr_id');
+		console.log(req.body);
 		var tr_id = req.params.tr_id;
 		if (isNaN(tr_id))
 			return next();
