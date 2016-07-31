@@ -322,6 +322,7 @@ module.exports = function (configuration) {
 			return next();
 		switch (req.body.sc_name.toUpperCase()) {
 			case "WEEKLY":
+				console.log("in WEEKLY");
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
@@ -342,11 +343,13 @@ module.exports = function (configuration) {
 					.execute('sp_updateTertulia_Weekly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
+							console.log("WEEKLY updated");
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
 							return next();
 						} else {
+							console.log("WEEKLY update failed");
 							res.status(422)	// 422: Unprocessable Entity, 409: Conflict (WebDAV; RFC 4918)
 								.type('application/json')
 								.json( { result: 'Duplicate' } );
@@ -355,6 +358,7 @@ module.exports = function (configuration) {
 						next();
 					})
 					.catch(function(err) {
+						console.log("WEEKLY error");
 						next(err);
 					});
 				})
@@ -363,6 +367,7 @@ module.exports = function (configuration) {
 				});
 				break;
 			case "MONTHLYD":
+				console.log("in MONTHLYD");
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
@@ -383,11 +388,13 @@ module.exports = function (configuration) {
 					.execute('sp_insertTertulia_Weekly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
+							console.log("MONTHLYD updated");
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
 							return next();
 						} else {
+							console.log("MONTHLYD update failed");
 							res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 								.type('application/json')
 								.json( { result: 'Duplicate' } );
@@ -396,6 +403,7 @@ module.exports = function (configuration) {
 						next();
 					})
 					.catch(function(err) {
+						console.log("MONTHLYD error");
 						next(err);
 					});
 				})
@@ -404,10 +412,13 @@ module.exports = function (configuration) {
 				});
 				break;
 			case "MONTHLYW":
+				console.log("in MONTHLYW");
 				break;
 			case "YEARLY":
+				console.log("in YEARLY");
 				break;
 			case "YEARLYW":
+				console.log("in YEARLYW");
 				break;
 		}
 	});
