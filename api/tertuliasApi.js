@@ -413,6 +413,10 @@ module.exports = function (configuration) {
 				break;
 			case "MONTHLYW":
 				console.log("in MONTHLYW");
+				res.status(200)	// 200: OK
+					.type('application/json')
+					.json( { result: 'Ok' } );
+				return next();
 				break;
 			case "YEARLY":
 				console.log("in YEARLY");
