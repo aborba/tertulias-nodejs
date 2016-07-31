@@ -320,8 +320,8 @@ module.exports = function (configuration) {
 		var tr_id = req.params.tr_id;
 		if (isNaN(tr_id))
 			return next();
-		switch (req.body.schedule_name.toLowerCase()) {
-			case "weekly":
+		switch (req.body.sc_name.toUpperCase()) {
+			case "WEEKLY":
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
@@ -362,7 +362,7 @@ module.exports = function (configuration) {
 					return next(err);
 				});
 				break;
-			case "monthly":
+			case "MONTHLYD":
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
@@ -403,11 +403,11 @@ module.exports = function (configuration) {
 					return next(err);
 				});
 				break;
-			case "monthlyw":
+			case "MONTHLYW":
 				break;
-			case "yearly":
+			case "YEARLY":
 				break;
-			case "yearlyw":
+			case "YEARLYW":
 				break;
 		}
 	});
