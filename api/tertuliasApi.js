@@ -322,7 +322,7 @@ module.exports = function (configuration) {
 		console.log(tr_id);
 		console.log(req.azureMobile.user.id);
 		console.log(req.body);
-		switch (req.body.sc_name.toUpperCase()) {
+		switch (req.body.schedule_name.toUpperCase()) {
 			case "WEEKLY":
 				console.log("in WEEKLY");
 			    sql.connect(util.sqlConfiguration)
@@ -330,9 +330,9 @@ module.exports = function (configuration) {
 					new sql.Request()
 					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
-					.input('name', sql.NVarChar(40), req.body.tertulia_name)
-					.input('subject', sql.NVarChar(80), req.body.tertulia_subject)
-					.input('isPrivate', sql.Int, req.body.tr_isPrivate ? 1 : 0)
+					.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+					.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+					.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isPrivate ? 1 : 0)
 					.input('locationName', sql.NVarChar(40), req.body.location_name)
 					.input('locationAddress', sql.NVarChar(80), req.body.location_address)
 					.input('locationZip', sql.NVarChar(40), req.body.location_zip)
@@ -340,8 +340,8 @@ module.exports = function (configuration) {
 					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-					.input('weekDay', sql.NVarChar(20), req.body.schedule_weekday)
-					.input('skip', sql.Int, req.body.sc_skip)
+					.input('scheduleWeekDay', sql.NVarChar(20), req.body.schedule_weekday)
+					.input('scheduleSkip', sql.Int, req.body.schedule_skip)
 					.execute('sp_updateTertulia_Weekly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
