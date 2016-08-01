@@ -1,11 +1,28 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
-import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
-import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 
 public class Address implements Parcelable {
@@ -22,25 +39,11 @@ public class Address implements Parcelable {
         this.country = country;
     }
 
-    public Address(RTertulia rtertulia) {
-        address = rtertulia.address;
-        zip = rtertulia.zip;
-        city = rtertulia.city;
-        country = rtertulia.country;
-    }
-
     public Address(ApiTertuliaEdition core) {
         address = core.lo_address;
         zip = core.lo_zip;
         city = core.lo_city;
         country = core.lo_country;
-    }
-
-    public Address(RLocation rlocation) {
-        address = rlocation.address;
-        zip = rlocation.zip;
-        city = rlocation.city;
-        country = rlocation.country;
     }
 
     public static final Creator<Address> CREATOR = new Creator<Address>() {
@@ -66,10 +69,10 @@ public class Address implements Parcelable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) return false;
+        if (obj == null || ! (obj instanceof Address))
+            return false;
         Address other = (Address) obj;
-        return obj instanceof Address &&
-                other.address.equals(address) &&
+        return other.address.equals(address) &&
                 other.zip.equals(zip) &&
                 other.city.equals(city) &&
                 other.country.equals(country);

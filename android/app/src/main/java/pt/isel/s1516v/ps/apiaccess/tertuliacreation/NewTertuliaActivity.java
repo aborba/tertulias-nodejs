@@ -1,15 +1,31 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,7 +47,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
@@ -42,16 +57,9 @@ import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthly;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCreationMonthly;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlySchedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlyWSchedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiWeeklySchedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiAddress;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiManager;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiSchedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
 public class NewTertuliaActivity extends Activity implements
@@ -139,22 +147,28 @@ public class NewTertuliaActivity extends Activity implements
         }
 
         JsonElement postParameters;
-        String apiLinksKey = null;
+        String apiLinksKey;
         switch (tertulia.scheduleType.name()) {
             case "WEEKLY":
                 uiManager.update(tertulia);
+                if ( ! (tertulia instanceof TertuliaCreationWeekly))
+                    throw new IllegalArgumentException();
                 TertuliaCreationWeekly tertuliaCreationWeekly = new TertuliaCreationWeekly(tertulia);
                 postParameters = new Gson().toJsonTree(tertuliaCreationWeekly);
                 apiLinksKey = LINK_CREATE_WEEKLY;
                 break;
             case "MONTHLYD":
                 uiManager.update(tertulia);
+                if ( ! (tertulia instanceof TertuliaCreationMonthly))
+                    throw new IllegalArgumentException();
                 TertuliaCreationMonthly tertuliaCreationMonthly = new TertuliaCreationMonthly(tertulia);
                 postParameters = new Gson().toJsonTree(tertuliaCreationMonthly);
                 apiLinksKey = LINK_CREATE_MONTHLY;
                 break;
             case "MONTHLYW":
                 uiManager.update(tertulia);
+                if ( ! (tertulia instanceof TertuliaCreationMonthlyW))
+                    throw new IllegalArgumentException();
                 TertuliaCreationMonthlyW tertuliaCreationMonthlyW = new TertuliaCreationMonthlyW(tertulia);
                 postParameters = new Gson().toJsonTree(tertuliaCreationMonthlyW);
                 apiLinksKey = LINK_CREATE_MONTHLYW;
@@ -200,6 +214,7 @@ public class NewTertuliaActivity extends Activity implements
             case WeeklyActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
+                setResult(RESULT_OK);
                 CrUiWeekly crWeekly = data.getParcelableExtra("result");
                 tertulia = new TertuliaCreationWeekly(tertulia, crWeekly);
                 uiManager.set(tertulia);
@@ -207,6 +222,7 @@ public class NewTertuliaActivity extends Activity implements
             case MonthlyActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
+                setResult(RESULT_OK);
                 CrUiMonthly crMonthly = data.getParcelableExtra("result");
                 tertulia = new TertuliaCreationMonthly(tertulia, crMonthly);
                 uiManager.set(tertulia);
@@ -214,6 +230,7 @@ public class NewTertuliaActivity extends Activity implements
             case MonthlywActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
+                setResult(RESULT_OK);
                 CrUiMonthlyW crMonthlyW = data.getParcelableExtra("result");
                 tertulia = new TertuliaCreationMonthlyW(tertulia, crMonthlyW);
                 uiManager.set(tertulia);
@@ -275,9 +292,9 @@ public class NewTertuliaActivity extends Activity implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            return;
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            // TODO: review
     }
 
     @Override
@@ -300,7 +317,7 @@ public class NewTertuliaActivity extends Activity implements
             Util.longSnack(view, R.string.new_tertulia_toast_success);
             Util.logd("New tertulia created");
             Util.logd(result.toString());
-            setResult(RESULT_SUCCESS);
+            setResult(RESULT_OK);
             finish();
         }
 

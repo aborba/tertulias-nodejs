@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliadetails;
 
 import android.app.Activity;
@@ -93,7 +112,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case EditTertuliaActivity.ACTIVITY_REQUEST_CODE:
-                if (resultCode == RESULT_SUCCESS) {
+                if (resultCode == RESULT_OK) {
+                    setResult(RESULT_OK);
                     Util.longSnack(uiManager.getRootView(), R.string.edit_tertulia_toast_updated);
                     refreshDataAndViews();
                 }
@@ -209,7 +229,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         @Override
         public void onSuccess(JsonElement result) {
             Util.longSnack(rootView, R.string.message_dialog_unsubscribe_complete);
-            setResult(RESULT_SUCCESS);
+            setResult(RESULT_OK);
             finish();
         }
 
@@ -233,7 +253,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         @Override
         public void onSuccess(JsonElement result) {
             Util.longSnack(rootView, R.string.edit_tertulia_toast_updated);
-            setResult(RESULT_SUCCESS);
+            setResult(RESULT_OK);
             finish();
         }
 

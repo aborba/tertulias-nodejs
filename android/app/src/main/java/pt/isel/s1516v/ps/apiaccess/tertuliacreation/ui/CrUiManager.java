@@ -1,6 +1,26 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui;
 
 import android.content.Context;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -14,9 +34,11 @@ import java.util.EnumMap;
 import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Address;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Geolocation;
 import pt.isel.s1516v.ps.apiaccess.support.domain.LocationCreation;
+import pt.isel.s1516v.ps.apiaccess.support.domain.NewSchedule;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreation;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
@@ -32,9 +54,10 @@ public class CrUiManager extends UiManager {
     }
 
     private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
-    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
+    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);
     private boolean isViewsSet;
 
+    private Toolbar toolbarView;
     private EditText tertuliaNameView, subjectView,
             locationNameView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView;
@@ -85,9 +108,10 @@ public class CrUiManager extends UiManager {
                 cityView.getText().toString(), countryView.getText().toString());
         Geolocation geolocation = new Geolocation(getLatitudeData(), getLongitudeData());
         LocationCreation location = new LocationCreation(locationNameView.getText().toString(), address, geolocation);
-        TertuliaCreation newTertulia = new TertuliaCreation(tertuliaNameView.getText().toString(),
-                subjectView.getText().toString(), isPrivateView.isChecked(), location, tertulia.scheduleType, tertulia.getSchedule());
-        return newTertulia;
+        TertuliasApi.SCHEDULES scheduleType = tertulia == null ? null : tertulia.scheduleType;
+        NewSchedule schedule = tertulia == null ? null : tertulia.getSchedule();
+        return new TertuliaCreation(tertuliaNameView.getText().toString(),
+                subjectView.getText().toString(), isPrivateView.isChecked(), location, scheduleType, schedule);
     }
 
     public View getView(UIRESOURCE uiresource) {
@@ -173,6 +197,7 @@ public class CrUiManager extends UiManager {
     private void lazyViewsSetup() {
         if (isViewsSet)
             return;
+        toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
         tertuliaNameView = setup(UIRESOURCE.TERTULIA_NAME, EditText.class, uiViews);
         subjectView = setup(UIRESOURCE.SUBJECT, EditText.class, uiViews);
         locationNameView = setup(UIRESOURCE.LOCATION_NAME, EditText.class, uiViews);
@@ -208,7 +233,7 @@ public class CrUiManager extends UiManager {
                 scheduleText = tertulia.scheduleType.toString();
                 switch (tertulia.scheduleType.name()) {
                     case "WEEKLY":
-                        scheduleText += " - " + ((TertuliaCreationWeekly) tertulia).toString();
+                        scheduleText += " - " + tertulia.toString();
                         break;
                     case "MONTHLYD":
 //                        scheduleText += " - " + ((TertuliaCreationMonthly) tertulia).toString();
