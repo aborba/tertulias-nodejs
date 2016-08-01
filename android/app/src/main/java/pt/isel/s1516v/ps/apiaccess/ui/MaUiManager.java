@@ -2,67 +2,74 @@ package pt.isel.s1516v.ps.apiaccess.ui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
+import java.util.EnumMap;
 
+import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayRvAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 
 public class MaUiManager extends UiManager {
-    public final DrawerManager drawer;
-    public final RecyclerView recyclerView;
-    private final TextView emptyView;
-    private final ProgressBar progressBar;
-    private View rootView;
 
-    public MaUiManager(Context ctx, DrawerManager drawer,
-                       RecyclerView recyclerView, TertuliasArrayRvAdapter viewAdapter, TextView emptyView, ProgressBar progressBar) {
+    private DrawerManager drawerManager;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
+    private ProgressBar progressBar;
+
+    public enum UIRESOURCE {
+        DRAWER_LAYOUT,
+        DRAWER_MENU_LIST,
+        USER_PICTURE,
+        RECYCLER_VIEW,
+        EMPTY_VIEW,
+        PROGRESSBAR
+    }
+
+    public final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
+    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);
+    private boolean isViewsSet;
+
+    public MaUiManager(Context ctx) {
         super(ctx);
-        this.drawer = drawer;
-        this.recyclerView = recyclerView;
-        this.emptyView = emptyView;
-        this.progressBar = progressBar;
-        swapAdapter(viewAdapter);
-        progressBar.getIndeterminateDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+        uiResources.put(UIRESOURCE.DRAWER_LAYOUT, R.id.drawer_layout);
+        uiResources.put(UIRESOURCE.DRAWER_MENU_LIST, R.id.menu_list);
+        uiResources.put(UIRESOURCE.USER_PICTURE, R.id.mtl_user_picture);
+        uiResources.put(UIRESOURCE.RECYCLER_VIEW, R.id.mtl_RecyclerView);
+        uiResources.put(UIRESOURCE.EMPTY_VIEW, R.id.mtl_empty_view);
+        uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.mtl_progressbar);
     }
 
-    public MaUiManager(Context ctx, DrawerLayout drawerLayout, ListView drawerMenuView, ImageView drawerUserImage,
-                       RecyclerView recyclerView, TertuliasArrayRvAdapter viewAdapter, TextView emptyView, ProgressBar progressBar) {
-        this(ctx, new DrawerManager(ctx, drawerLayout, drawerMenuView, drawerUserImage), recyclerView, viewAdapter, emptyView, progressBar);
+    public void setDrawerManager(DrawerManager drawerManager) {
+        this.drawerManager = drawerManager;
     }
 
-    public MaUiManager(Context ctx, DrawerManager drawer,
-                       int recyclerView, TertuliasArrayRvAdapter viewAdapter, int emptyView, int progressBar) {
-        this(ctx, drawer,
-                (RecyclerView) ((Activity) ctx).findViewById(recyclerView),
-                viewAdapter,
-                (TextView) ((Activity) ctx).findViewById(emptyView),
-                (ProgressBar) ((Activity) ctx).findViewById(progressBar));
+    public DrawerManager getDrawerManager() {
+        return drawerManager;
     }
 
-    public MaUiManager(Context ctx, int rDrawerLayout, int rDrawerMenuView, int rDrawerUserImage,
-                       int rRecyclerView, TertuliasArrayRvAdapter viewAdapter, int rEmptyView, int rProgressBar) {
-        this(ctx, new DrawerManager(ctx, (DrawerLayout) ((Activity) ctx).findViewById(rDrawerLayout),
-                        (ListView) ((Activity) ctx).findViewById(rDrawerMenuView),
-                        (ImageView) ((Activity) ctx).findViewById(rDrawerUserImage)),
-                (RecyclerView) ((Activity) ctx).findViewById(rRecyclerView),
-                viewAdapter,
-                (TextView) ((Activity) ctx).findViewById(rEmptyView),
-                (ProgressBar) ((Activity) ctx).findViewById(rProgressBar));
+    public void setUserPicture(int resource) {
+        drawerManager.setIcon(resource);
+    }
+
+    public void setUserPicture(String resource) {
+        drawerManager.setIcon(resource);
     }
 
     public MaUiManager swapAdapter(TertuliasArrayRvAdapter viewAdapter) {
+        lazyViewsSetup();
         Util.setupAdapter((Activity) ctx, recyclerView, viewAdapter);
         return this;
+    }
+
+    public View getView(UIRESOURCE uiresource) {
+        lazyViewsSetup();
+        return uiViews.get(uiresource);
     }
 
     // region UiManager
@@ -97,6 +104,11 @@ public class MaUiManager extends UiManager {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected int getUiResource(String resource) {
+        return uiResources.get(UIRESOURCE.valueOf(resource));
+    }
+
     // endregion
 
     // region EmptyView
@@ -110,12 +122,14 @@ public class MaUiManager extends UiManager {
     }
 
     public MaUiManager setEmpty() {
+        lazyViewsSetup();
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
         return this;
     }
 
     public MaUiManager resetEmpty() {
+        lazyViewsSetup();
         recyclerView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
         return this;
@@ -126,12 +140,42 @@ public class MaUiManager extends UiManager {
     // region ProgressBar
 
     public void showProgressBar() {
+        lazyViewsSetup();
         progressBar.setVisibility(View.VISIBLE);
     }
 
     public void hideProgressBar() {
+        lazyViewsSetup();
         progressBar.setVisibility(View.INVISIBLE);
     }
 
     // endregion
+
+    // region private methods
+
+    private void lazyViewsSetup() {
+        if (isViewsSet)
+            return;
+        recyclerView = setup(UIRESOURCE.RECYCLER_VIEW, RecyclerView.class, uiViews);
+        emptyView = setup(UIRESOURCE.EMPTY_VIEW, TextView.class, uiViews);
+        progressBar = setup(UIRESOURCE.PROGRESSBAR, ProgressBar.class, uiViews);
+        isViewsSet = true;
+    }
+
+//    private View findViewById(int resource) {
+//        return ((Activity) ctx).findViewById(resource);
+//    }
+//
+//    private View findView(UIRESOURCE resource) {
+//        return findViewById(uiResources.get(resource));
+//    }
+//
+//    private <T extends View> T setup(Class<T> viewType, UIRESOURCE resource) {
+//        T view = (T) findView(resource);
+//        uiViews.put(resource, view);
+//        return view;
+//    }
+
+    // endregion
+
 }

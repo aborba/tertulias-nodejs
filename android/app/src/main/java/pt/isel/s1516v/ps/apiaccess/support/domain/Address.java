@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 
 public class Address implements Parcelable {
 
@@ -29,11 +29,11 @@ public class Address implements Parcelable {
         country = rtertulia.country;
     }
 
-    public Address(ApiReadTertuliaCore core) {
-        address = core.address;
-        zip = core.zip;
-        city = core.city;
-        country = core.country;
+    public Address(ApiTertuliaEdition core) {
+        address = core.lo_address;
+        zip = core.lo_zip;
+        city = core.lo_city;
+        country = core.lo_country;
     }
 
     public Address(RLocation rlocation) {

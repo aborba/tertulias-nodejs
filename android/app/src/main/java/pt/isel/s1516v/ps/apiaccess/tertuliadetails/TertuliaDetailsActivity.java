@@ -19,31 +19,32 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
-import java.util.EnumMap;
-
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundle;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
+import pt.isel.s1516v.ps.apiaccess.tertuliaedition.EditTertuliaActivity;
 
 public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public final static int ACTIVITY_REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
     public final static String SELF_LINK = LINK_SELF;
     private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
-    DtUiManager uiManager;
-    private ReadTertulia tertulia;
+    private DtUiManager uiManager;
+    private ApiLinks apiLinks;
+    private TertuliaEdition tertulia;
 
     // region Activity Life Cycle
 
@@ -55,34 +56,20 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA_INSTANCE_STATE_LABEL))
             tertulia = savedInstanceState.getParcelable(TERTULIA_INSTANCE_STATE_LABEL);
 
-        EnumMap<DtUiManager.UIRESOURCE, Integer> viewsMap = DtUiManager.getDictionary();
-        viewsMap.put(DtUiManager.UIRESOURCE.TITLE, R.id.tda_title);
-        viewsMap.put(DtUiManager.UIRESOURCE.SUBJECT, R.id.tda_subject);
-        viewsMap.put(DtUiManager.UIRESOURCE.ROLE, R.id.tda_role);
-        viewsMap.put(DtUiManager.UIRESOURCE.LOCATION, R.id.tda_locationName);
-        viewsMap.put(DtUiManager.UIRESOURCE.ADDRESS, R.id.tda_address);
-        viewsMap.put(DtUiManager.UIRESOURCE.ZIP, R.id.tda_zip);
-        viewsMap.put(DtUiManager.UIRESOURCE.CITY, R.id.tda_city);
-        viewsMap.put(DtUiManager.UIRESOURCE.COUNTRY, R.id.tda_country);
-        viewsMap.put(DtUiManager.UIRESOURCE.LATITUDE, R.id.tda_latitude);
-        viewsMap.put(DtUiManager.UIRESOURCE.LONGITUDE, R.id.tda_longitude);
-        viewsMap.put(DtUiManager.UIRESOURCE.SCHEDULE, R.id.tda_schedule);
-        viewsMap.put(DtUiManager.UIRESOURCE.PRIVACY, R.id.tda_isPrivate);
-        uiManager = new DtUiManager(this, viewsMap);
+        uiManager = new DtUiManager(this);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.tda_toolbar),
+        Toolbar toolbar = (Toolbar) uiManager.getView(DtUiManager.UIRESOURCE.TOOLBAR);
+
+        Util.setupToolBar(this, (Toolbar) uiManager.getView(DtUiManager.UIRESOURCE.TOOLBAR),
                 R.string.title_activity_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        ApiLink selfLink = getIntent().getParcelableExtra(SELF_LINK);
+        apiLinks = new ApiLinks(Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class));
 
-        if (tertulia != null) uiManager.set(tertulia);
-        else {
-            MobileServiceClient cli = Util.getMobileServiceClient(this);
-            ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(selfLink.href, null, selfLink.method, null);
-            Futures.addCallback(rTertuliasFuture, new TertuliaPresentation());
-        }
-
+        if (tertulia != null)
+            uiManager.set(tertulia);
+        else
+            refreshDataAndViews();
     }
 
     @Override
@@ -100,6 +87,28 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case EditTertuliaActivity.ACTIVITY_REQUEST_CODE:
+                if (resultCode == RESULT_SUCCESS) {
+                    Util.longSnack(uiManager.getRootView(), R.string.edit_tertulia_toast_updated);
+                    refreshDataAndViews();
+                }
+                else
+                    Util.longSnack(uiManager.getRootView(), R.string.tertulia_details_not_updated);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+    private void refreshDataAndViews() {
+        MobileServiceClient cli = Util.getMobileServiceClient(this);
+        ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(apiLinks.getRoute(LINK_SELF), null, apiLinks.getMethod(LINK_SELF), null);
+        Futures.addCallback(rTertuliasFuture, new TertuliaPresentation());
     }
 
     public void onClickMapLookup(View view) {
@@ -129,6 +138,24 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public void onClickSubmitEdit(View view) {
         Log.d("trt", "in onClickSubmitEdit");
+        if (!tertulia.role.name.toLowerCase().equals("owner")) {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.title_activity_edit_tertulia)
+                    .setMessage(R.string.message_dialog_edit_tertulia_owner_warning)
+                    .setIcon(android.R.drawable.ic_lock_lock)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+            return;
+        }
+        ApiLink[] apiLinks = Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class);
+        if (apiLinks == null) {
+            Util.longSnack(view, R.string.tertulia_details_undefined_links);
+            return;
+        }
+        Intent intent = new Intent(this, EditTertuliaActivity.class);
+        intent.putExtra(EditTertuliaActivity.INTENT_LINKS, apiLinks);
+        intent.putExtra(EditTertuliaActivity.INTENT_TERTULIA, tertulia);
+        startActivityForResult(intent, EditTertuliaActivity.ACTIVITY_REQUEST_CODE);
     }
 
     public void onClickSubmitMembers(View view) {
@@ -136,7 +163,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     public void onClickUnsubscribe(View view) {
-        if (tertulia.role_type.toLowerCase().equals("owner")) {
+        if (tertulia.role.name.toLowerCase().equals("owner")) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.title_dialog_unsubscribe_public_tertulia)
                     .setMessage(R.string.message_dialog_unsubscribe_public_tertulia_owner_warning)
@@ -169,6 +196,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 .show();
     }
 
+    // endregion
+
     public class UnsubscriptionCallback implements FutureCallback<JsonElement> {
 
         final View rootView;
@@ -179,7 +208,31 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
         @Override
         public void onSuccess(JsonElement result) {
-            Util.longSnack(rootView, "Unsubscribed from Tertulia"); // TODO: strings.xml
+            Util.longSnack(rootView, R.string.message_dialog_unsubscribe_complete);
+            setResult(RESULT_SUCCESS);
+            finish();
+        }
+
+        @Override
+        public void onFailure(Throwable e) {
+            Util.longSnack(rootView, e.getMessage());
+            Util.logd("Public tertulia unsubscription failed");
+            Util.logd(e.getMessage());
+            setResult(RESULT_FAIL);
+        }
+    }
+
+    public class UpdateCallback implements FutureCallback<JsonElement> {
+
+        final View rootView;
+
+        public UpdateCallback(View rootView) {
+            this.rootView = rootView;
+        }
+
+        @Override
+        public void onSuccess(JsonElement result) {
+            Util.longSnack(rootView, R.string.edit_tertulia_toast_updated);
             setResult(RESULT_SUCCESS);
             finish();
         }
@@ -208,16 +261,16 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, ReadTertulia>() {
+            new AsyncTask<JsonElement, Void, TertuliaEdition>() {
                 @Override
-                protected ReadTertulia doInBackground(JsonElement... params) {
-                    ApiReadTertulia apiTertulia = new Gson().fromJson(params[0], ApiReadTertulia.class);
-                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
+                protected TertuliaEdition doInBackground(JsonElement... params) {
+                    ApiTertuliaEditionBundle apiTertulia = new Gson().fromJson(params[0], ApiTertuliaEditionBundle.class);
+                    tertulia = new TertuliaEdition(apiTertulia.tertulia, apiTertulia.links);
                     return tertulia;
                 }
 
                 @Override
-                protected void onPostExecute(ReadTertulia tertulia) {
+                protected void onPostExecute(TertuliaEdition tertulia) {
                     uiManager.set(tertulia);
                 }
             }.execute(result);
@@ -226,34 +279,28 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     private class TertuliaPresentation implements FutureCallback<JsonElement> {
         @Override
-        public void onFailure(Throwable e) {
-            Context ctx = TertuliaDetailsActivity.this;
-            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
-        }
-
-        @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, ReadTertulia>() {
+            new AsyncTask<JsonElement, Void, TertuliaEdition>() {
                 @Override
-                protected ReadTertulia doInBackground(JsonElement... params) {
-                    ApiReadTertulia apiTertulia = new Gson().fromJson(params[0], ApiReadTertulia.class);
-                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
+                protected TertuliaEdition doInBackground(JsonElement... params) {
+                    ApiTertuliaEditionBundle apiTertulia = new Gson().fromJson(params[0], ApiTertuliaEditionBundle.class);
+                    tertulia = new TertuliaEdition(apiTertulia);
                     if (tertulia.scheduleType != null) {
-                        switch (tertulia.scheduleType) {
-                            case "Weekly":
-                                ApiReadTertuliaWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiReadTertuliaWeekly.class);
-                                tertulia = new ReadWeekly(apiReadTertuliaWeekly);
+                        switch (tertulia.scheduleType.name()) {
+                            case "WEEKLY":
+                                ApiTertuliaEditionBundleWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleWeekly.class);
+                                tertulia = new TertuliaEditionWeekly(apiReadTertuliaWeekly);
                                 break;
-                            case "MonthlyD":
-                                ApiReadTertuliaMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiReadTertuliaMonthly.class);
-                                tertulia = new ReadMonthly(apiReadTertuliaMonthly);
+                            case "MONTHLYD":
+                                ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthly.class);
+                                tertulia = new TertuliaEditionMonthly(apiReadTertuliaMonthly);
                                 break;
-                            case "MonthlyW":
-                                ApiReadTertuliaMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiReadTertuliaMonthlyW.class);
-                                tertulia = new ReadMonthlyW(apiReadTertuliaMonthlyW);
+                            case "MONTHLYW":
+                                ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);
+                                tertulia = new TertuliaEditionMonthlyW(apiReadTertuliaMonthlyW);
                                 break;
-                            case "Yearly":
-                            case "YearlW":
+                            case "YEARLY":
+                            case "YEARLW":
                                 break;
                             default:
                                 throw new IllegalArgumentException();
@@ -263,10 +310,16 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 }
 
                 @Override
-                protected void onPostExecute(ReadTertulia tertulia) {
+                protected void onPostExecute(TertuliaEdition tertulia) {
                     uiManager.set(tertulia);
                 }
             }.execute(result);
+        }
+
+        @Override
+        public void onFailure(Throwable e) {
+            Context ctx = TertuliaDetailsActivity.this;
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
         }
     }
 }

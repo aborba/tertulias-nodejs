@@ -9,9 +9,10 @@ import android.widget.TextView;
 
 import java.util.EnumMap;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class SbUiManager extends UiManager {
@@ -36,7 +37,7 @@ public class SbUiManager extends UiManager {
         this.uiResources = uiResources;
     }
 
-    public void set(ReadTertulia tertulia) {
+    public void set(TertuliaEdition tertulia) {
         lazyViewsSetup();
         fillInViews(tertulia);
     }
@@ -99,6 +100,11 @@ public class SbUiManager extends UiManager {
         return longitudeView.getText().toString();
     }
 
+    @Override
+    protected int getUiResource(String resource) {
+        return uiResources.get(UIRESOURCE.valueOf(resource));
+    }
+
     // endregion
 
     // region public static methods
@@ -137,7 +143,7 @@ public class SbUiManager extends UiManager {
         isViewsSet = true;
     }
 
-    private void fillInViews(ReadTertulia tertulia) {
+    private void fillInViews(TertuliaEdition tertulia) {
         titleView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
         locationView.setText(tertulia.location.name);
@@ -148,14 +154,29 @@ public class SbUiManager extends UiManager {
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
         String scheduleText;
-        if (tertulia instanceof ReadWeekly || tertulia instanceof ReadMonthly) {
+        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthly) {
             scheduleText = tertulia.toString();
         } else {
-            if (!TextUtils.isEmpty(tertulia.scheduleType)) {
-                scheduleText = tertulia.scheduleType;
-                if (!TextUtils.isEmpty(tertulia.scheduleDescription))
-                    scheduleText += " - " + tertulia.scheduleDescription;
-            } else scheduleText = tertulia.scheduleDescription;
+            if (tertulia.scheduleType != null) {
+                scheduleText = tertulia.scheduleType.toString();
+                switch (tertulia.scheduleType.name()) {
+                    case "WEEKLY":
+                        scheduleText += " - " + ((TertuliaEditionWeekly) tertulia).toString();
+                        break;
+                    case "MONTHLYD":
+                        scheduleText += " - " + ((TertuliaEditionMonthly) tertulia).toString();
+                        break;
+                    case "MONTHLYW":
+                        scheduleText += " - " + ((TertuliaEditionMonthlyW) tertulia).toString();
+                        break;
+                    case "YEARLY":
+                    case "YEARLYW":
+//                        scheduleText += " - " + ((TertuliaEditionYearlyW) tertulia).toString();
+                        throw new UnsupportedOperationException();
+                    default:
+                        throw new RuntimeException();
+                }
+            } else scheduleText = tertulia.scheduleType.toString();
         }
         scheduleView.setText(scheduleText);
     }

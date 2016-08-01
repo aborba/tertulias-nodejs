@@ -7,44 +7,45 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreation;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
 
 public class CrApiMonthlyWSchedule extends CrApiTertulia implements Parcelable, Schedule {
 
-    @com.google.gson.annotations.SerializedName("sc_weekDay")
+    @com.google.gson.annotations.SerializedName("schedule_weekday")
     public final String weekDay;
-    @com.google.gson.annotations.SerializedName("sc_weekNr")
+    @com.google.gson.annotations.SerializedName("schedule_weeknr")
     public final int weekNr;
-    @com.google.gson.annotations.SerializedName("sc_fromStart")
+    @com.google.gson.annotations.SerializedName("schedule_isfromstart")
     public final boolean fromStart;
-    @com.google.gson.annotations.SerializedName("sc_skip")
+    @com.google.gson.annotations.SerializedName("schedule_skip")
     public final int skip;
 
-    public CrApiMonthlyWSchedule(String name, String subject,
+    public CrApiMonthlyWSchedule(String name, String subject, boolean isPrivate,
                                  String location, String address, String zip, String city, String country,
                                  String latitude, String longitude,
-                                 String weekDay, int weekNr, boolean fromStart, int skip,
-//                                 String scheduleType, int scheduleId,
-                                 boolean isPrivate) {
-        super(name, subject,
+                                 String weekDay, int weekNr, boolean fromStart, int skip) {
+        super(name, subject, isPrivate,
                 location, address, zip, city, country,
                 latitude, longitude,
-//                scheduleType, scheduleId,
-                isPrivate);
+                TertuliasApi.SCHEDULES.MONTHLYW.name());
         this.weekDay = weekDay;
         this.weekNr = weekNr;
         this.fromStart = fromStart;
         this.skip = skip;
     }
 
-    public CrApiMonthlyWSchedule(Context ctx, CrUiTertulia crUiTertulia, CrUiMonthlyW crUiMonthlyW) {
-        this(crUiTertulia.name, crUiTertulia.subject,
-                crUiTertulia.crUiLocation.name, crUiTertulia.crUiLocation.address.address, crUiTertulia.crUiLocation.address.zip, crUiTertulia.crUiLocation.address.city, crUiTertulia.crUiLocation.address.country,
-                String.valueOf(crUiTertulia.crUiLocation.geo.latitude), String.valueOf(crUiTertulia.crUiLocation.geo.longitude),
-                crUiMonthlyW.getWeekDay(ctx), crUiMonthlyW.weekNr, crUiMonthlyW.isFromStart, crUiMonthlyW.skip,
-                crUiTertulia.isPrivate);
+    public CrApiMonthlyWSchedule(Context ctx, TertuliaEditionMonthlyW tertulia) {
+        this(tertulia.name, tertulia.subject, tertulia.isPrivate,
+                tertulia.location.name, tertulia.location.address.address, tertulia.location.address.zip, tertulia.location.address.city, tertulia.location.address.country,
+                String.valueOf(tertulia.location.geolocation.latitude), String.valueOf(tertulia.location.geolocation.longitude),
+                tertulia.getWeekDay(ctx), tertulia.weeknr, tertulia.isFromStart, tertulia.skip);
+
     }
 
     @Override
@@ -56,7 +57,7 @@ public class CrApiMonthlyWSchedule extends CrApiTertulia implements Parcelable, 
 
     // region CrApiTertulia
 
-    @Override
+//    @Override
     protected String toStringContribution() { return null; }
 
     // endregion
@@ -73,11 +74,7 @@ public class CrApiMonthlyWSchedule extends CrApiTertulia implements Parcelable, 
     // region Parcelable
 
     protected CrApiMonthlyWSchedule(Parcel in) {
-        super(in.readString(), in.readString(),
-                in.readString(), in.readString(), in.readString(), in.readString(), in.readString(),
-                in.readString(), in.readString(),
-//                in.readString(), in.readInt(),
-                in.readByte() != 0);
+        super(in);
         weekDay = in.readString();
         weekNr = in.readInt();
         fromStart = in.readByte() != 0;
@@ -91,18 +88,7 @@ public class CrApiMonthlyWSchedule extends CrApiTertulia implements Parcelable, 
 
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
-        out.writeString(tertuliaName);
-        out.writeString(subject);
-        out.writeString(locationName);
-        out.writeString(streetAddress);
-        out.writeString(zip);
-        out.writeString(city);
-        out.writeString(country);
-        out.writeString(latitude);
-        out.writeString(longitude);
-//        out.writeString(scheduleType);
-//        out.writeInt(scheduleId);
-        out.writeByte((byte) (isPrivate ? 1 : 0));
+        super.writeToParcel(out, flags);
         out.writeString(weekDay);
         out.writeInt(weekNr);
         out.writeByte((byte) (fromStart ? 1 : 0));

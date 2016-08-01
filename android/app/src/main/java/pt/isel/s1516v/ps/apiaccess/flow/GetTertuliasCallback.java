@@ -15,7 +15,8 @@ import java.util.concurrent.ExecutionException;
 import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayRvAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
@@ -51,22 +52,22 @@ public class GetTertuliasCallback implements FutureCallback<JsonElement> {
             }
         }.execute(result);
 
-        new AsyncTask<JsonElement, Void, ReadTertulia[]>() {
+        new AsyncTask<JsonElement, Void, TertuliaListItem[]>() {
             @Override
-            protected ReadTertulia[] doInBackground(JsonElement... params) {
+            protected TertuliaListItem[] doInBackground(JsonElement... params) {
                 ApiTertuliasList apiTertuliasList = new Gson().fromJson(params[0], ApiTertuliasList.class);
-                LinkedList<ReadTertulia> tertulias = new LinkedList<>();
+                LinkedList<TertuliaListItem> tertulias = new LinkedList<>();
                 for (ApiTertuliaListItem apiTertuliaListItem : apiTertuliasList.items) {
-                    ReadTertulia tertulia = new ReadTertulia(apiTertuliaListItem);
+                    TertuliaListItem tertulia = new TertuliaListItem(apiTertuliaListItem);
                     tertulias.add(tertulia);
                 }
-                return tertulias.toArray(new ReadTertulia[tertulias.size()]);
+                return tertulias.toArray(new TertuliaListItem[tertulias.size()]);
             }
 
             @Override
-            protected void onPostExecute(ReadTertulia[] tertulias) {
+            protected void onPostExecute(TertuliaListItem[] tertulias) {
                 MainActivity.tertulias = tertulias;
-                TertuliasArrayRvAdapter adapter = new TertuliasArrayRvAdapter((Activity)ctx, tertulias != null ? tertulias : new ReadTertulia[0]);
+                TertuliasArrayRvAdapter adapter = new TertuliasArrayRvAdapter((Activity)ctx, tertulias != null ? tertulias : new TertuliaListItem[0]);
                 uiManager.swapAdapter(adapter)
                         .setEmpty(tertulias == null || tertulias.length == 0)
                         .hideProgressBar();

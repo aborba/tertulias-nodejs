@@ -15,7 +15,7 @@ public class InvitationActivity extends Activity implements TertuliasApi {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitation);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.ia_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 

@@ -83,7 +83,7 @@ public class PlacePresentationActivity extends FragmentActivity
             }
         });
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.ppa_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_place_presentation,
                 Util.IGNORE, Util.IGNORE, null, true);
 

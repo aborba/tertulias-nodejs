@@ -1,7 +1,7 @@
 package pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -9,15 +9,17 @@ import android.widget.TextView;
 
 import java.util.EnumMap;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
+import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class DtUiManager extends UiManager {
 
     public enum UIRESOURCE {
+        TOOLBAR,
         TITLE, SUBJECT,
         ROLE,
         LOCATION, ADDRESS, ZIP, CITY, COUNTRY, LATITUDE, LONGITUDE,
@@ -25,24 +27,42 @@ public class DtUiManager extends UiManager {
         PRIVACY
     }
 
-    private final EnumMap<UIRESOURCE, Integer> uiResources;
+    private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);;
     private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
     private boolean isViewsSet;
 
+    private Toolbar toolbarView;
     private TextView titleView, subjectView, roleView,
             locationView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView,
             scheduleView;
     private CheckBox isPrivateView;
 
-    public DtUiManager(Context ctx, EnumMap<UIRESOURCE, Integer> uiResources) {
+    public DtUiManager(Context ctx) {
         super(ctx);
-        this.uiResources = uiResources;
+        uiResources.put(UIRESOURCE.TOOLBAR, R.id.toolbar);
+        uiResources.put(UIRESOURCE.TITLE, R.id.tda_title);
+        uiResources.put(UIRESOURCE.SUBJECT, R.id.tda_subject);
+        uiResources.put(UIRESOURCE.ROLE, R.id.tda_role);
+        uiResources.put(UIRESOURCE.LOCATION, R.id.tda_locationName);
+        uiResources.put(UIRESOURCE.ADDRESS, R.id.tda_address);
+        uiResources.put(UIRESOURCE.ZIP, R.id.tda_zip);
+        uiResources.put(UIRESOURCE.CITY, R.id.tda_city);
+        uiResources.put(UIRESOURCE.COUNTRY, R.id.tda_country);
+        uiResources.put(UIRESOURCE.LATITUDE, R.id.tda_latitude);
+        uiResources.put(UIRESOURCE.LONGITUDE, R.id.tda_longitude);
+        uiResources.put(UIRESOURCE.SCHEDULE, R.id.tda_schedule);
+        uiResources.put(UIRESOURCE.PRIVACY, R.id.tda_isPrivate);
     }
 
-    public void set(ReadTertulia tertulia) {
+    public void set(TertuliaEdition tertulia) {
         lazyViewsSetup();
         fillInViews(tertulia);
+    }
+
+    public View getView(UIRESOURCE uiresource) {
+        lazyViewsSetup();
+        return uiViews.get(uiresource);
     }
 
     public String getTextViewValue(UIRESOURCE uiresource) {
@@ -103,6 +123,11 @@ public class DtUiManager extends UiManager {
         return longitudeView.getText().toString();
     }
 
+    @Override
+    protected int getUiResource(String resource) {
+        return uiResources.get(UIRESOURCE.valueOf(resource));
+    }
+
     // endregion
 
     // region public static methods
@@ -118,34 +143,23 @@ public class DtUiManager extends UiManager {
     private void lazyViewsSetup() {
         if (isViewsSet)
             return;
-        titleView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.TITLE));
-        uiViews.put(UIRESOURCE.TITLE, titleView);
-        subjectView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.SUBJECT));
-        uiViews.put(UIRESOURCE.SUBJECT, subjectView);
-        roleView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.ROLE));
-        uiViews.put(UIRESOURCE.ROLE, roleView);
-        locationView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.LOCATION));
-        uiViews.put(UIRESOURCE.LOCATION, locationView);
-        addressView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.ADDRESS));
-        uiViews.put(UIRESOURCE.ADDRESS, addressView);
-        zipView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.ZIP));
-        uiViews.put(UIRESOURCE.ZIP, zipView);
-        cityView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.CITY));
-        uiViews.put(UIRESOURCE.CITY, cityView);
-        countryView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.COUNTRY));
-        uiViews.put(UIRESOURCE.COUNTRY, countryView);
-        latitudeView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.LATITUDE));
-        uiViews.put(UIRESOURCE.LATITUDE, latitudeView);
-        longitudeView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.LONGITUDE));
-        uiViews.put(UIRESOURCE.LONGITUDE, longitudeView);
-        scheduleView = (TextView) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.SCHEDULE));
-        uiViews.put(UIRESOURCE.SCHEDULE, scheduleView);
-        isPrivateView = (CheckBox) ((Activity) ctx).findViewById(uiResources.get(UIRESOURCE.PRIVACY));
-        uiViews.put(UIRESOURCE.PRIVACY, isPrivateView);
+        toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
+        titleView = setup(UIRESOURCE.TITLE, TextView.class, uiViews);
+        subjectView = setup(UIRESOURCE.SUBJECT, TextView.class, uiViews);
+        roleView = setup(UIRESOURCE.ROLE, TextView.class, uiViews);
+        locationView = setup(UIRESOURCE.LOCATION, TextView.class, uiViews);
+        addressView = setup(UIRESOURCE.ADDRESS, TextView.class, uiViews);
+        zipView = setup(UIRESOURCE.ZIP, TextView.class, uiViews);
+        cityView = setup(UIRESOURCE.CITY, TextView.class, uiViews);
+        countryView = setup(UIRESOURCE.COUNTRY, TextView.class, uiViews);
+        latitudeView = setup(UIRESOURCE.LATITUDE, TextView.class, uiViews);
+        longitudeView = setup(UIRESOURCE.LONGITUDE, TextView.class, uiViews);
+        scheduleView = setup(UIRESOURCE.SCHEDULE, TextView.class, uiViews);
+        isPrivateView = setup(UIRESOURCE.PRIVACY, CheckBox.class, uiViews);
         isViewsSet = true;
     }
 
-    private void fillInViews(ReadTertulia tertulia) {
+    private void fillInViews(TertuliaEdition tertulia) {
         titleView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
         locationView.setText(tertulia.location.name);
@@ -156,17 +170,34 @@ public class DtUiManager extends UiManager {
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
         String scheduleText;
-        if (tertulia instanceof ReadWeekly || tertulia instanceof ReadMonthly || tertulia instanceof ReadMonthlyW)
+        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthly || tertulia instanceof TertuliaEditionMonthlyW
+//                || tertulia instanceof TertuliaEditionYearly || tertulia instanceof TertuliaEditionYearlyW
+        )
             scheduleText = tertulia.toString();
         else {
-            if (!TextUtils.isEmpty(tertulia.scheduleType)) {
-                scheduleText = tertulia.scheduleType;
-                if (!TextUtils.isEmpty(tertulia.scheduleDescription))
-                    scheduleText += " - " + tertulia.scheduleDescription;
-            } else scheduleText = tertulia.scheduleDescription;
+            if (tertulia.scheduleType != null) {
+                scheduleText = tertulia.scheduleType.toString();
+                switch (tertulia.scheduleType.name()) {
+                    case "WEEKLY":
+                        scheduleText += " - " + ((TertuliaEditionWeekly) tertulia).toString();
+                        break;
+                    case "MONTHLYD":
+                        scheduleText += " - " + ((TertuliaEditionMonthly) tertulia).toString();
+                        break;
+                    case "MONTHLYW":
+                        scheduleText += " - " + ((TertuliaEditionMonthlyW) tertulia).toString();
+                        break;
+                    case "YEARLY":
+                    case "YEARLYW":
+//                        scheduleText += " - " + ((TertuliaEditionYearlyW) tertulia).toString();
+                        throw new UnsupportedOperationException();
+                    default:
+                        throw new RuntimeException();
+                }
+            } else scheduleText = "";
         }
         scheduleView.setText(scheduleText);
-        roleView.setText(tertulia.role_type);
+        roleView.setText(tertulia.role.name);
         isPrivateView.setChecked(tertulia.isPrivate);
     }
 

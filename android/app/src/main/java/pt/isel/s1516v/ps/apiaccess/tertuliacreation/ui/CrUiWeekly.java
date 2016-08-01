@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 
 public class CrUiWeekly implements Parcelable, CrUiSchedule {
 
@@ -22,6 +23,10 @@ public class CrUiWeekly implements Parcelable, CrUiSchedule {
     public CrUiWeekly(int weekDayNr, int skip) {
         this.weekDayNr = weekDayNr;
         this.skip = skip;
+    }
+
+    public TertuliasApi.SCHEDULES getScheduleType() {
+        return TertuliasApi.SCHEDULES.WEEKLY;
     }
 
     public String getWeekDay(Context ctx) {

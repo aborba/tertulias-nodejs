@@ -46,6 +46,8 @@ import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUse
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -195,6 +197,8 @@ public class Util {
     public static final int IGNORE = -1;
 
     public static void setupToolBar(@NonNull Toolbar toolbar, int title, int subtitle, int menu, Toolbar.OnMenuItemClickListener menuItemClickListener) {
+        if (toolbar == null)
+            throw new IllegalArgumentException();
         if (title != IGNORE) toolbar.setTitle(title);
         if (subtitle != IGNORE) toolbar.setSubtitle(subtitle);
         if (menu != IGNORE) {
@@ -360,5 +364,23 @@ public class Util {
     }
 
     // endregion
+
+    public static boolean isZipCode(String target, String country) {
+        switch (country.toLowerCase()) {
+            case "czech republic":
+                return target.matches("\\d{3}\\s\\d{2}");
+            case "netherlands":
+                target = target.toUpperCase();
+                if (target.startsWith("NL-"))
+                    target = target.substring(3);
+                return target.matches("\\d{4}\\s[A-Z]{2}");
+            case "portugal":
+            default:
+                return target.matches("^\\d{4}-\\d{3}");
+        }
+
+    }
+
+
 
 }

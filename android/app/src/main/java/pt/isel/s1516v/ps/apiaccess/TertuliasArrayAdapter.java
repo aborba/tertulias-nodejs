@@ -11,15 +11,16 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
-public class TertuliasArrayAdapter extends ArrayAdapter<ReadTertulia> {
+public class TertuliasArrayAdapter extends ArrayAdapter<TertuliaListItem> {
 
     private Activity ctx;
-    private ReadTertulia[] tertulias;
+    private TertuliaListItem[] tertulias;
 
-    public TertuliasArrayAdapter(Activity ctx, ReadTertulia[] tertulias) {
+    public TertuliasArrayAdapter(Activity ctx, TertuliaListItem[] tertulias) {
         super(ctx, -1, tertulias);
         this.ctx = ctx;
         this.tertulias = tertulias;
@@ -31,7 +32,7 @@ public class TertuliasArrayAdapter extends ArrayAdapter<ReadTertulia> {
         View rowView = convertView;
         if (rowView == null) {
             LayoutInflater inflater = ctx.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.tertulias_listview_row, null);
+            rowView = inflater.inflate(R.layout.adapter_tertulias_listview_row, null);
             viewHolder = new ViewHolder(rowView,
                     R.id.ltlr_tertulia_name,
                     R.id.ltlr_tertulia_subject,
@@ -72,7 +73,7 @@ public class TertuliasArrayAdapter extends ArrayAdapter<ReadTertulia> {
             messageLabel = (TextView) ctx.findViewById(viewIds[i]);
         }
 
-        public void updateViews(ReadTertulia tertulia) {
+        public void updateViews(TertuliaListItem tertulia) {
             tertuliaName.setText(tertulia.name);
 
             if (TextUtils.isEmpty(tertulia.subject)) tertuliaSubject.setVisibility(View.INVISIBLE);

@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -27,29 +26,27 @@ import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadWeekly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundle;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.PlacePresentationActivity;
-import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.ui.SbUiManager;
 
 public class PublicTertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public final static int ACTIVITY_REQUEST_CODE = SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE;
     public final static String SELF_LINK = LINK_SELF;
-    public final static String LINKS = LINKS_LABEL;
+    public final static String LINKS = INTENT_LINKS;
     public final static String LINK_ACTION = LINK_SUBSCRIBE;
     private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
     SbUiManager uiManager;
-    private ReadTertulia tertulia;
+    private TertuliaEdition tertulia;
 
     // region Activity Life Cycle
 
@@ -74,7 +71,7 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
         viewsMap.put(SbUiManager.UIRESOURCE.SCHEDULE, R.id.ptda_schedule);
         uiManager = new SbUiManager(this, viewsMap);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.ptda_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_public_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 
@@ -193,27 +190,27 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
 
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, ReadTertulia>(){
+            new AsyncTask<JsonElement, Void, TertuliaEdition>(){
                 @Override
-                protected ReadTertulia doInBackground(JsonElement... params) {
-                    ApiReadTertulia apiTertulia = new Gson().fromJson(params[0], ApiReadTertulia.class);
-                    tertulia = new ReadTertulia(apiTertulia.tertulia, apiTertulia.links);
+                protected TertuliaEdition doInBackground(JsonElement... params) {
+                    ApiTertuliaEditionBundle apiTertulia = new Gson().fromJson(params[0], ApiTertuliaEditionBundle.class);
+                    tertulia = new TertuliaEdition(apiTertulia.tertulia, apiTertulia.links);
                     if (tertulia.scheduleType != null) {
-                        switch (tertulia.scheduleType) {
-                            case "Weekly":
-                                ApiReadTertuliaWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiReadTertuliaWeekly.class);
-                                tertulia = new ReadWeekly(apiReadTertuliaWeekly);
+                        switch (tertulia.scheduleType.name()) {
+                            case "WEEKLY":
+                                ApiTertuliaEditionBundleWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleWeekly.class);
+                                tertulia = new TertuliaEditionWeekly(apiReadTertuliaWeekly);
                                 break;
-                            case "MonthlyD":
-                                ApiReadTertuliaMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiReadTertuliaMonthly.class);
-                                tertulia = new ReadMonthly(apiReadTertuliaMonthly);
+                            case "MONTHLYD":
+                                ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthly.class);
+                                tertulia = new TertuliaEditionMonthly(apiReadTertuliaMonthly);
                                 break;
-                            case "MonthlyW":
-                                ApiReadTertuliaMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiReadTertuliaMonthlyW.class);
-                                tertulia = new ReadMonthlyW(apiReadTertuliaMonthlyW);
+                            case "MONTHLYW":
+                                ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);
+                                tertulia = new TertuliaEditionMonthlyW(apiReadTertuliaMonthlyW);
                                 break;
-                            case "Yearly":
-                            case "YearlW":
+                            case "YEARLY":
+                            case "YEARLW":
                                 break;
                             default:
                                 throw new IllegalArgumentException();
@@ -223,7 +220,7 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
                 }
 
                 @Override
-                protected void onPostExecute(ReadTertulia tertulia) {
+                protected void onPostExecute(TertuliaEdition tertulia) {
                     uiManager.set(tertulia);
                 }
             }.execute(result);

@@ -5,38 +5,39 @@ import android.os.Parcelable;
 
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaListItem;
 
-public class NewLocation implements Parcelable {
+public class LocationCreation implements Parcelable {
 
-    public int id;
     public String name;
     public Address address;
     public Geolocation geolocation;
 
-    public NewLocation(RLocation rlocation) {
-        id = rlocation.id;
+    public LocationCreation(String name, Address address, Geolocation geolocation) {
+        this.name = name;
+        this.address = address;
+        this.geolocation = geolocation;
+    }
+
+    public LocationCreation(RLocation rlocation) {
         name = rlocation.name;
         address = new Address(rlocation);
         geolocation = new Geolocation(rlocation);
     }
 
-    public NewLocation(ApiTertuliaListItem apiTertuliaListItem) {
-        id = -1;
+    public LocationCreation(ApiTertuliaListItem apiTertuliaListItem) {
         name = apiTertuliaListItem.eventLocation;
     }
 
-    public NewLocation(RTertulia rtertulia) {
-        id = rtertulia.locationId;
+    public LocationCreation(RTertulia rtertulia) {
         name = rtertulia.locationName;
         address = new Address(rtertulia);
         geolocation = new Geolocation(rtertulia);
     }
 
-    public NewLocation(ApiReadTertuliaCore core) {
-        id = -1;
-        name = core.location;
+    public LocationCreation(ApiTertuliaEdition core) {
+        name = core.lo_name;
         address = new Address(core);
         geolocation = new Geolocation(core);
     }
@@ -44,31 +45,23 @@ public class NewLocation implements Parcelable {
     @Override
     public String toString() { return name + " (" + address + ")"; }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        NewLocation other = (NewLocation) obj;
-        return obj instanceof NewLocation && other.id == this.id && other.name == this.name;
-    }
-
     // region Parcelable
 
-    protected NewLocation(Parcel in) {
-        id = in.readInt();
+    protected LocationCreation(Parcel in) {
         name = in.readString();
         address = in.readParcelable(Address.class.getClassLoader());
         geolocation = in.readParcelable(Geolocation.class.getClassLoader());
     }
 
-    public static final Creator<NewLocation> CREATOR = new Creator<NewLocation>() {
+    public static final Creator<LocationCreation> CREATOR = new Creator<LocationCreation>() {
         @Override
-        public NewLocation createFromParcel(Parcel in) {
-            return new NewLocation(in);
+        public LocationCreation createFromParcel(Parcel in) {
+            return new LocationCreation(in);
         }
 
         @Override
-        public NewLocation[] newArray(int size) {
-            return new NewLocation[size];
+        public LocationCreation[] newArray(int size) {
+            return new LocationCreation[size];
         }
     };
 
@@ -79,7 +72,6 @@ public class NewLocation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
         dest.writeString(name);
         dest.writeParcelable(address, flags);
         dest.writeParcelable(geolocation, flags);

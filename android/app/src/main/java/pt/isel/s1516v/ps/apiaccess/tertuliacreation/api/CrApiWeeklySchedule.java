@@ -7,28 +7,27 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
 public class CrApiWeeklySchedule extends CrApiTertulia implements Parcelable, Schedule {
 
-    @com.google.gson.annotations.SerializedName("sc_weekDay")
+    @com.google.gson.annotations.SerializedName("schedule_weekday")
     public final String weekDay;
-    @com.google.gson.annotations.SerializedName("sc_skip")
+    @com.google.gson.annotations.SerializedName("schedule_skip")
     public final int skip;
 
     public CrApiWeeklySchedule(String name, String subject,
                                String location, String address, String zip, String city, String country,
                                String latitude, String longitude,
                                String weekDay, int skip,
-//                               String scheduleType, int scheduleId,
                                boolean isPrivate) {
-        super(name, subject,
+        super(name, subject, isPrivate,
                 location, address, zip, city, country,
                 latitude, longitude,
-//                scheduleType, scheduleId,
-                isPrivate);
+                TertuliasApi.SCHEDULES.WEEKLY.name());
         this.weekDay = weekDay;
         this.skip = skip;
     }
@@ -51,7 +50,7 @@ public class CrApiWeeklySchedule extends CrApiTertulia implements Parcelable, Sc
 
     // region CrApiTertulia
 
-    @Override
+//    @Override
     protected String toStringContribution() { return null; }
 
     // endregion
@@ -68,11 +67,7 @@ public class CrApiWeeklySchedule extends CrApiTertulia implements Parcelable, Sc
     // region Parcelable
 
     protected CrApiWeeklySchedule(Parcel in) {
-        super(in.readString(), in.readString(),
-                in.readString(), in.readString(), in.readString(), in.readString(), in.readString(),
-                in.readString(), in.readString(),
-//                in.readString(), in.readInt(),
-                in.readByte() != 0);
+        super(in);
         weekDay = in.readString();
         skip = in.readInt();
     }
@@ -84,18 +79,7 @@ public class CrApiWeeklySchedule extends CrApiTertulia implements Parcelable, Sc
 
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
-        out.writeString(tertuliaName);
-        out.writeString(subject);
-        out.writeString(locationName);
-        out.writeString(streetAddress);
-        out.writeString(zip);
-        out.writeString(city);
-        out.writeString(country);
-        out.writeString(latitude);
-        out.writeString(longitude);
-//        out.writeString(scheduleType);
-//        out.writeInt(scheduleId);
-        out.writeByte((byte) (isPrivate ? 1 : 0));
+        super.writeToParcel(out, flags);
         out.writeString(weekDay);
         out.writeInt(skip);
     }

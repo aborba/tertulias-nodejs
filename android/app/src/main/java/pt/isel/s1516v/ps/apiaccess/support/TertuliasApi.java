@@ -10,7 +10,7 @@ public interface TertuliasApi {
     String HTTP_PUT = HttpConstants.PutMethod;
 
     // Endpoints keys
-    String LINKS_LABEL = "Links";
+    String INTENT_LINKS = "Links";
     String ROUTE_END_POINT_LABEL = "RouteEndPoint";
     String ROUTE_METHOD_LABEL = "RouteMethod";
     String GET_TERTULIAS = "getTertulias";
@@ -45,6 +45,28 @@ public interface TertuliasApi {
     int SUBSCRIBE_PUBLIC_TERTULIA_RETURN_CODE = 11;
 
     // Schedule Types
+    enum SCHEDULES {
+
+        WEEKLY(0, "Weekly"), MONTHLYD(1, "MonthlyD"), MONTHLYW(2, "MonthlyW"), YEARLY(3, "Yearly"), YEARLYW(4, "YearlyW");
+//        WEEKLY("Weekly"), MONTHLYD("MonthlyD"), MONTHLYW("MonthlyW"), YEARLY("Yearly"), YEARLYW("YearlyW");
+
+        public final int id;
+        public final String type;
+
+        SCHEDULES(int id, String type) {
+            this.id = id;
+            this.type = type;
+        }
+
+//        SCHEDULES(String type) {
+//            this.type = type;
+//        }
+
+        public String toString() {
+            return type;
+        }
+    }
+
     int WEEKLY = 0;
     int MONTHLY = 1;
     int MONTHLYW = 2;

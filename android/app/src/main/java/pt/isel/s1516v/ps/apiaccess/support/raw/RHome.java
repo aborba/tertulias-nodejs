@@ -3,12 +3,6 @@ package pt.isel.s1516v.ps.apiaccess.support.raw;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashMap;
-
-import pt.isel.s1516v.ps.apiaccess.MainActivity;
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Location;
-
 public class RHome implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("links")

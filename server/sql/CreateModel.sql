@@ -102,6 +102,16 @@ IF OBJECT_ID(N'dbo.sp_insertTertulia_Yearly') IS NOT NULL DROP PROCEDURE sp_inse
 IF OBJECT_ID(N'dbo.sp_insertTertulia_Yearly_sid') IS NOT NULL DROP PROCEDURE sp_insertTertulia_Yearly_sid;
 IF OBJECT_ID(N'dbo.sp_insertTertulia_YearlyW') IS NOT NULL DROP PROCEDURE sp_insertTertulia_YearlyW;
 IF OBJECT_ID(N'dbo.sp_insertTertulia_YearlyW_sid') IS NOT NULL DROP PROCEDURE sp_insertTertulia_YearlyW_sid;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Weekly_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Weekly_sid;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Weekly') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Weekly;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Monthly') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Monthly;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Monthly_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Monthly_sid;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_MonthlyW') IS NOT NULL DROP PROCEDURE sp_updateTertulia_MonthlyW;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_MonthlyW_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_MonthlyW_sid;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Yearly') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Yearly;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_Yearly_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_Yearly_sid;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_YearlyW') IS NOT NULL DROP PROCEDURE sp_updateTertulia_YearlyW;
+IF OBJECT_ID(N'dbo.sp_updateTertulia_YearlyW_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_YearlyW_sid;
 
 IF OBJECT_ID(N'dbo.sp_postNotification_byAlias') IS NOT NULL DROP PROCEDURE sp_postNotification_byAlias;
 IF OBJECT_ID(N'dbo.sp_postNotification') IS NOT NULL DROP PROCEDURE sp_postNotification;
@@ -838,6 +848,96 @@ BEGIN
 END
 GO
 
+-- UPDATE
+
+CREATE PROCEDURE sp_updateTertulia_Weekly
+	@userId INTEGER, 
+	@tertuliaId INTEGER,
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay VARCHAR(20), @scheduleSkip INTEGER
+AS
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_sp_updateTertulia_Weekly
+BEGIN TRY
+
+	DECLARE @weekly INTEGER, @schedule INTEGER, @checkTertuliaId INTEGER, @dow INTEGER, @locationId INTEGER;
+
+	SELECT @checkTertuliaId = tr_id
+	FROM Tertulias INNER JOIN Members on mb_tertulia = tr_id
+	WHERE tr_is_cancelled = 0 AND mb_user = @userId AND tr_id = @tertuliaId;
+
+	IF @checkTertuliaId IS NULL
+	BEGIN
+		ROLLBACK TRANSACTION tran_sp_updateTertulia_Weekly;
+		RETURN 1;
+	END
+
+	SELECT @weekly = wk_id
+	FROM Tertulias
+	INNER JOIN Schedules ON tr_schedule = sc_id
+	INNER JOIN Weekly ON wk_schedule = sc_id
+	WHERE tr_id = @tertuliaId;
+
+	SELECT @dow = nv_value
+	FROM EnumValues INNER JOIN EnumTypes on nv_type = nt_id
+	WHERE nv_name = LOWER(@scheduleWeekDay);
+
+	IF (@weekly IS NOT NULL)
+	BEGIN
+		UPDATE Weekly SET wk_dow = @dow, wk_skip = @scheduleSkip WHERE wk_id = @weekly;
+	END
+	ELSE
+	BEGIN
+		SELECT @schedule = tr_schedule FROM Tertulias WHERE tr_id = @tertuliaId;
+		DELETE FROM MonthlyD WHERE md_schedule = @schedule;
+		DELETE FROM MonthlyW WHERE mw_schedule = @schedule;
+		-- DELETE FROM Yearly WHERE yr_schedule = @schedule;
+		-- DELETE FROM YearlyW WHERE yw_schedule = @schedule;
+		INSERT INTO Weekly (wk_schedule, wk_dow, wk_skip) VALUES (@schedule, @scheduleWeekDay, @scheduleSkip);
+	END
+
+	SELECT @locationId = tr_location FROM Tertulias WHERE tr_id = @tertuliaId;
+
+	UPDATE Locations SET
+		lo_name = @locationName, 
+		lo_address = @locationAddress, lo_zip = @locationZip, lo_city = @locationCity, lo_country = @locationCountry,
+		lo_latitude = @locationLatitude, lo_longitude = @locationLongitude
+	WHERE lo_id = @locationId;
+
+	UPDATE Tertulias SET tr_name = @tertuliaName, tr_subject = @tertuliaSubject, tr_is_private = @tertuliaIsPrivate
+	WHERE tr_id = @tertuliaId;
+
+	COMMIT TRANSACTION tran_sp_updateTertulia_Weekly
+
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK TRANSACTION tran_sp_updateTertulia_Weekly
+END CATCH
+GO
+
+CREATE PROCEDURE sp_updateTertulia_Weekly_sid
+	@userSid VARCHAR(40), 
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay VARCHAR(20), @scheduleSkip INTEGER
+AS
+BEGIN
+	DECLARE @userId INTEGER;
+	SET @userId = dbo.fnGetUserId_bySid(@userSid);
+
+	EXEC sp_updateTertulia_Weekly
+		@userId,
+		@tertuliaId, @tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
+		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
+		@locationLatitude, @locationLongitude,
+		@scheduleWeekDay, @scheduleSkip
+END
+GO
+
 -- TODO: CHECK TERTULIAS
 CREATE PROCEDURE sp_createEvent
 	@tertuliaName VARCHAR(40), 
@@ -927,11 +1027,11 @@ BEGIN TRY
 
 	SELECT @totalQuantity = SUM(ei_quantity) FROM EventsItems 
 	WHERE ei_event = @eventId AND ei_item = @itemId;
-	if (@totalQuantity = NULL) SET @totalQuantity = 0
+	IF (@totalQuantity = NULL) SET @totalQuantity = 0
 
 	SELECT @committedQuantity = SUM(ct_quantity) FROM Contributions 
 	WHERE ct_event = @eventId AND ct_item = @itemId AND ct_user <> @userId;
-	if (@committedQuantity IS NULL) SET @committedQuantity = 0
+	IF (@committedQuantity IS NULL) SET @committedQuantity = 0
 
 	DECLARE @availableQuantity INTEGER;
 	SET @availableQuantity = @totalQuantity - @committedQuantity;

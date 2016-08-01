@@ -39,8 +39,8 @@ EXEC sp_insertTertulia_MonthlyW
 	, N'1050'						   -- [locationZip]
 	, N'Lisboa'                   	   -- [locationCity]
 	, N'Portugal'                      -- [locationCountry]
-	, 38.733541                        -- [locationLatitude]
-	, -9.147056                        -- [locationLongitude]
+	, 38.733373                        -- [locationLatitude]
+	, -9.147067                        -- [locationLongitude]
 	, N'friday'                        -- [weekDay]
 	, 2                                -- [weekNr]
 	, 1                                -- [fromStart]
@@ -48,14 +48,14 @@ EXEC sp_insertTertulia_MonthlyW
 	, 1;                               -- [isPrivate]
 SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Tertulia do Tejo para testes';
 INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
-	  (N'Pastelaria Mexicana',              N'Avenida Guerra Junqueiro 30C',                      N'1000-167', N'Lisboa',  'Portugal', 38.740117, -9.136394, @tertulia)
---	, (N'Restaurante Cave Real',            N'Avenida 5 de Outubro 13',                           N'1050',     N'Lisboa',  'Portugal', 38.733541, -9.147056, @tertulia)
-	, (N'Restaurante Picanha',              N'Rua das Janelas Verdes 96',                         N'1200',     N'Lisboa',  'Portugal', 38.705678, -9.160624, @tertulia)
-	, (N'Restaurante EntreCopos',           N'Rua de Entrecampos, nº11',                          N'1000-151', N'Lisboa',  'Portugal', 38.744912, -9.145291, @tertulia)
-	, (N'Lisboa Racket Center',             N'Rua Alferes Malheiro',                              N'1700',     N'Lisboa',  'Portugal', 38.758372, -9.134471, @tertulia)
-	, (N'Restaurante O Jacinto',            N'Avenida Ventura Terra 2',                           N'1600-781', N'Lisboa',  'Portugal', 38.758563, -9.167007, @tertulia)
-	, (N'Restaurante Taberna Gourmet',      N'Rua Padre Américo 28',                              N'1600-548', N'Lisboa',  'Portugal', 38.763603, -9.180278, @tertulia)
-	, (N'Café A Luz Ideal',                 N'Rua Gen. Schiappa Monteiro 2A',                     N'1600-155', N'Lisboa',  'Portugal', 38.754401, -9.174995, @tertulia)
+	  (N'Mexicana',                         N'Avenida Guerra Junqueiro 30C',                      N'1000-167', N'Lisboa',  'Portugal', 38.739942, -9.136394, @tertulia)
+--	, (N'Restaurante Cave Real',            N'Avenida 5 de Outubro 13',                           N'1050',     N'Lisboa',  'Portugal', 38.733373, -9.147067, @tertulia)
+	, (N'RESTAURANTE PICANHA',              N'Rua das Janelas Verdes 96',                         N'1200',     N'Lisboa',  'Portugal', 38.705477, -9.160645, @tertulia)
+	, (N'Restaurante Entre-Copos',          N'Rua de Entrecampos, nº11',                          N'1000-151', N'Lisboa',  'Portugal', 38.744745, -9.145302, @tertulia)
+	, (N'Lisboa Racket Center',             N'Rua Alferes Malheiro',                              N'1700',     N'Lisboa',  'Portugal', 38.758255, -9.134471, @tertulia)
+	, (N'Restaurante O Jacinto',            N'Avenida Ventura Terra 2',                           N'1600-781', N'Lisboa',  'Portugal', 38.758362, -9.166996, @tertulia)
+	, (N'TABERNA GOURMET Telheiras',        N'Rua Padre Américo 28',                              N'1600-548', N'Lisboa',  'Portugal', 38.763461, -9.180289, @tertulia)
+	, (N'Café A Luz Ideal',                 N'Rua Gen. Schiappa Monteiro 2A',                     N'1600-155', N'Lisboa',  'Portugal', 38.754300, -9.174984, @tertulia)
 	, (N'Restaurante Honorato - Telheiras', N'Rua Professor Francisco Gentil, Lote A, Telheiras', N'1600',     N'Lisboa',  'Portugal', 38.760363, -9.166720, @tertulia)
 	, (N'Restaurante Gardens',              N'Rua Principal, S/N, Urbanização Quinta Alcoutins',  N'1600-263', N'Lisboa',  'Portugal', 38.776200, -9.171391, @tertulia)
 	, (N'Pastelaria Arcadas',               N'Rua Cidade de Lobito 282',                          N'1800-071', N'Lisboa',  'Portugal', 38.764007, -9.112470, @tertulia)

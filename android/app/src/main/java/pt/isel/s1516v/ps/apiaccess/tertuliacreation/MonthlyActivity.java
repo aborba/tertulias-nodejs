@@ -49,7 +49,7 @@ public class MonthlyActivity extends Activity implements Schedule, TertuliasApi 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthly);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.ma_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_new_monthly,
                 Util.IGNORE, Util.IGNORE, null, true);
 

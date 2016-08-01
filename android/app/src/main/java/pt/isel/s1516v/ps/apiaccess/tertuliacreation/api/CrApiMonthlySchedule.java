@@ -6,41 +6,38 @@ import android.support.annotation.NonNull;
 
 import java.util.Date;
 
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
 
 public class CrApiMonthlySchedule extends CrApiTertulia implements Parcelable, Schedule {
 
-    @com.google.gson.annotations.SerializedName("sc_dayNr")
+    @com.google.gson.annotations.SerializedName("schedule_daynr")
     public final int dayNr;
-    @com.google.gson.annotations.SerializedName("sc_fromStart")
+    @com.google.gson.annotations.SerializedName("schedule_fromstart")
     public final boolean fromStart;
-    @com.google.gson.annotations.SerializedName("sc_skip")
+    @com.google.gson.annotations.SerializedName("schedule_skip")
     public final int skip;
 
-    public CrApiMonthlySchedule(String name, String subject,
+    public CrApiMonthlySchedule(String name, String subject, boolean isPrivate,
                                String location, String address, String zip, String city, String country,
                                String latitude, String longitude,
-                               int dayNr, boolean fromStart, int skip,
-//                               String scheduleType, int scheduleId,
-                               boolean isPrivate) {
-        super(name, subject,
+                               int dayNr, boolean fromStart, int skip) {
+        super(name, subject, isPrivate,
                 location, address, zip, city, country,
                 latitude, longitude,
-//                scheduleType, scheduleId,
-                isPrivate);
+                TertuliasApi.SCHEDULES.MONTHLYD.name());
         this.dayNr = dayNr;
         this.fromStart = fromStart;
         this.skip = skip;
     }
 
     public CrApiMonthlySchedule(CrUiTertulia crUiTertulia, CrUiMonthly crUiMonthly) {
-        this(crUiTertulia.name, crUiTertulia.subject,
+        this(crUiTertulia.name, crUiTertulia.subject, crUiTertulia.isPrivate,
                 crUiTertulia.crUiLocation.name, crUiTertulia.crUiLocation.address.address, crUiTertulia.crUiLocation.address.zip, crUiTertulia.crUiLocation.address.city, crUiTertulia.crUiLocation.address.country,
                 String.valueOf(crUiTertulia.crUiLocation.geo.latitude), String.valueOf(crUiTertulia.crUiLocation.geo.longitude),
-                crUiMonthly.dayNr, crUiMonthly.isFromStart, crUiMonthly.skip,
-                crUiTertulia.isPrivate);
+                crUiMonthly.dayNr, crUiMonthly.isFromStart, crUiMonthly.skip);
     }
 
     @Override
@@ -52,7 +49,7 @@ public class CrApiMonthlySchedule extends CrApiTertulia implements Parcelable, S
 
     // region CrApiTertulia
 
-    @Override
+//    @Override
     protected String toStringContribution() { return null; }
 
     // endregion
@@ -69,11 +66,7 @@ public class CrApiMonthlySchedule extends CrApiTertulia implements Parcelable, S
     // region Parcelable
 
     protected CrApiMonthlySchedule(Parcel in) {
-        super(in.readString(), in.readString(),
-                in.readString(), in.readString(), in.readString(), in.readString(), in.readString(),
-                in.readString(), in.readString(),
-//                in.readString(), in.readInt(),
-                in.readByte() != 0);
+        super(in);
         dayNr = in.readInt();
         fromStart = in.readByte() != 0;
         skip = in.readInt();
@@ -86,18 +79,7 @@ public class CrApiMonthlySchedule extends CrApiTertulia implements Parcelable, S
 
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
-        out.writeString(tertuliaName);
-        out.writeString(subject);
-        out.writeString(locationName);
-        out.writeString(streetAddress);
-        out.writeString(zip);
-        out.writeString(city);
-        out.writeString(country);
-        out.writeString(latitude);
-        out.writeString(longitude);
-//        out.writeString(scheduleType);
-//        out.writeInt(scheduleId);
-        out.writeByte((byte) (isPrivate ? 1 : 0));
+        super.writeToParcel(out, flags);
         out.writeInt(dayNr);
         out.writeByte((byte) (fromStart ? 1 : 0));
         out.writeInt(skip);

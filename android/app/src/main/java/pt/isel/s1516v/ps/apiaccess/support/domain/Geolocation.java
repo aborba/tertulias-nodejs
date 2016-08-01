@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RLocation;
 import pt.isel.s1516v.ps.apiaccess.support.raw.RTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiReadTertuliaCore;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 
 public class Geolocation implements Parcelable {
 
@@ -35,8 +35,8 @@ public class Geolocation implements Parcelable {
         this(rlocation.latitude, rlocation.longitude);
     }
 
-    public Geolocation(ApiReadTertuliaCore core) {
-        this(core.latitude, core.longitude);
+    public Geolocation(ApiTertuliaEdition core) {
+        this(core.lo_latitude, core.lo_longitude);
     }
 
     public String getLatitude() {

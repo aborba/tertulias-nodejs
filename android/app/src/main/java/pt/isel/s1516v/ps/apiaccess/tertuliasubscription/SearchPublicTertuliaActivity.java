@@ -6,7 +6,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,10 +34,10 @@ import java.util.List;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchList;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchListItem;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchList;
+import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchListItem;
 
 public class SearchPublicTertuliaActivity extends Activity
         implements TertuliasApi
@@ -60,8 +59,8 @@ public class SearchPublicTertuliaActivity extends Activity
     private PublicTertulia[] publicTertulias;
 
     private GoogleApiClient googleApiClient;
-    private GoogleMap map;
-    private LocationManager locationManager;
+//    private GoogleMap map;
+//    private LocationManager locationManager;
 
     private double currentLatitude, currentLongitude;
 
@@ -207,20 +206,20 @@ public class SearchPublicTertuliaActivity extends Activity
 
     // region Private Methods
 
-    private void setUpMap() {
-        if (map == null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-            }
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-                return;
-            map.setMyLocationEnabled(true);
-            map.setOnMyLocationButtonClickListener(this);
-        }
-    }
+//    private void setUpMap() {
+//        if (map == null) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+//            }
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+//                return;
+//            map.setMyLocationEnabled(true);
+//            map.setOnMyLocationButtonClickListener(this);
+//        }
+//    }
 
     // endregion
 
@@ -285,7 +284,7 @@ public class SearchPublicTertuliaActivity extends Activity
     }
 
     private void requestSearch(String query) {
-        ApiLinks apiLinks = getIntent().getParcelableExtra(LINKS_LABEL);
+        ApiLinks apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
         String apiEndPoint = apiLinks.getRoute(APILINKS_KEY);
         String apiMethod = apiLinks.getMethod(APILINKS_KEY);
         List<Pair<String, String>> parameters = new LinkedList<>();

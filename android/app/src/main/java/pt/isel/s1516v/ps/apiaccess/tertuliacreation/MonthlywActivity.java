@@ -44,7 +44,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monthlyw);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.mwa_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_new_monthlyw,
                 Util.IGNORE, Util.IGNORE, null, true);
 

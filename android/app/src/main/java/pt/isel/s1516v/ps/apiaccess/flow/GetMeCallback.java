@@ -37,7 +37,7 @@ public class GetMeCallback implements FutureCallback<JsonElement> {
         ApiMe apiMe = new Gson().fromJson(result, ApiMe.class);
         if (apiMe.me.picture != null) {
             Util.logd(apiMe.me.picture);
-            uiClient.drawer.setIcon(apiMe.me.picture);
+            uiClient.setUserPicture(apiMe.me.picture);
         }
 
         if (future != null) {

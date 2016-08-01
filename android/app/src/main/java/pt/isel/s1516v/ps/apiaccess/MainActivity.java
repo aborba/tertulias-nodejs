@@ -21,20 +21,20 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 
-import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetData;
+import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetMeCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.GetTertuliasCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.LoginCallback;
 import pt.isel.s1516v.ps.apiaccess.flow.PostRegisterCallback;
 import pt.isel.s1516v.ps.apiaccess.helpers.LoginStatus;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.NewTertuliaActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.TertuliaDetailsActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.SearchPublicTertuliaActivity;
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.ReadTertulia;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.ui.DrawerManager;
 import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
 
@@ -46,7 +46,7 @@ public class MainActivity extends Activity implements TertuliasApi {
     private final static String INSTANCE_KEY_TERTULIA = "tertulias";
     private final static String API_ROOT_END_POINT = "/";
 
-    public static ReadTertulia[] tertulias;
+    public static TertuliaListItem[] tertulias;
     private MobileServiceUser mUser;
     private LoginStatus loginStatus = null;
 
@@ -59,34 +59,40 @@ public class MainActivity extends Activity implements TertuliasApi {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DrawerManager drawerManager = new DrawerManager(this, R.id.drawer_layout, R.id.menu_list, R.id.mtl_user_picture);
+        uiManager = new MaUiManager(this);
+
+        DrawerManager drawerManager = new DrawerManager(this,
+                uiManager.uiResources.get(MaUiManager.UIRESOURCE.DRAWER_LAYOUT),
+                uiManager.uiResources.get(MaUiManager.UIRESOURCE.DRAWER_MENU_LIST),
+                uiManager.uiResources.get(MaUiManager.UIRESOURCE.USER_PICTURE));
+
         drawerManager.prepareMenu(R.array.main_activity_drawer_list_items, new ListView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0: // Login
                         doLoginAndFetch(MainActivity.this, uiManager);
-                        uiManager.drawer.close();
+                        uiManager.getDrawerManager().close();
                         break;
                     case 1: // Logout
                         doLogout(MainActivity.this);
                         break;
                     case 2: // Refresh
                         requestTertuliasList(MainActivity.this);
-                        uiManager.drawer.close();
+                        uiManager.getDrawerManager().close();
                         break;
                     default:
                 }
             }
         });
 
-        uiManager = new MaUiManager(this, drawerManager, R.id.mtl_RecyclerView,
-                new TertuliasArrayRvAdapter(this, tertulias != null ? tertulias : new ReadTertulia[0]),
-                R.id.mtl_empty_view, R.id.mtl_progressbar);
+        uiManager.setDrawerManager(drawerManager);
+        uiManager.swapAdapter(new TertuliasArrayRvAdapter(this, tertulias != null ? tertulias : new TertuliaListItem[0]));
 
         setupToolbar();
+
         if (!Util.isSignedIn(this))
-            uiManager.drawer.setIcon(R.mipmap.tertulias);
+            uiManager.setUserPicture(R.mipmap.tertulias);
 
         if (!Util.isConnectivityAvailable(this)) {
             Util.alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
@@ -126,12 +132,12 @@ public class MainActivity extends Activity implements TertuliasApi {
             return;
         Parcelable[] parcelables = inState.getParcelableArray(INSTANCE_KEY_TERTULIA);
         if (parcelables == null) {
-            tertulias = new ReadTertulia[0];
+            tertulias = new TertuliaListItem[0];
             return;
         }
-        tertulias = new ReadTertulia[parcelables.length];
+        tertulias = new TertuliaListItem[parcelables.length];
         for (int i = 0; i < parcelables.length; i++)
-            tertulias[i] = (ReadTertulia) parcelables[i];
+            tertulias[i] = (TertuliaListItem) parcelables[i];
     }
 
 //  endregion
@@ -144,7 +150,7 @@ public class MainActivity extends Activity implements TertuliasApi {
             return;
         }
         Intent intent = new Intent(this, NewTertuliaActivity.class);
-        intent.putExtra(NewTertuliaActivity.LINKS_LABEL, apiLinks);
+        intent.putExtra(NewTertuliaActivity.INTENT_LINKS, apiLinks);
 //        intent.putExtra(NewTertuliaActivity.ROUTE_END_POINT_LABEL, apiLinks.getRoute(LINK_CREATE));
 //        intent.putExtra(NewTertuliaActivity.ROUTE_METHOD_LABEL, apiLinks.getMethod(LINK_CREATE));
         intent.putExtra(NewTertuliaActivity.INTENT_TERTULIAS, getTrimmedLowerCaseNames(tertulias));
@@ -158,7 +164,7 @@ public class MainActivity extends Activity implements TertuliasApi {
         }
         Intent intent = new Intent(this, SearchPublicTertuliaActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra(SearchPublicTertuliaActivity.LINKS_LABEL, apiLinks);
+        intent.putExtra(SearchPublicTertuliaActivity.INTENT_LINKS, apiLinks);
         startActivityForResult(intent, SearchPublicTertuliaActivity.ACTIVITY_REQUEST_CODE);
     }
 
@@ -178,8 +184,8 @@ public class MainActivity extends Activity implements TertuliasApi {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!uiManager.drawer.isOpen())
-                    uiManager.drawer.open();
+                if ( ! uiManager.getDrawerManager().isOpen())
+                    uiManager.getDrawerManager().open();
             }
         });
     }
@@ -271,13 +277,13 @@ public class MainActivity extends Activity implements TertuliasApi {
                         CookieManager cookieManager = CookieManager.getInstance();
                         cookieManager.removeAllCookie();
                         mUser = null;
-                        tertulias = new ReadTertulia[0];
+                        tertulias = new TertuliaListItem[0];
 
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                                uiManager.drawer.resetIcon();
-                                uiManager.swapAdapter(new TertuliasArrayRvAdapter(MainActivity.this, tertulias != null ? tertulias : new ReadTertulia[0]));
+                                uiManager.getDrawerManager().resetIcon();
+                                uiManager.swapAdapter(new TertuliasArrayRvAdapter(MainActivity.this, tertulias != null ? tertulias : new TertuliaListItem[0]));
                             }
                         };
                         Looper.prepare();
@@ -302,7 +308,7 @@ public class MainActivity extends Activity implements TertuliasApi {
 
 //  region private static methods
 
-    private static String[] getTrimmedLowerCaseNames(ReadTertulia[] tertulias) {
+    private static String[] getTrimmedLowerCaseNames(TertuliaListItem[] tertulias) {
         String[] names = new String[tertulias.length];
         for (int i = 0; i < tertulias.length; i++)
             names[i] = tertulias[i].name.toLowerCase().trim();

@@ -41,7 +41,7 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weekly);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.wa_toolbar),
+        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
                 R.string.title_activity_new_weekly,
                 Util.IGNORE, Util.IGNORE, null, true);
 
@@ -101,6 +101,7 @@ public class WeeklyActivity extends Activity implements Schedule, TertuliasApi {
     public void onClickCancel(View view) {
         Log.d("trt", "Schedule creation cancelled");
         Util.longSnack(view, R.string.new_tertulia_toast_schedule_creation_cancelled);
+        setResult(RESULT_FAIL);
         finish();
     }
 

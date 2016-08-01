@@ -25,7 +25,7 @@ public class PublicTertuliaArrayAdapter extends RecyclerView.Adapter<PublicTertu
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.search_public_tertulia_recycleview_row, parent, false);
+                .inflate(R.layout.adapter_search_public_tertulia_recycleview_row, parent, false);
         return new ViewHolder(itemView,
                 R.id.sprr_tertulia_name,
                 R.id.sprr_tertulia_subject,

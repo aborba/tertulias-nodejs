@@ -39,6 +39,8 @@
     <string name="tertulia_details_label">Tertulia Details</string>
     <string name="tertulia_details_title">Title</string>
     <string name="tertulia_details_undefined_coordinates">Can not display map, coordinates not defined.</string>
+    <string name="tertulia_details_undefined_links">Sorry, cannot edit right now. Please try again later.</string>
+    <string name="tertulia_details_not_updated">Tertulia not updated.</string>
     <string name="tertulia_details_subject">Subject</string>
     <string name="tertulia_details_location">Default Location</string>
     <string name="tertulia_details_schedule">Schedule</string>
@@ -97,7 +99,7 @@
         <item>"MonthlyW schedule selected. The Tertulia events shall occur "</item>
         <item>monthly</item>
         <item>"every %d months"</item>
-        <item>", on %s of the %d week"</item>
+        <item>", on %s of the %d%s week"</item>
         <item>" counting from the end of the month"</item>
     </string-array>
     <string-array name="new_tertulia_dialog_schedules">
@@ -117,6 +119,10 @@
 
     <string name="title_activity_edit_tertulia">Edit Tertulia</string>
     <string name="edit_tertulia_update_button">Update</string>
+    <string name="edit_tertulia_toast_cancel">Tertulia edition cancelled</string>
+    <string name="edit_tertulia_toast_updated">Tertulia updated</string>
+    <string name="message_dialog_edit_tertulia_owner_warning">"You can only edit tertulias that you own. Please get ownership from the current owner and try again."</string>
+    <string name="message_dialog_edit_tertulia">"Do you really want to update this tertulia?"</string>
 
     <string name="title_activity_search_public_tertulia">"Search Public Tertulia"</string>
     <string name="search_public_tertulia_name_label">By Title</string>
@@ -135,6 +141,7 @@
     <string name="title_dialog_unsubscribe_public_tertulia">"Unsubscribe From Tertulia"</string>
     <string name="message_dialog_unsubscribe_public_tertulia">"Do you really want to unsubscribe from this tertulia?"</string>
     <string name="message_dialog_unsubscribe_public_tertulia_owner_warning">"You cannot unsubscribe from a tertulia that you own. Please transfer the tertulia ownership to another member and try again."</string>
+    <string name="message_dialog_unsubscribe_complete">"Unsubscribed from Tertulia"</string>
 
     <string name="title_activity_public_tertulia_details">Subscribe Public Tertulia</string>
     <string name="public_tertulia_details_label">Tertulia Details</string>

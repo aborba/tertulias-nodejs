@@ -1,21 +1,26 @@
 package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
@@ -32,18 +37,28 @@ import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreation;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaCreationMonthly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlySchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlyWSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiWeeklySchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiAddress;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiManager;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
-public class NewTertuliaActivity extends Activity implements TertuliasApi, DialogFragmentResult {
+public class NewTertuliaActivity extends Activity implements
+        TertuliasApi
+        , DialogFragmentResult
+        , GoogleApiClient.OnConnectionFailedListener
+        , GoogleApiClient.ConnectionCallbacks {
 
     public final static int ACTIVITY_REQUEST_CODE = NEW_TERTULIA_RETURN_CODE;
     private final static String INSTANCE_KEY_TERTULIA = "tertulia";
@@ -51,39 +66,27 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
     public static final String INTENT_TERTULIAS = "Tertulias";
 
     private String apiEndPoint, apiMethod;
-    private EditText titleView, subjectView, locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView;
-    private TextView scheduleView;
-    private CheckBox privacyView;
 
-    private CrUiTertulia crUiTertulia;
-    private int scheduleType;
-    private CrUiSchedule crUiSchedule;
+    private CrUiManager uiManager;
+    private TertuliaCreation tertulia;
     ApiLinks apiLinks;
+
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_tertulia);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.nta_toolbar),
+        uiManager = new CrUiManager(this);
+
+        Util.setupToolBar(this, (Toolbar) uiManager.getView(CrUiManager.UIRESOURCE.TOOLBAR),
                 R.string.title_activity_new_tertulia,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        titleView = (EditText) findViewById(R.id.nta_Title);
-        subjectView = (EditText) findViewById(R.id.nta_Subject);
-        locationView = (EditText) findViewById(R.id.nta_LocationName);
-        addressView = (EditText) findViewById(R.id.nta_Address);
-        zipView = (EditText) findViewById(R.id.tda_zip);
-        cityView = (EditText) findViewById(R.id.tda_city);
-        countryView = (EditText) findViewById(R.id.tda_country);
-        latitudeView = (EditText) findViewById(R.id.tda_latitude);
-        longitudeView = (EditText) findViewById(R.id.tda_longitude);
-        scheduleView = (TextView) findViewById(R.id.tda_schedule);
-        privacyView = (CheckBox) findViewById(R.id.nta_IsPrivate);
-
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
 
-        apiLinks = getIntent().getParcelableExtra(LINKS_LABEL);
+        apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
     }
 
     @Override
@@ -98,20 +101,15 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(
-                INSTANCE_KEY_TERTULIA,
-                new CrUiTertulia(titleView, subjectView,
-                        locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView,
-                        scheduleType, crUiSchedule,
-                        privacyView)
-        );
+        tertulia = uiManager.update(tertulia);
+        outState.putParcelable(INSTANCE_KEY_TERTULIA, tertulia);
     }
 
     public void onClickMapLookup(View view) {
         try {
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            String latitude = latitudeView.getText().toString();
-            String longitude = longitudeView.getText().toString();
+            String latitude = uiManager.getLatitudeData();
+            String longitude = uiManager.getLongitudeData();
             if (!TextUtils.isEmpty(latitude) && !TextUtils.isEmpty(longitude)) {
                 LatLng latLng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
                 builder.setLatLngBounds(new LatLngBounds(latLng, latLng));
@@ -128,49 +126,43 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
     }
 
     public void onClickCreateTertulia(View view) {
-        crUiTertulia = new CrUiTertulia(titleView, subjectView,
-                locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView,
-                scheduleType, crUiSchedule,
-                privacyView);
+        tertulia = uiManager.update(tertulia);
 
-        if (!isNameValid(crUiTertulia.name, getIntent().getStringArrayExtra(INTENT_TERTULIAS))) {
+        if (!isNameValid(tertulia.name, getIntent().getStringArrayExtra(INTENT_TERTULIAS))) {
             Util.longSnack(view, R.string.new_tertulia_toast_invalid_name);
             return;
         }
 
-        if (crUiSchedule == null) {
+        if (tertulia.scheduleType == null) {
             Util.longSnack(view, R.string.new_tertulia_toast_no_schedule_selected);
             return;
         }
 
         JsonElement postParameters;
         String apiLinksKey = null;
-        switch (scheduleType) {
-            case WEEKLY:
-                CrUiWeekly crWeekly = (CrUiWeekly) crUiSchedule;
-//                ApiCreateTertuliaWeekly tertuliaWeekly = new ApiCreateTertuliaWeekly(this, crUiTertulia, crWeekly);
-                CrApiWeeklySchedule tertuliaWeekly = new CrApiWeeklySchedule(this, crUiTertulia, crWeekly);
-                postParameters = new Gson().toJsonTree(tertuliaWeekly);
+        switch (tertulia.scheduleType.name()) {
+            case "WEEKLY":
+                uiManager.update(tertulia);
+                TertuliaCreationWeekly tertuliaCreationWeekly = new TertuliaCreationWeekly(tertulia);
+                postParameters = new Gson().toJsonTree(tertuliaCreationWeekly);
                 apiLinksKey = LINK_CREATE_WEEKLY;
                 break;
-            case MONTHLY:
-                CrUiMonthly crMonthly = (CrUiMonthly) crUiSchedule;
-//                ApiCreateTertuliaMonthly tertuliaMonthly = new ApiCreateTertuliaMonthly(crUiTertulia, crMonthly);
-                CrApiMonthlySchedule tertuliaMonthly = new CrApiMonthlySchedule(crUiTertulia, crMonthly);
-                postParameters = new Gson().toJsonTree(tertuliaMonthly);
+            case "MONTHLYD":
+                uiManager.update(tertulia);
+                TertuliaCreationMonthly tertuliaCreationMonthly = new TertuliaCreationMonthly(tertulia);
+                postParameters = new Gson().toJsonTree(tertuliaCreationMonthly);
                 apiLinksKey = LINK_CREATE_MONTHLY;
                 break;
-            case MONTHLYW:
-                CrUiMonthlyW crMonthlyW = (CrUiMonthlyW) crUiSchedule;
-//                ApiCreateTertuliaMonthlyW tertuliaMonthlyW = new ApiCreateTertuliaMonthlyW(this, crUiTertulia, crMonthlyW);
-                CrApiMonthlyWSchedule tertuliaMonthlyW = new CrApiMonthlyWSchedule(this, crUiTertulia, crMonthlyW);
-                postParameters = new Gson().toJsonTree(tertuliaMonthlyW);
+            case "MONTHLYW":
+                uiManager.update(tertulia);
+                TertuliaCreationMonthlyW tertuliaCreationMonthlyW = new TertuliaCreationMonthlyW(tertulia);
+                postParameters = new Gson().toJsonTree(tertuliaCreationMonthlyW);
                 apiLinksKey = LINK_CREATE_MONTHLYW;
                 break;
-            case YEARLY:
+            case "YEARLY":
                 apiLinksKey = LINK_CREATE_YEARLY;
                 throw new UnsupportedOperationException();
-            case YEARLYW:
+            case "YEARLYW":
                 apiLinksKey = LINK_CREATE_YEARLYW;
                 throw new UnsupportedOperationException();
             default:
@@ -203,38 +195,28 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
                 Place place = PlacePicker.getPlace(data, this);
                 if (place == null)
                     return;
-                locationView.setText(place.getName());
-                CrUiAddress crUiAddress = new CrUiAddress(place.getAddress().toString());
-                addressView.setText(crUiAddress.address);
-                zipView.setText(crUiAddress.zip);
-                cityView.setText(crUiAddress.city);
-                countryView.setText(crUiAddress.country);
-                latitudeView.setText(String.format(Locale.getDefault(), "%.6f", place.getLatLng().latitude));
-                longitudeView.setText(String.format(Locale.getDefault(), "%.6f", place.getLatLng().longitude));
+                uiManager.set(place);
                 break;
             case WeeklyActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
-                scheduleType = data.getIntExtra("type", -1);
                 CrUiWeekly crWeekly = data.getParcelableExtra("result");
-                crUiSchedule = crWeekly;
-                scheduleView.setText(crWeekly.toString());
+                tertulia = new TertuliaCreationWeekly(tertulia, crWeekly);
+                uiManager.set(tertulia);
                 break;
             case MonthlyActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
-                scheduleType = data.getIntExtra("type", -1);
                 CrUiMonthly crMonthly = data.getParcelableExtra("result");
-                crUiSchedule = crMonthly;
-                scheduleView.setText(crMonthly.toString());
+                tertulia = new TertuliaCreationMonthly(tertulia, crMonthly);
+                uiManager.set(tertulia);
                 break;
             case MonthlywActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
-                scheduleType = data.getIntExtra("type", -1);
                 CrUiMonthlyW crMonthlyW = data.getParcelableExtra("result");
-                crUiSchedule = crMonthlyW;
-                scheduleView.setText(crMonthlyW.toString());
+                tertulia = new TertuliaCreationMonthlyW(tertulia, crMonthlyW);
+                uiManager.set(tertulia);
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -271,6 +253,39 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
 
     // endregion
 
+    // region GoogleApiClient.OnConnectionFailedListener
+
+    private void setUpGoogleApiClient() {
+        if (googleApiClient != null)
+            return;
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    }
+
+    // endregion
+
+    // region GoogleApiClient.ConnectionCallbacks
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+
+    // endregion
+
     // region Private Classes
 
     public class Callback implements FutureCallback<JsonElement> {
@@ -278,6 +293,15 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
 
         public Callback(View view) {
             this.view = view;
+        }
+
+        @Override
+        public void onSuccess(JsonElement result) {
+            Util.longSnack(view, R.string.new_tertulia_toast_success);
+            Util.logd("New tertulia created");
+            Util.logd(result.toString());
+            setResult(RESULT_SUCCESS);
+            finish();
         }
 
         @Override
@@ -289,14 +313,6 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
             finish();
         }
 
-        @Override
-        public void onSuccess(JsonElement result) {
-            Util.longSnack(view, R.string.new_tertulia_toast_success);
-            Util.logd("New tertulia created");
-            Util.logd(result.toString());
-            setResult(RESULT_SUCCESS);
-            finish();
-        }
     }
 
     // endregion
@@ -310,12 +326,8 @@ public class NewTertuliaActivity extends Activity implements TertuliasApi, Dialo
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
-        crUiTertulia = savedInstanceState.getParcelable(INSTANCE_KEY_TERTULIA);
-        crUiTertulia.updateViews(titleView, subjectView,
-                locationView, addressView, zipView, cityView, countryView, latitudeView, longitudeView,
-                scheduleView, privacyView);
-        crUiSchedule = crUiTertulia.crUiSchedule;
-        scheduleType = crUiTertulia.getScheduleType(this);
+        tertulia = savedInstanceState.getParcelable(INSTANCE_KEY_TERTULIA);
+        uiManager.set(tertulia);
     }
 
     // endregion

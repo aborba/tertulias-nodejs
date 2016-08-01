@@ -38,13 +38,13 @@ public class CrUiAddress implements Parcelable {
                 String[] subparts = parts[0].split("\\s+");
                 switch (subparts.length) {
                     case 1: // " ": 0
-                        if (subparts[0].split("-").length == 1)
+                        if (subparts[0].contains("-"))
                             xZip = subparts[0];
                         else
                             xCity = subparts[0];
                         break;
                     case 2: // " ": 1
-                        if (subparts[0].split("-").length == 1) {
+                        if (subparts[0].contains("-")) {
                             xZip = subparts[0];
                             xCity = subparts[1];
                         } else {
@@ -58,14 +58,14 @@ public class CrUiAddress implements Parcelable {
                 break;
             case 2: // ", ": 1
                 String[] subparts1 = parts[1].split("\\s+");
-                if (subparts1[0].split("-").length == 1) {
+                if (subparts1[0].contains("-")) {
                     xZip = subparts1[0];
                     xCity = subparts1[1];
                     xAddress = parts[0];
                 } else {
                     xCountry = parts[1];
                     subparts1 = parts[0].split("\\s+");
-                    if (subparts1[0].split("-").length == 1) {
+                    if (subparts1[0].contains("-")) {
                         xZip = subparts1[0];
                         xCity = subparts1[1];
                     } else
@@ -76,7 +76,7 @@ public class CrUiAddress implements Parcelable {
                 xCountry = parts[parts.length - 1];
                 String[] subparts2 = parts[parts.length - 2].split("\\s+");
                 if (subparts2.length == 1) {
-                    if (subparts2[0].split("-").length == 1)
+                    if (subparts2[0].contains("-"))
                         xCity = subparts2[0];
                     else
                         xZip = subparts2[0];

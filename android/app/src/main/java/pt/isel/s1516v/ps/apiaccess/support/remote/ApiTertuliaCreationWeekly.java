@@ -2,41 +2,34 @@ package pt.isel.s1516v.ps.apiaccess.support.remote;
 
 import android.content.Context;
 
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
-public class ApiCreateTertuliaMonthlyW extends ApiCreateTertulia {
+public class ApiTertuliaCreationWeekly extends ApiTertuliaCreation {
 
-    @com.google.gson.annotations.SerializedName("weekday")
+    @com.google.gson.annotations.SerializedName("weekDay")
     public final String weekDay;
-    @com.google.gson.annotations.SerializedName("weekNr")
-    public final int weekNr;
-    @com.google.gson.annotations.SerializedName("fromStart")
-    public final boolean fromStart;
-    @com.google.gson.annotations.SerializedName("skip")
+    @com.google.gson.annotations.SerializedName("sc_skip")
     public final int skip;
 
-    public ApiCreateTertuliaMonthlyW(String name, String subject,
+    public ApiTertuliaCreationWeekly(String name, String subject,
                                      String location, String address, String zip, String city, String country,
                                      String latitude, String longitude,
-                                     String weekDay, int weekNr, boolean fromStart, int skip,
+                                     String weekDay, int skip,
                                      boolean isPrivate) {
-        super(name, subject,
+        super(name, subject, isPrivate,
                 location, address, zip, city, country,
                 latitude, longitude,
-                "MonthlyW",
-                isPrivate);
+                "Weekly");
         this.weekDay = weekDay;
-        this.weekNr = weekNr;
-        this.fromStart = fromStart;
         this.skip = skip;
     }
 
-    public ApiCreateTertuliaMonthlyW(Context ctx, CrUiTertulia crUiTertulia, CrUiMonthlyW crUiMonthlyW) {
+    public ApiTertuliaCreationWeekly(Context ctx, CrUiTertulia crUiTertulia, CrUiWeekly crUiWeekly) {
         this(crUiTertulia.name, crUiTertulia.subject,
                 crUiTertulia.crUiLocation.name, crUiTertulia.crUiLocation.address.address, crUiTertulia.crUiLocation.address.zip, crUiTertulia.crUiLocation.address.city, crUiTertulia.crUiLocation.address.country,
                 String.valueOf(crUiTertulia.crUiLocation.geo.latitude), String.valueOf(crUiTertulia.crUiLocation.geo.longitude),
-                crUiMonthlyW.getWeekDay(ctx), crUiMonthlyW.weekNr, crUiMonthlyW.isFromStart, crUiMonthlyW.skip,
+                crUiWeekly.getWeekDay(ctx), crUiWeekly.skip,
                 crUiTertulia.isPrivate);
     }
 
@@ -46,8 +39,8 @@ public class ApiCreateTertuliaMonthlyW extends ApiCreateTertulia {
     @Override
     public boolean equals(Object obj) {
         if (obj == null) return false;
-        ApiCreateTertuliaMonthlyW other = (ApiCreateTertuliaMonthlyW) obj;
-        return other.name.equals(name) && other.subject.equals(this.subject);
+        ApiTertuliaCreationWeekly other = (ApiTertuliaCreationWeekly) obj;
+        return other.tr_name.equals(tr_name) && other.tr_subject.equals(this.tr_subject);
     }
 
 }
