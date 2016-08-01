@@ -288,11 +288,12 @@ module.exports = function (configuration) {
 			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('weekDay', sql.NVarChar(20), req.body.schedule_weekday)
+			.input('weekDay', sql.Int, req.body.schedule_weekday)
 			.input('skip', sql.Int, req.body.schedule_skip)
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_Weekly_sid')
 			.then((recordsets) => {
+				console.log(recordsets);
 				if (recordsets.length == 0) {
 					res.status(201)	// 201: Created
 						.type('application/json')
