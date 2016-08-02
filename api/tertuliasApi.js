@@ -387,10 +387,10 @@ module.exports = function (configuration) {
 					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-					.input('scheduleDayNr', sql.NVarChar(20), req.body.schedule_daynr)
+					.input('scheduleDayNr', sql.Int, req.body.schedule_daynr)
 					.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
 					.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-					.execute('sp_insertTertulia_Weekly_sid')
+					.execute('sp_updateTertulia_Monthly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYD updated");
@@ -418,10 +418,50 @@ module.exports = function (configuration) {
 				break;
 			case "MONTHLYW":
 				console.log("in MONTHLYW");
-				res.status(200)	// 200: OK
-					.type('application/json')
-					.json( { result: 'Ok' } );
-				return next();
+			    sql.connect(util.sqlConfiguration)
+			    .then(function() {
+					new sql.Request()
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+					.input('tertuliaId', sql.Int, tr_id)
+					.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+					.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+					.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
+					.input('locationName', sql.NVarChar(40), req.body.location_name)
+					.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+					.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+					.input('locationCity', sql.NVarChar(40), req.body.location_city)
+					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+					.input('scheduleWeekDay', sql.Int, req.body.schedule_weekday)
+					.input('scheduleWeekNr', sql.Int, req.body.schedule_weeknr)
+					.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
+					.input('scheduleSkip', sql.Int, req.body.schedule_skip)
+					.execute('sp_updateTertulia_MonthlyW_sid')
+					.then((recordsets) => {
+						if (recordsets.length == 0) {
+							console.log("MONTHLYW updated");
+							res.status(201)	// 201: Created
+								.type('application/json')
+								.json( { result: 'Ok' } );
+							return next();
+						} else {
+							console.log("MONTHLYW update failed");
+							res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+								.type('application/json')
+								.json( { result: 'Duplicate' } );
+							return next('409');
+						}
+						next();
+					})
+					.catch(function(err) {
+						console.log("MONTHLYW error");
+						next(err);
+					});
+				})
+				.catch(function(err) {
+					return next(err);
+				});
 				break;
 			case "YEARLY":
 				console.log("in YEARLY");
