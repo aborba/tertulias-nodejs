@@ -342,7 +342,7 @@ module.exports = function (configuration) {
 					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-					.input('scheduleWeekDay', sql.NVarChar(20), req.body.schedule_weekday)
+					.input('scheduleWeekDay', sql.Int, req.body.schedule_weekday)
 					.input('scheduleSkip', sql.Int, req.body.schedule_skip)
 					.execute('sp_updateTertulia_Weekly_sid')
 					.then((recordsets) => {
