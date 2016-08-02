@@ -278,9 +278,10 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('name', sql.NVarChar(40), req.body.tertulia_name)
-			.input('subject', sql.NVarChar(80), req.body.tertulia_subject)
-			.input('isPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
 			.input('locationName', sql.NVarChar(40), req.body.location_name)
 			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
 			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
@@ -288,9 +289,8 @@ module.exports = function (configuration) {
 			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('weekDay', sql.Int, req.body.schedule_weekday)
-			.input('skip', sql.Int, req.body.schedule_skip)
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('scheduleWeekDay', sql.Int, req.body.schedule_weekday)
+			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
 			.execute('sp_insertTertulia_Weekly_sid')
 			.then((recordsets) => {
 				console.log(recordsets);
@@ -375,6 +375,7 @@ module.exports = function (configuration) {
 			    sql.connect(util.sqlConfiguration)
 			    .then(function() {
 					new sql.Request()
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
 					.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
 					.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
@@ -386,10 +387,9 @@ module.exports = function (configuration) {
 					.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 					.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 					.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-					.input('scheduleDom', sql.NVarChar(20), req.body.schedule_daynr)
+					.input('scheduleDayNr', sql.NVarChar(20), req.body.schedule_daynr)
 					.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
 					.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.execute('sp_insertTertulia_Weekly_sid')
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
@@ -438,6 +438,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
 			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
 			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
@@ -448,10 +449,9 @@ module.exports = function (configuration) {
 			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
 			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
 			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('scheduleDom', sql.Int, req.body.schedule_daynr)
+			.input('scheduleDayNr', sql.Int, req.body.schedule_daynr)
 			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
 			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_Monthly_sid')
 			.then((recordsets) => {
 				if (recordsets.length == 0) {
@@ -481,6 +481,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
 			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
 			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
@@ -495,7 +496,6 @@ module.exports = function (configuration) {
 			.input('scheduleWeekNr', sql.Int, req.body.schedule_weeknr)
 			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
 			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.execute('sp_insertTertulia_MonthlyW_sid')
 			.then((recordsets) => {
 				if (recordsets.length == 0) {
