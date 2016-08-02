@@ -188,9 +188,9 @@ module.exports = function (configuration) {
 							// .input('tertulia', sql.Int, recordset[0].tertulia_id)
 							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
-									' wk_id' +   ' AS schedule_id,' +
-									' nv_value' +  ' AS schedule_weekday,' +
-									' wk_skip' + ' AS schedule_skip' +
+									' wk_id' +    ' AS schedule_id,' +
+									' nv_value' + ' AS schedule_weekday,' +
+									' wk_skip' +  ' AS schedule_skip' +
 								' FROM Weekly' +
 									' INNER JOIN Schedules ON wk_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
@@ -243,13 +243,14 @@ module.exports = function (configuration) {
 							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
 									' mw_id' +           ' AS schedule_id,' +
-									' mw_dow' +          ' AS schedule_weekday,' +
+									' nv_value' +        ' AS schedule_weekday,' +
 									' mw_weeknr' +       ' AS schedule_weeknr,' +
 									' mw_is_fromstart' + ' AS schedule_isfromstart,' +
 									' mw_skip' +         ' AS schedule_skip' +
 								' FROM MonthlyW' +
 									' INNER JOIN Schedules ON mw_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+									' INNER JOIN EnumValues ON mw_dow = nv_id' +
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['monthlyw'] = recordset[0];
