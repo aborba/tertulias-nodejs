@@ -434,6 +434,7 @@ module.exports = function (configuration) {
 
 	router.post('/monthly', (req, res, next) => {
 		console.log('in POST /tertulias/monthly');
+		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
