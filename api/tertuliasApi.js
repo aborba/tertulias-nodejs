@@ -518,6 +518,7 @@ module.exports = function (configuration) {
 
 	router.post('/monthlyw', (req, res, next) => {
 		console.log('in POST /tertulias/monthlyw');
+		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -544,6 +545,7 @@ module.exports = function (configuration) {
 						.json( { result: 'Ok' } );
 					return next();
 				} else {
+					console.log(recordsets);
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Duplicate' } );
