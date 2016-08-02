@@ -190,11 +190,12 @@ module.exports = function (configuration) {
 							// .input('sid', sql.NVarChar(40), req.azureMobile.user.id)
 							.query('SELECT' +
 									' wk_id' +   ' AS schedule_id,' +
-									' wk_dow' +  ' AS schedule_weekday,' +
+									' nv_value' +  ' AS schedule_weekday,' +
 									' wk_skip' + ' AS schedule_skip' +
 								' FROM Weekly' +
 									' INNER JOIN Schedules ON wk_schedule = sc_id' +
 									' INNER JOIN Tertulias ON tr_schedule = sc_id' +
+									' INNER JOIN EnumValues ON wk_dow = nv_id' +
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['weekly'] = recordset[0];
