@@ -31,9 +31,10 @@ GO
 DECLARE @userId INTEGER, @tertulia INTEGER;
 SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
 EXEC sp_insertTertulia_MonthlyW 
-	N'Tertulia do Tejo para testes'    -- [name]
+	@UserId                            -- [userId]
+	, N'Tertulia do Tejo para testes'  -- [name]
 	, N'O que seria do Mundo sem nós!' -- [subject]
-	, @UserId                          -- [userId]
+	, 1                                -- [isPrivate]
 	, N'Restaurante Cave Real'         -- [locationName]
 	, N'Avenida 5 de Outubro 13'       -- [locationAddress]
 	, N'1050'						   -- [locationZip]
@@ -41,11 +42,10 @@ EXEC sp_insertTertulia_MonthlyW
 	, N'Portugal'                      -- [locationCountry]
 	, 38.733373                        -- [locationLatitude]
 	, -9.147067                        -- [locationLongitude]
-	, N'friday'                        -- [weekDay]
+	, 6                                -- [weekDay]
 	, 2                                -- [weekNr]
 	, 1                                -- [fromStart]
-	, 0                                -- [skip]
-	, 1;                               -- [isPrivate]
+	, 0;                               -- [skip]
 SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Tertulia do Tejo para testes';
 INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia) VALUES
 	  (N'Mexicana',                         N'Avenida Guerra Junqueiro 30C',                      N'1000-167', N'Lisboa',  'Portugal', 38.739942, -9.136394, @tertulia)
@@ -69,55 +69,48 @@ GO
 DECLARE @userId INTEGER, @tertulia INTEGER;
 SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
 EXEC sp_insertTertulia_Weekly 
-	N'Tertúlia dos primos para testes', N'Só Celoricos' -- [name], [subject]
-	, @UserId                               -- [userId]
-	, N'Restaurante O Jacinto', N'Avenida Ventura Terra 2', N'1600-781', N'Lisboa', N'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]                     --
-	, 38.758563, -9.167007                  -- [locationLatitude], [locationLongitude]
-	, N'friday', 1                          -- [weekDay], [weekNr], [fromStart], [skip]
-	, 1;                                    -- [isPrivate]
+	@UserId -- [userId]
+	, N'Tertúlia dos primos para testes', N'Só Celoricos', 1 -- [name], [subject], [isPrivate]
+	, N'Restaurante O Jacinto', N'Avenida Ventura Terra 2', N'1600-781', N'Lisboa', N'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]
+	, 38.758563, -9.167007 -- [locationLatitude], [locationLongitude]
+	, 4, 1; -- [weekDay], [skip]
 EXEC sp_insertTertulia_Monthly 
-	N'Escolinha 72-77 para testes', N'Sempre em contato'            
-	, @UserId
-	, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal'
-	, 38.744912, -9.145291
-	, 22, 1, 10
-	, 1;
+	@UserId -- [userId]
+	, N'Escolinha 72-77 para testes', N'Sempre em contato', 1 -- [name], [subject], [isPrivate]
+	, 'Restaurante EntreCopos', N'Rua de Entrecampos, nº11', N'1000-151', N'Lisboa', 'Portugal' -- [locationName], [locationAddress], [locationZip], [locationCountry]
+	, 38.744912, -9.145291 -- [locationLatitude], [locationLongitude]
+	, 22, 1, 10; -- [dayNr], [isFromStart], [skip]
 EXEC sp_insertTertulia_MonthlyW 
-	N'Natais BS para testes' , N'Mais um...'
-	, @UserId
+	@UserId -- [userId]
+	, N'Natais BS para testes' , N'Mais um...', 1 -- [name], [subject], [isPrivate]
 	, 'Avó Fernanda', N'Avenida Nações Unidas, 33, 2.ºDtº', N'1600-531', N'Lisboa', 'Portugal'
-	, 38.764288, -9.180429
-	, 'sunday', 0, 0, 5
-	, 1;
+	, 38.764288, -9.180429 -- [locationLatitude], [locationLongitude]
+	, 1, 0, 0, 5; -- [weekDay], [weekNr], [fromStart], [skip]
 SET @UserId = dbo.fnGetUserId_byAlias('aborba')
 EXEC sp_insertTertulia_MonthlyW 
-	N'Gulbenkian Música para testes' , N''
-	, @UserId
+	@UserId
+	, N'Gulbenkian Música para testes' , N'', 0
 	, 'Restaurante Gardens', N'Rua Principal, S/N, Urbanização Quinta Alcoutins', N'1600-263', N'Lisboa', 'Portugal'
 	, 38.776200, -9.171391
-	, 'thursday', 1, 1, 3
-	, 0;
+	, 7, 1, 1, 3;
 EXEC sp_insertTertulia_MonthlyW 
-	N'CALM para testes', N'Ex MAC - Sempre só nós 8'
-	, @UserId
+	@UserId
+	, N'CALM para testes', N'Ex MAC - Sempre só nós 8', 1
 	, 'Restaurante Taberna Gourmet', N'Rua Padre Américo 28', N'1600-548', N'Lisboa', 'Portugal'
 	, 38.763603, -9.180278
-	, 'friday', 0, 0, 3
-	, 1;
+	, 6, 0, 0, 3;
 EXEC sp_insertTertulia_MonthlyW 
-	N'AtHere para testes', N'Tipo RoBoTo'
-	, @UserId
+	@UserId
+	, N'AtHere para testes', N'Tipo RoBoTo', 1
 	, 'Pastelaria Zineira', N'Rua Principal, 444, Livramento', N'2765-383', N'Estoril', 'Portugal'
 	, 38.713092, -9.371864
-	, 'thursday', 0, 0, 5
-	, 1;
+	, 5, 0, 0, 5;
 EXEC sp_insertTertulia_MonthlyW 
-	N'Terças Ggl para testes', N''
-	, @UserId
+	@UserId
+	, N'Terças Ggl para testes', N'', 1
 	, 'Varsailles - Técnico', N'Avenida Rovisco Pais 1', N'1049-001', N'Lisboa', 'Portugal'
 	, 38.737674, -9.138564
-	, 'tuesday', 0, 0, 0
-	, 1;
+	, 3, 0, 0, 0;
 GO
 
 -- Set a user member of other tertulias

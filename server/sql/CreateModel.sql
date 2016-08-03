@@ -73,6 +73,7 @@ GO
 ----------------------------------------------------------------------
                                                             
 IF OBJECT_ID(N'dbo.fnGetEnum') IS NOT NULL DROP FUNCTION fnGetEnum;
+IF OBJECT_ID(N'dbo.fnGetEnumByVal') IS NOT NULL DROP FUNCTION fnGetEnumByVal;
 IF OBJECT_ID(N'dbo.spSetEnumI') IS NOT NULL DROP PROCEDURE spSetEnumI;
 IF OBJECT_ID(N'dbo.spSetEnumS') IS NOT NULL DROP PROCEDURE spSetEnumS;
 GO
@@ -472,6 +473,17 @@ BEGIN
 END;
 GO
 
+CREATE FUNCTION fnGetEnumByVal(@enumtype VARCHAR(20), @value INTEGER)
+RETURNS INTEGER
+AS 
+BEGIN
+	DECLARE @id INTEGER;
+	SELECT @id = nv_id FROM EnumTypes INNER JOIN EnumValues ON nv_type = nt_id 
+	WHERE nt_name = @enumtype AND nv_value = @value;
+	RETURN @id;
+END;
+GO
+
 CREATE PROCEDURE spSetEnumI @enumtype VARCHAR(20), @name VARCHAR(20), @value INTEGER
 AS 
 BEGIN
@@ -626,17 +638,12 @@ GO
 
 -- TODO: CHECK TERTULIAS
 CREATE PROCEDURE sp_insertTertulia_Weekly
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userId INTEGER, 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@weekDay VARCHAR(20), @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION tran_sp_insertTertulia_Weekly
@@ -646,16 +653,16 @@ BEGIN TRY
 	SET @scheduleType = dbo.fnGetEnum('Schedule', 'Weekly');
 	EXEC @location = dbo.sp_getId 'lo', 'Locations', 'Dummy';
 
-	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
+	SET @dow = dbo.fnGetEnumByVal('WeekDays', @scheduleWeekDay);
 
 	INSERT INTO Schedules (sc_type) VALUES (@scheduleType);
 	SET @schedule = SCOPE_IDENTITY();
 
 	INSERT INTO Weekly (wk_schedule, wk_dow, wk_skip) 
-	VALUES (@schedule, @dow, @skip);
+	VALUES (@schedule, @dow, @scheduleSkip);
 
     INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
-    VALUES (@name, @subject, @location, @schedule, @isPrivate);
+    VALUES (@tertuliaName, @tertuliaSubject, @location, @schedule, @tertuliaIsPrivate);
     SET @tertulia = SCOPE_IDENTITY();
 
     INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia)
@@ -675,43 +682,32 @@ END CATCH
 GO
 
 CREATE PROCEDURE sp_insertTertulia_Weekly_sid
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userSid VARCHAR(40), 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@weekDay VARCHAR(20), @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 BEGIN
 	DECLARE @userId INTEGER;
 	SET @userId = dbo.fnGetUserId_bySid(@userSid);
 
-	EXEC sp_insertTertulia_Weekly @name, @subject,
-		@userId,
+	EXEC sp_insertTertulia_Weekly @userId,
+		@tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
 		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
 		@locationLatitude, @locationLongitude,
-		@weekDay, @skip,
-		@isPrivate
+		@scheduleWeekDay, @scheduleSkip
 END
 GO
 
 CREATE PROCEDURE sp_insertTertulia_Monthly
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userId INTEGER, 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@dom INTEGER, @fromStart BIT, @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION tran_sp_insertTertulia_Monthly
@@ -725,10 +721,10 @@ BEGIN TRY
 	SET @schedule = SCOPE_IDENTITY();
 
 	INSERT INTO MonthlyD (md_schedule, md_dom, md_is_fromstart, md_skip) 
-	VALUES (@schedule, @dom, @fromStart, @skip);
+	VALUES (@schedule, @scheduleDayNr, @scheduleIsFromStart, @scheduleSkip);
 
     INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
-    VALUES (@name, @subject, @location, @schedule, @isPrivate);
+    VALUES (@tertuliaName, @tertuliaSubject, @location, @schedule, @tertuliaIsPrivate);
     SET @tertulia = SCOPE_IDENTITY();
 
     INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia)
@@ -748,43 +744,32 @@ END CATCH
 GO
 
 CREATE PROCEDURE sp_insertTertulia_Monthly_sid
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userSid VARCHAR(40), 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@dom INTEGER, @fromStart BIT, @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 BEGIN
 	DECLARE @userId INTEGER;
 	SET @userId = dbo.fnGetUserId_bySid(@userSid);
 
-	EXEC sp_insertTertulia_Monthly @name, @subject,
-		@userId,
+	EXEC sp_insertTertulia_Monthly @userId,
+		@tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
 		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
 		@locationLatitude, @locationLongitude,
-		@dom, @fromStart, @skip,
-		@isPrivate
+		@scheduleDayNr, @scheduleIsFromStart, @scheduleSkip
 END
 GO
 
 CREATE PROCEDURE sp_insertTertulia_MonthlyW
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userId INTEGER, 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@weekDay VARCHAR(20), @weekNr INTEGER, @fromStart BIT, @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay INTEGER, @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
@@ -794,16 +779,16 @@ BEGIN TRY
 	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyW');
 	EXEC @location = dbo.sp_getId 'lo', 'Locations', 'Dummy';
 
-	SET @dow = dbo.fnGetEnum('WeekDays', @weekDay);
+	SET @dow = dbo.fnGetEnumByVal('WeekDays', @scheduleWeekDay);
 
 	INSERT INTO Schedules (sc_type) VALUES (@scheduleType);
 	SET @schedule = SCOPE_IDENTITY();
 
 	INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) 
-	VALUES (@schedule, @dow, @weekNr, @fromStart, @skip);
+	VALUES (@schedule, @dow, @scheduleWeekNr, @scheduleIsFromStart, @scheduleSkip);
 
     INSERT INTO Tertulias (tr_name, tr_subject, tr_location, tr_schedule, tr_is_private) 
-    VALUES (@name, @subject, @location, @schedule, @isPrivate);
+    VALUES (@tertuliaName, @tertuliaSubject, @location, @schedule, @tertuliaIsPrivate);
     SET @tertulia = SCOPE_IDENTITY();
 
     INSERT INTO Locations (lo_name, lo_address, lo_zip, lo_city, lo_country, lo_latitude, lo_longitude, lo_tertulia)
@@ -823,28 +808,22 @@ END CATCH
 GO
 
 CREATE PROCEDURE sp_insertTertulia_MonthlyW_sid
-	@name VARCHAR(40), @subject VARCHAR(80), 
 	@userSid VARCHAR(40), 
-	@locationName VARCHAR(40),
-	@locationAddress VARCHAR(80),
-	@locationZip VARCHAR(40),
-	@locationCity VARCHAR(40),
-	@locationCountry VARCHAR(40),
-	@locationLatitude VARCHAR(12),
-	@locationLongitude VARCHAR(12),
-	@weekDay VARCHAR(20), @weekNr INTEGER, @fromStart BIT, @skip INTEGER,
-	@isPrivate BIT
+	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80),
+	@locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay VARCHAR(20), @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 BEGIN
 	DECLARE @userId INTEGER;
 	SET @userId = dbo.fnGetUserId_bySid(@userSid);
 
-	EXEC sp_insertTertulia_MonthlyW @name, @subject,
-		@userId,
+	EXEC sp_insertTertulia_MonthlyW @userId,
+		@tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
 		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
 		@locationLatitude, @locationLongitude,
-		@weekDay, @weekNr, @fromStart, @skip,
-		@isPrivate
+		@scheduleWeekDay, @scheduleWeekNr, @scheduleIsFromStart, @scheduleSkip
 END
 GO
 
@@ -852,17 +831,16 @@ GO
 
 CREATE PROCEDURE sp_updateTertulia_Weekly
 	@userId INTEGER, 
-	@tertuliaId INTEGER,
-	@tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
 	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
 	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
-	@scheduleWeekDay VARCHAR(20), @scheduleSkip INTEGER
+	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 BEGIN TRANSACTION tran_sp_updateTertulia_Weekly
 BEGIN TRY
 
-	DECLARE @weekly INTEGER, @schedule INTEGER, @checkTertuliaId INTEGER, @dow INTEGER, @locationId INTEGER;
+	DECLARE @weekly INTEGER, @schedule INTEGER, @newSchedule INTEGER, @checkTertuliaId INTEGER, @dow INTEGER, @locationId INTEGER;
 
 	SELECT @checkTertuliaId = tr_id
 	FROM Tertulias INNER JOIN Members on mb_tertulia = tr_id
@@ -880,9 +858,7 @@ BEGIN TRY
 	INNER JOIN Weekly ON wk_schedule = sc_id
 	WHERE tr_id = @tertuliaId;
 
-	SELECT @dow = nv_value
-	FROM EnumValues INNER JOIN EnumTypes on nv_type = nt_id
-	WHERE nv_name = LOWER(@scheduleWeekDay);
+	SET @dow = dbo.fnGetEnumByVal('WeekDays', @scheduleWeekDay);
 
 	IF (@weekly IS NOT NULL)
 	BEGIN
@@ -893,9 +869,11 @@ BEGIN TRY
 		SELECT @schedule = tr_schedule FROM Tertulias WHERE tr_id = @tertuliaId;
 		DELETE FROM MonthlyD WHERE md_schedule = @schedule;
 		DELETE FROM MonthlyW WHERE mw_schedule = @schedule;
-		-- DELETE FROM Yearly WHERE yr_schedule = @schedule;
+		-- DELETE FROM YearlyD WHERE yd_schedule = @schedule;
 		-- DELETE FROM YearlyW WHERE yw_schedule = @schedule;
-		INSERT INTO Weekly (wk_schedule, wk_dow, wk_skip) VALUES (@schedule, @scheduleWeekDay, @scheduleSkip);
+		INSERT INTO Weekly (wk_schedule, wk_dow, wk_skip) VALUES (@schedule, @dow, @scheduleSkip);
+		SET @newSchedule = dbo.fnGetEnum('Schedule', 'Weekly');
+		UPDATE Schedules SET sc_type = @newSchedule WHERE sc_id = @schedule;
 	END
 
 	SELECT @locationId = tr_location FROM Tertulias WHERE tr_id = @tertuliaId;
@@ -923,7 +901,7 @@ CREATE PROCEDURE sp_updateTertulia_Weekly_sid
 	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
 	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
 	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
-	@scheduleWeekDay VARCHAR(20), @scheduleSkip INTEGER
+	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 BEGIN
 	DECLARE @userId INTEGER;
@@ -935,6 +913,178 @@ BEGIN
 		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
 		@locationLatitude, @locationLongitude,
 		@scheduleWeekDay, @scheduleSkip
+END
+GO
+
+CREATE PROCEDURE sp_updateTertulia_Monthly
+	@userId INTEGER, 
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
+AS
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_sp_updateTertulia_Monthly
+BEGIN TRY
+
+	DECLARE @monthly INTEGER, @schedule INTEGER, @newSchedule INTEGER, @checkTertuliaId INTEGER, @locationId INTEGER;
+
+	SELECT @checkTertuliaId = tr_id
+	FROM Tertulias INNER JOIN Members on mb_tertulia = tr_id
+	WHERE tr_is_cancelled = 0 AND mb_user = @userId AND tr_id = @tertuliaId;
+
+	IF @checkTertuliaId IS NULL
+	BEGIN
+		ROLLBACK TRANSACTION tran_sp_updateTertulia_Monthly;
+		RETURN 1;
+	END
+
+	SELECT @monthly = md_id
+	FROM Tertulias
+	INNER JOIN Schedules ON tr_schedule = sc_id
+	INNER JOIN MonthlyD ON md_schedule = sc_id
+	WHERE tr_id = @tertuliaId;
+
+	IF (@monthly IS NOT NULL)
+	BEGIN
+		UPDATE MonthlyD SET md_dom = @scheduleDayNr, md_is_fromstart = @scheduleIsFromStart, md_skip = @scheduleSkip WHERE md_id = @monthly;
+	END
+	ELSE
+	BEGIN
+		SELECT @schedule = tr_schedule FROM Tertulias WHERE tr_id = @tertuliaId;
+		DELETE FROM Weekly WHERE wk_schedule = @schedule;
+		DELETE FROM MonthlyW WHERE mw_schedule = @schedule;
+		-- DELETE FROM YearlyD WHERE yd_schedule = @schedule;
+		-- DELETE FROM YearlyW WHERE yw_schedule = @schedule;
+		INSERT INTO MonthlyD (md_schedule, md_dom, md_is_fromstart, md_skip) VALUES (@schedule, @scheduleDayNr, @scheduleIsFromStart, @scheduleSkip);
+		SET @newSchedule = dbo.fnGetEnum('Schedule', 'MonthlyD');
+		UPDATE Schedules SET sc_type = @newSchedule WHERE sc_id = @schedule;
+	END
+
+	SELECT @locationId = tr_location FROM Tertulias WHERE tr_id = @tertuliaId;
+
+	UPDATE Locations SET
+		lo_name = @locationName, 
+		lo_address = @locationAddress, lo_zip = @locationZip, lo_city = @locationCity, lo_country = @locationCountry,
+		lo_latitude = @locationLatitude, lo_longitude = @locationLongitude
+	WHERE lo_id = @locationId;
+
+	UPDATE Tertulias SET tr_name = @tertuliaName, tr_subject = @tertuliaSubject, tr_is_private = @tertuliaIsPrivate
+	WHERE tr_id = @tertuliaId;
+
+	COMMIT TRANSACTION tran_sp_updateTertulia_Monthly
+
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK TRANSACTION tran_sp_updateTertulia_Monthly
+END CATCH
+GO
+
+CREATE PROCEDURE sp_updateTertulia_Monthly_sid
+	@userSid VARCHAR(40), 
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
+AS
+BEGIN
+	DECLARE @userId INTEGER;
+	SET @userId = dbo.fnGetUserId_bySid(@userSid);
+
+	EXEC sp_updateTertulia_Monthly
+		@userId,
+		@tertuliaId, @tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
+		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
+		@locationLatitude, @locationLongitude,
+		@scheduleDayNr, @scheduleIsFromStart, @scheduleSkip
+END
+GO
+
+CREATE PROCEDURE sp_updateTertulia_MonthlyW
+	@userId INTEGER, 
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay INTEGER, @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
+AS
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+BEGIN TRANSACTION tran_sp_updateTertulia_MonthlyW
+BEGIN TRY
+
+	DECLARE @monthlyw INTEGER, @schedule INTEGER, @newSchedule INTEGER, @checkTertuliaId INTEGER, @dow INTEGER, @locationId INTEGER;
+
+	SELECT @checkTertuliaId = tr_id
+	FROM Tertulias INNER JOIN Members on mb_tertulia = tr_id
+	WHERE tr_is_cancelled = 0 AND mb_user = @userId AND tr_id = @tertuliaId;
+
+	IF @checkTertuliaId IS NULL
+	BEGIN
+		ROLLBACK TRANSACTION tran_sp_updateTertulia_MonthlyW;
+		RETURN 1;
+	END
+
+	SELECT @monthlyw = mw_id
+	FROM Tertulias
+	INNER JOIN Schedules ON tr_schedule = sc_id
+	INNER JOIN MonthlyW ON mw_schedule = sc_id
+	WHERE tr_id = @tertuliaId;
+
+	SET @dow = dbo.fnGetEnumByVal('WeekDays', @scheduleWeekDay);
+
+	IF (@monthlyw IS NOT NULL)
+	BEGIN
+		UPDATE MonthlyW SET mw_dow = @dow, mw_weeknr = @scheduleWeekNr, mw_is_fromstart = @scheduleIsFromStart, mw_skip = @scheduleSkip WHERE mw_id = @monthlyw;
+	END
+	ELSE
+	BEGIN
+		SELECT @schedule = tr_schedule FROM Tertulias WHERE tr_id = @tertuliaId;
+		DELETE FROM Weekly WHERE wk_schedule = @schedule;
+		DELETE FROM MonthlyD WHERE md_schedule = @schedule;
+		-- DELETE FROM YearlyD WHERE yd_schedule = @schedule;
+		-- DELETE FROM YearlyW WHERE yw_schedule = @schedule;
+		INSERT INTO MonthlyW (mw_schedule, mw_dow, mw_weeknr, mw_is_fromstart, mw_skip) VALUES (@schedule, @dow, @scheduleWeekNr, @scheduleIsFromStart, @scheduleSkip);
+		SET @newSchedule = dbo.fnGetEnum('Schedule', 'MonthlyW');
+		UPDATE Schedules SET sc_type = @newSchedule WHERE sc_id = @schedule;
+	END
+
+	SELECT @locationId = tr_location FROM Tertulias WHERE tr_id = @tertuliaId;
+
+	UPDATE Locations SET
+		lo_name = @locationName, 
+		lo_address = @locationAddress, lo_zip = @locationZip, lo_city = @locationCity, lo_country = @locationCountry,
+		lo_latitude = @locationLatitude, lo_longitude = @locationLongitude
+	WHERE lo_id = @locationId;
+
+	UPDATE Tertulias SET tr_name = @tertuliaName, tr_subject = @tertuliaSubject, tr_is_private = @tertuliaIsPrivate
+	WHERE tr_id = @tertuliaId;
+
+	COMMIT TRANSACTION tran_sp_updateTertulia_MonthlyW
+
+END TRY
+BEGIN CATCH
+	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+	ROLLBACK TRANSACTION tran_sp_updateTertulia_MonthlyW
+END CATCH
+GO
+
+CREATE PROCEDURE sp_updateTertulia_MonthlyW_sid
+	@userSid VARCHAR(40), 
+	@tertuliaId INTEGER, @tertuliaName VARCHAR(40), @tertuliaSubject VARCHAR(80), @tertuliaIsPrivate BIT,
+	@locationName VARCHAR(40), @locationAddress VARCHAR(80), @locationZip VARCHAR(40), @locationCity VARCHAR(40), @locationCountry VARCHAR(40),
+	@locationLatitude VARCHAR(12), @locationLongitude VARCHAR(12),
+	@scheduleWeekDay INTEGER, @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
+AS
+BEGIN
+	DECLARE @userId INTEGER;
+	SET @userId = dbo.fnGetUserId_bySid(@userSid);
+
+	EXEC sp_updateTertulia_MonthlyW
+		@userId,
+		@tertuliaId, @tertuliaName, @tertuliaSubject, @tertuliaIsPrivate,
+		@locationName, @locationAddress, @locationZip, @locationCity, @locationCountry,
+		@locationLatitude, @locationLongitude,
+		@scheduleWeekDay, @scheduleWeekNr, @scheduleIsFromStart, @scheduleSkip
 END
 GO
 
