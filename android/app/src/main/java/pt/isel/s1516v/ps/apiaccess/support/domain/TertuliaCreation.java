@@ -20,30 +20,18 @@
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+public class TertuliaCreation extends TertuliaBase {
 
-public class TertuliaCreation implements Parcelable, TertuliasApi {
-
-    public final String name;
-    public final String subject;
-    public final boolean isPrivate;
     public LocationCreation location;
-    public SCHEDULES scheduleType;
-    private NewSchedule schedule;
 
-    public TertuliaCreation(String name, String subject, boolean isPrivate, LocationCreation location, SCHEDULES scheduleType, NewSchedule schedule) {
-        this.name = name;
-        this.subject = subject;
-        this.isPrivate = isPrivate;
+    public TertuliaCreation(String name, String subject, boolean isPrivate, LocationCreation location, TertuliaSchedule schedule, SCHEDULES scheduleType, NewSchedule scheduleOLD) {
+        super(name, subject, isPrivate, schedule, scheduleType);
         this.location = location;
-        this.scheduleType = scheduleType;
-        this.schedule = schedule;
     }
 
     public NewSchedule getSchedule() {
-        return schedule;
+        return null;
     }
 
     @Override
@@ -60,13 +48,8 @@ public class TertuliaCreation implements Parcelable, TertuliasApi {
     // region Parcelable
 
     protected TertuliaCreation(Parcel in) {
-        name = in.readString();
-        subject = in.readString();
+        super(in);
         location = in.readParcelable(LocationCreation.class.getClassLoader());
-        if (in.readByte() != 0)
-            scheduleType = SCHEDULES.valueOf(in.readString());
-        schedule = in.readParcelable(NewSchedule.class.getClassLoader());
-        isPrivate = in.readByte() != 0;
     }
 
     public static final Creator<TertuliaCreation> CREATOR = new Creator<TertuliaCreation>() {
@@ -88,14 +71,8 @@ public class TertuliaCreation implements Parcelable, TertuliasApi {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(name);
-        out.writeString(subject);
+        super.writeToParcel(out, flags);
         out.writeParcelable(location, flags);
-        out.writeByte((byte) (scheduleType != null ? 1 : 0));
-        if (scheduleType != null)
-            out.writeString(scheduleType.name());
-        out.writeParcelable(schedule, flags);
-        out.writeByte((byte) (isPrivate ? 1 : 0));
     }
 
     // endregion

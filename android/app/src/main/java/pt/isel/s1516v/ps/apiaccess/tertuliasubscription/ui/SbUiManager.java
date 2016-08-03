@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliasubscription.ui;
 
 import android.app.Activity;
@@ -9,9 +28,8 @@ import android.widget.TextView;
 
 import java.util.EnumMap;
 
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
@@ -24,7 +42,7 @@ public class SbUiManager extends UiManager {
     }
 
     private final EnumMap<UIRESOURCE, Integer> uiResources;
-    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
+    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);
     private boolean isViewsSet;
 
     private TextView titleView, subjectView,
@@ -154,20 +172,20 @@ public class SbUiManager extends UiManager {
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
         String scheduleText;
-        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthly) {
+        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthlyD) {
             scheduleText = tertulia.toString();
         } else {
             if (tertulia.scheduleType != null) {
                 scheduleText = tertulia.scheduleType.toString();
                 switch (tertulia.scheduleType.name()) {
                     case "WEEKLY":
-                        scheduleText += " - " + ((TertuliaEditionWeekly) tertulia).toString();
+                        scheduleText += " - " + tertulia.toString();
                         break;
                     case "MONTHLYD":
-                        scheduleText += " - " + ((TertuliaEditionMonthly) tertulia).toString();
+                        scheduleText += " - " + tertulia.toString();
                         break;
                     case "MONTHLYW":
-                        scheduleText += " - " + ((TertuliaEditionMonthlyW) tertulia).toString();
+                        scheduleText += " - " + tertulia.toString();
                         break;
                     case "YEARLY":
                     case "YEARLYW":
@@ -176,7 +194,9 @@ public class SbUiManager extends UiManager {
                     default:
                         throw new RuntimeException();
                 }
-            } else scheduleText = tertulia.scheduleType.toString();
+            } else {
+                scheduleText = "";
+            }
         }
         scheduleView.setText(scheduleText);
     }

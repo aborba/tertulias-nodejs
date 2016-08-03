@@ -1,3 +1,22 @@
+<!--
+  ~ Copyright (c) 2016 António Borba da Silva
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+  ~ documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+  ~ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+  ~ persons to whom the Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+  ~ Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+  ~ NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  ~ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  ~ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  ~
+  -->
+
 <resources>
     <string name="app_name">Tertulias</string>
     <string name="app_mobile_service_creation_error">There was an error creating the Mobile Service. Please contact support.</string>
@@ -25,7 +44,7 @@
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
     <string name="main_activity_root_path_not_found">Root path unreachable. Shame on us.</string>
-    <string name="main_activity_routes_undefined">No routes defined yet. Still working...</string>
+    <string name="main_activity_routes_undefined">No routes defined yet. Still working&#8230;</string>
     <string name="main_activity_no_network_title">Connection to the network unavailable</string>
     <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
     <string name="main_activity_no_tertulias">You are not subscribed to any tertulia. Use the buttons bellow to either create one or to search for a public tertulia to subscribe.</string>
@@ -66,7 +85,7 @@
     <string name="new_tertulia_location_address_label">"Address"</string>
     <string name="new_tertulia_location_address_hint">"Street, number"</string>
     <string name="new_tertulia_location_zipcountry_label">"Zip + Country"</string>
-    <string name="new_tertulia_location_zip_hint">0000-000"</string>
+    <string name="new_tertulia_location_zip_hint">0000&#8211;000"</string>
     <string name="new_tertulia_location_city_hint">City name"</string>
     <string name="new_tertulia_location_country_hint">"Country"</string>
     <string name="new_tertulia_location_coordinates_label">"Map coordinates"</string>
@@ -83,20 +102,20 @@
     <string name="new_tertulia_dialog_cancel_button">Cancel</string>
     <string name="new_tertulia_dialog_next_button">Next</string>
     <string-array name="new_tertulia_dialog_weekly_tostring" formatted="false">
-        <item>"Weekly schedule selected. The Tertulia events shall occur "</item>
+        <item>"The Tertulia events shall occur "</item>
         <item>weekly</item>
         <item>"every %d weeks"</item>
         <item>", on %s"</item>
     </string-array>
     <string-array name="new_tertulia_dialog_monthly_tostring" formatted="false">
-        <item>"Monthly schedule selected. The Tertulia events shall occur "</item>
+        <item>"The Tertulia events shall occur "</item>
         <item>monthly</item>
         <item>"every %d months"</item>
         <item>", on the %d%s day"</item>
         <item>" counting from the end of the month"</item>
     </string-array>
     <string-array name="new_tertulia_dialog_monthlyw_tostring" formatted="false">
-        <item>"MonthlyW schedule selected. The Tertulia events shall occur "</item>
+        <item>"The Tertulia events shall occur "</item>
         <item>monthly</item>
         <item>"every %d months"</item>
         <item>", on %s of the %d%s week"</item>
@@ -104,10 +123,10 @@
     </string-array>
     <string-array name="new_tertulia_dialog_schedules">
         <item>Weekly</item>
-        <item>Monthly/day</item>
-        <item>Monthly/week</item>
-        <item>Yearly/day</item>
-        <item>Yearly/week</item>
+        <item>Monthly/Day</item>
+        <item>Monthly/Week/Week day</item>
+        <!-- <item>Yearly/Day</item> -->
+        <!-- <item>Yearly/Month/Day</item> -->
     </string-array>
     <string name="new_tertulia_toast_success">Tertulia created</string>
     <string name="new_tertulia_toast_cancel">Tertulia creation cancelled</string>
@@ -168,17 +187,17 @@
     <string name="new_location_cancel_button">"Cancel"</string>
 
     <string name="title_activity_new_monthlyw">"MonthlyW Schedule"</string>
-    <string name="new_monthlyw_submit_button">"Ok"</string>
+    <string name="new_monthlyw_submit_button">"OK"</string>
     <string name="new_monthlyw_cancel_button">"Cancel"</string>
     <string name="new_monthlyw_weekday_label">"Day of the week"</string>
     <string name="new_monthlyw_weekday_hint">"Select"</string>
     <string name="new_monthlyw_weeknr_label">"Week of the month"</string>
-    <string name="new_monthlyw_weeknr_hint">"0-4"</string>
+    <string name="new_monthlyw_weeknr_hint">"0&#8211;4"</string>
     <string name="new_monthlyw_fromend_label">"Count weeks from the end of the month"</string>
     <string name="new_monthlyw_fromend_hint">"Count weeks from the end of the month"</string>
     <string name="new_monthlyw_skip_label">"Repeat every"</string>
     <string name="new_monthlyw_skip_units_label">"months"</string>
-    <string name="new_monthlyw_skip_hint">"1-12"</string>
+    <string name="new_monthlyw_skip_hint">"1&#8211;12"</string>
 
     <string name="title_activity_new_weekly">"Weekly Schedule"</string>
     <string-array name="new_weekly_tostring" formatted="false">
@@ -197,7 +216,7 @@
 
     <string name="title_activity_new_monthly">"Monthly Schedule"</string>
     <string name="new_monthly_day_label">"Day of the month"</string>
-    <string name="new_monthly_day_hint">"[1-31]"</string>
+    <string name="new_monthly_day_hint">"[1&#8211;31]"</string>
     <string name="new_monthly_fromend_label">"Count days from the end of the month"</string>
     <string-array name="new_monthly_day_suffix">
         <item>st</item>
@@ -289,5 +308,6 @@
     <string name="semicolon_spacer">; </string>
     <string name="title_activity_demo">demo</string>
     <string name="message_not_available_yet">"Functionality not available yet."</string>
+    <string name="undefined">"Undefined"</string>
 
 </resources>

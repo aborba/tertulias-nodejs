@@ -28,30 +28,23 @@ import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiScheduleEditionWeekly;
 
-public class TertuliaCreationWeekly extends TertuliaCreation {
+public class TertuliaScheduleWeekly implements TertuliaSchedule {
     public final int weekday;
     public final int skip;
 
-    public TertuliaCreationWeekly(String name, String subject, boolean isPrivate,
-                                  LocationCreation location,
-                                  SCHEDULES scheduleType, NewSchedule schedule,
-                                  int weekday, int skip) {
-        super(name, subject, isPrivate, location, null, scheduleType, schedule);
+    public TertuliaScheduleWeekly(int weekday, int skip) {
         this.weekday = weekday;
         this.skip = skip;
     }
 
-    public TertuliaCreationWeekly(TertuliaCreation tertulia, TertuliaSchedule schedule, CrUiWeekly scheduleOLD) {
-        super(tertulia.name, tertulia.subject, tertulia.isPrivate, tertulia.location, schedule, scheduleOLD.getScheduleType(), tertulia.getSchedule());
-        this.weekday = scheduleOLD.weekDayNr;
-        this.skip = scheduleOLD.skip;
+    public TertuliaScheduleWeekly(ApiScheduleEditionWeekly weekly) {
+        weekday = weekly.sc_weekday - 1;
+        skip = weekly.sc_skip;
     }
 
-    public TertuliaCreationWeekly(TertuliaCreation tertulia) {
-        this(tertulia, null, new CrUiWeekly(((TertuliaCreationWeekly) tertulia).weekday, ((TertuliaCreationWeekly) tertulia).skip));
-    }
+    // region TertuliaSchedule
 
     @Override
     public String toString() {
@@ -66,10 +59,16 @@ public class TertuliaCreationWeekly extends TertuliaCreation {
         return result;
     }
 
+    @Override
+    public SCHEDULES getType() {
+        return SCHEDULES.WEEKLY;
+    }
+
+    // endregion
+
     // region Parcelable
 
-    protected TertuliaCreationWeekly(Parcel in) {
-        super(in);
+    protected TertuliaScheduleWeekly(Parcel in) {
         weekday = in.readInt();
         skip = in.readInt();
     }
@@ -81,20 +80,19 @@ public class TertuliaCreationWeekly extends TertuliaCreation {
 
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
-        super.writeToParcel(out, flags);
         out.writeInt(weekday);
         out.writeInt(skip);
     }
 
-    public static final Creator<TertuliaCreationWeekly> CREATOR = new Creator<TertuliaCreationWeekly>() {
+    public static final Creator<TertuliaScheduleWeekly> CREATOR = new Creator<TertuliaScheduleWeekly>() {
         @Override
-        public TertuliaCreationWeekly createFromParcel(Parcel in) {
-            return new TertuliaCreationWeekly(in);
+        public TertuliaScheduleWeekly createFromParcel(Parcel in) {
+            return new TertuliaScheduleWeekly(in);
         }
 
         @Override
-        public TertuliaCreationWeekly[] newArray(int size) {
-            return new TertuliaCreationWeekly[size];
+        public TertuliaScheduleWeekly[] newArray(int size) {
+            return new TertuliaScheduleWeekly[size];
         }
     };
 

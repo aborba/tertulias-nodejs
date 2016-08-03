@@ -34,23 +34,17 @@ import java.util.EnumMap;
 import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Address;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Geolocation;
-import pt.isel.s1516v.ps.apiaccess.support.domain.LocationCreation;
-import pt.isel.s1516v.ps.apiaccess.support.domain.NewSchedule;
+import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreation;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class CrUiManager extends UiManager {
 
     public enum UIRESOURCE {
         TOOLBAR,
-        TERTULIA_NAME, SUBJECT,
+        TERTULIA_NAME, SUBJECT, ISPRIVATE,
         LOCATION_NAME, ADDRESS, ZIP, CITY, COUNTRY, LATITUDE, LONGITUDE,
-        SCHEDULE_DESCRIPTION,
-        ISPRIVATE
+        SCHEDULE_DESCRIPTION
     }
 
     private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
@@ -61,7 +55,7 @@ public class CrUiManager extends UiManager {
     private EditText tertuliaNameView, subjectView,
             locationNameView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView;
-    private TextView scheduleDescriptionView;
+    private TextView scheduleView;
     private CheckBox isPrivateView;
 
     public CrUiManager(Context ctx) {
@@ -69,6 +63,7 @@ public class CrUiManager extends UiManager {
         uiResources.put(UIRESOURCE.TOOLBAR, R.id.toolbar);
         uiResources.put(UIRESOURCE.TERTULIA_NAME, R.id.tertuliaName);
         uiResources.put(UIRESOURCE.SUBJECT, R.id.subject);
+        uiResources.put(UIRESOURCE.ISPRIVATE, R.id.isPrivate);
         uiResources.put(UIRESOURCE.LOCATION_NAME, R.id.locationName);
         uiResources.put(UIRESOURCE.ADDRESS, R.id.address);
         uiResources.put(UIRESOURCE.ZIP, R.id.zip);
@@ -77,7 +72,6 @@ public class CrUiManager extends UiManager {
         uiResources.put(UIRESOURCE.LATITUDE, R.id.latitude);
         uiResources.put(UIRESOURCE.LONGITUDE, R.id.longitude);
         uiResources.put(UIRESOURCE.SCHEDULE_DESCRIPTION, R.id.scheduleDescription);
-        uiResources.put(UIRESOURCE.ISPRIVATE, R.id.isPrivate);
     }
 
     public void set(TertuliaCreation tertulia) {
@@ -103,15 +97,38 @@ public class CrUiManager extends UiManager {
         longitudeView.setText(formatter.apply(place.getLatLng().longitude));
     }
 
-    public TertuliaCreation update(TertuliaCreation tertulia) {
-        Address address = new Address(addressView.getText().toString(), zipView.getText().toString(),
-                cityView.getText().toString(), countryView.getText().toString());
-        Geolocation geolocation = new Geolocation(getLatitudeData(), getLongitudeData());
-        LocationCreation location = new LocationCreation(locationNameView.getText().toString(), address, geolocation);
-        TertuliasApi.SCHEDULES scheduleType = tertulia == null ? null : tertulia.scheduleType;
-        NewSchedule schedule = tertulia == null ? null : tertulia.getSchedule();
-        return new TertuliaCreation(tertuliaNameView.getText().toString(),
-                subjectView.getText().toString(), isPrivateView.isChecked(), location, scheduleType, schedule);
+    public void update(TertuliaCreation tertulia) {
+        tertulia.name = tertuliaNameView.getText().toString().trim();
+        tertulia.subject = subjectView.getText().toString().trim();
+        tertulia.isPrivate = isPrivateView.isChecked();
+        tertulia.location.address.address = addressView.getText().toString().trim();
+        tertulia.location.address.zip = zipView.getText().toString().trim();
+        tertulia.location.address.city = cityView.getText().toString().trim();
+        tertulia.location.address.country = countryView.getText().toString().trim();
+        String locationName = locationNameView.getText().toString().trim();
+        if (TextUtils.isEmpty(locationName)) {
+            if ( ! TextUtils.isEmpty(tertulia.location.address.address))
+                locationName = tertulia.location.address.address;
+            else if (!TextUtils.isEmpty(tertulia.location.address.city))
+                locationName = tertulia.location.address.city;
+            else if (!TextUtils.isEmpty(tertulia.location.address.country))
+                locationName = tertulia.location.address.country;
+            else
+                locationName = tertulia.location.geolocation.toString();
+        }
+        tertulia.location.name = locationName;
+        if (TextUtils.isEmpty(latitudeView.getText().toString()))
+            tertulia.location.geolocation.isLatitude = false;
+        else {
+            tertulia.location.geolocation.isLatitude = true;
+            tertulia.location.geolocation.latitude = Util.string2Double(latitudeView.getText().toString());
+        }
+        if (TextUtils.isEmpty(longitudeView.getText().toString()))
+            tertulia.location.geolocation.isLongitude = false;
+        else {
+            tertulia.location.geolocation.isLongitude = true;
+            tertulia.location.geolocation.longitude = Util.string2Double(longitudeView.getText().toString());
+        }
     }
 
     public View getView(UIRESOURCE uiresource) {
@@ -207,7 +224,7 @@ public class CrUiManager extends UiManager {
         countryView = setup(UIRESOURCE.COUNTRY, EditText.class, uiViews);
         latitudeView = setup(UIRESOURCE.LATITUDE, EditText.class, uiViews);
         longitudeView = setup(UIRESOURCE.LONGITUDE, EditText.class, uiViews);
-        scheduleDescriptionView = setup(UIRESOURCE.SCHEDULE_DESCRIPTION, EditText.class, uiViews);
+        scheduleView = setup(UIRESOURCE.SCHEDULE_DESCRIPTION, EditText.class, uiViews);
         isPrivateView = setup(UIRESOURCE.ISPRIVATE, CheckBox.class, uiViews);
         isViewsSet = true;
     }
@@ -215,6 +232,7 @@ public class CrUiManager extends UiManager {
     private void fillInViews(TertuliaCreation tertulia) {
         tertuliaNameView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
+        isPrivateView.setChecked(tertulia.isPrivate);
         locationNameView.setText(tertulia.location.name);
         addressView.setText(tertulia.location.address.address);
         zipView.setText(tertulia.location.address.zip);
@@ -222,36 +240,8 @@ public class CrUiManager extends UiManager {
         countryView.setText(tertulia.location.address.country);
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
-        String scheduleText;
-        if (tertulia instanceof TertuliaCreationWeekly
-//                || tertulia instanceof TertuliaCreationMonthly || tertulia instanceof TertuliaCreationMonthlyW
-//                || tertulia instanceof EditCreationYearly || tertulia instanceof EditCreationYearlyW
-        )
-            scheduleText = tertulia.toString();
-        else {
-            if (tertulia.scheduleType != null) {
-                scheduleText = tertulia.scheduleType.toString();
-                switch (tertulia.scheduleType.name()) {
-                    case "WEEKLY":
-                        scheduleText += " - " + tertulia.toString();
-                        break;
-                    case "MONTHLYD":
-//                        scheduleText += " - " + ((TertuliaCreationMonthly) tertulia).toString();
-                        break;
-                    case "MONTHLYW":
-//                        scheduleText += " - " + ((TertuliaCreationMonthlyW) tertulia).toString();
-                        break;
-                    case "YEARLY":
-                    case "YEARLYW":
-//                        scheduleText += " - " + ((TertuliaEditionYearly) tertulia).toString();
-                        throw new UnsupportedOperationException();
-                    default:
-                        throw new RuntimeException();
-                }
-            } else scheduleText = "";
-        }
-        scheduleDescriptionView.setText(scheduleText);
-        isPrivateView.setChecked(tertulia.isPrivate);
+        if (tertulia.tertuliaSchedule != null)
+            scheduleView.setText(tertulia.tertuliaSchedule.toString());
     }
 
     // endregion

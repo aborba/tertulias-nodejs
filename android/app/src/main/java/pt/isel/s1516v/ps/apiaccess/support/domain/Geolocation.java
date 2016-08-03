@@ -23,12 +23,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
 
+import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 
 public class Geolocation implements Parcelable {
 
-    public final double latitude, longitude;
-    public final boolean isLatitude, isLongitude;
+    public double latitude, longitude;
+    public boolean isLatitude, isLongitude;
 
     public Geolocation(double latitude, double longitude) {
         this.latitude = latitude;
@@ -43,12 +45,22 @@ public class Geolocation implements Parcelable {
         this.longitude = Util.string2Double(longitude);
     }
 
+    public boolean isDefined() {
+        return isLatitude && isLongitude;
+    }
+
     public String getLatitude() {
         return isLatitude ? String.valueOf(latitude) : "";
     }
 
     public String getLongitude() {
         return isLongitude ? String.valueOf(longitude) : "";
+    }
+
+    @Override
+    public String toString() {
+        return isDefined() ? getLatitude() + " " + getLongitude() :
+                TertuliasApplication.getApplication().getResources().getString(R.string.undefined);
     }
 
     // region Parcelable

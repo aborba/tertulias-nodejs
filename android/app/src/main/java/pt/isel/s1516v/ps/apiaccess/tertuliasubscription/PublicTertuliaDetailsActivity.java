@@ -46,12 +46,12 @@ import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundle;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.PlacePresentationActivity;
@@ -221,8 +221,8 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
                                 tertulia = new TertuliaEditionWeekly(apiReadTertuliaWeekly);
                                 break;
                             case "MONTHLYD":
-                                ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthly.class);
-                                tertulia = new TertuliaEditionMonthly(apiReadTertuliaMonthly);
+                                ApiTertuliaEditionBundleMonthlyD apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyD.class);
+                                tertulia = new TertuliaEditionMonthlyD(apiReadTertuliaMonthly);
                                 break;
                             case "MONTHLYW":
                                 ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);

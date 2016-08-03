@@ -35,21 +35,26 @@ public class TertuliaEdition extends TertuliaBase {
     public TertuliaEdition(int id, String name, String subject, boolean isPrivate,
                            Role role,
                            LocationEdition location,
+                           TertuliaSchedule tSchedule,
                            String scheduleType,
                            ApiLink[] links) {
-        super(name, subject, isPrivate, SCHEDULES.valueOf(scheduleType));
+        super(name, subject, isPrivate, tSchedule, SCHEDULES.valueOf(scheduleType));
         this.id = id;
         this.location = location;
         this.role = role;
         this.links = links;
     }
 
-    public TertuliaEdition(ApiTertuliaEdition tertulia, ApiLink[] links) {
-        super(tertulia.tr_name, tertulia.tr_subject, tertulia.tr_isPrivate, SCHEDULES.valueOf(tertulia.sc_name.toUpperCase()));
+    public TertuliaEdition(ApiTertuliaEdition tertulia, TertuliaSchedule schedule, ApiLink[] links) {
+        super(tertulia.tr_name, tertulia.tr_subject, tertulia.tr_isPrivate, schedule, SCHEDULES.valueOf(tertulia.sc_name.toUpperCase()));
         id = Integer.parseInt(tertulia.tr_id);
         role = new Role(tertulia.ro_id, tertulia.ro_name);
         location = new LocationEdition(tertulia);
         this.links = links;
+    }
+
+    public TertuliaEdition(ApiTertuliaEdition tertulia, ApiLink[] links) {
+        this(tertulia, null, links);
     }
 
     public TertuliaEdition(ApiTertuliaEditionBundle apiTertuliaEditionBundle) {
@@ -104,5 +109,4 @@ public class TertuliaEdition extends TertuliaBase {
     }
 
     // endregion
-
 }

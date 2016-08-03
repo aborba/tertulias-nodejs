@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.content.Context;
@@ -9,10 +28,6 @@ import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 
 public class TertuliaCreationMonthlyW extends TertuliaCreation {
@@ -22,7 +37,7 @@ public class TertuliaCreationMonthlyW extends TertuliaCreation {
     public final int skip;
 
     public TertuliaCreationMonthlyW(TertuliaCreation tertulia, CrUiMonthlyW schedule) {
-        super(tertulia.name, tertulia.subject, tertulia.isPrivate, tertulia.location, schedule.getScheduleType(), tertulia.getSchedule());
+        super(tertulia.name, tertulia.subject, tertulia.isPrivate, tertulia.location, null, schedule.getScheduleType(), tertulia.getSchedule());
         this.weekday = schedule.weekDayNr;
         this.weeknr = schedule.weekNr;
         this.isFromStart = schedule.isFromStart;
@@ -73,7 +88,7 @@ public class TertuliaCreationMonthlyW extends TertuliaCreation {
         out.writeInt(weekday);
         out.writeInt(weeknr);
         out.writeByte((byte) (isFromStart ? 1 : 0));
-        out.writeInt(skip);;
+        out.writeInt(skip);
     }
 
     public static final Creator<TertuliaCreationMonthlyW> CREATOR = new Creator<TertuliaCreationMonthlyW>() {

@@ -44,13 +44,13 @@ import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleMonthlyD;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundle;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
@@ -116,8 +116,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                     setResult(RESULT_OK);
                     Util.longSnack(uiManager.getRootView(), R.string.edit_tertulia_toast_updated);
                     refreshDataAndViews();
-                }
-                else
+                } else
                     Util.longSnack(uiManager.getRootView(), R.string.tertulia_details_not_updated);
                 break;
             default:
@@ -304,27 +303,27 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 @Override
                 protected TertuliaEdition doInBackground(JsonElement... params) {
                     ApiTertuliaEditionBundle apiTertulia = new Gson().fromJson(params[0], ApiTertuliaEditionBundle.class);
-                    tertulia = new TertuliaEdition(apiTertulia);
-                    if (tertulia.scheduleType != null) {
-                        switch (tertulia.scheduleType.name()) {
-                            case "WEEKLY":
-                                ApiTertuliaEditionBundleWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleWeekly.class);
-                                tertulia = new TertuliaEditionWeekly(apiReadTertuliaWeekly);
-                                break;
-                            case "MONTHLYD":
-                                ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthly.class);
-                                tertulia = new TertuliaEditionMonthly(apiReadTertuliaMonthly);
-                                break;
-                            case "MONTHLYW":
-                                ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);
-                                tertulia = new TertuliaEditionMonthlyW(apiReadTertuliaMonthlyW);
-                                break;
-                            case "YEARLY":
-                            case "YEARLW":
-                                break;
-                            default:
-                                throw new IllegalArgumentException();
-                        }
+                    switch (apiTertulia.tertulia.sc_name.toUpperCase()) {
+                        case "WEEKLY":
+                            ApiTertuliaEditionBundleWeekly apiReadTertuliaWeekly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleWeekly.class);
+                            TertuliaScheduleWeekly tertuliaScheduleWeekly = new TertuliaScheduleWeekly(apiReadTertuliaWeekly.weekly);
+                            tertulia = new TertuliaEdition(apiReadTertuliaWeekly.tertulia, tertuliaScheduleWeekly, apiReadTertuliaWeekly.links);
+                            break;
+                        case "MONTHLYD":
+                            ApiTertuliaEditionBundleMonthlyD apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyD.class);
+                            TertuliaScheduleMonthlyD tertuliaScheduleMonthlyD = new TertuliaScheduleMonthlyD(apiReadTertuliaMonthly.monthly);
+                            tertulia = new TertuliaEdition(apiReadTertuliaMonthly.tertulia, tertuliaScheduleMonthlyD, apiReadTertuliaMonthly.links);
+                            break;
+                        case "MONTHLYW":
+                            ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);
+                            TertuliaScheduleMonthlyW tertuliaScheduleMonthlyW = new TertuliaScheduleMonthlyW(apiReadTertuliaMonthlyW.monthlyw);
+                            tertulia = new TertuliaEdition(apiReadTertuliaMonthlyW.tertulia, tertuliaScheduleMonthlyW, apiReadTertuliaMonthlyW.links);
+                            break;
+                        case "YEARLY":
+                        case "YEARLW":
+                            break;
+                        default:
+                            throw new IllegalArgumentException();
                     }
                     return tertulia;
                 }

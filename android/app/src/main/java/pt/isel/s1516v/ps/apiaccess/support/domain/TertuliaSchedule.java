@@ -19,12 +19,14 @@
 
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
-import java.util.Date;
+import android.os.Parcelable;
 
-public interface Schedule {
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 
-    Date nextEvent();
+public interface TertuliaSchedule extends Parcelable, TertuliasApi {
 
     String toString();
+
+    SCHEDULES getType();
 
 }

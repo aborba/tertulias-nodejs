@@ -19,12 +19,47 @@
 
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
-import java.util.Date;
+import android.os.Parcel;
+import android.support.annotation.NonNull;
 
-public interface Schedule {
+public class TertuliaCreationMonthlyD extends TertuliaCreation {
+    public final int dayNr;
+    public final boolean isFromStart;
+    public final int skip;
 
-    Date nextEvent();
+    // region Parcelable
 
-    String toString();
+    protected TertuliaCreationMonthlyD(Parcel in) {
+        super(in);
+        dayNr = in.readInt();
+        isFromStart = in.readByte() != 0;
+        skip = in.readInt();
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        out.writeInt(dayNr);
+        out.writeByte((byte) (isFromStart ? 1 : 0));
+        out.writeInt(skip);
+    }
+
+    public static final Creator<TertuliaCreationMonthlyD> CREATOR = new Creator<TertuliaCreationMonthlyD>() {
+        @Override
+        public TertuliaCreationMonthlyD createFromParcel(Parcel in) {
+            return new TertuliaCreationMonthlyD(in);
+        }
+
+        @Override
+        public TertuliaCreationMonthlyD[] newArray(int size) {
+            return new TertuliaCreationMonthlyD[size];
+        }
+    };
+
+    // endregion
 }

@@ -52,15 +52,15 @@ import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.Address;
+import pt.isel.s1516v.ps.apiaccess.support.domain.Geolocation;
+import pt.isel.s1516v.ps.apiaccess.support.domain.LocationCreation;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreation;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaCreationWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiTertuliaMonthlyDSchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiTertuliaMonthlyWSchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiTertuliaWeeklySchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiManager;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
 
 public class NewTertuliaActivity extends Activity implements
         TertuliasApi
@@ -93,6 +93,12 @@ public class NewTertuliaActivity extends Activity implements
                 Util.IGNORE, Util.IGNORE, null, true);
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
+        if (tertulia == null) {
+            Address address = new Address(null, null, null, null);
+            Geolocation geolocation = new Geolocation(0.0, 0.0);
+            LocationCreation location = new LocationCreation(null, address, geolocation);
+            tertulia = new TertuliaCreation(null, null, false, location, null, null, null);
+        }
 
         apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
     }
@@ -109,7 +115,8 @@ public class NewTertuliaActivity extends Activity implements
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        tertulia = uiManager.update(tertulia);
+        if (tertulia != null)
+            uiManager.update(tertulia);
         outState.putParcelable(INSTANCE_KEY_TERTULIA, tertulia);
     }
 
@@ -134,43 +141,35 @@ public class NewTertuliaActivity extends Activity implements
     }
 
     public void onClickCreateTertulia(View view) {
-        tertulia = uiManager.update(tertulia);
+        uiManager.update(tertulia);
 
         if (!isNameValid(tertulia.name, getIntent().getStringArrayExtra(INTENT_TERTULIAS))) {
             Util.longSnack(view, R.string.new_tertulia_toast_invalid_name);
             return;
         }
 
-        if (tertulia.scheduleType == null) {
+        if (tertulia.tertuliaSchedule == null) {
             Util.longSnack(view, R.string.new_tertulia_toast_no_schedule_selected);
             return;
         }
 
         JsonElement postParameters;
         String apiLinksKey;
-        switch (tertulia.scheduleType.name()) {
+        uiManager.update(tertulia);
+        switch (tertulia.tertuliaSchedule.getType().name()) {
             case "WEEKLY":
-                uiManager.update(tertulia);
-                if ( ! (tertulia instanceof TertuliaCreationWeekly))
-                    throw new IllegalArgumentException();
-                TertuliaCreationWeekly tertuliaCreationWeekly = new TertuliaCreationWeekly(tertulia);
-                postParameters = new Gson().toJsonTree(tertuliaCreationWeekly);
+                CrApiTertuliaWeeklySchedule apiWeekly = new CrApiTertuliaWeeklySchedule(tertulia);
+                postParameters = new Gson().toJsonTree(apiWeekly);
                 apiLinksKey = LINK_CREATE_WEEKLY;
                 break;
             case "MONTHLYD":
-                uiManager.update(tertulia);
-                if ( ! (tertulia instanceof TertuliaCreationMonthly))
-                    throw new IllegalArgumentException();
-                TertuliaCreationMonthly tertuliaCreationMonthly = new TertuliaCreationMonthly(tertulia);
-                postParameters = new Gson().toJsonTree(tertuliaCreationMonthly);
+                CrApiTertuliaMonthlyDSchedule apiMonthly = new CrApiTertuliaMonthlyDSchedule(tertulia);
+                postParameters = new Gson().toJsonTree(apiMonthly);
                 apiLinksKey = LINK_CREATE_MONTHLY;
                 break;
             case "MONTHLYW":
-                uiManager.update(tertulia);
-                if ( ! (tertulia instanceof TertuliaCreationMonthlyW))
-                    throw new IllegalArgumentException();
-                TertuliaCreationMonthlyW tertuliaCreationMonthlyW = new TertuliaCreationMonthlyW(tertulia);
-                postParameters = new Gson().toJsonTree(tertuliaCreationMonthlyW);
+                CrApiTertuliaMonthlyWSchedule apiMonthlyW = new CrApiTertuliaMonthlyWSchedule(tertulia);
+                postParameters = new Gson().toJsonTree(apiMonthlyW);
                 apiLinksKey = LINK_CREATE_MONTHLYW;
                 break;
             case "YEARLY":
@@ -211,28 +210,13 @@ public class NewTertuliaActivity extends Activity implements
                     return;
                 uiManager.set(place);
                 break;
-            case WeeklyActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleWeeklyActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleMonthlyDActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleMonthlyWActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
                 setResult(RESULT_OK);
-                CrUiWeekly crWeekly = data.getParcelableExtra("result");
-                tertulia = new TertuliaCreationWeekly(tertulia, crWeekly);
-                uiManager.set(tertulia);
-                break;
-            case MonthlyActivity.ACTIVITY_REQUEST_CODE:
-                if (resultCode == RESULT_FAIL)
-                    return;
-                setResult(RESULT_OK);
-                CrUiMonthly crMonthly = data.getParcelableExtra("result");
-                tertulia = new TertuliaCreationMonthly(tertulia, crMonthly);
-                uiManager.set(tertulia);
-                break;
-            case MonthlywActivity.ACTIVITY_REQUEST_CODE:
-                if (resultCode == RESULT_FAIL)
-                    return;
-                setResult(RESULT_OK);
-                CrUiMonthlyW crMonthlyW = data.getParcelableExtra("result");
-                tertulia = new TertuliaCreationMonthlyW(tertulia, crMonthlyW);
+                tertulia.tertuliaSchedule = data.getParcelableExtra("result");
                 uiManager.set(tertulia);
                 break;
             default:
@@ -248,16 +232,16 @@ public class NewTertuliaActivity extends Activity implements
         Intent intent;
         switch (selection) {
             case WEEKLY:
-                intent = new Intent(this, WeeklyActivity.class);
-                startActivityForResult(intent, WeeklyActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleWeeklyActivity.class);
+                startActivityForResult(intent, ScheduleWeeklyActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case MONTHLY:
-                intent = new Intent(this, MonthlyActivity.class);
-                startActivityForResult(intent, MonthlyActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleMonthlyDActivity.class);
+                startActivityForResult(intent, ScheduleMonthlyDActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case MONTHLYW:
-                intent = new Intent(this, MonthlywActivity.class);
-                startActivityForResult(intent, MonthlywActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleMonthlyWActivity.class);
+                startActivityForResult(intent, ScheduleMonthlyWActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case YEARLY:
             case YEARLYW:

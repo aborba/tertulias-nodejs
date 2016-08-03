@@ -17,14 +17,28 @@
  *
  */
 
-package pt.isel.s1516v.ps.apiaccess.support.domain;
+package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
-import java.util.Date;
+import android.app.Activity;
+import android.content.Context;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
-public interface Schedule {
+import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
+import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
 
-    Date nextEvent();
+public abstract class ScheduleBaseActivity extends Activity implements Schedule, TertuliasApi {
 
-    String toString();
+    protected static ArrayAdapter<CharSequence> prepareArrayAdapter(Context ctx, int source, int schema, int item) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(ctx, source, item);
+        adapter.setDropDownViewResource(schema);
+        return adapter;
+    }
+
+    protected static void setupSpinner(Context ctx, Spinner spinner, int source, int schema, int item, AdapterView.OnItemSelectedListener listener) {
+        spinner.setAdapter(prepareArrayAdapter(ctx, source, schema, item));
+        spinner.setOnItemSelectedListener(listener);
+    }
 
 }

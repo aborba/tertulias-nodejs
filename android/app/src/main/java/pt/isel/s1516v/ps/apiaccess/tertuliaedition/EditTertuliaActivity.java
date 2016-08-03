@@ -22,10 +22,12 @@ package pt.isel.s1516v.ps.apiaccess.tertuliaedition;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -51,29 +53,26 @@ import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundle;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyD;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.DialogFragmentResult;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.MonthlyActivity;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.MonthlywActivity;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleMonthlyDActivity;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleMonthlyWActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleSelectionDialog;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.WeeklyActivity;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlySchedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.api.CrApiMonthlyWSchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleWeeklyActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiAddress;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthly;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
-import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiWeeklySchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaMonthlyDSchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaMonthlyWSchedule;
+import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaWeeklySchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliaedition.ui.EdUiManager;
 
 public class EditTertuliaActivity extends Activity implements TertuliasApi, DialogFragmentResult {
@@ -172,49 +171,55 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
             return;
         }
 
-        tertulia = uiManager.update(tertulia);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.title_activity_edit_tertulia)
+                .setMessage(R.string.message_dialog_edit_tertulia)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        uiManager.update(tertulia);
 
-        JsonElement postParameters;
-        String apiLinksKey;
-        switch (tertulia.scheduleType.name()) {
-            case "WEEKLY":
-                if ( ! (tertulia instanceof TertuliaEditionWeekly))
-                    throw new RuntimeException();
-                TertuliaEditionWeekly tertuliaEditionWeekly = (TertuliaEditionWeekly) tertulia;
-                EdApiWeeklySchedule tertuliaWeekly = new EdApiWeeklySchedule(this, tertuliaEditionWeekly);
-                postParameters = new Gson().toJsonTree(tertuliaWeekly);
-                apiLinksKey = LINK_UPDATE;
-                break;
-            case "MONTHLYD":
-                CrUiMonthly crMonthly = (CrUiMonthly) crUiSchedule;
-//                ApiCreateTertuliaMonthly tertuliaMonthly = new ApiCreateTertuliaMonthly(crUiTertulia, crMonthly);
-                CrApiMonthlySchedule tertuliaMonthly = new CrApiMonthlySchedule(crUiTertulia, crMonthly);
-                postParameters = new Gson().toJsonTree(tertuliaMonthly);
-                apiLinksKey = LINK_UPDATE;
-                break;
-            case "MONTHLYW":
-                if ( ! (tertulia instanceof TertuliaEditionMonthlyW))
-                    throw new RuntimeException();
-                TertuliaEditionMonthlyW tertuliaEditionMonthlyW = (TertuliaEditionMonthlyW)tertulia;
-                CrApiMonthlyWSchedule tertuliaMonthlyW = new CrApiMonthlyWSchedule(this, tertuliaEditionMonthlyW);
-                postParameters = new Gson().toJsonTree(tertuliaMonthlyW);
-                apiLinksKey = LINK_UPDATE;
-                break;
-            case "YEARLY":
-                apiLinksKey = LINK_UPDATE;
-                throw new UnsupportedOperationException();
-            case "YEARLYW":
-                apiLinksKey = LINK_UPDATE;
-                throw new UnsupportedOperationException();
-            default:
-                throw new IllegalArgumentException();
-        }
-        apiEndPoint = apiLinks.getRoute(apiLinksKey);
-        apiMethod = apiLinks.getMethod(apiLinksKey);
+                        JsonElement postParameters;
+                        String apiLinksKey;
+                        switch (tertulia.tertuliaSchedule.getType().name()) {
+                            case "WEEKLY":
+                                uiManager.update(tertulia);
+                                EdApiTertuliaWeeklySchedule apiWeekly = new EdApiTertuliaWeeklySchedule(tertulia);
+                                postParameters = new Gson().toJsonTree(apiWeekly);
+                                apiLinksKey = LINK_UPDATE;
+                                break;
+                            case "MONTHLYD":
+                                uiManager.update(tertulia);
+                                EdApiTertuliaMonthlyDSchedule apiMonthy = new EdApiTertuliaMonthlyDSchedule(tertulia);
+                                postParameters = new Gson().toJsonTree(apiMonthy);
+                                apiLinksKey = LINK_UPDATE;
+                                break;
+                            case "MONTHLYW":
+                                uiManager.update(tertulia);
+                                EdApiTertuliaMonthlyWSchedule apiMonthyW = new EdApiTertuliaMonthlyWSchedule(tertulia);
+                                postParameters = new Gson().toJsonTree(apiMonthyW);
+                                apiLinksKey = LINK_UPDATE;
+                                break;
+                            case "YEARLY":
+                                apiLinksKey = LINK_UPDATE;
+                                throw new UnsupportedOperationException();
+                            case "YEARLYW":
+                                apiLinksKey = LINK_UPDATE;
+                                throw new UnsupportedOperationException();
+                            default:
+                                throw new IllegalArgumentException();
+                        }
+                        apiEndPoint = apiLinks.getRoute(apiLinksKey);
+                        apiMethod = apiLinks.getMethod(apiLinksKey);
 
-        Futures.addCallback(Util.getMobileServiceClient(this)
-                        .invokeApi(apiEndPoint, postParameters, apiMethod, null)
-                , new Callback(uiManager.getRootView()));
+                        Futures.addCallback(Util.getMobileServiceClient(EditTertuliaActivity.this)
+                                        .invokeApi(apiEndPoint, postParameters, apiMethod, null)
+                                , new Callback(uiManager.getRootView()));
+                    }
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     private boolean isNameValid(String name) {
@@ -253,31 +258,30 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
                 uiManager.setTextViewValue(EdUiManager.UIRESOURCE.LATITUDE, String.format(Locale.getDefault(), "%.6f", place.getLatLng().latitude));
                 uiManager.setTextViewValue(EdUiManager.UIRESOURCE.LONGITUDE, String.format(Locale.getDefault(), "%.6f", place.getLatLng().longitude));
                 break;
-            case WeeklyActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleWeeklyActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
                 setResult(RESULT_OK);
-                CrUiWeekly crWeekly = data.getParcelableExtra("result");
-                tertulia = new TertuliaEditionWeekly(tertulia, crWeekly);
+//                TertuliaScheduleWeekly scheduleWeekly = data.getParcelableExtra("result");
+                uiManager.update(tertulia);
+                tertulia.tertuliaSchedule = data.getParcelableExtra("result");
                 uiManager.set(tertulia);
                 break;
-            case MonthlyActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleMonthlyDActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
                 setResult(RESULT_OK);
-                scheduleType = data.getIntExtra("type", -1);
-                CrUiMonthly crMonthly = data.getParcelableExtra("result");
-                crUiSchedule = crMonthly;
-                uiManager.setTextViewValue(EdUiManager.UIRESOURCE.SCHEDULE, crMonthly.toString());
+                uiManager.update(tertulia);
+                tertulia.tertuliaSchedule = data.getParcelableExtra("result");
+                uiManager.set(tertulia);
                 break;
-            case MonthlywActivity.ACTIVITY_REQUEST_CODE:
+            case ScheduleMonthlyWActivity.ACTIVITY_REQUEST_CODE:
                 if (resultCode == RESULT_FAIL)
                     return;
                 setResult(RESULT_OK);
-                scheduleType = data.getIntExtra("type", -1);
-                CrUiMonthlyW crMonthlyW = data.getParcelableExtra("result");
-                crUiSchedule = crMonthlyW;
-                uiManager.setTextViewValue(EdUiManager.UIRESOURCE.SCHEDULE, crMonthlyW.toString());
+                uiManager.update(tertulia);
+                tertulia.tertuliaSchedule = data.getParcelableExtra("result");
+                uiManager.set(tertulia);
                 break;
             default:
                 throw new UnsupportedOperationException();
@@ -292,16 +296,16 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
         Intent intent;
         switch (selection) {
             case WEEKLY:
-                intent = new Intent(this, WeeklyActivity.class);
-                startActivityForResult(intent, WeeklyActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleWeeklyActivity.class);
+                startActivityForResult(intent, ScheduleWeeklyActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case MONTHLY:
-                intent = new Intent(this, MonthlyActivity.class);
-                startActivityForResult(intent, MonthlyActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleMonthlyDActivity.class);
+                startActivityForResult(intent, ScheduleMonthlyDActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case MONTHLYW:
-                intent = new Intent(this, MonthlywActivity.class);
-                startActivityForResult(intent, MonthlywActivity.ACTIVITY_REQUEST_CODE);
+                intent = new Intent(this, ScheduleMonthlyWActivity.class);
+                startActivityForResult(intent, ScheduleMonthlyWActivity.ACTIVITY_REQUEST_CODE);
                 break;
             case YEARLY:
             case YEARLYW:
@@ -382,8 +386,8 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
                                 tertulia = new TertuliaEditionWeekly(apiReadTertuliaWeekly);
                                 break;
                             case "MONTHLYD":
-                                ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthly.class);
-                                tertulia = new TertuliaEditionMonthly(apiReadTertuliaMonthly);
+                                ApiTertuliaEditionBundleMonthlyD apiReadTertuliaMonthly = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyD.class);
+                                tertulia = new TertuliaEditionMonthlyD(apiReadTertuliaMonthly);
                                 break;
                             case "MONTHLYW":
                                 ApiTertuliaEditionBundleMonthlyW apiReadTertuliaMonthlyW = new Gson().fromJson(params[0], ApiTertuliaEditionBundleMonthlyW.class);

@@ -28,49 +28,59 @@ import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiWeekly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiScheduleEditionMonthlyW;
 
-public class TertuliaCreationWeekly extends TertuliaCreation {
+public class TertuliaScheduleMonthlyW implements TertuliaSchedule {
     public final int weekday;
+    public final int weeknr;
+    public final boolean isFromStart;
     public final int skip;
 
-    public TertuliaCreationWeekly(String name, String subject, boolean isPrivate,
-                                  LocationCreation location,
-                                  SCHEDULES scheduleType, NewSchedule schedule,
-                                  int weekday, int skip) {
-        super(name, subject, isPrivate, location, null, scheduleType, schedule);
+    public TertuliaScheduleMonthlyW(int weekday, int weeknr, boolean isFromStart, int skip) {
         this.weekday = weekday;
+        this.weeknr = weeknr;
+        this.isFromStart = isFromStart;
         this.skip = skip;
     }
 
-    public TertuliaCreationWeekly(TertuliaCreation tertulia, TertuliaSchedule schedule, CrUiWeekly scheduleOLD) {
-        super(tertulia.name, tertulia.subject, tertulia.isPrivate, tertulia.location, schedule, scheduleOLD.getScheduleType(), tertulia.getSchedule());
-        this.weekday = scheduleOLD.weekDayNr;
-        this.skip = scheduleOLD.skip;
+    public TertuliaScheduleMonthlyW(ApiScheduleEditionMonthlyW monthlyw) {
+        weekday = monthlyw.sc_weekday - 1;
+        weeknr = monthlyw.sc_weeknr;
+        isFromStart = monthlyw.sc_isfromstart;
+        skip = monthlyw.sc_skip;
     }
 
-    public TertuliaCreationWeekly(TertuliaCreation tertulia) {
-        this(tertulia, null, new CrUiWeekly(((TertuliaCreationWeekly) tertulia).weekday, ((TertuliaCreationWeekly) tertulia).skip));
-    }
+    // region TertuliaSchedule
 
     @Override
     public String toString() {
         Context ctx = TertuliasApplication.getApplication().getApplicationContext();
         Resources res = ctx.getResources();
-        String[] parts = res.getStringArray(R.array.new_tertulia_dialog_weekly_tostring);
+        String[] parts = res.getStringArray(R.array.new_tertulia_dialog_monthlyw_tostring);
         String[] weekdays = res.getStringArray(R.array.new_monthlyw_weekday);
+        String[] suffix = res.getStringArray(R.array.new_monthly_day_suffix);
         String result = parts[0];
         result += skip == 0 ? parts[1] : String.format(Locale.getDefault(), parts[2], skip + 1);
-        result += String.format(parts[3], weekdays[weekday]);
+        result += String.format(parts[3], weekdays[weekday], weeknr + 1, suffix[weeknr]);
+        if (! isFromStart)
+            result += parts[4];
         result += ".";
         return result;
     }
 
+    @Override
+    public SCHEDULES getType() {
+        return SCHEDULES.MONTHLYW;
+    }
+
+    // endregion
+
     // region Parcelable
 
-    protected TertuliaCreationWeekly(Parcel in) {
-        super(in);
+    protected TertuliaScheduleMonthlyW(Parcel in) {
         weekday = in.readInt();
+        weeknr = in.readInt();
+        isFromStart = in.readByte() != 0;
         skip = in.readInt();
     }
 
@@ -81,20 +91,21 @@ public class TertuliaCreationWeekly extends TertuliaCreation {
 
     @Override
     public void writeToParcel(@NonNull Parcel out, int flags) {
-        super.writeToParcel(out, flags);
         out.writeInt(weekday);
+        out.writeInt(weeknr);
+        out.writeByte((byte) (isFromStart ? 1 : 0));
         out.writeInt(skip);
     }
 
-    public static final Creator<TertuliaCreationWeekly> CREATOR = new Creator<TertuliaCreationWeekly>() {
+    public static final Creator<TertuliaScheduleMonthlyW> CREATOR = new Creator<TertuliaScheduleMonthlyW>() {
         @Override
-        public TertuliaCreationWeekly createFromParcel(Parcel in) {
-            return new TertuliaCreationWeekly(in);
+        public TertuliaScheduleMonthlyW createFromParcel(Parcel in) {
+            return new TertuliaScheduleMonthlyW(in);
         }
 
         @Override
-        public TertuliaCreationWeekly[] newArray(int size) {
-            return new TertuliaCreationWeekly[size];
+        public TertuliaScheduleMonthlyW[] newArray(int size) {
+            return new TertuliaScheduleMonthlyW[size];
         }
     };
 

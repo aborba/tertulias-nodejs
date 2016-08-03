@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016 António Borba da Silva
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+  ~ documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+  ~ rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+  ~ persons to whom the Software is furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+  ~ Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+  ~ NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  ~ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  ~ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  ~
+  -->
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pt.isel.s1516v.ps.apiaccess">
 
     <uses-sdk
-        android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -57,11 +76,11 @@
 
         <activity android:name=".EditUserProfileActivity" />
 
-        <activity android:name=".tertuliacreation.WeeklyActivity" />
+        <activity android:name=".tertuliacreation.ScheduleWeeklyActivity" />
 
-        <activity android:name=".tertuliacreation.MonthlyActivity" />
+        <activity android:name=".tertuliacreation.ScheduleMonthlyDActivity" />
 
-        <activity android:name=".tertuliacreation.MonthlywActivity" />
+        <activity android:name=".tertuliacreation.ScheduleMonthlyWActivity" />
 
         <activity
             android:name=".tertuliasubscription.SearchPublicTertuliaActivity"
@@ -79,11 +98,8 @@
             android:label="@string/title_activity_public_tertulia_details"
             android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
 
-        <activity android:name=".InvitationActivity"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        <activity android:name=".InvitationActivity" />
+
     </application>
 
 </manifest>

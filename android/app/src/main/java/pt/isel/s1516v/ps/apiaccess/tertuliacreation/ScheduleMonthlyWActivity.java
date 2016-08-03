@@ -19,18 +19,12 @@
 
 package pt.isel.s1516v.ps.apiaccess.tertuliacreation;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.ToggleButton;
@@ -39,22 +33,16 @@ import java.util.Date;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Schedule;
-import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiMonthlyW;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleMonthlyW;
 
-public class MonthlywActivity extends Activity implements Schedule, TertuliasApi {
+public class ScheduleMonthlyWActivity extends ScheduleBaseActivity {
 
     public final static int ACTIVITY_REQUEST_CODE = MONTHLYW_RETURN_CODE;
 
-    private final static String INSTANCE_KEY_MONTHLYW = "monthlyw";
+    private final static String INSTANCE_KEY_MONTHLYW = "MONTHLYW";
 
-    private ToggleButton fromEndVw;
-    private CrUiMonthlyW crMonthlyW;
-
-    public MonthlywActivity() {
-        super();
-    }
+    private ToggleButton isFromEndView;
+    private TertuliaScheduleMonthlyW schedule;
 
     // region Activity LifeCycle
 
@@ -67,9 +55,9 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 R.string.title_activity_new_monthlyw,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        crMonthlyW = savedInstanceState != null ?
-                    (CrUiMonthlyW) savedInstanceState.getParcelable(INSTANCE_KEY_MONTHLYW) :
-                    new CrUiMonthlyW(-1, -1, true, -1);
+        schedule = savedInstanceState != null ?
+                (TertuliaScheduleMonthlyW) savedInstanceState.getParcelable(INSTANCE_KEY_MONTHLYW) :
+                new TertuliaScheduleMonthlyW(0, 0, true, 0);
 
         setupSpinner(this, (Spinner) findViewById(R.id.mwa_weekDay),
                 R.array.new_monthlyw_weekday,
@@ -78,7 +66,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.weekDayNr = position;
+                        schedule = new TertuliaScheduleMonthlyW(position, schedule.weeknr, schedule.isFromStart, schedule.skip);
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -93,7 +81,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.weekNr = position;
+                        schedule = new TertuliaScheduleMonthlyW(schedule.weekday, position, schedule.isFromStart, schedule.skip);
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -108,7 +96,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        crMonthlyW.skip = position;
+                        schedule = new TertuliaScheduleMonthlyW(schedule.weekday, schedule.weeknr, schedule.isFromStart, position);
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -116,17 +104,17 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
                 }
         );
 
-        fromEndVw = (ToggleButton) findViewById(R.id.mwa_fromend);
-        fromEndVw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        isFromEndView = (ToggleButton) findViewById(R.id.mwa_fromend);
+        isFromEndView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                crMonthlyW.isFromStart = !isChecked;
+                schedule = new TertuliaScheduleMonthlyW(schedule.weekday, schedule.weeknr, !isChecked, schedule.skip);
             }
         });
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(INSTANCE_KEY_MONTHLYW, crMonthlyW);
+        outState.putParcelable(INSTANCE_KEY_MONTHLYW, schedule);
         super.onSaveInstanceState(outState);
     }
 
@@ -136,8 +124,7 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
 
     public void onClickCreateSchedule(View view) {
         Intent intent = new Intent();
-        intent.putExtra("type", MONTHLYW);
-        intent.putExtra("result", crMonthlyW);
+        intent.putExtra("result", schedule);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -155,49 +142,6 @@ public class MonthlywActivity extends Activity implements Schedule, TertuliasApi
     @Override
     public Date nextEvent() {
         return null;
-    }
-
-    // endregion
-
-    // region Parcelable
-
-    protected MonthlywActivity(Parcel in) {
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-    }
-
-    public static final Creator<MonthlywActivity> CREATOR = new Parcelable.Creator<MonthlywActivity>() {
-        @Override
-        public MonthlywActivity createFromParcel(Parcel in) {
-            return new MonthlywActivity(in);
-        }
-
-        @Override
-        public MonthlywActivity[] newArray(int size) {
-            return new MonthlywActivity[size];
-        }
-    };
-
-    // endregion
-
-    // region Private Static Methods
-
-    private static ArrayAdapter<CharSequence> prepareArrayAdapter(Context ctx, int source, int schema, int item) {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(ctx, source, item);
-        adapter.setDropDownViewResource(schema);
-        return adapter;
-    }
-
-    private static void setupSpinner(Context ctx, Spinner spinner, int source, int schema, int item, AdapterView.OnItemSelectedListener listener) {
-        spinner.setAdapter(prepareArrayAdapter(ctx, source, schema, item));
-        spinner.setOnItemSelectedListener(listener);
     }
 
     // endregion

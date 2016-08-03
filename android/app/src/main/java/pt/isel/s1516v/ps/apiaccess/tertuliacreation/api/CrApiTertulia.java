@@ -1,10 +1,28 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliacreation.api;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 
 public class CrApiTertulia implements Parcelable {
@@ -13,7 +31,7 @@ public class CrApiTertulia implements Parcelable {
     public final String tertuliaName;
     @com.google.gson.annotations.SerializedName("tertulia_subject")
     public final String subject;
-    @com.google.gson.annotations.SerializedName("tertulia_isPrivate")
+    @com.google.gson.annotations.SerializedName("tertulia_isprivate")
     public final boolean isPrivate;
 
 
@@ -34,8 +52,6 @@ public class CrApiTertulia implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("schedule_name")
     public final String scheduleType;
-//    @com.google.gson.annotations.SerializedName("sc_id")
-//    public final int scheduleId;
 
     @com.google.gson.annotations.SerializedName("links")
     public ApiLink[] links;
@@ -44,12 +60,11 @@ public class CrApiTertulia implements Parcelable {
                          String locationName, String streetAddress, String zip, String city, String country,
                          String latitude, String longitude,
                          String scheduleType
-//                         , int scheduleId
         ) {
         this.tertuliaName = tertuliaName;
         this.subject = subject;
         this.isPrivate = isPrivate;
-        this.locationName = locationName;
+        this.locationName = locationName != null ? locationName: streetAddress;
         this.streetAddress = streetAddress;
         this.zip = zip;
         this.city = city;
@@ -57,23 +72,6 @@ public class CrApiTertulia implements Parcelable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.scheduleType = scheduleType;
-//        this.scheduleId = scheduleId;
-    }
-
-//    protected abstract String toStringContribution();
-
-    @Override
-    public String toString() {
-//        String contribution = toStringContribution();
-        String contribution = "";
-        return tertuliaName + (contribution == null ? "" : " " + contribution);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        CrApiTertulia other = (CrApiTertulia) obj;
-        return other.tertuliaName.equals(tertuliaName) && other.subject.equals(this.subject);
     }
 
     // region Parcelable

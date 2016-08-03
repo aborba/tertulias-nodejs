@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliaedition.ui;
 
 import android.content.Context;
@@ -11,33 +30,25 @@ import java.util.EnumMap;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Address;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.Geolocation;
-import pt.isel.s1516v.ps.apiaccess.support.domain.LocationEdition;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class EdUiManager extends UiManager {
 
     public enum UIRESOURCE {
         TOOLBAR,
-        TITLE, SUBJECT,
+        TITLE, SUBJECT, PRIVACY,
         LOCATION, ADDRESS, ZIP, CITY, COUNTRY, LATITUDE, LONGITUDE,
-        SCHEDULE,
-        PRIVACY
+        SCHEDULE
     }
 
     private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
-    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
+    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);
     private boolean isViewsSet;
 
-    private Toolbar toolbar;
-    private TextView titleView, subjectView,
-            locationView, addressView, zipView, cityView, countryView,
+    private Toolbar toolbarView;
+    private TextView tertuliaNameView, subjectView,
+            locationNameView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView,
             scheduleView;
     private CheckBox isPrivateView;
@@ -47,6 +58,7 @@ public class EdUiManager extends UiManager {
         uiResources.put(UIRESOURCE.TOOLBAR, R.id.toolbar);
         uiResources.put(UIRESOURCE.TITLE, R.id.tertuliaName);
         uiResources.put(UIRESOURCE.SUBJECT, R.id.subject);
+        uiResources.put(UIRESOURCE.PRIVACY, R.id.isPrivate);
         uiResources.put(UIRESOURCE.LOCATION, R.id.locationName);
         uiResources.put(UIRESOURCE.ADDRESS, R.id.address);
         uiResources.put(UIRESOURCE.ZIP, R.id.zip);
@@ -55,7 +67,6 @@ public class EdUiManager extends UiManager {
         uiResources.put(UIRESOURCE.LATITUDE, R.id.latitude);
         uiResources.put(UIRESOURCE.LONGITUDE, R.id.longitude);
         uiResources.put(UIRESOURCE.SCHEDULE, R.id.scheduleDescription);
-        uiResources.put(UIRESOURCE.PRIVACY, R.id.isPrivate);
     }
 
     public void set(TertuliaEdition tertulia) {
@@ -63,70 +74,37 @@ public class EdUiManager extends UiManager {
         fillInViews(tertulia);
     }
 
-    public TertuliaEdition update(TertuliaEdition tertulia) {
-        Address address = new Address(
-                getTextViewValue(UIRESOURCE.ADDRESS),
-                getTextViewValue(UIRESOURCE.ZIP),
-                getTextViewValue(UIRESOURCE.CITY),
-                getTextViewValue(UIRESOURCE.COUNTRY));
-        Geolocation geolocation = new Geolocation(
-                Util.string2Double(getTextViewValue(UIRESOURCE.LATITUDE)),
-                Util.string2Double(getTextViewValue(UIRESOURCE.LONGITUDE)));
-        LocationEdition location = new LocationEdition(
-                tertulia.location.id,
-                getTextViewValue(UIRESOURCE.LOCATION),
-                address, geolocation);
-        int scheduleId;
-        String scheduleDescription;
-        switch (tertulia.scheduleType.name()) {
-            case "WEEKLY":
-                if (! (tertulia instanceof TertuliaEditionWeekly))
-                    throw new RuntimeException();
-                TertuliaEditionWeekly tertuliaEditionWeekly = (TertuliaEditionWeekly)tertulia;
-                scheduleId = tertuliaEditionWeekly.schedule_id;
-                scheduleDescription = tertuliaEditionWeekly.toString();
-                break;
-            case "MONTHLYD":
-                if (! (tertulia instanceof TertuliaEditionMonthly))
-                    throw new RuntimeException();
-                TertuliaEditionMonthly tertuliaEditionMonthly = (TertuliaEditionMonthly)tertulia;
-                scheduleId = tertuliaEditionMonthly.schedule_id;
-                scheduleDescription = tertuliaEditionMonthly.toString();
-                break;
-            case "MONTHLYW":
-                if (! (tertulia instanceof TertuliaEditionMonthlyW))
-                    throw new RuntimeException();
-                TertuliaEditionMonthlyW tertuliaEditionMonthlyW = (TertuliaEditionMonthlyW)tertulia;
-                scheduleId = tertuliaEditionMonthlyW.schedule_id;
-                scheduleDescription = tertuliaEditionMonthlyW.toString();
-                break;
-            case "YEARLY":
-            case "YEARLYW":
-                throw new UnsupportedOperationException();
-            default:
-                throw new IllegalStateException();
+    public void update(TertuliaEdition tertulia) {
+        tertulia.name = tertuliaNameView.getText().toString().trim();
+        tertulia.subject = subjectView.getText().toString().trim();
+        tertulia.isPrivate = isPrivateView.isChecked();
+        tertulia.location.address.address = addressView.getText().toString().trim();
+        tertulia.location.address.zip = zipView.getText().toString().trim();
+        tertulia.location.address.city = cityView.getText().toString().trim();
+        tertulia.location.address.country = countryView.getText().toString().trim();
+        String locationName = locationNameView.getText().toString().trim();
+        if (TextUtils.isEmpty(locationName)) {
+            if ( ! TextUtils.isEmpty(tertulia.location.address.address))
+                locationName = tertulia.location.address.address;
+            else if (!TextUtils.isEmpty(tertulia.location.address.city))
+                locationName = tertulia.location.address.city;
+            else if (!TextUtils.isEmpty(tertulia.location.address.country))
+                locationName = tertulia.location.address.country;
+            else
+                locationName = tertulia.location.geolocation.toString();
         }
-        ApiTertuliaEdition apiTertuliaEdition = new ApiTertuliaEdition(
-                String.valueOf(tertulia.id), getTextViewValue(UIRESOURCE.TITLE), getTextViewValue(UIRESOURCE.SUBJECT), isCheckBoxChecked(UIRESOURCE.PRIVACY),
-                String.valueOf(tertulia.location.id), getTextViewValue(UIRESOURCE.LOCATION), getTextViewValue(UIRESOURCE.ADDRESS), getTextViewValue(UIRESOURCE.ZIP), getTextViewValue(UIRESOURCE.CITY), getTextViewValue(UIRESOURCE.COUNTRY),
-                getTextViewValue(UIRESOURCE.LATITUDE), getTextViewValue(UIRESOURCE.LONGITUDE),
-                String.valueOf(scheduleId), tertulia.scheduleType.toString(), scheduleDescription,
-                "1", "owner", 0);
-        switch (tertulia.scheduleType.name()) { // TODO: Acho que não é preciso
-            case "WEEKLY":
-                TertuliaEditionWeekly etw = (TertuliaEditionWeekly)tertulia;
-                return new TertuliaEditionWeekly(apiTertuliaEdition, tertulia.links, etw.schedule_id, etw.weekday, etw.skip);
-            case "MONTHLYD":
-                TertuliaEditionMonthly etm = (TertuliaEditionMonthly)tertulia;
-                return new TertuliaEditionMonthly(apiTertuliaEdition, tertulia.links, etm.schedule_id, etm.dayNr, etm.isFromStart, etm.skip);
-            case "MONTHLYW":
-                TertuliaEditionMonthlyW etmw = (TertuliaEditionMonthlyW)tertulia;
-                return new TertuliaEditionMonthlyW(apiTertuliaEdition, tertulia.links, etmw.schedule_id, etmw.weekday, etmw.weeknr, etmw.isFromStart, etmw.skip);
-            case "YEARLY":
-            case "YEARLYW":
-                throw new UnsupportedOperationException();
-            default:
-                throw new IllegalStateException();
+        tertulia.location.name = locationName;
+        if (TextUtils.isEmpty(latitudeView.getText().toString()))
+            tertulia.location.geolocation.isLatitude = false;
+        else {
+            tertulia.location.geolocation.isLatitude = true;
+            tertulia.location.geolocation.latitude = Util.string2Double(latitudeView.getText().toString());
+        }
+        if (TextUtils.isEmpty(longitudeView.getText().toString()))
+            tertulia.location.geolocation.isLongitude = false;
+        else {
+            tertulia.location.geolocation.isLongitude = true;
+            tertulia.location.geolocation.longitude = Util.string2Double(longitudeView.getText().toString());
         }
     }
 
@@ -220,10 +198,10 @@ public class EdUiManager extends UiManager {
     private void lazyViewsSetup() {
         if (isViewsSet)
             return;
-        toolbar = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
-        titleView = setup(UIRESOURCE.TITLE, TextView.class, uiViews);
+        toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
+        tertuliaNameView = setup(UIRESOURCE.TITLE, TextView.class, uiViews);
         subjectView = setup(UIRESOURCE.SUBJECT, TextView.class, uiViews);
-        locationView = setup(UIRESOURCE.LOCATION, TextView.class, uiViews);
+        locationNameView = setup(UIRESOURCE.LOCATION, TextView.class, uiViews);
         addressView = setup(UIRESOURCE.ADDRESS, TextView.class, uiViews);
         zipView = setup(UIRESOURCE.ZIP, TextView.class, uiViews);
         cityView = setup(UIRESOURCE.CITY, TextView.class, uiViews);
@@ -236,42 +214,18 @@ public class EdUiManager extends UiManager {
     }
 
     private void fillInViews(TertuliaEdition tertulia) {
-        titleView.setText(tertulia.name);
+        tertuliaNameView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
-        locationView.setText(tertulia.location.name);
+        locationNameView.setText(tertulia.location.name);
+        isPrivateView.setChecked(tertulia.isPrivate);
         addressView.setText(tertulia.location.address.address);
         zipView.setText(tertulia.location.address.zip);
         cityView.setText(tertulia.location.address.city);
         countryView.setText(tertulia.location.address.country);
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
-        String scheduleText;
-        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthly || tertulia instanceof TertuliaEditionMonthlyW)
-            scheduleText = tertulia.toString();
-        else {
-            if (tertulia.scheduleType != null) {
-                scheduleText = tertulia.scheduleType.toString();
-                switch (tertulia.scheduleType.name()) {
-                    case "WEEKLY":
-                        scheduleText += " - " + ((TertuliaEditionWeekly) tertulia).toString();
-                        break;
-                    case "MONTHLYD":
-                        scheduleText += " - " + ((TertuliaEditionMonthly) tertulia).toString();
-                        break;
-                    case "MONTHLYW":
-                        scheduleText += " - " + ((TertuliaEditionMonthlyW) tertulia).toString();
-                        break;
-                    case "YEARLY":
-                    case "YEARLYW":
-//                        scheduleText += " - " + ((TertuliaEditionYearly) tertulia).toString();
-                        throw new UnsupportedOperationException();
-                    default:
-                        throw new RuntimeException();
-                }
-            } else scheduleText = "";
-        }
-        scheduleView.setText(scheduleText);
-        isPrivateView.setChecked(tertulia.isPrivate);
+        if (tertulia.tertuliaSchedule != null)
+            scheduleView.setText(tertulia.tertuliaSchedule.toString());
     }
 
     // endregion

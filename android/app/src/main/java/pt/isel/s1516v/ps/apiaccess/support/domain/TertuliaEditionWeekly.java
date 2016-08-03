@@ -55,6 +55,7 @@ public class TertuliaEditionWeekly extends TertuliaEdition {
         super(tertulia.id, tertulia.name, tertulia.subject, tertulia.isPrivate,
                 tertulia.role,
                 tertulia.location,
+                null,
                 tertulia.scheduleType.name(),
                 tertulia.links);
         schedule_id = -1;

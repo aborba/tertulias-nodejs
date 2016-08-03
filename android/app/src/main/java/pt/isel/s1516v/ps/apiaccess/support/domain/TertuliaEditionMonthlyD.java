@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.support.domain;
 
 import android.content.Context;
@@ -11,15 +30,15 @@ import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthly;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyD;
 
-public class TertuliaEditionMonthly extends TertuliaEdition {
+public class TertuliaEditionMonthlyD extends TertuliaEdition {
     public final int schedule_id;
     public final int dayNr;
     public final boolean isFromStart;
     public final int skip;
 
-    public TertuliaEditionMonthly(ApiTertuliaEdition core, ApiLink[] links, int schedule_id, int dayNr, boolean isFromStart, int skip) {
+    public TertuliaEditionMonthlyD(ApiTertuliaEdition core, ApiLink[] links, int schedule_id, int dayNr, boolean isFromStart, int skip) {
         super(core, links);
         this.schedule_id = schedule_id;
         this.dayNr = dayNr;
@@ -27,7 +46,7 @@ public class TertuliaEditionMonthly extends TertuliaEdition {
         this.skip = skip;
     }
 
-    public TertuliaEditionMonthly(ApiTertuliaEditionBundleMonthly apiReadTertuliaMonthly) {
+    public TertuliaEditionMonthlyD(ApiTertuliaEditionBundleMonthlyD apiReadTertuliaMonthly) {
         this(apiReadTertuliaMonthly.tertulia, apiReadTertuliaMonthly.links,
                 apiReadTertuliaMonthly.monthly.sc_id, apiReadTertuliaMonthly.monthly.sc_daynr, apiReadTertuliaMonthly.monthly.sc_isfromstart, apiReadTertuliaMonthly.monthly.sc_skip);
     }
@@ -40,7 +59,7 @@ public class TertuliaEditionMonthly extends TertuliaEdition {
         String[] suffix = res.getStringArray(R.array.new_monthly_day_suffix);
         String result = parts[0];
         result += skip == 0 ? parts[1] : String.format(Locale.getDefault(), parts[2], skip + 1);
-        result += String.format(parts[3], dayNr, suffix[dayNr]);
+        result += String.format(parts[3], dayNr, suffix[dayNr - 1]);
         if (! isFromStart)
             result += parts[4];
         result += ".";
@@ -49,7 +68,7 @@ public class TertuliaEditionMonthly extends TertuliaEdition {
 
     // region Parcelable
 
-    protected TertuliaEditionMonthly(Parcel in) {
+    protected TertuliaEditionMonthlyD(Parcel in) {
         super(in);
         schedule_id = in.readInt();
         dayNr = in.readInt();
@@ -68,18 +87,18 @@ public class TertuliaEditionMonthly extends TertuliaEdition {
         out.writeInt(schedule_id);
         out.writeInt(dayNr);
         out.writeByte((byte) (isFromStart ? 1 : 0));
-        out.writeInt(skip);;
+        out.writeInt(skip);
     }
 
-    public static final Creator<TertuliaEditionMonthly> CREATOR = new Creator<TertuliaEditionMonthly>() {
+    public static final Creator<TertuliaEditionMonthlyD> CREATOR = new Creator<TertuliaEditionMonthlyD>() {
         @Override
-        public TertuliaEditionMonthly createFromParcel(Parcel in) {
-            return new TertuliaEditionMonthly(in);
+        public TertuliaEditionMonthlyD createFromParcel(Parcel in) {
+            return new TertuliaEditionMonthlyD(in);
         }
 
         @Override
-        public TertuliaEditionMonthly[] newArray(int size) {
-            return new TertuliaEditionMonthly[size];
+        public TertuliaEditionMonthlyD[] newArray(int size) {
+            return new TertuliaEditionMonthlyD[size];
         }
     };
 

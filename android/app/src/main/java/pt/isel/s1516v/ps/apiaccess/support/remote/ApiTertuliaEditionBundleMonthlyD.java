@@ -17,14 +17,15 @@
  *
  */
 
-package pt.isel.s1516v.ps.apiaccess.support.domain;
+package pt.isel.s1516v.ps.apiaccess.support.remote;
 
-import java.util.Date;
+public class ApiTertuliaEditionBundleMonthlyD extends ApiTertuliaEditionBundle {
 
-public interface Schedule {
+    @com.google.gson.annotations.SerializedName("monthly")
+    public final ApiScheduleEditionMonthlyD monthly;
 
-    Date nextEvent();
-
-    String toString();
-
+    public ApiTertuliaEditionBundleMonthlyD(ApiTertuliaEdition tertulia, ApiScheduleEditionMonthlyD monthly, ApiLink[] links) {
+        super(tertulia, links);
+        this.monthly = monthly;
+    }
 }

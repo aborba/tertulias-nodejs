@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 António Borba da Silva
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
 package pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui;
 
 import android.content.Context;
@@ -10,10 +29,7 @@ import android.widget.TextView;
 import java.util.EnumMap;
 
 import pt.isel.s1516v.ps.apiaccess.R;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthly;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
-import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEditionWeekly;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class DtUiManager extends UiManager {
@@ -27,8 +43,8 @@ public class DtUiManager extends UiManager {
         PRIVACY
     }
 
-    private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);;
-    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);;
+    private final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
+    private final EnumMap<UIRESOURCE, View> uiViews = new EnumMap<>(UIRESOURCE.class);
     private boolean isViewsSet;
 
     private Toolbar toolbarView;
@@ -162,6 +178,8 @@ public class DtUiManager extends UiManager {
     private void fillInViews(TertuliaEdition tertulia) {
         titleView.setText(tertulia.name);
         subjectView.setText(tertulia.subject);
+        isPrivateView.setChecked(tertulia.isPrivate);
+        roleView.setText(tertulia.role.name);
         locationView.setText(tertulia.location.name);
         addressView.setText(tertulia.location.address.address);
         zipView.setText(tertulia.location.address.zip);
@@ -169,36 +187,8 @@ public class DtUiManager extends UiManager {
         countryView.setText(tertulia.location.address.country);
         latitudeView.setText(tertulia.location.geolocation.getLatitude());
         longitudeView.setText(tertulia.location.geolocation.getLongitude());
-        String scheduleText;
-        if (tertulia instanceof TertuliaEditionWeekly || tertulia instanceof TertuliaEditionMonthly || tertulia instanceof TertuliaEditionMonthlyW
-//                || tertulia instanceof TertuliaEditionYearly || tertulia instanceof TertuliaEditionYearlyW
-        )
-            scheduleText = tertulia.toString();
-        else {
-            if (tertulia.scheduleType != null) {
-                scheduleText = tertulia.scheduleType.toString();
-                switch (tertulia.scheduleType.name()) {
-                    case "WEEKLY":
-                        scheduleText += " - " + ((TertuliaEditionWeekly) tertulia).toString();
-                        break;
-                    case "MONTHLYD":
-                        scheduleText += " - " + ((TertuliaEditionMonthly) tertulia).toString();
-                        break;
-                    case "MONTHLYW":
-                        scheduleText += " - " + ((TertuliaEditionMonthlyW) tertulia).toString();
-                        break;
-                    case "YEARLY":
-                    case "YEARLYW":
-//                        scheduleText += " - " + ((TertuliaEditionYearlyW) tertulia).toString();
-                        throw new UnsupportedOperationException();
-                    default:
-                        throw new RuntimeException();
-                }
-            } else scheduleText = "";
-        }
-        scheduleView.setText(scheduleText);
-        roleView.setText(tertulia.role.name);
-        isPrivateView.setChecked(tertulia.isPrivate);
+        if (tertulia.tertuliaSchedule != null)
+            scheduleView.setText(tertulia.tertuliaSchedule.toString());
     }
 
     // endregion

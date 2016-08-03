@@ -27,10 +27,10 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEdition;
 
 public class Address implements Parcelable {
 
-    public final String address;
-    public final String zip;
-    public final String city;
-    public final String country;
+    public String address;
+    public String zip;
+    public String city;
+    public String country;
 
     public Address(String address, String zip, String city, String country) {
         this.address = address;
