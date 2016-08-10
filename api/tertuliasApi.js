@@ -632,7 +632,7 @@ module.exports = function (configuration) {
 
 			    		// var results = {};
 			    		// results['tertulias'] = recordset;
-		                res.json(recordset);
+		                res.json( { vouchers : recordset } );
 						return next();
 					})
 			    })
