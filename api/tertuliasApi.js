@@ -602,8 +602,14 @@ module.exports = function (configuration) {
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
 				var batch = request.parameters.vouchers_batch.value;
+				
+				console.log(batch);
+
 				res.type('application/json');
 				res.json( { vouchers_batch: batch } );
+				
+				console.log('here we go again');
+
 				new sql.Request()
 				.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 				.input('batch', sql.NVarChar(36), batch)
@@ -615,6 +621,9 @@ module.exports = function (configuration) {
 					' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
 					' AND in_batch = @batch')
 		    	.then(function(recordset) {
+				
+					console.log(recordset);
+
 		    		// var results = {};
 		    		// results['tertulias'] = recordset;
 	                res.json(recordset);
@@ -622,6 +631,9 @@ module.exports = function (configuration) {
 				})
 			})
 			.catch(function(err) {
+				
+				console.log('errorrr');
+
 				return next(err);
 			});
 			return;
