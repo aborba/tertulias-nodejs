@@ -633,7 +633,7 @@ module.exports = function (configuration) {
 				var batch = request.parameters.vouchers_batch.value;
 				console.log(batch);
 			    var links = '[ ' +
-			    	'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					// '{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
 				']';
 				console.log(links);
