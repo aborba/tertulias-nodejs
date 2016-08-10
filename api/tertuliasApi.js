@@ -626,6 +626,7 @@ module.exports = function (configuration) {
 			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
+				console.log(recordsets);
 				var route = "/tertulias/" + tr_id + "/voucher";
 				var batch = request.parameters.vouchers_batch.value;
 			    var links = '[ ' +
