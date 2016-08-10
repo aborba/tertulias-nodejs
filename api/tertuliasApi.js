@@ -603,6 +603,7 @@ module.exports = function (configuration) {
 			.execute('sp_inviteToTertulia')
 			.then((recordsets) => {
 				console.log(recordsets);
+				console.log(output);
 				if (recordsets == '[ returnValue : 0 ]') {
 					console.log('success');
 					res.sendStatus(200);
