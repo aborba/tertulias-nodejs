@@ -590,6 +590,31 @@ module.exports = function (configuration) {
 		});
 	});
 
+	router.get('/:tr_id/voucher/:voucher_batch', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/voucher/:voucher_batch');
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
+			.query('SELECT' + ' in_key AS voucher' +
+				' FROM Invitations' +
+					' INNER JOIN Users ON in_user = us_id' +
+					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
+					' AND in_batch = @batch')
+			.then(function(recordset) {
+				console.log(recordset);
+				res.json( { vouchers : recordset } );
+				return next();
+			})
+		});
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
 	router.post('/:tr_id/voucher', (req, res, next) => {
 		console.log('in POST /tertulias/:tr_id/voucher');
 		sql.connect(util.sqlConfiguration)
@@ -603,47 +628,23 @@ module.exports = function (configuration) {
 			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
-				req.batch = request.parameters.vouchers_batch.value;
-				
-				// console.log('batch');
-				// console.log(req.batch);
-
-				// res.type('application/json');
-				// res.json( { vouchers_batch: req.batch } );
-				
-				// console.log('here we go again');
-
-				sql.connect(util.sqlConfiguration)
-				.then(function() {
-					new sql.Request()
-					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-					.input('batch', sql.NVarChar(36), req.batch)
-			    	.query('SELECT' + ' in_key AS voucher' +
-			    		' FROM Invitations' +
-							' INNER JOIN Users ON in_user = us_id' +
-							' INNER JOIN Tertulias ON in_tertulia = tr_id' +
-						' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-							' AND in_batch = @batch')
-			    	.then(function(recordset) {
-					
-						console.log(recordset);
-
-			    		// var results = {};
-			    		// results['tertulias'] = recordset;
-		                // res.json( { vouchers : recordset } );
-						res.type('application/json');
-		                res.json( { vouchers_batch1: req.batch } );
-						return next();
-					})
-			    })
-			})
-			.catch(function(err) {
-				
-				console.log('errorrr');
-
-				return next(err);
+				var route = "/tertulias/" + tr_id + "/voucher";
+				var batch = request.parameters.vouchers_batch.value;
+			    var links = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+						'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
+					']';
+				var results = {};
+				results[' vouchers_batch'] = batch;
+				results['links'] = JSON.parse(links);
+				res.type('application/json');
+				res.json(results);
+				res.sendStatus(200);
+				return next();
 			});
-			return;
+		})
+		.catch(function(err) {
+			return next(err);
 		});
 
 		// sql.connect(util.sqlConfiguration)
