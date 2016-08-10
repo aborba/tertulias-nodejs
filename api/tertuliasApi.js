@@ -617,17 +617,18 @@ module.exports = function (configuration) {
 
 	router.post('/:tr_id/voucher', (req, res, next) => {
 		console.log('in POST /tertulias/:tr_id/voucher');
+		var tr_id = req.params.tr_id;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			var request = new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
+			.input('tertulia', sql.Int, tr_id)
 			.input('vouchers_count', sql.Int, req.body.count)
 			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
 				console.log(request.parameters.vouchers_batch.value);
-				var route = "/tertulias/" + tr_id + "/voucher";
+				var route = '/tertulias/' + tr_id + '/voucher';
 				console.log(route);
 				var batch = request.parameters.vouchers_batch.value;
 				console.log(batch);
