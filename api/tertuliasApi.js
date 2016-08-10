@@ -611,26 +611,29 @@ module.exports = function (configuration) {
 				
 				console.log('here we go again');
 
-				new sql.Request()
-				.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-				.input('batch', sql.NVarChar(36), req.batch)
-		    	.query('SELECT' +
-		    			' in_key AS voucher' +
-		    		' FROM Invitations' +
-					// ' INNER JOIN Users ON in_user = us_id' +
-					// ' INNER JOIN Tertulias ON in_tertulia = tr_id' +
-					// ' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-					// ' AND in_batch = @batch' +
-					'')
-		    	.then(function(recordset) {
-				
-					console.log(recordset);
+				sql.connect(util.sqlConfiguration)
+				.then(function() {
+					new sql.Request()
+					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+					.input('batch', sql.NVarChar(36), req.batch)
+			    	.query('SELECT' +
+			    			' in_key AS voucher' +
+			    		' FROM Invitations' +
+						// ' INNER JOIN Users ON in_user = us_id' +
+						// ' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+						// ' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
+						// ' AND in_batch = @batch' +
+						'')
+			    	.then(function(recordset) {
+					
+						console.log(recordset);
 
-		    		// var results = {};
-		    		// results['tertulias'] = recordset;
-	                res.json(recordset);
-					return next();
-				})
+			    		// var results = {};
+			    		// results['tertulias'] = recordset;
+		                res.json(recordset);
+						return next();
+					})
+			    })
 			})
 			.catch(function(err) {
 				
