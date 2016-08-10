@@ -599,6 +599,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
+			.output('voucher', sql.NVarChar(36))
 			.execute('sp_inviteToTertulia')
 			.then((recordset) => {
 				console.log(recordset);
