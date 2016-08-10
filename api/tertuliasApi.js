@@ -609,7 +609,7 @@ module.exports = function (configuration) {
 				// console.log(req.batch);
 
 				res.type('application/json');
-				res.json( { vouchers_batch: req.batch } );
+				// res.json( { vouchers_batch: req.batch } );
 				
 				// console.log('here we go again');
 
@@ -618,14 +618,12 @@ module.exports = function (configuration) {
 					new sql.Request()
 					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('batch', sql.NVarChar(36), req.batch)
-			    	.query('SELECT' +
-			    			' in_key AS voucher' +
+			    	.query('SELECT' + ' in_key AS voucher' +
 			    		' FROM Invitations' +
-						' INNER JOIN Users ON in_user = us_id' +
-						' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+							' INNER JOIN Users ON in_user = us_id' +
+							' INNER JOIN Tertulias ON in_tertulia = tr_id' +
 						' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-						' AND in_batch = @batch' +
-						'')
+							' AND in_batch = @batch')
 			    	.then(function(recordset) {
 					
 						console.log(recordset);
