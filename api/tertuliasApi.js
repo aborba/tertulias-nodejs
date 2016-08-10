@@ -594,6 +594,8 @@ module.exports = function (configuration) {
 		console.log('in POST /tertulias/:tr_id/voucher');
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
+			console.log('body coumt');
+			console.log(req.body.count);
 			var request = new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
@@ -603,13 +605,13 @@ module.exports = function (configuration) {
 			.then(function(recordsets) {
 				req.batch = request.parameters.vouchers_batch.value;
 				
-				console.log('batch');
-				console.log(req.batch);
+				// console.log('batch');
+				// console.log(req.batch);
 
 				res.type('application/json');
 				res.json( { vouchers_batch: req.batch } );
 				
-				console.log('here we go again');
+				// console.log('here we go again');
 
 				sql.connect(util.sqlConfiguration)
 				.then(function() {
@@ -626,7 +628,7 @@ module.exports = function (configuration) {
 						'')
 			    	.then(function(recordset) {
 					
-						console.log(recordset);
+						// console.log(recordset);
 
 			    		// var results = {};
 			    		// results['tertulias'] = recordset;
