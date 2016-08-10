@@ -619,10 +619,10 @@ module.exports = function (configuration) {
 			    	.query('SELECT' +
 			    			' in_key AS voucher' +
 			    		' FROM Invitations' +
-						// ' INNER JOIN Users ON in_user = us_id' +
-						// ' INNER JOIN Tertulias ON in_tertulia = tr_id' +
-						// ' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-						// ' AND in_batch = @batch' +
+						' INNER JOIN Users ON in_user = us_id' +
+						' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+						' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
+						' AND in_batch = @batch' +
 						'')
 			    	.then(function(recordset) {
 					
