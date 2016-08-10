@@ -592,6 +592,8 @@ module.exports = function (configuration) {
 
 	router.post('/:tr_id/voucher', (req, res, next) => {
 		console.log('in POST /tertulias/:tr_id/voucher');
+		console.log('sid: ' + req.azureMobile.user.id);
+		console.log('tertulia: ' + req.params.tr_id);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
