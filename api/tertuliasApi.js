@@ -601,7 +601,7 @@ module.exports = function (configuration) {
 			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
-				var batch = request.parameters.vouchers_batch.value;
+				req.batch = request.parameters.vouchers_batch.value;
 				
 				console.log('batch');
 				console.log(batch);
@@ -613,7 +613,7 @@ module.exports = function (configuration) {
 
 				new sql.Request()
 				.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-				.input('batch', sql.NVarChar(36), request.parameters.vouchers_batch.value)
+				.input('batch', sql.NVarChar(36), req.batch)
 		    	.query('SELECT' +
 		    			' in_key AS voucher' +
 		    		' FROM Invitations' +
