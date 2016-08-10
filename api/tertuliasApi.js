@@ -604,10 +604,10 @@ module.exports = function (configuration) {
 				req.batch = request.parameters.vouchers_batch.value;
 				
 				console.log('batch');
-				console.log(batch);
+				console.log(req.batch);
 
 				res.type('application/json');
-				res.json( { vouchers_batch: batch } );
+				res.json( { vouchers_batch: req.batch } );
 				
 				console.log('here we go again');
 
