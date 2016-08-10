@@ -592,8 +592,6 @@ module.exports = function (configuration) {
 
 	router.post('/:tr_id/voucher', (req, res, next) => {
 		console.log('in POST /tertulias/:tr_id/voucher');
-		console.log('sid: ' + req.azureMobile.user.id);
-		console.log('tertulia: ' + req.params.tr_id);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			var request = new sql.Request()
@@ -604,13 +602,13 @@ module.exports = function (configuration) {
 			.then(function(recordsets) {
 				console.dir(recordsets);
 				console.log(request.parameters.voucher.value);
-				res.send( { voucher: request.parameters.voucher.value } );
-				res.sendStatus(200);
+				res.write( { voucher: request.parameters.voucher.value } );
+				// res.sendStatus(200);
 				return next();
 			})
 			.catch(function(err) {
 				return next(err);
-				res.sendStatus(409);
+				// res.sendStatus(409);
 			});
 			return;
 		});
