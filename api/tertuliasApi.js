@@ -18,7 +18,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.query('SELECT' +
 					' tr_id         AS id,' +
 					' tr_name       AS name,' +
@@ -38,9 +38,9 @@ module.exports = function (configuration) {
 							' ON ev_tertulia = tr_id' +
 						' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications WHERE no_id NOT IN' +
 							' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id' +
-						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
+						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @userSid)' +
 				' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
-				' WHERE tr_is_cancelled = 0 AND us_sid = @sid')
+				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid')
 	    	.then(function(recordset) {
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
@@ -80,7 +80,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
 	    	.input('latitude', sql.NVarChar, req.query.latitude)
 	    	.input('longitude', sql.NVarChar, req.query.longitude)
@@ -97,7 +97,7 @@ module.exports = function (configuration) {
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
-		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
+		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @userSid)' +
 				' ORDER BY lo_geography.STDistance( @point )')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( @latitude @longitude )\')')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
@@ -131,7 +131,7 @@ module.exports = function (configuration) {
 	    .then(function() {
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.query('SELECT' +
 					' tr_id' +                    ' AS tertulia_id,' +          // Tertulia
 					' tr_name' +                  ' AS tertulia_name,' +
@@ -157,13 +157,13 @@ module.exports = function (configuration) {
 					' LEFT JOIN Users ON mb_user = us_id' +
 					' LEFT JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
 					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
-				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR (tr_is_private = 0' +
+				' WHERE tr_is_cancelled = 0 AND (us_sid = @userSid OR (tr_is_private = 0' +
 					' AND tr_id NOT IN' +
 						' (SELECT tr_id' +
 						' FROM Tertulias' +
 							' INNER JOIN Members ON mb_tertulia = tr_id' +
 							' INNER JOIN Users ON mb_user = us_id' +
-						' WHERE us_sid = @sid)))' +
+						' WHERE us_sid = @userSid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
                 var results = {};
@@ -178,8 +178,8 @@ module.exports = function (configuration) {
                 results['links'] = JSON.parse(links);
 				req.results = results;
 				console.log("Schedule name: " + results['tertulia'].schedule_name);
-				switch(results['tertulia'].schedule_name) {
-					case 'Weekly':
+				switch(results['tertulia'].schedule_name.toUpperCase()) {
+					case 'WEEKLY':
 						console.log('in weekly');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
@@ -206,7 +206,7 @@ module.exports = function (configuration) {
 							})
 						});
 						break;
-					case 'MonthlyD':
+					case 'MONTHLYD':
 						console.log('in monthly');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
@@ -233,7 +233,7 @@ module.exports = function (configuration) {
 							})
 						});
 						break;
-					case 'MonthlyW':
+					case 'MONTHLYW':
 						console.log('in monthlyw');
 					    sql.connect(util.sqlConfiguration)
 					    .then(function() {
@@ -568,7 +568,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spSubscribe')
 			.then((recordset) => {
@@ -593,7 +593,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spUnsubscribe')
 			.then((recordset) => {
