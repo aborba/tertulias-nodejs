@@ -601,13 +601,16 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
+					console.log('success');
 					res.sendStatus(200);
 				} else {
+					console.log('failure');
 					res.sendStatus(409);
 				}
 				return next();
 			})
 			.catch(function(err) {
+				console.log('error');
 				next(err);
 			});
 		})
