@@ -596,17 +596,20 @@ module.exports = function (configuration) {
 		console.log('tertulia: ' + req.params.tr_id);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
-			new sql.Request();
-			input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
-			input('tertulia', sql.Int, req.params.tr_id);
-			output('voucher', sql.NVarChar(36));
-			execute('sp_inviteToTertulia')
+			var request = new sql.Request();
+			request.input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
+			request.input('tertulia', sql.Int, req.params.tr_id);
+			request.output('voucher', sql.NVarChar(36));
+			request.execute('sp_inviteToTertulia')
 			.then(function(recordsets) {
 				console.dir(recordsets);
+				res.sendStatus(200);
 			})
 			.catch(function(err) {
 				return next(err);
+				res.sendStatus(409);
 			});
+			return next();
 		});
 
 		// sql.connect(util.sqlConfiguration)
