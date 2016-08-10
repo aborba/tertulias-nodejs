@@ -628,7 +628,7 @@ module.exports = function (configuration) {
 						'')
 			    	.then(function(recordset) {
 					
-						// console.log(recordset);
+						console.log(recordset);
 
 			    		// var results = {};
 			    		// results['tertulias'] = recordset;
