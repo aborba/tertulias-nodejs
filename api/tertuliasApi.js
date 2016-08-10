@@ -613,7 +613,7 @@ module.exports = function (configuration) {
 
 				new sql.Request()
 				.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-				.input('batch', sql.NVarChar(36), batch)
+				.input('batch', sql.NVarChar(36), request.parameters.vouchers_batch.value)
 		    	.query('SELECT' +
 		    			' in_key AS voucher' +
 		    		' FROM Invitations' +
