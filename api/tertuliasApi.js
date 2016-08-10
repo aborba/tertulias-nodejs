@@ -619,8 +619,6 @@ module.exports = function (configuration) {
 		console.log('in POST /tertulias/:tr_id/voucher');
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
-			console.log('body coumt');
-			console.log(req.body.count);
 			var request = new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
@@ -631,12 +629,13 @@ module.exports = function (configuration) {
 				var route = "/tertulias/" + tr_id + "/voucher";
 				var batch = request.parameters.vouchers_batch.value;
 			    var links = '[ ' +
-						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-						'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
-					']';
+			    	'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
+				']';
 				var results = {};
-				results[' vouchers_batch'] = batch;
+				results['vouchers_batch'] = batch;
 				results['links'] = JSON.parse(links);
+				console.log(results);
 				res.type('application/json');
 				res.json(results);
 				res.sendStatus(200);
