@@ -608,8 +608,8 @@ module.exports = function (configuration) {
 				console.log(recordset);
 				res.json( { vouchers : recordset } );
 				return next();
-			})
-		});
+			});
+		})
 		.catch(function(err) {
 			return next(err);
 		});
