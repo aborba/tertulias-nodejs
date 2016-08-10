@@ -175,6 +175,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
+						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/voucher" }, ' +
 					']';
                 results['links'] = JSON.parse(links);
 				req.results = results;
