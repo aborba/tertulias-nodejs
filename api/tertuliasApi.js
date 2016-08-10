@@ -596,22 +596,23 @@ module.exports = function (configuration) {
 		console.log('tertulia: ' + req.params.tr_id);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
-			var request = new sql.Request();
-			request.input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
-			request.input('tertulia', sql.Int, req.params.tr_id);
-			request.output('voucher', sql.NVarChar(36));
+			var request = new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.output('voucher', sql.NVarChar(36));
 			request.execute('sp_inviteToTertulia')
 			.then(function(recordsets) {
 				console.dir(recordsets);
 				console.log(request.parameters.voucher.value);
 				res.send( { voucher: request.parameters.voucher.value } );
-				// res.sendStatus(200);
+				res.sendStatus(200);
+				return next();
 			})
 			.catch(function(err) {
 				return next(err);
-				// res.sendStatus(409);
+				res.sendStatus(409);
 			});
-			return next();
+			return;
 		});
 
 		// sql.connect(util.sqlConfiguration)
