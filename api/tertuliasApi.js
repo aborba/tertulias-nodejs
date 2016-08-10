@@ -603,6 +603,7 @@ module.exports = function (configuration) {
 			request.execute('sp_inviteToTertulia')
 			.then(function(recordsets) {
 				console.dir(recordsets);
+				console.dir(request.output);
 				// res.sendStatus(200);
 			})
 			.catch(function(err) {
