@@ -599,7 +599,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
-			.output('voucher', sql.NVarChar(36))
+			.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
 			.execute('sp_inviteToTertulia')
 			.then((recordsets) => {
 				console.log(recordsets);
@@ -614,7 +614,7 @@ module.exports = function (configuration) {
 				return next();
 			})
 			.catch(function(err) {
-				console.log('error');
+				console.log('catched error');
 				next(err);
 			});
 		})
