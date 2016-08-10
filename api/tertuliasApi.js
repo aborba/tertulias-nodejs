@@ -626,13 +626,16 @@ module.exports = function (configuration) {
 			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
-				console.log(recordsets);
+				console.log(request.parameters.vouchers_batch.value);
 				var route = "/tertulias/" + tr_id + "/voucher";
+				console.log(route);
 				var batch = request.parameters.vouchers_batch.value;
+				console.log(batch);
 			    var links = '[ ' +
 			    	'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
 				']';
+				console.log(links);
 				var results = {};
 				results['vouchers_batch'] = batch;
 				results['links'] = JSON.parse(links);
