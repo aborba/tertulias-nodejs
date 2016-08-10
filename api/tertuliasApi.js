@@ -614,11 +614,12 @@ module.exports = function (configuration) {
 					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
 					' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
 					' AND in_batch = @voucher_batch')
-	    	.then(function(recordset) {
-	    		// var results = {};
-	    		// results['tertulias'] = recordset;
-                res.json(recordset);
-				return next();
+		    	.then(function(recordset) {
+		    		// var results = {};
+		    		// results['tertulias'] = recordset;
+	                res.json(recordset);
+					return next();
+				})
 			})
 			.catch(function(err) {
 				return next(err);
