@@ -606,6 +606,7 @@ module.exports = function (configuration) {
 					console.log('err');
 					console.log(err);
 					res.sendStatus(409);
+					return next();
 				}
 				console.log(recordsets);
 				console.log(returnValue);
