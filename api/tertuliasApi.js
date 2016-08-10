@@ -605,7 +605,7 @@ module.exports = function (configuration) {
 				console.log(err);
 				console.log(recordsets);
 				console.log(returnValue);
-				if (recordsets.returnValue == 0) {
+				if (recordsets[returnValue] == 0) {
 					console.log('success');
 					res.sendStatus(200);
 				} else {
