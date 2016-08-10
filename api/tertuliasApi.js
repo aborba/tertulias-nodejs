@@ -598,22 +598,22 @@ module.exports = function (configuration) {
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.input('vouchers_count', sql.Int, req.body.count)
-			.output('voucher', sql.NVarChar(36));
+			.output('vouchers_batch', sql.NVarChar(36));
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
-				var voucher_batch = request.parameters.voucher.value;
+				var batch = request.parameters.vouchers_batch.value;
 				res.type('application/json');
-				res.json( { voucher_batch: request.parameters.voucher.value } );
+				res.json( { vouchers_batch: batch } );
 				new sql.Request()
 				.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-				.input('voucher_batch', sql.NVarChar(36), voucher_batch)
+				.input('batch', sql.NVarChar(36), batch)
 		    	.query('SELECT' +
 		    			' in_key AS voucher' +
 		    		' FROM Invitations' +
 					' INNER JOIN Users ON in_user = us_id' +
 					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
 					' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-					' AND in_batch = @voucher_batch')
+					' AND in_batch = @batch')
 		    	.then(function(recordset) {
 		    		// var results = {};
 		    		// results['tertulias'] = recordset;
