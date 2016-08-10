@@ -602,7 +602,7 @@ module.exports = function (configuration) {
 			.then(function(recordsets) {
 				console.dir(recordsets);
 				console.log(request.parameters.voucher.value);
-				res.write( { voucher: request.parameters.voucher.value } );
+				res.json( { voucher: request.parameters.voucher.value } );
 				// res.sendStatus(200);
 				return next();
 			})
