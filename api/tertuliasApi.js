@@ -588,6 +588,32 @@ module.exports = function (configuration) {
 		});
 	});
 
+	router.post('/:tr_id/voucher', (req, res, next) => {
+		console.log('in POST /tertulias/:tr_id/voucher');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.execute('sp_inviteToTertulia')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset.returnValue = 1) {
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
 		console.log('in DELETE /tertulias/:tr_id/unsubscribe');
 	    sql.connect(util.sqlConfiguration)
