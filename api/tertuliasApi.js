@@ -630,7 +630,8 @@ module.exports = function (configuration) {
 
 			    		// var results = {};
 			    		// results['tertulias'] = recordset;
-		                res.json( { vouchers : recordset } );
+		                // res.json( { vouchers : recordset } );
+		                res.json( { vouchers_batch1: req.batch } );
 						return next();
 					})
 			    })
