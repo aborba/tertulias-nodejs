@@ -602,7 +602,11 @@ module.exports = function (configuration) {
 			.output('voucher', sql.NVarChar(36))
 			.execute('sp_inviteToTertulia')
 			.then((err, recordsets, returnValue) => {
-				console.log(err);
+				if (err) {
+					console.log('err');
+					console.log(err);
+					res.sendStatus(409);
+				}
 				console.log(recordsets);
 				console.log(returnValue);
 				if (recordsets[returnValue] == 0) {
