@@ -603,6 +603,7 @@ module.exports = function (configuration) {
 			.then(function(recordsets) {
 				var batch = request.parameters.vouchers_batch.value;
 				
+				console.log('batch');
 				console.log(batch);
 
 				res.type('application/json');
