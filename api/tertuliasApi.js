@@ -601,9 +601,11 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.output('voucher', sql.NVarChar(36))
 			.execute('sp_inviteToTertulia')
-			.then((recordset) => {
-				console.log(recordset);
-				if (recordset.returnValue = 1) {
+			.then((err, recordsets, returnValue) => {
+				console.log(err);
+				console.log(recordsets);
+				console.log(returnValue);
+				if (recordsets.returnValue == 0) {
 					console.log('success');
 					res.sendStatus(200);
 				} else {
