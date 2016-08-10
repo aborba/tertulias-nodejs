@@ -594,33 +594,48 @@ module.exports = function (configuration) {
 		console.log('in POST /tertulias/:tr_id/voucher');
 		console.log('sid: ' + req.azureMobile.user.id);
 		console.log('tertulia: ' + req.params.tr_id);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
-			.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request();
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
+			.input('tertulia', sql.Int, req.params.tr_id);
+			.output('voucher', sql.NVarChar(36));
 			.execute('sp_inviteToTertulia')
-			.then((recordsets) => {
-				console.log(recordsets);
-				console.log(parameters);
-				if (recordsets == '[ returnValue : 0 ]') {
-					console.log('success');
-					res.sendStatus(200);
-				} else {
-					console.log('failure');
-					res.sendStatus(409);
-				}
-				return next();
+			.then(function(recordsets) {
+				console.dir(recordsets);
 			})
 			.catch(function(err) {
-				console.log('catched error');
-				next(err);
+				return next(err);
 			});
-		})
-		.catch(function(err) {
-			return next(err);
 		});
+
+		// sql.connect(util.sqlConfiguration)
+		// .then(function() {
+		// 	new sql.Request()
+		// 	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+		// 	.input('tertulia', sql.Int, req.params.tr_id)
+		// 	.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
+		// 	.execute('sp_inviteToTertulia')
+		// 	.then((recordsets) => {
+		// 		console.log(recordsets);
+		// 		console.log(parameters);
+		// 		if (recordsets == '[ returnValue : 0 ]') {
+		// 			console.log('success');
+		// 			res.sendStatus(200);
+		// 		} else {
+		// 			console.log('failure');
+		// 			res.sendStatus(409);
+		// 		}
+		// 		return next();
+		// 	})
+		// 	.catch(function(err) {
+		// 		console.log('catched error');
+		// 		next(err);
+		// 	});
+		// })
+		// .catch(function(err) {
+		// 	return next(err);
+		// });
 	});
 
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
