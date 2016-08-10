@@ -609,7 +609,7 @@ module.exports = function (configuration) {
 				// console.log(req.batch);
 
 				res.type('application/json');
-				// res.json( { vouchers_batch: req.batch } );
+				res.json( { vouchers_batch: req.batch } );
 				
 				// console.log('here we go again');
 
