@@ -603,11 +603,11 @@ module.exports = function (configuration) {
 			request.execute('sp_inviteToTertulia')
 			.then(function(recordsets) {
 				console.dir(recordsets);
-				res.sendStatus(200);
+				// res.sendStatus(200);
 			})
 			.catch(function(err) {
 				return next(err);
-				res.sendStatus(409);
+				// res.sendStatus(409);
 			});
 			return next();
 		});
