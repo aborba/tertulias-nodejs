@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
-						'{ "rel": "invite_member", "method": "POST", "href": "' + route + '/:id/voucher" }, ' +
+						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/voucher" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
