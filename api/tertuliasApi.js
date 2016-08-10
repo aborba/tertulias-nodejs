@@ -597,10 +597,10 @@ module.exports = function (configuration) {
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request();
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
-			.input('tertulia', sql.Int, req.params.tr_id);
-			.output('voucher', sql.NVarChar(36));
-			.execute('sp_inviteToTertulia')
+			input('userSid', sql.NVarChar(40), req.azureMobile.user.id);
+			input('tertulia', sql.Int, req.params.tr_id);
+			output('voucher', sql.NVarChar(36));
+			execute('sp_inviteToTertulia')
 			.then(function(recordsets) {
 				console.dir(recordsets);
 			})
