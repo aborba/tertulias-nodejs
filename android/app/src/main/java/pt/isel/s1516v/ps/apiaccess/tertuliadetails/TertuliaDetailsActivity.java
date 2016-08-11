@@ -38,10 +38,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.memberinvitation.SearchContactsActivity;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleMonthlyD;
@@ -179,6 +183,9 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public void onClickSubmitMembers(View view) {
         Log.d("trt", "in onClickSubmitMembers");
+        Intent intent = new Intent(this, SearchContactsActivity.class);
+        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(tertulia.links)));
+        startActivity(intent);
     }
 
     public void onClickUnsubscribe(View view) {

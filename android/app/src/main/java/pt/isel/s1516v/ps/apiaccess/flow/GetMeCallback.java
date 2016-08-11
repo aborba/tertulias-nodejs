@@ -2,6 +2,7 @@ package pt.isel.s1516v.ps.apiaccess.flow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 
 import com.google.common.util.concurrent.FutureCallback;
@@ -11,7 +12,10 @@ import com.google.gson.JsonElement;
 
 import java.util.concurrent.ExecutionException;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
+import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiMe;
 import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
 
@@ -34,6 +38,17 @@ public class GetMeCallback implements FutureCallback<JsonElement> {
 
     @Override
     public void onSuccess(JsonElement result) {
+
+        SharedPreferences prefs = ctx.getSharedPreferences(MainActivity.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+        String tertuliasJson = prefs.getString(MainActivity.TERTULIAS_PREF, null);
+        if (tertuliasJson != null) {
+            TertuliaListItem[] tertulias = new Gson().fromJson(tertuliasJson, TertuliaListItem[].class);
+            MainActivity.tertulias = tertulias;
+            uiClient.swapAdapter(new TertuliasArrayAdapter(((Activity) ctx), tertulias));
+            uiClient.hideProgressBar();
+            return;
+        }
+
         ApiMe apiMe = new Gson().fromJson(result, ApiMe.class);
         if (apiMe.me.picture != null) {
             Util.logd(apiMe.me.picture);

@@ -22,6 +22,7 @@ package pt.isel.s1516v.ps.apiaccess;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,10 +36,13 @@ import android.widget.ListView;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceAuthenticationProvider;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+
+import java.util.Set;
 
 import pt.isel.s1516v.ps.apiaccess.flow.GetData;
 import pt.isel.s1516v.ps.apiaccess.flow.GetHomeCallback;
@@ -65,11 +69,15 @@ public class MainActivity extends Activity implements TertuliasApi {
     private final static String INSTANCE_KEY_TERTULIA = "tertulias";
     private final static String API_ROOT_END_POINT = "/";
 
+    public static final String SHARED_PREFS_FILE = "access";
+    public static final String USERID_PREF = "userid";
+    public static final String TOKEN_PREF = "token";
+    public static final String TERTULIAS_PREF = "tertulias";
+
     public static TertuliaListItem[] tertulias;
-    private MobileServiceUser mUser;
     private LoginStatus loginStatus = null;
 
-    private MaUiManager uiManager;
+    public static MaUiManager uiManager = null;
 
 //  region Activity lifecycle
 
@@ -143,6 +151,8 @@ public class MainActivity extends Activity implements TertuliasApi {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        cacheUserToken(Util.getMobileServiceClient(this).getCurrentUser());
+        cacheTertulias(tertulias);
         outState.putParcelableArray(INSTANCE_KEY_TERTULIA, tertulias);
     }
 
@@ -283,7 +293,12 @@ public class MainActivity extends Activity implements TertuliasApi {
         GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, null, postRegister, postRegisterCallback);
 
         LoginCallback loginCallback = new LoginCallback(ctx, null, getHome, getHomeCallback);
-        requestLogin(ctx, loginCallback);
+
+        MobileServiceClient cli = Util.getMobileServiceClient(this);
+        if (cli == null || ! loadCachedUserToken(cli))
+            requestLogin(ctx, loginCallback);
+        else
+            loginCallback.onSuccess(cli.getCurrentUser());
     }
 
     private void doLogout(final Context ctx) {
@@ -295,7 +310,9 @@ public class MainActivity extends Activity implements TertuliasApi {
                     public void onSuccess(MobileServiceUser user) {
                         CookieManager cookieManager = CookieManager.getInstance();
                         cookieManager.removeAllCookie();
-                        mUser = null;
+                        clearCacheUserToken();
+                        Util.getMobileServiceClient(MainActivity.this).setCurrentUser(null);
+                        clearCacheTertulias();
                         tertulias = new TertuliaListItem[0];
 
                         Runnable runnable = new Runnable() {
@@ -322,6 +339,68 @@ public class MainActivity extends Activity implements TertuliasApi {
     }
 
     //    endregion
+
+    private void cacheTertulias(TertuliaListItem[] tertulias)
+    {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        String tertuliasJson = tertulias == null ? null : new Gson().toJson(tertulias);
+        editor.putString(TERTULIAS_PREF, tertuliasJson);
+        editor.commit();
+    }
+
+    private void clearCacheTertulias()
+    {
+        cacheTertulias(null);
+    }
+
+    private TertuliaListItem[] loadCachedTertulias()
+    {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+        String tertuliasJson = prefs.getString(TERTULIAS_PREF, null);
+        if (tertuliasJson == null)
+            return null;
+        TertuliaListItem[] tertulias = new Gson().fromJson(tertuliasJson, TertuliaListItem[].class);
+        return tertulias;
+    }
+
+    private void cacheUserToken(String user, String token)
+    {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USERID_PREF, user);
+        editor.putString(TOKEN_PREF, token);
+        editor.commit();
+    }
+
+    private void cacheUserToken(MobileServiceUser user)
+    {
+        cacheUserToken(user.getUserId(), user.getAuthenticationToken());
+    }
+
+    private void clearCacheUserToken()
+    {
+        cacheUserToken(null, null);
+    }
+
+    private boolean loadCachedUserToken(MobileServiceClient client)
+    {
+        SharedPreferences prefs = getSharedPreferences(SHARED_PREFS_FILE, Context.MODE_PRIVATE);
+        String userId = prefs.getString(USERID_PREF, null);
+        if (userId == null)
+            return false;
+        String token = prefs.getString(TOKEN_PREF, null);
+        if (token == null)
+            return false;
+        if (! Util.isTokenValid(token, 1000))
+            return false;
+
+        MobileServiceUser user = new MobileServiceUser(userId);
+        user.setAuthenticationToken(token);
+        client.setCurrentUser(user);
+
+        return true;
+    }
 
 //    endregion
 

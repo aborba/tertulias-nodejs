@@ -124,12 +124,14 @@ INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @user, @r
 GO
 
 -- Create Tertulia Events
-DECLARE @userId INTEGER, @tertulia INTEGER;
-SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
+DECLARE @userSid VARCHAR(40), @tertulia INTEGER;
+SET @UserSid = dbo.fnGetUserSid_byAlias('aborba');
 SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Terças Ggl para testes';
-EXEC dbo.sp_createEvent 'Terças Ggl para testes', 'Lisboa Racket Center', '20160523 13:00:00';
-EXEC dbo.sp_createEventDefaultLocation 'Terças Ggl para testes', '20160904 13:00:00';
-EXEC dbo.sp_createEventDefaultLocation 'Tertulia do Tejo para testes', '2016-09-04 13:00:00';
+EXEC dbo.sp_createEvent @userSid, @tertulia, 'Lisboa Racket Center', '20160523 13:00:00';
+EXEC dbo.sp_createEventDefaultLocation @userSid, @tertulia, '20160904 13:00:00';
+SET @UserSid = dbo.fnGetUserSid_byAlias('GGLabs');
+SELECT @tertulia = tr_id FROM Tertulias WHERE tr_name = N'Tertulia do Tejo para testes';
+EXEC dbo.sp_createEventDefaultLocation @userSid, @tertulia, '2016-09-04 13:00:00';
 GO
 
 -- Create Tertulia Items inventory
@@ -203,30 +205,34 @@ INSERT INTO QuantifiedItems (qi_template, qi_item, qi_quantity) VALUES
 GO
 
 -- Fill Event Checklist with Tertulia Template
-DECLARE @userId INTEGER, @tertuliaId INTEGER, @templateId INTEGER;
-SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
-SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertuliaId, 'Drinks');
-EXEC sp_buildEventsItems 'Tertulia do Tejo para testes', '2016-09-04 13:00:00', 'Drinks';
+DECLARE @userSid VARCHAR(40), @tertulia INTEGER, @templateId INTEGER;
+SET @UserSid = dbo.fnGetUserSid_byAlias('GGLabs');
+EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
+SET @templateId = dbo.fnGetTemplate_byTertuliaId(@tertulia, 'Drinks');
+EXEC sp_buildEventsItems @userSid, @tertulia, '2016-09-04 13:00:00', 'Drinks';
 GO
 
 -- Commit to handle items to a Tertulia event
-DECLARE @userId INTEGER, @tertuliaId INTEGER, @commitment INTEGER, @itemName VARCHAR(40);
-SET @UserId = dbo.fnGetUserId_byAlias('GGLabs');
-EXEC @tertuliaId = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
+DECLARE @userSid VARCHAR(40), @tertulia INTEGER, @commitment INTEGER, @itemName VARCHAR(40);
+SET @UserSid = dbo.fnGetUserSid_byAlias('GGLabs');
+EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
 SET @itemName = 'Copos de vidro';
-EXEC @commitment = sp_assignChecklistItems 'GGLabs', 'Tertulia do Tejo para testes', '2016-09-04 13:00:00', @itemName, 2;
+EXEC @commitment = sp_assignChecklistItems @userSid, @tertulia, '2016-09-04 13:00:00', @itemName, 2;
 PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
 SET @itemName = 'Cerveja (1lt)';
-EXEC @commitment = sp_assignChecklistItems 'GGLabs', 'Tertulia do Tejo para testes', '2016-09-04 13:00:00', @itemName, 2;
+EXEC @commitment = sp_assignChecklistItems @userSid, @tertulia, '2016-09-04 13:00:00', @itemName, 2;
 PRINT 'Commitment for ' + @itemName + ': ' + CAST(@commitment AS VARCHAR);
 GO
 
 -- Post a message in a Tertulia
-EXEC sp_postNotification_byAlias 'GGLabs', 'Tertulia do Tejo para testes', 'Announcement', 'My test post to a tertulia';
-EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl para testes', 'Announcement', 'Another test post to a tertulia';
-EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl para testes', 'Announcement', 'And another test post to a tertulia';
-EXEC sp_postNotification_byAlias 'GGLabs', 'Terças Ggl para testes', 'Announcement', 'Yet another test post to a tertulia';
+DECLARE @userSid VARCHAR(40), @tertulia INTEGER;
+SET @UserSid = dbo.fnGetUserSid_byAlias('GGLabs');
+EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
+EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'My test post to a tertulia';
+EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Terças Ggl para testes';
+EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'Another test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'And another test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'Yet another test post to a tertulia';
 GO
 
 -- Mark Tertulia messages as read

@@ -77,7 +77,7 @@ public class NewTertuliaActivity extends Activity implements
 
     private CrUiManager uiManager;
     private TertuliaCreation tertulia;
-    ApiLinks apiLinks;
+    private ApiLinks apiLinks;
 
     private GoogleApiClient googleApiClient;
 

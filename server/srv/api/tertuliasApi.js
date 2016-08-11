@@ -18,7 +18,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.query('SELECT' +
 					' tr_id         AS id,' +
 					' tr_name       AS name,' +
@@ -38,9 +38,9 @@ module.exports = function (configuration) {
 							' ON ev_tertulia = tr_id' +
 						' LEFT JOIN (SELECT no_tertulia, count(*) AS no_count FROM Notifications WHERE no_id NOT IN' +
 							' (SELECT no_id FROM Notifications INNER JOIN Readnotifications ON rn_notification = no_id' +
-						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @sid)' +
+						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @userSid)' +
 				' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
-				' WHERE tr_is_cancelled = 0 AND us_sid = @sid')
+				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid')
 	    	.then(function(recordset) {
 			    var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
@@ -57,6 +57,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
+						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/voucher" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
@@ -80,7 +81,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
 	    	.input('latitude', sql.NVarChar, req.query.latitude)
 	    	.input('longitude', sql.NVarChar, req.query.longitude)
@@ -97,7 +98,7 @@ module.exports = function (configuration) {
 		    		' AND tr_id NOT IN' +
 		    			' (SELECT mb_tertulia FROM Tertulias' +
 		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
-		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @sid)' +
+		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @userSid)' +
 				' ORDER BY lo_geography.STDistance( @point )')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( @latitude @longitude )\')')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
@@ -131,7 +132,7 @@ module.exports = function (configuration) {
 	    .then(function() {
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.query('SELECT' +
 					' tr_id' +                    ' AS tertulia_id,' +          // Tertulia
 					' tr_name' +                  ' AS tertulia_name,' +
@@ -157,13 +158,13 @@ module.exports = function (configuration) {
 					' LEFT JOIN Users ON mb_user = us_id' +
 					' LEFT JOIN EnumValues AS _Member ON mb_role = _Member.nv_id' +
 					' INNER JOIN EnumValues AS _Schedule ON sc_type = _Schedule.nv_id' +
-				' WHERE tr_is_cancelled = 0 AND (us_sid = @sid OR (tr_is_private = 0' +
+				' WHERE tr_is_cancelled = 0 AND (us_sid = @userSid OR (tr_is_private = 0' +
 					' AND tr_id NOT IN' +
 						' (SELECT tr_id' +
 						' FROM Tertulias' +
 							' INNER JOIN Members ON mb_tertulia = tr_id' +
 							' INNER JOIN Users ON mb_user = us_id' +
-						' WHERE us_sid = @sid)))' +
+						' WHERE us_sid = @userSid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
                 var results = {};
@@ -172,6 +173,7 @@ module.exports = function (configuration) {
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
+						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/voucher" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
@@ -568,7 +570,7 @@ module.exports = function (configuration) {
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spSubscribe')
 			.then((recordset) => {
@@ -588,12 +590,102 @@ module.exports = function (configuration) {
 		});
 	});
 
+	router.get('/:tr_id/voucher/:voucher_batch', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/voucher/:voucher_batch');
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
+			.query('SELECT' + ' in_key AS voucher' +
+				' FROM Invitations' +
+					' INNER JOIN Users ON in_user = us_id' +
+					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
+					' AND in_batch = @batch')
+			.then(function(recordset) {
+				console.log(recordset);
+				res.json( { vouchers : recordset } );
+				return next();
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/:tr_id/voucher', (req, res, next) => {
+		console.log('in POST /tertulias/:tr_id/voucher');
+		var tr_id = req.params.tr_id;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			var request = new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.input('vouchers_count', sql.Int, req.body.count)
+			.output('vouchers_batch', sql.NVarChar(36));
+			request.execute('sp_createInvitationVouchers')
+			.then(function(recordsets) {
+				console.log(request.parameters.vouchers_batch.value);
+				var route = '/tertulias/' + tr_id + '/voucher';
+				console.log(route);
+				var batch = request.parameters.vouchers_batch.value;
+				console.log(batch);
+			    var links = '[ ' +
+					// '{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
+				']';
+				console.log(links);
+				var results = {};
+				results['vouchers_batch'] = batch;
+				results['links'] = JSON.parse(links);
+				console.log(results);
+				res.type('application/json');
+				res.json(results);
+				res.sendStatus(200);
+				return next();
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+
+		// sql.connect(util.sqlConfiguration)
+		// .then(function() {
+		// 	new sql.Request()
+		// 	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+		// 	.input('tertulia', sql.Int, req.params.tr_id)
+		// 	.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
+		// 	.execute('sp_inviteToTertulia')
+		// 	.then((recordsets) => {
+		// 		console.log(recordsets);
+		// 		console.log(parameters);
+		// 		if (recordsets == '[ returnValue : 0 ]') {
+		// 			console.log('success');
+		// 			res.sendStatus(200);
+		// 		} else {
+		// 			console.log('failure');
+		// 			res.sendStatus(409);
+		// 		}
+		// 		return next();
+		// 	})
+		// 	.catch(function(err) {
+		// 		console.log('catched error');
+		// 		next(err);
+		// 	});
+		// })
+		// .catch(function(err) {
+		// 	return next(err);
+		// });
+	});
+
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
 		console.log('in DELETE /tertulias/:tr_id/unsubscribe');
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spUnsubscribe')
 			.then((recordset) => {

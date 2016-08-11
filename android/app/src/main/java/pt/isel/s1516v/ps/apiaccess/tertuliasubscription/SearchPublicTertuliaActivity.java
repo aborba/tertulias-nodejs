@@ -103,7 +103,6 @@ public class SearchPublicTertuliaActivity extends Activity
 
         recyclerView = (RecyclerView) findViewById(R.id.ts_RecyclerView);
         viewAdapter = new PublicTertuliaArrayAdapter(this, publicTertulias != null ? publicTertulias : new PublicTertulia[0]);
-
         Util.setupAdapter(this, recyclerView, viewAdapter);
 
         handleIntent(getIntent());
@@ -224,21 +223,6 @@ public class SearchPublicTertuliaActivity extends Activity
     // endregion
 
     // region Private Methods
-
-//    private void setUpMap() {
-//        if (map == null) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
-//            }
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-//                    ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-//                return;
-//            map.setMyLocationEnabled(true);
-//            map.setOnMyLocationButtonClickListener(this);
-//        }
-//    }
 
     // endregion
 

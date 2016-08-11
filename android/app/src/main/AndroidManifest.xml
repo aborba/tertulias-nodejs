@@ -32,6 +32,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".TertuliasApplication"
@@ -90,13 +91,26 @@
             </intent-filter>
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable_tertulia" />
         </activity>
 
         <activity
             android:name=".tertuliasubscription.PublicTertuliaDetailsActivity"
             android:label="@string/title_activity_public_tertulia_details"
             android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
+
+        <activity
+            android:name=".memberinvitation.SearchContactsActivity"
+            android:label="@string/title_activity_member_invitation"
+            android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_contact" />
+        </activity>
 
         <activity android:name=".InvitationActivity" />
 
