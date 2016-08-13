@@ -206,7 +206,7 @@ module.exports = function (configuration) {
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
-						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/voucher" }, ' +
+						'{ "rel": "members", "method": "POST", "href": "' + route + '/members" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
