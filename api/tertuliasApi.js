@@ -122,6 +122,39 @@ module.exports = function (configuration) {
 	    });
 	});
 
+    router.get('/:tr_id/members', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/members');
+		var tr_id = req.params.tr_id;
+		var route = '/tertulias/' + tr_id + '/members';
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('tertulia', sql.Int, tr_id)
+			.execute('sp_insertTertulia_Weekly_sid')
+	    	.then(function(recordset) {
+                var links = '[ ' +
+					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, '
+					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } '
+            	']';
+                var itemLinks = '[ ' +
+            	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+						'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
+					']';
+                res.type('application/json');
+                recordset.forEach(function(elem) {
+                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+        		});
+                var results = {};
+            	results['tertulias'] = recordset;
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+            })
+	    });
+	});
+
 	router.get('/:tr_id', (req, res, next) => {
 		console.log('in GET /tertulias/:tr_id');
 		var tr_id = req.params.tr_id;
