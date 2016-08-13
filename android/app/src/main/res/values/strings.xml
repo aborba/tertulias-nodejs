@@ -297,6 +297,11 @@
     <string name="activity_list_tertulias_back_menu">Back</string>
     <string name="activity_list_tertulias_toast_no_details">Details not available.</string>
 
+    <string name="title_activity_view_members">View Members</string>
+    <string name="view_member_invitations_button">Invitations</string>
+    <string name="view_member_edit_button">Edit</string>
+    <string name="view_member_cancel_button">Cancel</string>
+
     <string name="title_activity_member_invitation">Member Invitation</string>
     <string name="member_invitation_toast_sent">Tertulia invitations sent</string>
     <string name="member_invitation_toast_cancel">Tertulia invitations cancelled</string>

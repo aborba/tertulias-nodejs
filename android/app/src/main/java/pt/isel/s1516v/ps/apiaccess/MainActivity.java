@@ -260,12 +260,15 @@ public class MainActivity extends Activity implements TertuliasApi {
             return;
         }
         Util.lockOrientation(this);
+        Util.logd("Login in");
         Futures.addCallback(
                 cli.login(MobileServiceAuthenticationProvider.Google),
                 new FutureCallback<MobileServiceUser>() {
                     @Override
                     public void onSuccess(MobileServiceUser user) {
+                        Util.logd("Login in ok");
                         Util.unlockOrientation(MainActivity.this);
+                        Util.logd("Proceeding on next callback");
                         callback.onSuccess(user);
                     }
 
@@ -279,6 +282,7 @@ public class MainActivity extends Activity implements TertuliasApi {
     }
 
     private void doLoginAndFetch(Context ctx, MaUiManager uiManager) {
+        Util.logd("Login and fetch content");
         uiManager.showProgressBar();
         GetData<JsonElement> getTertulias = new GetData<>(ctx, "tertulias", apiHome);
         GetTertuliasCallback getTertuliasCallback = new GetTertuliasCallback(ctx, uiManager, null, null);
@@ -295,8 +299,10 @@ public class MainActivity extends Activity implements TertuliasApi {
         LoginCallback loginCallback = new LoginCallback(ctx, null, getHome, getHomeCallback);
 
         MobileServiceClient cli = Util.getMobileServiceClient(this);
-        if (cli == null || ! loadCachedUserToken(cli))
+        if (cli == null || ! loadCachedUserToken(cli)) {
+            Util.logd("Null cli or no token.");
             requestLogin(ctx, loginCallback);
+        }
         else
             loginCallback.onSuccess(cli.getCurrentUser());
     }

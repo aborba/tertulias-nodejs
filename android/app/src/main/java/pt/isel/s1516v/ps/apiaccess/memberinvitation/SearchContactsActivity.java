@@ -63,7 +63,7 @@ import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.PublicTertuliaDetailsAct
 public class SearchContactsActivity extends Activity
         implements TertuliasApi {
 
-    public final static int ACTIVITY_REQUEST_CODE = SEARCH_PUBLIC_TERTULIA_RETURN_CODE;
+    public final static int ACTIVITY_REQUEST_CODE = SEARCH_CONTACTS_RETURN_CODE;
     public static final String DATA_SEARCH = "SubscribeTertulia_Search";
 
     private static final String APILINKS_CREATEVOUCHERS_KEY = LINK_POSTVAUCHER;

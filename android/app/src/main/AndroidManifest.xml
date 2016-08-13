@@ -99,10 +99,14 @@
             android:label="@string/title_activity_public_tertulia_details"
             android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
 
+        <activity android:name=".memberinvitation.ViewMembersActivity"
+            android:label="@string/title_activity_member_invitation"
+            android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity" />
+
         <activity
             android:name=".memberinvitation.SearchContactsActivity"
             android:label="@string/title_activity_member_invitation"
-            android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity"
+            android:parentActivityName=".memberinvitation.ViewMembersActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

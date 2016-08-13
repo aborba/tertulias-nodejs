@@ -108,6 +108,7 @@ public class Util {
     }
 
     public static void lockOrientation(Context ctx) {
+        Util.logd("Locking screen orientation");
         int screenOrientation;
         int rotation = ((WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRotation();
         switch (rotation) {
@@ -159,6 +160,7 @@ public class Util {
     }
 
     public static void unlockOrientation(Context ctx) {
+        Util.logd("Unlocking screen orientation");
         ((Activity)ctx).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
@@ -227,11 +229,13 @@ public class Util {
     public static void setupToolBar(final Context ctx, @NonNull Toolbar toolbar, int title, int subtitle,
                                     int menu, Toolbar.OnMenuItemClickListener menuselection, boolean backBehaviour, SearchView searchView) {
         setupToolBar(ctx, toolbar, title, subtitle, menu, menuselection, backBehaviour);
-        SearchManager searchManager = (SearchManager) ctx.getSystemService(Context.SEARCH_SERVICE);
-        ComponentName componentName = ((Activity)ctx).getComponentName();
-        SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
-        searchView.setSearchableInfo(searchableInfo);
-        searchView.setIconifiedByDefault(false);
+        if (searchView != null) {
+            SearchManager searchManager = (SearchManager) ctx.getSystemService(Context.SEARCH_SERVICE);
+            ComponentName componentName = ((Activity) ctx).getComponentName();
+            SearchableInfo searchableInfo = searchManager.getSearchableInfo(componentName);
+            searchView.setSearchableInfo(searchableInfo);
+            searchView.setIconifiedByDefault(false);
+        }
     }
 
     public static void setupActionBar(AppCompatActivity ctx, int title, boolean isSetupAsUpEnabled) {
