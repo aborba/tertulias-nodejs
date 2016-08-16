@@ -131,7 +131,7 @@ module.exports = function (configuration) {
 			new sql.Request()
 	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('tertulia', sql.Int, tr_id)
-			.execute('sp_insertTertulia_Weekly_sid')
+			.execute('sp_getTertuliaMembers')
 	    	.then(function(recordset) {
                 var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, '
@@ -146,7 +146,7 @@ module.exports = function (configuration) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
                 var results = {};
-            	results['tertulias'] = recordset;
+            	results['members'] = recordset;
                 results['links'] = JSON.parse(links);
                 res.json(results);
                 res.sendStatus(200);
