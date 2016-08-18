@@ -44,8 +44,12 @@
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
     <string name="main_activity_root_path_not_found">Root path unreachable. Shame on us.</string>
+    <string name="main_activity_routes_defined">Main routes defined.</string>
     <string name="main_activity_routes_undefined">No routes defined yet. Still working&#8230;</string>
-    <string name="main_activity_no_network_title">Connection to the network unavailable</string>
+    <string name="main_activity_token_expired">Access token expired; Requesting a new access token&#8230;</string>
+    <string name="main_activity_user_registration">User registration completed&#8230;</string>
+    <string name="main_activity_user_reading">User registration reading completed&#8230;</string>
+    <string name="main_activity_no_network_title">Connection to the network unavailable.</string>
     <string name="main_activity_no_network">Network connection not found. Please connect to a network and try again.</string>
     <string name="main_activity_no_tertulias">You are not subscribed to any tertulia. Use the buttons bellow to either create one or to search for a public tertulia to subscribe.</string>
     <string-array name="main_activity_drawer_list_items">

@@ -19,51 +19,34 @@
 
 package pt.isel.s1516v.ps.apiaccess.memberinvitation;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.memberinvitation.ui.VmUiManager;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.PublicTertulia;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.PublicTertuliaArrayAdapter;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.PublicTertuliaDetailsActivity;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchList;
-import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSearchListItem;
 
 public class ViewMembersActivity extends Activity implements TertuliasApi {
 
@@ -73,13 +56,11 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     private static final String APILINKS_KEY = LINK_SEARCHPUBLIC;
     private static final int REQUEST_LOCATION = 2;
 
-    private ProgressBar progressBar;
-    private RecyclerView recyclerView;
-    private TextView emptyView;
-    private PublicTertuliaArrayAdapter viewAdapter;
-    private PublicTertulia[] publicTertulias;
+    private VmUiManager uiManager;
+    private ApiLinks apiLinks;
+    private ContactListItem[] contacts;
 
-    private ApiLink[] links;
+    private ContactsArrayAdapter viewAdapter;
 
     // region Activity Lifecycle
 
@@ -90,16 +71,14 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
 
         if (savedInstanceState != null) restoreInstanceState(savedInstanceState);
 
-        progressBar = (ProgressBar) findViewById(R.id.vma_progressbar);
-        emptyView = (TextView) findViewById(R.id.vma_empty_view);
+        uiManager = new VmUiManager(this);
 
-        Util.setupToolBar(this, (Toolbar) findViewById(R.id.toolbar),
+        Util.setupToolBar(this, (Toolbar) uiManager.getView(VmUiManager.UIRESOURCE.TOOLBAR),
                 R.string.title_activity_view_members,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        recyclerView = (RecyclerView) findViewById(R.id.vma_RecyclerView);
-        viewAdapter = new PublicTertuliaArrayAdapter(this, publicTertulias != null ? publicTertulias : new PublicTertulia[0]);
-        Util.setupAdapter(this, recyclerView, viewAdapter);
+        viewAdapter = new ContactsArrayAdapter(this, contacts != null ? contacts : new ContactListItem[0]);
+        Util.setupAdapter(this, (RecyclerView) uiManager.getView(VmUiManager.UIRESOURCE.RECYCLE), viewAdapter);
 
         handleIntent(getIntent());
     }
@@ -126,14 +105,14 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     public void onClickInviteContacts(View view) {
         Log.d("trt", "in onClickSubmitMembers");
         Intent intent = new Intent(this, SearchContactsActivity.class);
-        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(links)));
+        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(apiLinks.get())));
         startActivityForResult(intent, SearchContactsActivity.ACTIVITY_REQUEST_CODE);
     }
 
     public void onClickEditMembers(View view) {
         Log.d("trt", "in onClickEditMembers");
         Intent intent = new Intent(this, SearchContactsActivity.class);
-        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(links)));
+        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(apiLinks.get())));
         startActivityForResult(intent, SearchContactsActivity.ACTIVITY_REQUEST_CODE);
     }
 
@@ -146,6 +125,12 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
 
     // region Private Methods
 
+    private void refreshDataAndViews() {
+        MobileServiceClient cli = Util.getMobileServiceClient(this);
+        ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(apiLinks.getRoute(LINK_SELF), null, apiLinks.getMethod(LINK_SELF), null);
+        Futures.addCallback(rTertuliasFuture, new MembersPresentation());
+    }
+
     // endregion
 
     // region Private Classes
@@ -155,19 +140,45 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     // region Private Methods
 
     private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            progressBar.setVisibility(View.VISIBLE);
-        }
         if (intent.hasExtra(INTENT_LINKS)) {
-            Object[] objects = getIntent().getParcelableArrayListExtra(INTENT_LINKS).toArray();
-            links = Arrays.copyOf(objects, objects.length, ApiLink[].class);
+            ApiLink[] links = Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class);
+            apiLinks = new ApiLinks(links);
         }
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
     }
 
+    private static String getEMsg(Context ctx, String msg) {
+        if (!Util.isJson(msg)) return msg;
+        Error error = new Gson().fromJson(msg, Error.class);
+        return error.getStatusCodeMessage(ctx);
+    }
+
     // endregion
+
+    private class MembersPresentation implements FutureCallback<JsonElement> {
+        @Override
+        public void onSuccess(JsonElement result) {
+            new AsyncTask<JsonElement, Void, ContactListItem[]>() {
+                @Override
+                protected ContactListItem[] doInBackground(JsonElement... params) {
+                    ContactListItem[] contacts = new Gson().fromJson(params[0], ContactListItem[].class);
+                    return contacts;
+                }
+
+                @Override
+                protected void onPostExecute(ContactListItem[] contacts) {
+                    uiManager.set(contacts);
+                }
+            }.execute(result);
+        }
+
+        @Override
+        public void onFailure(Throwable e) {
+            Context ctx = ViewMembersActivity.this;
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
+        }
+    }
 
 }

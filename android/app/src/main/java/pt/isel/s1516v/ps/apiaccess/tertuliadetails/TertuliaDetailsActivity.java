@@ -38,14 +38,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
-import pt.isel.s1516v.ps.apiaccess.memberinvitation.SearchContactsActivity;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ViewMembersActivity;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
@@ -66,6 +62,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     public final static int ACTIVITY_REQUEST_CODE = TERTULIA_DETAILS_RETURN_CODE;
     public final static String SELF_LINK = LINK_SELF;
     private final static String TERTULIA_INSTANCE_STATE_LABEL = "tertulia";
+
     private DtUiManager uiManager;
     private ApiLinks apiLinks;
     private TertuliaEdition tertulia;
@@ -81,8 +78,6 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
             tertulia = savedInstanceState.getParcelable(TERTULIA_INSTANCE_STATE_LABEL);
 
         uiManager = new DtUiManager(this);
-
-        Toolbar toolbar = (Toolbar) uiManager.getView(DtUiManager.UIRESOURCE.TOOLBAR);
 
         Util.setupToolBar(this, (Toolbar) uiManager.getView(DtUiManager.UIRESOURCE.TOOLBAR),
                 R.string.title_activity_tertulia_details,
@@ -185,8 +180,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     public void onClickSubmitMembers(View view) {
         Log.d("trt", "in onClickSubmitMembers");
         Intent intent = new Intent(this, ViewMembersActivity.class);
-        ArrayList<ApiLink> links = new ArrayList<>(Arrays.asList(tertulia.links));
-        intent.putParcelableArrayListExtra(ViewMembersActivity.INTENT_LINKS, links);
+        Util.insertParcelableArray(intent, ViewMembersActivity.INTENT_LINKS, tertulia.links);
         startActivity(intent);
     }
 

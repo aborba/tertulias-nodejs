@@ -29,19 +29,16 @@ import com.google.gson.JsonElement;
 
 import java.util.concurrent.ExecutionException;
 
-import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 
-public class PostRegisterCallback implements FutureCallback<JsonElement> {
+public class GetTokenCallback implements FutureCallback<JsonElement> {
     final Context ctx;
-    final String rel;
     final Futurizable<JsonElement> future;
     final FutureCallback<JsonElement> futureCallback;
     final View rootView;
 
-    public PostRegisterCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback) {
+    public GetTokenCallback(Context ctx, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback) {
         this.ctx = ctx;
-        this.rel = rel;
         this.future = future;
         this.futureCallback = futureCallback;
         rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
@@ -49,8 +46,7 @@ public class PostRegisterCallback implements FutureCallback<JsonElement> {
 
     @Override
     public void onSuccess(JsonElement result) {
-        if (result != null)
-            Util.longSnack(rootView, R.string.main_activity_user_registration);
+        Util.logd(result.toString());
         if (future != null) {
             if (futureCallback != null)
                 Futures.addCallback(future.getFuture(), futureCallback);

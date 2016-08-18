@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -38,11 +39,14 @@ public class MaUiManager extends UiManager {
     private RecyclerView recyclerView;
     private TextView emptyView;
     private ProgressBar progressBar;
+    private ImageView userView, authenticatedView;
+    private boolean isUserInfo;
 
     public enum UIRESOURCE {
         DRAWER_LAYOUT,
         DRAWER_MENU_LIST,
         USER_PICTURE,
+        AUTHENTICATED_PICTURE,
         RECYCLER_VIEW,
         EMPTY_VIEW,
         PROGRESSBAR
@@ -54,12 +58,6 @@ public class MaUiManager extends UiManager {
 
     public MaUiManager(Context ctx) {
         super(ctx);
-        uiResources.put(UIRESOURCE.DRAWER_LAYOUT, R.id.drawer_layout);
-        uiResources.put(UIRESOURCE.DRAWER_MENU_LIST, R.id.menu_list);
-        uiResources.put(UIRESOURCE.USER_PICTURE, R.id.mtl_user_picture);
-        uiResources.put(UIRESOURCE.RECYCLER_VIEW, R.id.mtl_RecyclerView);
-        uiResources.put(UIRESOURCE.EMPTY_VIEW, R.id.mtl_empty_view);
-        uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.mtl_progressbar);
     }
 
     public void setDrawerManager(DrawerManager drawerManager) {
@@ -71,11 +69,22 @@ public class MaUiManager extends UiManager {
     }
 
     public void setUserPicture(int resource) {
-        drawerManager.setIcon(resource);
+        drawerManager.setIcon(resource == 0 ? R.mipmap.tertulias : resource);
+        isUserInfo = resource != 0;
     }
 
     public void setUserPicture(String resource) {
-        drawerManager.setIcon(resource);
+        if (resource != null) {
+            drawerManager.setIcon(resource);
+            isUserInfo = true;
+            return;
+        }
+        isUserInfo = false;
+        drawerManager.setIcon(R.mipmap.tertulias);
+    }
+
+    public boolean isUserInfo() {
+        return isUserInfo;
     }
 
     public MaUiManager swapAdapter(TertuliasArrayAdapter viewAdapter) {
@@ -87,6 +96,11 @@ public class MaUiManager extends UiManager {
     public View getView(UIRESOURCE uiresource) {
         lazyViewsSetup();
         return uiViews.get(uiresource);
+    }
+
+    public Integer getResource(UIRESOURCE uiresource) {
+        lazyViewsSetup();
+        return uiResources.get(uiresource);
     }
 
     // region UiManager
@@ -128,13 +142,43 @@ public class MaUiManager extends UiManager {
 
     // endregion
 
+    // region LoginStatus
+
+    public MaUiManager setLoggedInStatus(int resource) {
+        lazyViewsSetup();
+        setUserPicture(resource);
+        return this;
+    }
+
+    public MaUiManager setLoggedIn(int resource) {
+        lazyViewsSetup();
+        setUserPicture(resource);
+        return this;
+    }
+
+    public MaUiManager setLoggedIn(String resource) {
+        lazyViewsSetup();
+        setUserPicture(resource);
+        return this;
+    }
+
+    public MaUiManager setLoggedOut() {
+        lazyViewsSetup();
+        drawerManager.resetIcon();
+        isUserInfo = false;
+        authenticatedView.setVisibility(View.INVISIBLE);
+        return this;
+    }
+
+    // endregion
+
     // region EmptyView
 
     public MaUiManager setEmpty(boolean isEmpty) {
         if (isEmpty)
             setEmpty();
         else
-            resetEmpty();
+            setNotEmpty();
         return this;
     }
 
@@ -145,7 +189,7 @@ public class MaUiManager extends UiManager {
         return this;
     }
 
-    public MaUiManager resetEmpty() {
+    public MaUiManager setNotEmpty() {
         lazyViewsSetup();
         recyclerView.setVisibility(View.VISIBLE);
         emptyView.setVisibility(View.GONE);
@@ -173,26 +217,23 @@ public class MaUiManager extends UiManager {
     private void lazyViewsSetup() {
         if (isViewsSet)
             return;
+
+        uiResources.put(UIRESOURCE.DRAWER_LAYOUT, R.id.drawer_layout);
+        uiResources.put(UIRESOURCE.DRAWER_MENU_LIST, R.id.ma_menuList);
+        uiResources.put(UIRESOURCE.USER_PICTURE, R.id.ma_userImage);
+        uiResources.put(UIRESOURCE.AUTHENTICATED_PICTURE, R.id.ma_authenticatedImage);
+        uiResources.put(UIRESOURCE.RECYCLER_VIEW, R.id.ma_recyclerView);
+        uiResources.put(UIRESOURCE.EMPTY_VIEW, R.id.ma_emptyView);
+        uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.ma_progressBar);
+
         recyclerView = setup(UIRESOURCE.RECYCLER_VIEW, RecyclerView.class, uiViews);
         emptyView = setup(UIRESOURCE.EMPTY_VIEW, TextView.class, uiViews);
         progressBar = setup(UIRESOURCE.PROGRESSBAR, ProgressBar.class, uiViews);
+        userView = setup(UIRESOURCE.USER_PICTURE, ImageView.class, uiViews);
+        authenticatedView = setup(UIRESOURCE.AUTHENTICATED_PICTURE, ImageView.class, uiViews);
+
         isViewsSet = true;
     }
 
-//    private View findViewById(int resource) {
-//        return ((Activity) ctx).findViewById(resource);
-//    }
-//
-//    private View findView(UIRESOURCE resource) {
-//        return findViewById(uiResources.get(resource));
-//    }
-//
-//    private <T extends View> T setup(Class<T> viewType, UIRESOURCE resource) {
-//        T view = (T) findView(resource);
-//        uiViews.put(resource, view);
-//        return view;
-//    }
-
     // endregion
-
 }
