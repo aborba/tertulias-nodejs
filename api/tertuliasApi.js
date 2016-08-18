@@ -148,7 +148,7 @@ module.exports = function (configuration) {
                 res.type('application/json');
                 console.log('recordset parts:');
                 console.log(recordset[0]);
-                console.log(recordset[1]);
+                console.log(recordset['returnValue']);
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
