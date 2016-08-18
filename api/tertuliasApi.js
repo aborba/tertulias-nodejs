@@ -57,7 +57,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
-						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/voucher" }, ' +
+						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/members/voucher" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
@@ -623,8 +623,8 @@ module.exports = function (configuration) {
 		});
 	});
 
-	router.get('/:tr_id/voucher/:voucher_batch', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/voucher/:voucher_batch');
+	router.get('/:tr_id/members/voucher/:voucher_batch', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/members/voucher/:voucher_batch');
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -648,8 +648,8 @@ module.exports = function (configuration) {
 		});
 	});
 
-	router.post('/:tr_id/voucher', (req, res, next) => {
-		console.log('in POST /tertulias/:tr_id/voucher');
+	router.post('/:tr_id/members/voucher', (req, res, next) => {
+		console.log('in POST /tertulias/:tr_id/members/voucher');
 		var tr_id = req.params.tr_id;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
