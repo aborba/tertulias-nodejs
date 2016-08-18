@@ -137,8 +137,8 @@ module.exports = function (configuration) {
 				console.log('in results');
 	    		console.log(recordset);
                 var links = '[ ' +
-					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, '
-					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } '
+					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
             	']';
                 var itemLinks = '[ ' +
         	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
