@@ -139,9 +139,9 @@ module.exports = function (configuration) {
 					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } '
             	']';
                 var itemLinks = '[ ' +
-            	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
-						'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
-					']';
+        	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
+				']';
                 res.type('application/json');
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
