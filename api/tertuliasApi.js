@@ -127,6 +127,8 @@ module.exports = function (configuration) {
 		var route = '/tertulias/' + tr_id + '/members';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
+	    	console.log(req.azureMobile.user.id);
+	    	console.log(tr_id);
 			new sql.Request()
 	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('tertulia', sql.Int, tr_id)
