@@ -57,7 +57,6 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
-						'{ "rel": "voucher", "method": "POST", "href": "' + route + '/:id/members/voucher" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
@@ -206,7 +205,7 @@ module.exports = function (configuration) {
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
-						'{ "rel": "members", "method": "POST", "href": "' + route + '/members" }, ' +
+						'{ "rel": "members", "method": "GET", "href": "' + route + '/members" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
