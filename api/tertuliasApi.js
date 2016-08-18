@@ -146,6 +146,9 @@ module.exports = function (configuration) {
 					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
 				']';
                 res.type('application/json');
+                console.log('recordset parts:');
+                console.log(recordset[0]);
+                console.log(recordset[1]);
                 recordset.forEach(function(elem) {
                 	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
         		});
