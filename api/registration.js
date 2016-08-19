@@ -30,5 +30,7 @@ module.exports = function (configuration) {
     	next();
     });
 
+    router.access = 'authenticated';
+
     return router;
 };
