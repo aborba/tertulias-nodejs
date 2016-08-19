@@ -18,7 +18,6 @@ module.exports = function (configuration) {
 
     router.get('/:voucher', (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
-		console.log(req.azureMobile);
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		var body = '<h1>Tertulias</h1>\n' +
