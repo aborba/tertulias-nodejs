@@ -1,8 +1,9 @@
 var express      = require('express'),
 	bodyParser   = require('body-parser'),
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
-    authorize    = require('azure-mobile-apps/src/express/middleware/authorize'),
-	sql          = require('mssql'),
+    authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
+
+var sql          = require('mssql'),
 	util         = require('../util');
 
 module.exports = function (configuration) {
@@ -20,10 +21,10 @@ module.exports = function (configuration) {
 		var voucher = req.params.voucher;
 		var userSid = req.azureMobile.user.id;
 		var body = '<h1>Tertulias</h1>\n' +
-			'<p>Welcome to Tertulias platform site.</p>' +
-			'<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
-			'<p>Your voucher number is <strong>' + voucher + '</strong>.</p>' +
-			'<p>Your user id is <strong>'  + '</strong>.</p>' +
+			'	<p>Welcome to Tertulias platform site.</p>' +
+			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
+			'	<p>Your voucher number is <strong>' + voucher + '</strong>.</p>' +
+			'	<p>Your user id is <strong>' + '</strong>.</p>' +
 			'';
 		res.send(body);
     	next();

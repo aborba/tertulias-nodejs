@@ -1,10 +1,10 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
+var express      = require('express'),
+	bodyParser   = require('body-parser'),
     authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
-    authorize = require('azure-mobile-apps/src/express/middleware/authorize');
+    authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
 
-var sql = require('mssql');
-var util = require('../util');
+var sql          = require('mssql'),
+    util         = require('../util');
 
 /* { 'SQL types': {
 	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
@@ -567,7 +567,8 @@ module.exports = function (configuration) {
     router.get('/:tr_id/members', (req, res, next) => {
 		console.log('in GET /tertulias/:tr_id/members');
 		var tr_id = req.params.tr_id;
-		var route = '/tertulias/' + tr_id + '/members';
+		var tertulia = '/tertulias/' + tr_id;
+		var route = tertulia + '/members';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
@@ -577,6 +578,7 @@ module.exports = function (configuration) {
 	    	.then(function(recordset) {
                 var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					'{ "rel": "tertulia", "method": "GET", "href": "' + tertulia + '" }, ' +
 					'{ "rel": "create_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
             	']';
                 var itemLinks = '[ ' +
