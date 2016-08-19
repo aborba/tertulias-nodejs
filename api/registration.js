@@ -21,7 +21,7 @@ module.exports = function (configuration) {
 		if (! req.azureMobile.user) {
 			console.log('redirecting...');
 			res.writeHead(302, {
-				'Location': 'tertulias.azurewebsites.net/.auth/login/google'
+				'Location': '/.auth/login/google'
 			});
 			res.end();
 			return;
