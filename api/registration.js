@@ -57,6 +57,7 @@ module.exports = function (configuration) {
     	next();
     });
 
+    router.access = 'authenticated';
     express.access = 'authenticated';
 
     return router;
