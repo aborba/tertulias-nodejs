@@ -31,9 +31,9 @@ mobile.tables
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
     app.use('/private_invitation', registration(mobile.configuration));
-    // app.use('/private_invitation/:voucher', registration(mobile.configuration));
     app.use('/api/', homeApi(mobile.configuration));
     app.use('/api/tertulias', tertuliasApi(mobile.configuration));
     console.log('Listening for requests.');
-    app.listen(process.env.PORT || 3000);
+    // app.listen(process.env.PORT || 3000);
+    app.listen(3000);
 });
