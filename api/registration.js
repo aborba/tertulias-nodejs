@@ -20,7 +20,8 @@ module.exports = function (configuration) {
 		console.log('in GET /private_invitation/:voucher');
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
-		var body = '' + 
+		var body = '' +
+			'<script src="path/to/MobileServices.Web.min.js"></script>' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
@@ -28,14 +29,22 @@ module.exports = function (configuration) {
 			'	<p>Your user id is <strong>' + '</strong>.</p>' +
 			'<script>' +
 			'	alert("Hello");' +
+			'	client' +
+			'		.login( "google", {"access_token": token})' +
+			'		.done(function (results) {' +
+     		'				alert("You are now logged in as: " + results.userId);' +
+			'			},' +
+			'			function (err) {' +
+     		'				alert("Error: " + err);' +
+			'			}' +
+			'		);' +
 			'</script>' +
 			'';
 		res.send(body);
     	next();
     });
 
-    router.access = 'authenticated';
-    router.get.access = 'authenticated';
+    express.access = 'authenticated';
 
     return router;
 };
