@@ -578,7 +578,6 @@ module.exports = function (configuration) {
 	    	.then(function(recordset) {
                 var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-					'{ "rel": "tertulia", "method": "GET", "href": "' + tertulia + '" }, ' +
 					'{ "rel": "create_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
             	']';
                 var itemLinks = '[ ' +
@@ -672,7 +671,10 @@ module.exports = function (configuration) {
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
-			.query('SELECT' + ' in_key AS voucher' +
+			.query('SELECT' +
+					' in_key AS voucher' +
+					' tr_name AS tertulia' +
+					' tr_subject AS subject' +
 				' FROM Invitations' +
 					' INNER JOIN Users ON in_user = us_id' +
 					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
