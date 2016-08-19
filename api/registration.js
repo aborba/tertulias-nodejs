@@ -23,7 +23,7 @@ module.exports = function (configuration) {
 			res.writeHead(302, {
 				'Location': 'tertulias.azurewebsites.net/.auth/login/google'
 			});
-			res.end();
+			response.end();
 			return;
 		}
 		console.log('proceeding...');
