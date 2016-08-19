@@ -18,6 +18,15 @@ module.exports = function (configuration) {
 
     router.get('/:voucher', (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
+		if (! req.azureMobile.user) {
+			console.log('redirecting...');
+			response.writeHead(302, {
+				'Location': 'tertulias.azurewebsites.net/.auth/login/google'
+			});
+			response.end();
+			return;
+		}
+		console.log('proceeding...');
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		var body = '' +
