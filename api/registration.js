@@ -20,10 +20,10 @@ module.exports = function (configuration) {
 		console.log('in GET /private_invitation/:voucher');
 		if (! req.azureMobile.user) {
 			console.log('redirecting...');
-			response.writeHead(302, {
+			res.writeHead(302, {
 				'Location': 'tertulias.azurewebsites.net/.auth/login/google'
 			});
-			response.end();
+			res.end();
 			return;
 		}
 		console.log('proceeding...');
