@@ -121,37 +121,138 @@ module.exports = function (configuration) {
 	    });
 	});
 
-    router.get('/:tr_id/members', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/members');
-		var tr_id = req.params.tr_id;
-		var route = '/tertulias/' + tr_id + '/members';
+	router.post('/weekly', (req, res, next) => {
+		console.log('in POST /tertulias/weekly');
+		console.log(req.body);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.input('tertulia', sql.Int, tr_id)
-			.execute('sp_getTertuliaMembers')
-	    	.then(function(recordset) {
-                var links = '[ ' +
-					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
-					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
-            	']';
-                var itemLinks = '[ ' +
-        	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
-					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
-				']';
-                res.type('application/json');
-                recordset[0].forEach(function(elem) {
-                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-        		});
-                var results = {};
-            	results['members'] = recordset[0];
-                results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-            })
-	    });
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
+			.input('locationName', sql.NVarChar(40), req.body.location_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.location_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+			.input('scheduleWeekDay', sql.Int, req.body.schedule_weekday)
+			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
+			.execute('sp_insertTertulia_Weekly_sid')
+			.then((recordsets) => {
+				console.log(recordsets);
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/monthly', (req, res, next) => {
+		console.log('in POST /tertulias/monthly');
+		console.log(req.body);
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
+			.input('locationName', sql.NVarChar(40), req.body.location_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.location_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+			.input('scheduleDayNr', sql.Int, req.body.schedule_daynr)
+			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
+			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
+			.execute('sp_insertTertulia_Monthly_sid')
+			.then((recordsets) => {
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/monthlyw', (req, res, next) => {
+		console.log('in POST /tertulias/monthlyw');
+		console.log(req.body);
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
+			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
+			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
+			.input('locationName', sql.NVarChar(40), req.body.location_name)
+			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
+			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
+			.input('locationCity', sql.NVarChar(40), req.body.location_city)
+			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
+			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
+			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
+			.input('scheduleWeekDay', sql.NVarChar(20), req.body.schedule_weekday)
+			.input('scheduleWeekNr', sql.Int, req.body.schedule_weeknr)
+			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
+			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
+			.execute('sp_insertTertulia_MonthlyW_sid')
+			.then((recordsets) => {
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					console.log(recordsets);
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Duplicate' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
 	});
 
 	router.get('/:tr_id', (req, res, next) => {
@@ -304,50 +405,6 @@ module.exports = function (configuration) {
 						return next('404');
 				}
 			})
-		});
-	});
-
-	router.post('/weekly', (req, res, next) => {
-		console.log('in POST /tertulias/weekly');
-		console.log(req.body);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
-			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
-			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
-			.input('locationName', sql.NVarChar(40), req.body.location_name)
-			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
-			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
-			.input('locationCity', sql.NVarChar(40), req.body.location_city)
-			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
-			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
-			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('scheduleWeekDay', sql.Int, req.body.schedule_weekday)
-			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-			.execute('sp_insertTertulia_Weekly_sid')
-			.then((recordsets) => {
-				console.log(recordsets);
-				if (recordsets.length == 0) {
-					res.status(201)	// 201: Created
-						.type('application/json')
-						.json( { result: 'Ok' } );
-					return next();
-				} else {
-					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-						.type('application/json')
-						.json( { result: 'Duplicate' } );
-					return next('409');
-				}
-				next();
-			})
-			.catch(function(err) {
-				next(err);
-			});
-		})
-		.catch(function(err) {
-			return next(err);
 		});
 	});
 
@@ -507,144 +564,37 @@ module.exports = function (configuration) {
 		}
 	});
 
-	router.post('/monthly', (req, res, next) => {
-		console.log('in POST /tertulias/monthly');
-		console.log(req.body);
+    router.get('/:tr_id/members', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/members');
+		var tr_id = req.params.tr_id;
+		var route = '/tertulias/' + tr_id + '/members';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
-			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
-			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
-			.input('locationName', sql.NVarChar(40), req.body.location_name)
-			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
-			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
-			.input('locationCity', sql.NVarChar(40), req.body.location_city)
-			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
-			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
-			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('scheduleDayNr', sql.Int, req.body.schedule_daynr)
-			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
-			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-			.execute('sp_insertTertulia_Monthly_sid')
-			.then((recordsets) => {
-				if (recordsets.length == 0) {
-					res.status(201)	// 201: Created
-						.type('application/json')
-						.json( { result: 'Ok' } );
-					return next();
-				} else {
-					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-						.type('application/json')
-						.json( { result: 'Duplicate' } );
-					return next('409');
-				}
-				next();
-			})
-			.catch(function(err) {
-				next(err);
-			});
-		})
-		.catch(function(err) {
-			return next(err);
-		});
-	});
-
-	router.post('/monthlyw', (req, res, next) => {
-		console.log('in POST /tertulias/monthlyw');
-		console.log(req.body);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
-			.input('tertuliaSubject', sql.NVarChar(80), req.body.tertulia_subject)
-			.input('tertuliaIsPrivate', sql.Int, req.body.tertulia_isprivate ? 1 : 0)
-			.input('locationName', sql.NVarChar(40), req.body.location_name)
-			.input('locationAddress', sql.NVarChar(80), req.body.location_address)
-			.input('locationZip', sql.NVarChar(40), req.body.location_zip)
-			.input('locationCity', sql.NVarChar(40), req.body.location_city)
-			.input('locationCountry', sql.NVarChar(40), req.body.location_country)
-			.input('locationLatitude', sql.NVarChar(12), req.body.location_latitude)
-			.input('locationLongitude', sql.NVarChar(12), req.body.location_longitude)
-			.input('scheduleWeekDay', sql.NVarChar(20), req.body.schedule_weekday)
-			.input('scheduleWeekNr', sql.Int, req.body.schedule_weeknr)
-			.input('scheduleIsFromStart', sql.BIT, req.body.schedule_isfromstart ? 1 : 0)
-			.input('scheduleSkip', sql.Int, req.body.schedule_skip)
-			.execute('sp_insertTertulia_MonthlyW_sid')
-			.then((recordsets) => {
-				if (recordsets.length == 0) {
-					res.status(201)	// 201: Created
-						.type('application/json')
-						.json( { result: 'Ok' } );
-					return next();
-				} else {
-					console.log(recordsets);
-					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-						.type('application/json')
-						.json( { result: 'Duplicate' } );
-					return next('409');
-				}
-				next();
-			})
-			.catch(function(err) {
-				next(err);
-			});
-		})
-		.catch(function(err) {
-			return next(err);
-		});
-	});
-
-	router.post('/:tr_id/subscribe', (req, res, next) => {
-		console.log('in POST /tertulias/:tr_id/subscribe');
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
-			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
-			.execute('spSubscribe')
-			.then((recordset) => {
-				if (recordset.returnValue = 1) {
-					res.sendStatus(200);
-				} else {
-					res.sendStatus(409);
-				}
-				return next();
-			})
-			.catch(function(err) {
-				next(err);
-			});
-		})
-		.catch(function(err) {
-			return next(err);
-		});
-	});
-
-	router.get('/:tr_id/members/voucher/:voucher_batch', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/members/voucher/:voucher_batch');
-		sql.connect(util.sqlConfiguration)
-		.then(function() {
-			new sql.Request()
-			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
-			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
-			.query('SELECT' + ' in_key AS voucher' +
-				' FROM Invitations' +
-					' INNER JOIN Users ON in_user = us_id' +
-					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
-				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
-					' AND in_batch = @batch')
-			.then(function(recordset) {
-				console.log(recordset);
-				res.json( { vouchers : recordset } );
-				return next();
-			});
-		})
-		.catch(function(err) {
-			return next(err);
-		});
+	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+	    	.input('tertulia', sql.Int, tr_id)
+			.execute('sp_getTertuliaMembers')
+	    	.then(function(recordset) {
+                var links = '[ ' +
+					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
+					'{ "rel": "create_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
+            	']';
+                var itemLinks = '[ ' +
+        	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
+				']';
+                res.type('application/json');
+                recordset[0].forEach(function(elem) {
+                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+        		});
+                var results = {};
+            	results['members'] = recordset[0];
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+            })
+	    });
 	});
 
 	router.post('/:tr_id/members/voucher', (req, res, next) => {
@@ -660,7 +610,7 @@ module.exports = function (configuration) {
 			request.execute('sp_createInvitationVouchers')
 			.then(function(recordsets) {
 				console.log(request.parameters.vouchers_batch.value);
-				var route = '/tertulias/' + tr_id + '/voucher';
+				var route = '/tertulias/' + tr_id + '/members/voucher';
 				console.log(route);
 				var batch = request.parameters.vouchers_batch.value;
 				console.log(batch);
@@ -710,6 +660,56 @@ module.exports = function (configuration) {
 		// .catch(function(err) {
 		// 	return next(err);
 		// });
+	});
+
+	router.get('/:tr_id/members/voucher/:voucher_batch', (req, res, next) => {
+		console.log('in GET /tertulias/:tr_id/members/voucher/:voucher_batch');
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
+			.query('SELECT' + ' in_key AS voucher' +
+				' FROM Invitations' +
+					' INNER JOIN Users ON in_user = us_id' +
+					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid' +
+					' AND in_batch = @batch')
+			.then(function(recordset) {
+				console.log(recordset);
+				res.json( { vouchers : recordset } );
+				return next();
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/:tr_id/subscribe', (req, res, next) => {
+		console.log('in POST /tertulias/:tr_id/subscribe');
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, req.params.tr_id)
+			.execute('spSubscribe')
+			.then((recordset) => {
+				if (recordset.returnValue = 1) {
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
 	});
 
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
