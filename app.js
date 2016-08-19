@@ -34,6 +34,5 @@ mobile.tables
     app.use('/api/', homeApi(mobile.configuration));
     app.use('/api/tertulias', tertuliasApi(mobile.configuration));
     console.log('Listening for requests.');
-    // app.listen(process.env.PORT || 3000);
-    app.listen(3000);
+    app.listen(process.env.PORT || 3000);
 });
