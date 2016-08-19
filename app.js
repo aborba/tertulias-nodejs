@@ -30,7 +30,7 @@ mobile.tables
     //util.dumpObj(mobile);
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
-    app.use('/private_invitation/', registration(mobile.configuration));
+    app.use('/private_invitation/*', registration(mobile.configuration));
     app.use('/api/', homeApi(mobile.configuration));
     app.use('/api/tertulias', tertuliasApi(mobile.configuration));
     console.log('Listening for requests.');

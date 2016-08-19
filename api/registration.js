@@ -16,7 +16,14 @@ module.exports = function (configuration) {
 	};
 
     router.get('/', (req, res, next) => {
-		res.send( 'Hello world' );
+		console.log('in GET /tertulias');
+		res.send( '<HTML>' );
+		res.send( '<HEAD>' );
+		res.send( '</HEAD>' );
+		res.send( '<BODY>' );
+		res.send( '<H1>Tertulias</H1>' );
+		res.send( '</BODY>' );
+		res.send( '</HTML>' );
     	next();
     });
 
