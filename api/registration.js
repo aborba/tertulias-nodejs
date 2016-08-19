@@ -21,7 +21,7 @@ module.exports = function (configuration) {
 		if (! req.azureMobile.user) {
 			console.log('redirecting...');
 			res.writeHead(302, {
-				'Location': 'tertulias.azurewebsites.net/.auth/login/google',
+				'Location': '/.auth/login/google',
 				'redirect_uri': 'https://tertulias.azurewebsites.net/.auth/login/google/callback'
 			});
 
