@@ -16,7 +16,7 @@ module.exports = function (configuration) {
 	    }
 	};
 
-    router.get('/:voucher', (req, res, next) => {
+    router.get('/:voucher', authenticate, (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
 		// if (! req.azureMobile.user) {
 		// 	console.log('redirecting...');
