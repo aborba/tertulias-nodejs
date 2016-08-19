@@ -18,7 +18,9 @@ module.exports = function (configuration) {
     router.get('/', (req, res, next) => {
 		console.log('in GET /private_invitation');
 		var body = '<h1>Tertulias</h1>\n' +
-			'<p>Tertulias</p>';
+			'<p>Welcome to Tertulias site.</p>' +
+			'<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
+			;
 		res.send(body);
     	next();
     });
