@@ -127,16 +127,11 @@ module.exports = function (configuration) {
 		var route = '/tertulias/' + tr_id + '/members';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
-	    	console.log('-- Parameters:');
-	    	console.log(req.azureMobile.user.id);
-	    	console.log(tr_id);
 			new sql.Request()
 	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 	    	.input('tertulia', sql.Int, tr_id)
 			.execute('sp_getTertuliaMembers')
 	    	.then(function(recordset) {
-				console.log('-- Recordset:');
-	    		console.log(recordset);
                 var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "get_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
@@ -152,8 +147,6 @@ module.exports = function (configuration) {
                 var results = {};
             	results['members'] = recordset[0];
                 results['links'] = JSON.parse(links);
-		    	console.log('-- Results:');
-                console.log(results);
                 res.json(results);
                 res.sendStatus(200);
                 return next();
