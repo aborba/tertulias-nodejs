@@ -672,8 +672,8 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.input('batch', sql.NVarChar(36), req.params.voucher_batch)
 			.query('SELECT' +
-					' in_key AS voucher' +
-					' tr_name AS tertulia' +
+					' in_key AS voucher,' +
+					' tr_name AS tertulia,' +
 					' tr_subject AS subject' +
 				' FROM Invitations' +
 					' INNER JOIN Users ON in_user = us_id' +
