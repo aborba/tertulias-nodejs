@@ -20,13 +20,13 @@ module.exports = function (configuration) {
 		console.log('in GET /private_invitation/:voucher');
 		if (! req.azureMobile.user) {
 			console.log('redirecting...');
-			// res.writeHead(302, {
-			// 	'Location': 'tertulias.azurewebsites.net/.auth/login/google',
-			// 	'redirect_uri': 'https://tertulias.azurewebsites.net/.auth/login/google/callback'
-			// });
+			res.writeHead(302, {
+				'Location': 'tertulias.azurewebsites.net/.auth/login/google',
+				'redirect_uri': 'https://tertulias.azurewebsites.net/.auth/login/google/callback'
+			});
 
-			res.redirect('tertulias.azurewebsites.net/.auth/login/google?redirect_uri=' +
-				encodeURI('https://tertulias.azurewebsites.net/.auth/login/google/callback'));
+			// res.redirect('tertulias.azurewebsites.net/.auth/login/google?redirect_uri=' +
+			// 	encodeURI('https://tertulias.azurewebsites.net/.auth/login/google/callback'));
 			res.end();
 			return;
 		}
