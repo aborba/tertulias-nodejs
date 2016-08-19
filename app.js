@@ -14,7 +14,7 @@ var app = express();
 
 var appConfiguration = {   // http://azure.github.io/azure-mobile-apps-node/global.html#configuration
     debug: true,
-    homePage: false,
+    homePage: true,
     swagger: false,
     skipVersionCheck: true
 }
