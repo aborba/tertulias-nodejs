@@ -38,15 +38,15 @@ module.exports      = function (configuration) {
     		'					var userSid = results.userId;\n' +
     		'					var url = window.location.href;\n' +
     		'					//var voucher = document.getElementById("voucher").innerHTML;\n' +
-    		'					var voucher = url;\n' +
+    		'					var voucher = document.createElement(url).pathname;\n' +
     		'					document.getElementById("userId").innerHTML = userSid;\n' +
     		'					alert("userId: " + userSid + ", voucher: " + voucher);\n' +
     		'				},\n' +
     		'				function(err) { alert("Error: " + err); }\n' +
     		'			);\n' +
 			'	};\n' +
-			'	signIn();' +
-			'</script>' +
+			'	signIn();\n' +
+			'</script>\n' +
 			'';
 		res.send(body);
     	next();
