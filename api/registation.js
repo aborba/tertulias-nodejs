@@ -22,13 +22,13 @@ module.exports      = function (configuration) {
 		var voucher = req.params.voucher;
 		console.log(voucher);
 		var body = '' +
-			'<script src="https://tertulias.scm.azurewebsites.net/api/vfs/site/wwwroot/MobileServices.Web.min.js"></script>\n' +
+			'<script type="text/javascript" src="https://tertulias.scm.azurewebsites.net/api/vfs/site/wwwroot/MobileServices.Web.min.js"></script>\n' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>\n' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
 			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>\n' +
 			'	<p>Your user id is <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
-			'<script>\n' +
+			'<script type="text/javascript">\n' +
 			'	function signIn() {\n' +
      		'		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",\n' +
      		'				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")\n' +
