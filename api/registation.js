@@ -25,9 +25,9 @@ module.exports      = function (configuration) {
 			'<script type="application/javascript" src="/MobileServices.Web.min.js"></script>\n' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>\n' +
-			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
+			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>\n' +
 			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>\n' +
-			'	<p>Press the button bellow to authenticate with your authentication provider and to subscribe to the tertulia.</p>\n' +
+			'	<p>In order to join the Tertulia, press the button bellow (You will be asked to authenticate with your authentication provider).</p>\n' +
 			'\n' +
 			'	<button onclick="onClickAction()">Subscribe</button>\n' +
 			'\n' +
