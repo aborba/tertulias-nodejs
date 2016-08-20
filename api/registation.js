@@ -29,18 +29,17 @@ module.exports      = function (configuration) {
 			'	<p>Your voucher number is <strong>' + voucher + '</strong>.</p>' +
 			'	<p>Your user id is <strong><span id="userId">________________________________</span></strong>.</p>' +
 			'<script>' +
-			'	function signIn(){' +
+			'	function signIn() {' +
 			'		alert("in signIn()");' +
-     		'		var MobileServiceClient = WindowsAzure.MobileServiceClient;' +
-     		'		var client = new MobileServiceClient("https://tertulias.azurewebsites.net", "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");' +
-    		'		client' +
+     		'		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",' +
+     		'				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")' +
     		'			.login("google")' +
     		'			.done(' +
-    		'				function (results) {' +
+    		'				function(results) {' +
     		'					alert(results.userId);' +
     		'					document.getElementById("userId").innerHTML = results.userId;' +
     		'				},' +
-    		'				function (err) { alert("Error: " + err); }' +
+    		'				function(err) { alert("Error: " + err); }' +
     		'			);' +
 			'	};' +
 			'	signIn();' +
