@@ -7,7 +7,6 @@ var sql             = require('mssql'),
 module.exports      = function (configuration) {
 	var router      = express.Router(),
 	authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
-	fs				= require('fs'),
 	authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
@@ -22,10 +21,6 @@ module.exports      = function (configuration) {
 		console.log(configuration);
 		var voucher = req.params.voucher;
 		console.log(voucher);
-		fs.readfile('body.html', function(result) {
-			res.send(result);
-			next();
-		});
 		var body = `
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
 <h1>Tertulias</h1>
