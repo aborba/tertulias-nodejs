@@ -35,7 +35,9 @@ module.exports      = function (configuration) {
     		'			.login("google")' +
     		'			.done(' +
     		'				function(results) {' +
-    		'					document.getElementById("userId").innerHTML = results.userId;' +
+    		'					var userSid = results.userId;' +
+    		'					document.getElementById("userId").innerHTML = userSid;' +
+    		'					alert("userId: " + userSid + ", voucher: " + voucher);' +
     		'				},' +
     		'				function(err) { alert("Error: " + err); }' +
     		'			);' +
