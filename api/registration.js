@@ -18,19 +18,6 @@ module.exports = function (configuration) {
 
     router.get('/:voucher', authenticate, (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
-		// if (! req.azureMobile.user) {
-		// 	console.log('redirecting...');
-		// 	res.writeHead(302, {
-		// 		'Location': '/.auth/login/google',
-		// 		'redirect_uri': 'https://tertulias.azurewebsites.net/.auth/login/google/callback'
-		// 	});
-
-		// 	// res.redirect('tertulias.azurewebsites.net/.auth/login/google?redirect_uri=' +
-		// 	// 	encodeURI('https://tertulias.azurewebsites.net/.auth/login/google/callback'));
-		// 	res.end();
-		// 	return;
-		// }
-		// console.log('proceeding...');
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		var body = '' +
@@ -42,23 +29,13 @@ module.exports = function (configuration) {
 			'	<p>Your user id is <strong>' + '</strong>.</p>' +
 			'<script>' +
 			'	alert("Hello");' +
-			'	client' +
-			// '		.login( "google", {"access_token": token})' +
-			'		.login( "google")' +
-			'		.done(function (results) {' +
-     		'				alert("You are now logged in as: " + results.userId);' +
-			'			},' +
-			'			function (err) {' +
-     		'				alert("Error: " + err);' +
-			'			}' +
-			'		);' +
+			'	client.login("google")' +
+			'		.done(function (results) {alert("You are now logged in as: " + results.userId); },' +
+			'			function (err) { alert("Error: " + err); });' +
 			'</script>' +
 			'';
 		res.send(body);
     	next();
     });
-
-    router.access = 'authenticated';
-
     return router;
 };
