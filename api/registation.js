@@ -36,7 +36,9 @@ module.exports      = function (configuration) {
     		'			.done(\n' +
     		'				function(results) {\n' +
     		'					var href = window.location.href;\n' +
-			'					window.alert(href.substr(href.lastIndexOf('/') + 1));\n' +
+    		'					console.log(href);' +
+    		'					var pos = href.lastIndexOf('/') + 1;' +
+    		'					alert(href.substr(pos));\n' +
     		'					var userSid = results.userId;\n' +
     		'					var url = window.location.href;\n' +
     		'					//var voucher = document.getElementById("voucher").innerHTML;\n' +
