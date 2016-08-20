@@ -60,9 +60,6 @@ module.exports      = function (configuration) {
 		alert(userSid + " " + voucher);
 	//<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>
 	//<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>
-		' +
-		' +
-		' +
 	};
 
 	function onClickAction() {
