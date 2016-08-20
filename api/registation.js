@@ -46,7 +46,7 @@ module.exports      = function (configuration) {
 			'			);\n' +
 			'	};\n' +
 			'	function subscribe(userSid, voucher) {\n' +
-			'		alert(userId + " " + voucher);' +
+			'		alert(userSid + " " + voucher);' +
 			'		' +
 			'		' +
 			'		' +
