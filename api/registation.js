@@ -30,18 +30,19 @@ module.exports      = function (configuration) {
 			'	<p>Your user id is <strong><span id="userId">________________________________</span></strong>.</p>' +
 			'<script>' +
 			'	function signIn(){' +
+			'		alert("in signIn()");' +
      		'		var MobileServiceClient = WindowsAzure.MobileServiceClient;' +
      		'		var client = new MobileServiceClient("https://tertulias.azurewebsites.net", "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");' +
-    		'		client.login("google").done(' +
-    		'			function (results) {' +
-    		'				alert(results.userId);' +
-    		'				document.getElementById("userId").innerHTML = results.userId;' +
-    		'' +
-    		'' +
-    		'' +
-    		'			},' +
-    		'			function (err) { alert("Error: " + err); });' +
-			'	}' +
+    		'		client' +
+    		'			.login("google")' +
+    		'			.done(' +
+    		'				function (results) {' +
+    		'					alert(results.userId);' +
+    		'					document.getElementById("userId").innerHTML = results.userId;' +
+    		'				},' +
+    		'				function (err) { alert("Error: " + err); }' +
+    		'			);' +
+			'	};' +
 			'	signIn();' +
 			'</script>' +
 			'';
