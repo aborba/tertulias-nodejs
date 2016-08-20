@@ -36,8 +36,8 @@ module.exports      = function (configuration) {
     		'			.done(\n' +
     		'				function(results) {\n' +
     		'					var href = window.location.href;\n' +
-    		'					console.log(href);' +
-    		'					var pos = href.lastIndexOf('/') + 1;' +
+    		'					console.log(href);\n' +
+    		'					var pos = "pos/href/kjahsdkadjh".lastIndexOf('/') + 1;\n' +
     		'					alert(href.substr(pos));\n' +
     		'					var userSid = results.userId;\n' +
     		'					var url = window.location.href;\n' +
