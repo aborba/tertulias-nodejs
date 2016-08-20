@@ -36,7 +36,6 @@ module.exports      = function (configuration) {
      		'		var client = new MobileServiceClient("https://tertulias.azurewebsites.net", "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");' +
     		'		client.login("google").done(' +
     		'			function (results) {' +
-    		'				alert("You are now logged in as: " + results.userId);' +
     		'				document.getElementById("userId").innerHTML = results.userId;' +
     		'' +
     		'' +
@@ -44,7 +43,6 @@ module.exports      = function (configuration) {
     		'			},' +
     		'			function (err) { alert("Error: " + err); });' +
 			'	}' +
-			'	alert("Hello");' +
 			'	signIn();' +
 			'</script>' +
 			'';
