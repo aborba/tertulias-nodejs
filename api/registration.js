@@ -21,7 +21,7 @@ module.exports = function (configuration) {
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		var body = '' +
-			'<script src="/MobileServices.Web.min.js"></script>' +
+			'<!-- <script src="/MobileServices.Web.min.js"></script> -->' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
