@@ -33,7 +33,7 @@ module.exports      = function (configuration) {
 			'' +
 			'<script type="application/javascript">\n' +
 			'' +
-			'	function getVoucher(href)) {\n' +
+			'	function getVoucher(href) {\n' +
 			'		return href.substr(href.lastIndexOf("/") + 1);\n' +
 			'	};\n' +
 			'' +
