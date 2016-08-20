@@ -43,7 +43,8 @@ module.exports = function (configuration) {
 			'<script>' +
 			'	alert("Hello");' +
 			'	client' +
-			'		.login( "google", {"access_token": token})' +
+			// '		.login( "google", {"access_token": token})' +
+			'		.login( "google")' +
 			'		.done(function (results) {' +
      		'				alert("You are now logged in as: " + results.userId);' +
 			'			},' +
@@ -58,6 +59,6 @@ module.exports = function (configuration) {
     });
 
     router.access = 'authenticated';
-    
+
     return router;
 };
