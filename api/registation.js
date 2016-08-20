@@ -56,7 +56,7 @@ module.exports      = function (configuration) {
 			'	};\n' +
 			'</script>\n' +
 			'<script type="application/javascript">\n' +
-			'	document.getElementById("voucher").innerHTML = getVoucher();\n' +
+			'	document.getElementById("voucher").innerHTML = getVoucher(window.location.href);\n' +
 			'</script>\n' +
 			'';
 		res.send(body);
