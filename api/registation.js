@@ -1,14 +1,15 @@
-var express      = require('express'),
-	bodyParser   = require('body-parser'),
-    // authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
-    authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
+var express         = require('express'),
+	bodyParser      = require('body-parser');
+// var authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
+//     authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
 
-var sql          = require('mssql'),
-	util         = require('../util');
+var sql             = require('mssql'),
+	util            = require('../util');
 
-module.exports = function (configuration) {
-    var router = express.Router(),
-    authenticate = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration);
+module.exports      = function (configuration) {
+    var router      = express.Router(),
+    authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
+    authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
 	    if (err) {
@@ -32,10 +33,15 @@ module.exports = function (configuration) {
 			'	<p>Your voucher number is <strong>' + voucher + '</strong>.</p>' +
 			'	<p>Your user id is <strong>' + '</strong>.</p>' +
 			'<script>' +
+			'	function signIn(){' +
+     		'		var MobileServiceClient = WindowsAzure.MobileServiceClient;' +
+     		'		var client = new MobileServiceClient("https://thehome.azurewebsites.net", "xxxx");' +
+    		'		client.login("google").done(' +
+    		'			function (results) { alert("You are now logged in as: " + results.userId); },' +
+    		'			function (err) { alert("Error: " + err); });' +
+			'	}' +
 			'	alert("Hello");' +
-			'	client.login("google")' +
-			'		.done(function (results) {alert("You are now logged in as: " + results.userId); },' +
-			'			function (err) { alert("Error: " + err); });' +
+			'	signIn();' +
 			'</script>' +
 			'';
 		res.send(body);
