@@ -26,10 +26,13 @@ module.exports      = function (configuration) {
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>\n' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
-			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong> and it is valid to subscribe to tertulia <span id="tertulia">______________</span>.</p>\n' +
-			'	<p>Your user id is <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
+			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>\n' +
 			'	<p>Press the button bellow to authenticate with your authentication provider and to subscribe to the tertulia.</p>\n' +
-			'	<button onclick="signInAndSubscribe()">Subscribe</button>' +
+			'	<p/>\n' +
+			'	<button onclick="onClickAction()">Subscribe</button>' +
+			'	<p/>\n' +
+			'	<p id="userIdMessage"></p>\n' +
+			'	<p id="tertuliaMessage"></p>\n' +
 			'' +
 			'<script type="application/javascript">\n' +
 			'' +
@@ -45,6 +48,7 @@ module.exports      = function (configuration) {
 			'				function(results) {\n' +
 			'					var userSid = results.userId;\n' +
 			'					var voucher = getVoucher(window.location.href);\n' +
+			'					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>."' +
 			'					subscribe(userSid, voucher);\n' +
 			'				},\n' +
 			'				function(err) { alert("Error: " + err); }\n' +
@@ -54,12 +58,14 @@ module.exports      = function (configuration) {
 			'	function subscribe(userSid, voucher) {\n' +
 			'		document.getElementById("userId").innerHTML = userSid;\n' +
 			'		alert(userSid + " " + voucher);' +
+			'	<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
+			'	<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
 			'		' +
 			'		' +
 			'		' +
 			'	};\n' +
 			'' +
-			'	function action() {\n' +
+			'	function onClickAction() {\n' +
 			'		signInAndSubscribe(getVoucher(window.location.href))' +
 			'	};\n' +
 			'' +
