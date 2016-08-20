@@ -57,7 +57,7 @@ module.exports      = function (configuration) {
 			'' +
 			'	function subscribe(userSid, voucher) {\n' +
 			'		document.getElementById("userId").innerHTML = userSid;\n' +
-			'		alert(userSid + " " + voucher);' +
+			'		alert(userSid + " " + voucher);\n' +
 			'	//<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
 			'	//<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
 			'		' +
