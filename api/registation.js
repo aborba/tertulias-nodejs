@@ -23,7 +23,7 @@ module.exports = function (configuration) {
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		console.log(voucher);
-		console.log(userSid);
+		console.log(req.azureMobile.user);
 		var body = '' +
 			'<!-- <script src="/MobileServices.Web.min.js"></script> -->' +
 			'<h1>Tertulias</h1>\n' +
