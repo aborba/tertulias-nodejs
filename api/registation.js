@@ -20,6 +20,8 @@ module.exports = function (configuration) {
 		console.log('in GET /private_invitation/:voucher');
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
+		console.log(voucher);
+		console.log(userSid);
 		var body = '' +
 			'<!-- <script src="/MobileServices.Web.min.js"></script> -->' +
 			'<h1>Tertulias</h1>\n' +
@@ -34,6 +36,7 @@ module.exports = function (configuration) {
 			'			function (err) { alert("Error: " + err); });' +
 			'</script>' +
 			'';
+		console.log(body);
 		res.send(body);
     	next();
     });
