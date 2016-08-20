@@ -26,10 +26,12 @@ module.exports      = function (configuration) {
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>\n' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
-			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>\n' +
+			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong> and it is valid to subscribe to tertulia <span id="tertulia">______________</span>.</p>\n' +
 			'	<p>Your user id is <strong><span id="userId">____________________________________</span></strong>.</p>\n' +
+			'	<p>Press the button bellow to authenticate with your authentication provider and to subscribe to the tertulia.</p>\n' +
+			'	<button onclick="signIn(subscribe)">Subscribe</button>' +
 			'<script type="application/javascript">\n' +
-			'	function signIn(subscribe) {\n' +
+			'	function signIn(continuation) {\n' +
 			'		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",\n' +
 			'				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")\n' +
 			'			.login("google")\n' +
@@ -38,7 +40,7 @@ module.exports      = function (configuration) {
 			'					var href = window.location.href;\n' +
 			'					var voucher = href.substr(href.lastIndexOf("/") + 1);\n' +
 			'					var userSid = results.userId;\n' +
-			'					subscribe(userSid, voucher);\n' +
+			'					continuation(userSid, voucher);\n' +
 			'					document.getElementById("voucher").innerHTML = voucher;\n' +
 			'					document.getElementById("userId").innerHTML = userSid;\n' +
 			'				},\n' +
@@ -51,9 +53,6 @@ module.exports      = function (configuration) {
 			'		' +
 			'		' +
 			'	};\n' +
-			'</script>\n' +
-			'<script type="application/javascript">' +
-			'	signIn(subscribe);\n' +
 			'</script>\n' +
 			'';
 		res.send(body);
