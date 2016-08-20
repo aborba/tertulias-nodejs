@@ -63,7 +63,7 @@ module.exports      = function (configuration) {
 	};
 
 	function onClickAction() {
-		signInAndSubscribe(getVoucher(window.location.href))' +
+		signInAndSubscribe(getVoucher(window.location.href))
 	};
 
 </script>
