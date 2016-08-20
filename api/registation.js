@@ -37,7 +37,7 @@ module.exports      = function (configuration) {
 			'		return href.substr(href.lastIndexOf("/") + 1);\n' +
 			'	};\n' +
 			'' +
-			'	function signInAndSubscribe(continuation) {\n' +
+			'	function signInAndSubscribe(voucher) {\n' +
 			'		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",\n' +
 			'				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")\n' +
 			'			.login("google")\n' +
@@ -57,6 +57,10 @@ module.exports      = function (configuration) {
 			'		' +
 			'		' +
 			'		' +
+			'	};\n' +
+			'' +
+			'	function action() {\n' +
+			'		signInAndSubscribe(getVoucher(window.location.href))' +
 			'	};\n' +
 			'' +
 			'</script>\n' +
