@@ -35,7 +35,7 @@ module.exports      = function (configuration) {
     		'			.login("google")\n' +
     		'			.done(\n' +
     		'				function(results) {\n' +
-    		'var href = $(this).attr("href");'+
+    		'var href = window.location.href;'+
 			'window.alert(href.substr(href.lastIndexOf('/') + 1));' +
     		'					var userSid = results.userId;\n' +
     		'					var url = window.location.href;\n' +
