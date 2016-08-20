@@ -28,9 +28,9 @@ module.exports      = function (configuration) {
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
 			'	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>\n' +
 			'	<p>Press the button bellow to authenticate with your authentication provider and to subscribe to the tertulia.</p>\n' +
-			'	<p/>\n' +
-			'	<button onclick="onClickAction()">Subscribe</button>' +
-			'	<p/>\n' +
+			'\n' +
+			'	<button onclick="onClickAction()">Subscribe</button>\n' +
+			'\n' +
 			'	<p id="userIdMessage"></p>\n' +
 			'	<p id="tertuliaMessage"></p>\n' +
 			'' +
