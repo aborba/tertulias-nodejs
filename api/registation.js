@@ -38,9 +38,9 @@ module.exports      = function (configuration) {
 			'					var href = window.location.href;\n' +
 			'					var voucher = href.substr(href.lastIndexOf("/") + 1);\n' +
 			'					var userSid = results.userId;\n' +
+			'					subscribe(userSid, voucher);\n' +
 			'					document.getElementById("voucher").innerHTML = voucher;\n' +
 			'					document.getElementById("userId").innerHTML = userSid;\n' +
-			'					subscribe(userSid, voucher);\n' +
 			'				},\n' +
 			'				function(err) { alert("Error: " + err); }\n' +
 			'			);\n' +
