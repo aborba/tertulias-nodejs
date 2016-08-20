@@ -35,7 +35,7 @@ module.exports      = function (configuration) {
 			'<script>' +
 			'	function signIn(){' +
      		'		var MobileServiceClient = WindowsAzure.MobileServiceClient;' +
-     		'		var client = new MobileServiceClient("https://thehome.azurewebsites.net", "xxxx");' +
+     		'		var client = new MobileServiceClient("https://tertulias.azurewebsites.net", "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");' +
     		'		client.login("google").done(' +
     		'			function (results) { alert("You are now logged in as: " + results.userId); },' +
     		'			function (err) { alert("Error: " + err); });' +
