@@ -1,5 +1,4 @@
 var express         = require('express'),
-	fs				= require('fs'),
 	bodyParser      = require('body-parser');
 
 var sql             = require('mssql'),
@@ -8,6 +7,7 @@ var sql             = require('mssql'),
 module.exports      = function (configuration) {
 	var router      = express.Router(),
 	authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
+	fs				= require('fs'),
 	authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
