@@ -35,8 +35,8 @@ module.exports      = function (configuration) {
     		'			.login("google")\n' +
     		'			.done(\n' +
     		'				function(results) {\n' +
-    		'var href = window.location.href;'+
-			'window.alert(href.substr(href.lastIndexOf('/') + 1));' +
+    		'					var href = window.location.href;\n' +
+			'					window.alert(href.substr(href.lastIndexOf('/') + 1));\n' +
     		'					var userSid = results.userId;\n' +
     		'					var url = window.location.href;\n' +
     		'					//var voucher = document.getElementById("voucher").innerHTML;\n' +
