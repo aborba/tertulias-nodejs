@@ -1,13 +1,14 @@
 var express      = require('express'),
 	bodyParser   = require('body-parser'),
-    authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
+    // authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
     authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
 
 var sql          = require('mssql'),
 	util         = require('../util');
 
 module.exports = function (configuration) {
-    var router = express.Router();
+    var router = express.Router(),
+    authenticate = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration);
 
 	var completeError = function(err, res) {
 	    if (err) {
@@ -16,8 +17,9 @@ module.exports = function (configuration) {
 	    }
 	};
 
-    router.get('/:voucher', (req, res, next) => {
+    router.get('/:voucher', authenticate, (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
+		console.log(configuration);
 		var voucher = req.params.voucher;
 		var userSid = 'req.azureMobile.user.id';
 		console.log(voucher);
