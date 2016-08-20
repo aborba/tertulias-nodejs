@@ -20,7 +20,7 @@ module.exports      = function (configuration) {
 		console.log('in GET /private_invitation/:voucher');
 		console.log(configuration);
 		var voucher = req.params.voucher;
-		var userSid = req.azureMobile.user.id;
+		var userSid = 'req.azureMobile.user.id';
 		console.log(voucher);
 		console.log(req.azureMobile.user);
 		var body = '' +
