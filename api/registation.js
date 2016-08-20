@@ -22,7 +22,7 @@ module.exports      = function (configuration) {
 		console.log(configuration);
 		var voucher = req.params.voucher;
 		console.log(voucher);
-		fs.readfile('./body.html', function(result) {
+		fs.readfile('body.html', function(result) {
 			res.send(result);
 			next();
 		});
