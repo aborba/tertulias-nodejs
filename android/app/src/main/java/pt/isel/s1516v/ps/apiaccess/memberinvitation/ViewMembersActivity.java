@@ -37,15 +37,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ui.VmUiManager;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
-import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 
 public class ViewMembersActivity extends Activity implements TertuliasApi {
@@ -59,8 +55,9 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     private VmUiManager uiManager;
     private ApiLinks apiLinks;
     private ContactListItem[] contacts;
+    private ApiMemberBundle members;
 
-    private ContactsArrayAdapter viewAdapter;
+    private MembersArrayAdapter viewAdapter;
 
     // region Activity Lifecycle
 
@@ -77,10 +74,15 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
                 R.string.title_activity_view_members,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        viewAdapter = new ContactsArrayAdapter(this, contacts != null ? contacts : new ContactListItem[0]);
+        viewAdapter = new MembersArrayAdapter(this, members != null ? members.members : new ApiMember[0]);
         Util.setupAdapter(this, (RecyclerView) uiManager.getView(VmUiManager.UIRESOURCE.RECYCLE), viewAdapter);
 
         handleIntent(getIntent());
+
+        if (members != null)
+            uiManager.set(members.members);
+        else
+            refreshDataAndViews();
     }
 
     @Override
@@ -92,7 +94,6 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
         int id = item.getItemId();
         switch (item.getItemId()) {
             default:
-                Util.longSnack(findViewById(android.R.id.content), R.string.new_tertulia_toast_cancel);
                 onBackPressed();
         }
         return super.onOptionsItemSelected(item);
@@ -103,16 +104,20 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     }
 
     public void onClickInviteContacts(View view) {
+        if (members == null) {
+            Util.longSnack(uiManager.getRootView(), R.string.main_activity_routes_undefined);
+            return;
+        }
         Log.d("trt", "in onClickSubmitMembers");
         Intent intent = new Intent(this, SearchContactsActivity.class);
-        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(apiLinks.get())));
+        intent.putExtra(SearchContactsActivity.INTENT_LINKS, new ApiLinks(members.links));
         startActivityForResult(intent, SearchContactsActivity.ACTIVITY_REQUEST_CODE);
     }
 
     public void onClickEditMembers(View view) {
         Log.d("trt", "in onClickEditMembers");
         Intent intent = new Intent(this, SearchContactsActivity.class);
-        intent.putParcelableArrayListExtra(SearchContactsActivity.INTENT_LINKS, new ArrayList<ApiLink>(Arrays.asList(apiLinks.get())));
+        intent.putExtra(SearchContactsActivity.INTENT_LINKS, apiLinks);
         startActivityForResult(intent, SearchContactsActivity.ACTIVITY_REQUEST_CODE);
     }
 
@@ -127,8 +132,8 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
 
     private void refreshDataAndViews() {
         MobileServiceClient cli = Util.getMobileServiceClient(this);
-        ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(apiLinks.getRoute(LINK_SELF), null, apiLinks.getMethod(LINK_SELF), null);
-        Futures.addCallback(rTertuliasFuture, new MembersPresentation());
+        ListenableFuture<JsonElement> future = cli.invokeApi(apiLinks.getRoute(LINK_MEMBERS), null, apiLinks.getMethod(LINK_MEMBERS), null);
+        Futures.addCallback(future, new MembersPresentation());
     }
 
     // endregion
@@ -140,10 +145,8 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     // region Private Methods
 
     private void handleIntent(Intent intent) {
-        if (intent.hasExtra(INTENT_LINKS)) {
-            ApiLink[] links = Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class);
-            apiLinks = new ApiLinks(links);
-        }
+        if (intent.hasExtra(INTENT_LINKS))
+            apiLinks = intent.getParcelableExtra(INTENT_LINKS);
     }
 
     private void restoreInstanceState(Bundle savedInstanceState) {
@@ -160,16 +163,17 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     private class MembersPresentation implements FutureCallback<JsonElement> {
         @Override
         public void onSuccess(JsonElement result) {
-            new AsyncTask<JsonElement, Void, ContactListItem[]>() {
+            new AsyncTask<JsonElement, Void, ApiMemberBundle>() {
                 @Override
-                protected ContactListItem[] doInBackground(JsonElement... params) {
-                    ContactListItem[] contacts = new Gson().fromJson(params[0], ContactListItem[].class);
-                    return contacts;
+                protected ApiMemberBundle doInBackground(JsonElement... params) {
+                    ApiMemberBundle members = new Gson().fromJson(params[0], ApiMemberBundle.class);
+                    return members;
                 }
 
                 @Override
-                protected void onPostExecute(ContactListItem[] contacts) {
-                    uiManager.set(contacts);
+                protected void onPostExecute(ApiMemberBundle membersBundle) {
+                    members = membersBundle;
+                    uiManager.set(members.members);
                 }
             }.execute(result);
         }

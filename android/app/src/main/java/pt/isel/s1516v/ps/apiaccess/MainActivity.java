@@ -216,8 +216,8 @@ public class MainActivity extends Activity implements TertuliasApi {
         });
     }
 
-    private void updateStatusAlert(Boolean isLogin, int alertMessage) {
-        Util.longSnack(findViewById(android.R.id.content), alertMessage);
+    private void updateStatusAlert(int alertMessage) {
+        Util.longSnack(uiManager.getRootView(), alertMessage);
     }
 
     private void request(Context ctx, String route, String httpMethod, FutureCallback<JsonElement> callback) {
@@ -296,7 +296,7 @@ public class MainActivity extends Activity implements TertuliasApi {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    updateStatusAlert(LoginStatus.SIGNED_IN, R.string.main_activity_logout_failed_message);
+                    updateStatusAlert(R.string.main_activity_logout_failed_message);
                     if (authorizationCallback != null) {
                         Util.logd("Proceeding failure on next callback");
                         authorizationCallback.onFailure(t);
@@ -373,7 +373,7 @@ public class MainActivity extends Activity implements TertuliasApi {
 
                     @Override
                     public void onFailure(Throwable e) {
-                        updateStatusAlert(LoginStatus.SIGNED_IN, R.string.main_activity_logout_failed_message);
+                        updateStatusAlert(R.string.main_activity_logout_failed_message);
                     }
                 }
         );

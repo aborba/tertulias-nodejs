@@ -34,6 +34,7 @@ import java.util.Locale;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.TertuliaDetailsActivity;
 
 public class TertuliasArrayAdapter extends RecyclerView.Adapter<TertuliasArrayAdapter.ViewHolder> {
@@ -112,9 +113,10 @@ public class TertuliasArrayAdapter extends RecyclerView.Adapter<TertuliasArrayAd
                     Util.longSnack(view, R.string.activity_list_tertulias_toast_no_details);
                     return;
                 }
+                ApiLinks apiLinks = new ApiLinks(holder.links);
                 Intent intent = new Intent(ctx, TertuliaDetailsActivity.class);
                 intent.putExtra(TertuliaDetailsActivity.SELF_LINK, selectedLink);
-                intent.putExtra(TertuliaDetailsActivity.INTENT_LINKS, holder.links);
+                intent.putExtra(TertuliaDetailsActivity.INTENT_LINKS, apiLinks);
                 ctx.startActivityForResult(intent, TertuliaDetailsActivity.ACTIVITY_REQUEST_CODE);
             }
         });

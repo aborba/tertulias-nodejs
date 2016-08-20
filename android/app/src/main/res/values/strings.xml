@@ -302,7 +302,7 @@
     <string name="activity_list_tertulias_toast_no_details">Details not available.</string>
 
     <string name="title_activity_view_members">View Members</string>
-    <string name="view_member_invitations_button">Invitations</string>
+    <string name="view_member_invitations_button">Invite</string>
     <string name="view_member_edit_button">Edit</string>
     <string name="view_member_cancel_button">Cancel</string>
 

@@ -63,7 +63,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
+import com.microsoft.windowsazure.mobileservices.http.HttpConstants;
+import com.microsoft.windowsazure.mobileservices.http.MobileServiceHttpClient;
+import com.microsoft.windowsazure.mobileservices.http.NextServiceFilterCallback;
 import com.microsoft.windowsazure.mobileservices.http.OkHttpClientFactory;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
+import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 import com.squareup.okhttp.OkHttpClient;
 
 import java.io.IOException;
@@ -73,14 +79,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import pt.isel.s1516v.ps.apiaccess.FutureCallback2;
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.flow.Futurizable;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ViewMembersActivity;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiError;
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiGoogleCredentials;
 import pt.isel.s1516v.ps.apiaccess.support.remote.JwtPayload;
 
 public class Util {
@@ -147,7 +157,73 @@ public class Util {
                 screenOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
                 break;
         }
-        ((Activity)ctx).setRequestedOrientation(screenOrientation);
+        ((Activity) ctx).setRequestedOrientation(screenOrientation);
+    }
+
+    // region Token
+
+    public static void refreshToken(final Context ctx, final View rootView, final Futurizable<JsonElement> future, final FutureCallback<JsonElement> futureCallback) {
+
+        ServiceFilter serviceFilter = new ServiceFilter() {
+            @Override
+            public ListenableFuture handleRequest(ServiceFilterRequest request, NextServiceFilterCallback next) {
+                //request.addHeader("X-Custom-Header", "Header Value");
+
+                ListenableFuture nextFuture = next.onNext(request);
+                Futures.addCallback(
+                        nextFuture,
+                        new FutureCallback() {
+
+                            @Override
+                            public void onSuccess(Object response) {
+                                if (response != null) {
+                                    String content = ((ServiceFilterResponse)response).getContent();
+                                    if (content != null) {
+                                        ApiGoogleCredentials credentials = new Gson().fromJson(content, ApiGoogleCredentials.class);
+                                        Util.setCredentials(ctx, credentials);
+                                        Util.cacheCredentialsAsync(ctx, credentials);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t) {
+                                Util.longSnack(rootView, t.getMessage());
+                                Util.logd("ServiceFilter on refresh token failed");
+                                Util.logd(t.getMessage());
+                            }
+                        }
+                );
+                return nextFuture;
+            }
+        };
+
+        MobileServiceClient cli = Util.getMobileServiceClient(ctx).withFilter(serviceFilter);
+        MobileServiceHttpClient httpClient = new MobileServiceHttpClient(cli);
+        String path = "/.auth/refresh";
+        byte[] content = null;
+        String httpMethod = HttpConstants.GetMethod;
+        List<Pair<String, String>> requestHeaders = null; // new LinkedList<>();
+        List<Pair<String, String>> parameters = new LinkedList<>();
+        parameters.add(new Pair<>("access_type", "offline"));
+        ListenableFuture<ServiceFilterResponse> serviceFilterResponseListenableFuture = httpClient.request(path, content, httpMethod, requestHeaders, parameters);
+        Futures.addCallback(
+                serviceFilterResponseListenableFuture,
+                new FutureCallback<ServiceFilterResponse>() {
+
+                    @Override
+                    public void onSuccess(ServiceFilterResponse result) {
+                        Util.logd(result.toString());
+                        Futures.addCallback(future.getFuture(), futureCallback);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Util.logd(t.getMessage());
+                        Util.longSnack(rootView, t.getMessage());
+                    }
+                }
+        );
     }
 
     public static String getAuthenticationToken(MobileServiceClient cli) {
@@ -169,9 +245,11 @@ public class Util {
             case 0:
                 break;
             case 2:
-                jwt += "=="; break;
+                jwt += "==";
+                break;
             case 3:
-                jwt += "="; break;
+                jwt += "=";
+                break;
             default:
                 throw new IllegalArgumentException("Invalid base64url string.");
         }
@@ -182,15 +260,25 @@ public class Util {
         Long expirationTimeInMillis = expirationTime.getTime();
         Long currentTimeInMillis = currentTime.getTime();
         Long currentTimeOutInMillis = currentTimeInMillis - withinMillis;
-        Date currentTimeOut = new Date(currentTimeOutInMillis);
         boolean result = expirationTimeInMillis > currentTimeOutInMillis;
         Util.logd(String.format(Locale.getDefault(), "Expiration: %s\nCurrent: %s", expirationTime.toString(), currentTime.toString()));
         return result;
     }
 
+    public static boolean isCurrentTokenValid(Context ctx, long withinMillis) {
+        String token = getMobileServiceClient(ctx).getCurrentUser().getAuthenticationToken();
+        return isTokenValid(token, withinMillis);
+    }
+
+    public static boolean isCurrentTokenValid(Context ctx) {
+        return isCurrentTokenValid(ctx, 0);
+    }
+
+    // endregion
+
     public static void unlockOrientation(Context ctx) {
         Util.logd("Unlocking screen orientation");
-        ((Activity)ctx).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        ((Activity) ctx).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     public static boolean isJson(String str) {
@@ -381,7 +469,7 @@ public class Util {
 
     private static boolean isJsonArray(String str) {
         if (!isMatch(str, "[", "]")) return false;
-        String subStr = str.substring(1, str.length()-1);
+        String subStr = str.substring(1, str.length() - 1);
         return isJsonObject(subStr) || !subStr.contains(":");
     }
 
@@ -432,6 +520,10 @@ public class Util {
         cacheCredentials(ctx, user.getUserId(), user.getAuthenticationToken());
     }
 
+    public static void cacheCredentials(Context ctx, ApiGoogleCredentials credentials) {
+        cacheCredentials(ctx, credentials.getUserSid(), credentials.getToken());
+    }
+
     public static void clearCachedCredentials(Context ctx) {
         cacheCredentials(ctx, null, null);
     }
@@ -474,6 +566,10 @@ public class Util {
         cacheCredentialsAsync(ctx, user.getUserId(), user.getAuthenticationToken());
     }
 
+    public static void cacheCredentialsAsync(Context ctx, ApiGoogleCredentials credentials) {
+        cacheCredentialsAsync(ctx, credentials.getUserSid(), credentials.getToken());
+    }
+
     public static void clearCachedCredentialsAsync(Context ctx) {
         cacheCredentialsAsync(ctx, null, null);
     }
@@ -492,6 +588,17 @@ public class Util {
         }.execute(ctx);
     }
 
+    public static void setCredentials(Context ctx, String user, String token) {
+        MobileServiceClient cli = getMobileServiceClient(ctx);
+        MobileServiceUser msu = new MobileServiceUser(user);
+        msu.setAuthenticationToken(token);
+        cli.setCurrentUser(msu);
+    }
+
+    public static void setCredentials(Context ctx, ApiGoogleCredentials credentials) {
+        setCredentials(ctx, credentials.getUserSid(), credentials.getToken());
+    }
+
     private static final String SHARED_PREFS_FILE = "tertulias_access";
     private static final String USERID_PREF = "userid";
     private static final String TOKEN_PREF = "token";
@@ -503,6 +610,18 @@ public class Util {
         for (int i = 0; i < tertulias.length; i++)
             names[i] = tertulias[i].name.toLowerCase().trim();
         return names;
+    }
+
+    public static ApiError getApiError(Throwable t) {
+        return new Gson().fromJson(t.getMessage(), ApiError.class);
+    }
+
+    public static int getApiErrorCode(Throwable t) {
+        return getApiError(t).code;
+    }
+
+    public static boolean isApiError(Throwable t, int code) {
+        return getApiErrorCode(t) == code;
     }
 
 }

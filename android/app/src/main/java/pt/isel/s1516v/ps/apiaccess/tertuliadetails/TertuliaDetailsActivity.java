@@ -38,7 +38,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.flow.Futurizable;
+import pt.isel.s1516v.ps.apiaccess.flow.GetData;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
@@ -83,7 +86,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 R.string.title_activity_tertulia_details,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        apiLinks = new ApiLinks(Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class));
+//        apiLinks = new ApiLinks(Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class));
+        apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
 
         if (tertulia != null)
             uiManager.set(tertulia);
@@ -127,7 +131,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     private void refreshDataAndViews() {
         MobileServiceClient cli = Util.getMobileServiceClient(this);
         ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(apiLinks.getRoute(LINK_SELF), null, apiLinks.getMethod(LINK_SELF), null);
-        Futures.addCallback(rTertuliasFuture, new TertuliaPresentation());
+        Futures.addCallback(rTertuliasFuture, new TertuliaPresentation(false));
     }
 
     public void onClickMapLookup(View view) {
@@ -166,11 +170,7 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                     .show();
             return;
         }
-        ApiLink[] apiLinks = Util.extractParcelableArray(getIntent(), INTENT_LINKS, ApiLink.class);
-        if (apiLinks == null) {
-            Util.longSnack(view, R.string.tertulia_details_undefined_links);
-            return;
-        }
+        ApiLinks apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
         Intent intent = new Intent(this, EditTertuliaActivity.class);
         intent.putExtra(EditTertuliaActivity.INTENT_LINKS, apiLinks);
         intent.putExtra(EditTertuliaActivity.INTENT_TERTULIA, tertulia);
@@ -179,8 +179,9 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public void onClickSubmitMembers(View view) {
         Log.d("trt", "in onClickSubmitMembers");
+        ApiLinks apiLinks = new ApiLinks(tertulia.links);
         Intent intent = new Intent(this, ViewMembersActivity.class);
-        Util.insertParcelableArray(intent, ViewMembersActivity.INTENT_LINKS, tertulia.links);
+        intent.putExtra(ViewMembersActivity.INTENT_LINKS, apiLinks);
         startActivity(intent);
     }
 
@@ -300,6 +301,12 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     private class TertuliaPresentation implements FutureCallback<JsonElement> {
+        private final boolean isRetry;
+
+        public TertuliaPresentation(boolean isRetry) {
+            this.isRetry = isRetry;
+        }
+
         @Override
         public void onSuccess(JsonElement result) {
             new AsyncTask<JsonElement, Void, TertuliaEdition>() {
@@ -339,9 +346,17 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         }
 
         @Override
-        public void onFailure(Throwable e) {
+        public void onFailure(Throwable t) {
             Context ctx = TertuliaDetailsActivity.this;
-            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
+            // TODO: Refresh token
+            if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
+                Util.longSnack(uiManager.getRootView(), R.string.main_activity_token_expired);
+                MobileServiceClient cli = Util.getMobileServiceClient(ctx);
+                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks);
+                Util.refreshToken(ctx, uiManager.getRootView(), future, new TertuliaPresentation(true));
+                return;
+            }
+            Util.longSnack(uiManager.getRootView(), t.getMessage());
         }
     }
 }

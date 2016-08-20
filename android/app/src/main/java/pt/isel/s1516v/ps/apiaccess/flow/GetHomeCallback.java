@@ -55,13 +55,16 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
 import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
 
 public class GetHomeCallback implements FutureCallback<JsonElement> {
-    final Context ctx;
-    final MaUiManager uiManager;
-    final String rel;
-    final Futurizable<JsonElement> future;
-    final FutureCallback<JsonElement> futureCallback;
-    final boolean isRetry;
-    final View rootView;
+
+    private final static String API_ROOT_END_POINT = "/";
+
+    private final Context ctx;
+    private final MaUiManager uiManager;
+    private final String rel;
+    private final Futurizable<JsonElement> future;
+    private final FutureCallback<JsonElement> futureCallback;
+    private final boolean isRetry;
+    private final View rootView;
 
     public GetHomeCallback(Context ctx, MaUiManager uiManager, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, boolean isRetry) {
         this.ctx = ctx;
@@ -96,95 +99,17 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
 
     @Override
     public void onFailure(Throwable t) {
-        String message = t.getMessage();
-        ApiError error = new Gson().fromJson(t.getMessage(), ApiError.class);
-        String token = Util.getMobileServiceClient(ctx).getCurrentUser().getAuthenticationToken();
-        boolean isTokenValid = Util.isTokenValid(token, 0);
-        if (! isRetry && error.code == 401 && ! isTokenValid) {
+        // TODO: Refresh token
+        if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
             Util.longSnack(rootView, R.string.main_activity_token_expired);
-            refreshToken(ctx, uiManager, future, futureCallback);
+            GetData<JsonElement> getHome = new GetData<>(ctx, MainActivity.API_ROOT_END_POINT, null);
+            GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, uiManager, null, future, futureCallback, true);
+            Util.refreshToken(ctx, uiManager.getRootView(), getHome, getHomeCallback);
             return;
         }
         uiManager.hideProgressBar();
-        Util.longSnack(rootView, message);
+        Util.longSnack(rootView, t.getMessage());
         futureCallback.onFailure(t);
-        return;
-    }
-
-    private void refreshToken(final Context ctx, final MaUiManager uiManager, final Futurizable<JsonElement> future, final FutureCallback<JsonElement> futureCallback) {
-
-        ServiceFilter filter = new ServiceFilter() {
-            @Override
-            public ListenableFuture handleRequest(ServiceFilterRequest request, NextServiceFilterCallback next) {
-
-                //request.addHeader("X-Custom-Header", "Header Value");
-                Util.logd(request.getUrl());
-
-                ListenableFuture responseFuture = next.onNext(request);
-                Futures.addCallback(responseFuture, new FutureCallback() {
-                    @Override
-                    public void onFailure(Throwable exception) {
-                        Util.logd(exception.getMessage());  // Example: Logging an error
-                    }
-
-                    @Override
-                    public void onSuccess(Object response) {
-                        if (response != null && ((ServiceFilterResponse)response).getContent() != null) {
-                            String content = ((ServiceFilterResponse)response).getContent();
-                            ApiGoogleCredentials credentials = new Gson().fromJson(content, ApiGoogleCredentials.class);
-                            Util.cacheCredentials(ctx, credentials.getUserSid(), credentials.token);
-                            MobileServiceClient cli = Util.getMobileServiceClient(ctx);
-                            MobileServiceUser user = new MobileServiceUser(credentials.getUserSid());
-                            user.setAuthenticationToken(credentials.token);
-                            cli.setCurrentUser(user);
-                        }
-                    }
-
-                });
-
-                return responseFuture;
-            }
-        };
-
-        uiManager.hideProgressBar();
-        MobileServiceClient cli = Util.getMobileServiceClient(ctx).withFilter(filter);
-        String token = cli.getCurrentUser().getAuthenticationToken();
-        if (token != null)
-            Util.logd(token);
-        MobileServiceHttpClient httpClient = new MobileServiceHttpClient(cli);
-
-        String path = "/.auth/refresh";
-        byte[] content = null;
-        String httpMethod = HttpConstants.GetMethod;
-        List<Pair<String, String>> requestHeaders = new LinkedList<>();
-        List<Pair<String, String>> parameters = new LinkedList<>();
-            parameters.add(new Pair<>("access_type", "offline"));
-        EnumSet<MobileServiceFeatures> features = null;
-
-        ListenableFuture<ServiceFilterResponse> nextFuture = httpClient.request(path, content, httpMethod, requestHeaders, parameters);
-        Futures.addCallback(nextFuture, new FutureCallback<ServiceFilterResponse>() {
-            @Override
-            public void onFailure(Throwable exception) {
-                uiManager.hideProgressBar();
-                Util.logd(exception.getMessage());
-                Context ctx = TertuliasApplication.getApplication();
-                MobileServiceClient cli = Util.getMobileServiceClient(ctx);
-                cli.setCurrentUser(null);
-                Futures.addCallback(
-                        cli.login(MobileServiceAuthenticationProvider.Google),
-                        new AuthorizationCallback(ctx, uiManager, null, null)
-                );
-            }
-
-            @Override
-            public void onSuccess(ServiceFilterResponse result) {
-                uiManager.hideProgressBar();
-                Util.logd(result.toString());
-                GetData<JsonElement> getHome = new GetData<>(ctx, MainActivity.API_ROOT_END_POINT, null);
-                GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, uiManager, null, future, futureCallback, true);
-                Futures.addCallback(getHome.getFuture(), getHomeCallback);
-            }
-        });
     }
 
 }

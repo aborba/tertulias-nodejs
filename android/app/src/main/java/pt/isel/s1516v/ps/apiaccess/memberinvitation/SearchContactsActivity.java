@@ -45,10 +45,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -103,9 +100,7 @@ public class SearchContactsActivity extends Activity
         viewAdapter = new ContactsArrayAdapter(this, contacts != null ? contacts : new ContactListItem[0]);
         Util.setupAdapter(this, recyclerView, viewAdapter);
 
-        Object[] objects = getIntent().getParcelableArrayListExtra(INTENT_LINKS).toArray();
-        ApiLink[] apiLinksArray = Arrays.copyOf(objects, objects.length, ApiLink[].class);
-        apiLinks = new ApiLinks(apiLinksArray);
+        apiLinks = getIntent().getParcelableExtra(INTENT_LINKS);
 
         handleIntent(getIntent());
 
@@ -235,8 +230,12 @@ public class SearchContactsActivity extends Activity
         public void onSuccess(JsonElement result) {
             Util.logd("Aquisition of invitation vouchers succeeded");
             JsonArray jsonArray = result.getAsJsonObject().get("vouchers").getAsJsonArray();
-            for (int i = 0; i < jsonArray.size(); i++)
-                selectedContacts[i].vaucher = jsonArray.get(i).getAsJsonObject().get("voucher").getAsString();
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject item = jsonArray.get(i).getAsJsonObject();
+                selectedContacts[i].vaucher = item.get("voucher").getAsString();
+                selectedContacts[i].tertulia = item.get("tertulia").getAsString();
+                selectedContacts[i].subject = item.get("subject").getAsString();
+            }
             sendEmail(selectedContacts);
             setResult(RESULT_OK);
             finish();
@@ -258,22 +257,24 @@ public class SearchContactsActivity extends Activity
     // region Private Methods
 
     private void sendEmail(ContactSelected[] contacts) {
-        String baseUri = "http://tertulias.azure.net/private_invitations/";
-        String subject = "Invitation to join a Tertulia";
+        if (contacts == null || contacts.length == 0)
+            return;
+        String baseUri = "http://tertulias.azurewebsites.net/private_invitation/";
+        String subject = "Invitation to join a Tertulia: " + contacts[0].tertulia;
+        // TODO: Strings
         String messageTemplate =
                 "Dear %s,\n" +
-                "This is an invitation for you to join a Tertulia, sent on behalf of " + "[MEMBER]" + ".\n" +
-                "The Tertulia is about " + "[SUBJECT]" + " and occurs " + "[SCHEDULE]" + ".\n" +
-                "In order to join in, please subscribe on the following link:\n" +
+                "This is an invitation for you to join Tertulia %s.\n" +
+                "The Tertulia is about %s.\n" +
+                "In order to join, please subscribe on the following link:\n" +
                 "<%s>\n" +
                 "and download the app at:\n" +
                 " - Android: " + "\n" +
                 "\nThis invitation is private and is valid for one month for a single subscription.\n" +
-                "\nIf you do not wish to subscribe online, you may subscribe using the app itself.\n" +
-                "Should you have any questions, please don't hesitate to contact us at <mailto://geral@gransingular.pt>.\n" +
-                "\nKind regards,\nAntónio Borba\n(The Tertulias Team)";
+                "Should you have any questions, please don't hesitate to contact the service provider at <mailto://antonio_borba@hotmail.com>.\n" +
+                "\nSee you there";
         for (ContactSelected contact : contacts) {
-            String messageBody = String.format(Locale.getDefault(), messageTemplate, contact.name, baseUri + contact.vaucher);
+            String messageBody = String.format(Locale.getDefault(), messageTemplate, contact.name, contact.tertulia, contact.subject, baseUri + contact.vaucher);
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setData(Uri.parse("mailto:"));
             intent.setType("text/plain");

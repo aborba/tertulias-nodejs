@@ -49,7 +49,8 @@ public interface TertuliasApi {
     String LINK_SEARCHPUBLIC = "searchPublic";
     String LINK_SUBSCRIBE = "subscribe";
     String LINK_UNSUBSCRIBE = "unsubscribe";
-    String LINK_POSTVAUCHER = "voucher";
+    String LINK_MEMBERS = "members";
+    String LINK_POSTVAUCHER = "create_vouchers";
     String LINK_GETVAUCHERS = "get_vouchers";
 
     // Activity Return Codes

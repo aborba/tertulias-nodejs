@@ -105,7 +105,7 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
             setResult(RESULT_FAIL);
             finish();
         }
-        apiLinks = new ApiLinks(Util.extractParcelableArray(intent, INTENT_LINKS, ApiLink.class));
+        apiLinks = intent.getParcelableExtra(INTENT_LINKS);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(TERTULIA_INSTANCE_STATE_LABEL))
             tertulia = savedInstanceState.getParcelable(TERTULIA_INSTANCE_STATE_LABEL);

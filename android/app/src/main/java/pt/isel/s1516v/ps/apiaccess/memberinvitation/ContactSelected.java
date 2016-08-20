@@ -25,7 +25,10 @@ import android.support.annotation.NonNull;
 
 public class ContactSelected extends ContactListItem implements Parcelable {
 
-    public String vaucher;
+    public String
+            vaucher,
+            tertulia,
+            subject;
 
     public ContactSelected(ContactListItem contactListItem) {
         super(contactListItem.id, contactListItem.name, contactListItem.email, contactListItem.photo);

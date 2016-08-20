@@ -19,6 +19,7 @@
 
 package pt.isel.s1516v.ps.apiaccess.memberinvitation.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,7 +30,10 @@ import android.widget.TextView;
 import java.util.EnumMap;
 
 import pt.isel.s1516v.ps.apiaccess.R;
-import pt.isel.s1516v.ps.apiaccess.memberinvitation.ContactListItem;
+import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
+import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.memberinvitation.ApiMember;
+import pt.isel.s1516v.ps.apiaccess.memberinvitation.MembersArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class VmUiManager extends UiManager {
@@ -48,7 +52,7 @@ public class VmUiManager extends UiManager {
     private Toolbar toolbarView;
     private ProgressBar progressBar;
     private TextView emptyView;
-    private RecyclerView listView;
+    private RecyclerView recyclerView;
 
     public VmUiManager(Context ctx) {
         super(ctx);
@@ -58,9 +62,15 @@ public class VmUiManager extends UiManager {
         uiResources.put(UIRESOURCE.RECYCLE, R.id.vma_RecyclerView);
     }
 
-    public void set(ContactListItem[] contacts) {
+    public void set(ApiMember[] members) {
         lazyViewsSetup();
-        fillInViews(contacts);
+        MembersArrayAdapter arrayAdapter = new MembersArrayAdapter((Activity) ctx, members);
+        swapAdapter(arrayAdapter);
+    }
+
+    public void swapAdapter(MembersArrayAdapter viewAdapter) {
+        lazyViewsSetup();
+        Util.setupAdapter((Activity) ctx, recyclerView, viewAdapter);
     }
 
     public View getView(UIRESOURCE uiresource) {
@@ -119,11 +129,11 @@ public class VmUiManager extends UiManager {
         toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
         progressBar = setup(UIRESOURCE.PROGRESBAR, ProgressBar.class, uiViews);
         emptyView = setup(UIRESOURCE.EMPTY, TextView.class, uiViews);
-        listView = setup(UIRESOURCE.RECYCLE, RecyclerView.class, uiViews);
-        listView.setHasFixedSize(true);
+        recyclerView = setup(UIRESOURCE.RECYCLE, RecyclerView.class, uiViews);
+        recyclerView.setHasFixedSize(true);
     }
 
-    private void fillInViews(ContactListItem[] contacts) {
+    private void fillInViews(ApiMember[] members) {
     }
 
     // endregion

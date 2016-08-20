@@ -23,12 +23,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-public class MemberListItem implements Parcelable {
+import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLink;
+
+public class ApiMember implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("id")
     public final int id;
     @com.google.gson.annotations.SerializedName("sid")
     public final String sid;
+    @com.google.gson.annotations.SerializedName("alias")
+    public final String alias;
     @com.google.gson.annotations.SerializedName("firstName")
     public final String firstName;
     @com.google.gson.annotations.SerializedName("lastName")
@@ -39,15 +43,19 @@ public class MemberListItem implements Parcelable {
     public final String photo;
     @com.google.gson.annotations.SerializedName("role")
     public final String role;
+    @com.google.gson.annotations.SerializedName("links")
+    public final ApiLink[] links;
 
-    public MemberListItem(int id, String sid, String firstName, String lastName, String email, String photo, String role) {
+    public ApiMember(int id, String sid, String alias, String firstName, String lastName, String email, String photo, String role, ApiLink[] links) {
         this.id = id;
         this.sid = sid;
+        this.alias = alias;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.photo = photo;
         this.role = role;
+        this.links = links;
     }
 
     @Override
@@ -55,16 +63,31 @@ public class MemberListItem implements Parcelable {
         return firstName + " " + lastName + ", " + email + ", " + role;
     }
 
+    public String getName() {
+        if (alias != null)
+            return alias;
+        String name = firstName;
+        if (name == null)
+            name = lastName;
+        else if (lastName != null)
+            name += " " + lastName;
+        if (name == null)
+            name = email;
+        return name;
+    }
+
     // region Parcelable
 
-    protected MemberListItem(Parcel in) {
+    protected ApiMember(Parcel in) {
         id = in.readInt();
         sid = in.readString();
+        alias = in.readString();
         firstName = in.readString();
         lastName = in.readString();
         email = in.readString();
         photo = in.readString();
         role = in.readString();
+        links = in.createTypedArray(ApiLink.CREATOR);
     }
 
     @Override
@@ -76,22 +99,24 @@ public class MemberListItem implements Parcelable {
     public void writeToParcel(@NonNull Parcel out, int flags) {
         out.writeInt(id);
         out.writeString(sid);
+        out.writeString(alias);
         out.writeString(firstName);
         out.writeString(lastName);
         out.writeString(email);
         out.writeString(photo);
         out.writeString(role);
+        out.writeTypedArray(links, flags);
     }
 
-    public static final Creator<MemberListItem> CREATOR = new Creator<MemberListItem>() {
+    public static final Creator<ApiMember> CREATOR = new Creator<ApiMember>() {
         @Override
-        public MemberListItem createFromParcel(Parcel in) {
-            return new MemberListItem(in);
+        public ApiMember createFromParcel(Parcel in) {
+            return new ApiMember(in);
         }
 
         @Override
-        public MemberListItem[] newArray(int size) {
-            return new MemberListItem[size];
+        public ApiMember[] newArray(int size) {
+            return new ApiMember[size];
         }
     };    // endregion
 }

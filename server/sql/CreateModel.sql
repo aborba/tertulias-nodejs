@@ -116,6 +116,7 @@ IF OBJECT_ID(N'dbo.sp_updateTertulia_Yearly_sid') IS NOT NULL DROP PROCEDURE sp_
 IF OBJECT_ID(N'dbo.sp_updateTertulia_YearlyW') IS NOT NULL DROP PROCEDURE sp_updateTertulia_YearlyW;
 IF OBJECT_ID(N'dbo.sp_updateTertulia_YearlyW_sid') IS NOT NULL DROP PROCEDURE sp_updateTertulia_YearlyW_sid;
 
+IF OBJECT_ID(N'dbo.sp_getTertuliaMembers') IS NOT NULL DROP PROCEDURE sp_getTertuliaMembers;
 IF OBJECT_ID(N'dbo.sp_postNotification') IS NOT NULL DROP PROCEDURE sp_postNotification;
 IF OBJECT_ID(N'dbo.sp_buildEventsItems') IS NOT NULL DROP PROCEDURE sp_buildEventsItems;
 IF OBJECT_ID(N'dbo.sp_assignChecklistItems') IS NOT NULL DROP PROCEDURE sp_assignChecklistItems;
@@ -1348,6 +1349,53 @@ BEGIN CATCH
 END CATCH
 GO
 
+CREATE PROCEDURE sp_getTertuliaMembers
+	@userSid VARCHAR(40),
+	@tertulia INTEGER
+AS
+BEGIN
+	IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'READ_MEMBERS_DETAILS_PRIVATE_TERTULIA') <> 1)
+		RETURN;
+
+	DECLARE @isPrivate BIT;
+
+	SELECT @isPrivate = tr_is_private
+	FROM EnumValues
+		INNER JOIN members ON mb_role = nv_id
+		INNER JOIN tertulias ON mb_tertulia = tr_id
+		INNER JOIN users ON mb_user = us_id
+	WHERE tr_is_cancelled = 0
+		AND us_sid = @userSid
+		AND tr_id = @tertulia;
+
+	IF @isPrivate = 1
+		SELECT
+			us_id AS id,
+			us_sid AS sid,
+			us_alias AS alias,
+			us_firstName AS firstName,
+			us_lastName AS lastName,
+			us_email AS email,
+			us_picture AS picture,
+			nv_name AS role
+		FROM Members
+			INNER JOIN Users ON mb_user = us_id
+			INNER JOIN Tertulias ON mb_tertulia = tr_id
+			INNER JOIN EnumValues ON mb_role = nv_id
+		WHERE tr_id = @tertulia;
+	ELSE
+		SELECT
+			us_id AS id,
+			us_alias AS alias,
+			us_picture AS picture,
+			nv_name AS role
+		FROM Members
+			INNER JOIN Users ON mb_user = us_id
+			INNER JOIN Tertulias ON mb_tertulia = tr_id
+			INNER JOIN EnumValues ON mb_role = nv_id
+		WHERE tr_id = @tertulia;
+END
+
 CREATE PROCEDURE sp_createInvitationVouchers
 	@userSid VARCHAR(40),
 	@tertulia INTEGER,
@@ -1586,6 +1634,7 @@ EXEC spSetEnumI N'Actions', N'UPDATE_TERTULIA', 0;
 EXEC spSetEnumI N'Actions', N'INVITE_NEW_MEMBER', 0;
 EXEC spSetEnumI N'Actions', N'CREATE_EVENT', 0;
 EXEC spSetEnumI N'Actions', N'MANAGE_EVENT', 0;
+EXEC spSetEnumI N'Actions', N'READ_MEMBERS_DETAILS_PRIVATE_TERTULIA', 0;
 GO
 
 -- RBAC0
@@ -1605,6 +1654,9 @@ SET @action = dbo.fnGetEnum('Actions', 'CREATE_EVENT');
 INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 
 SET @action = dbo.fnGetEnum('Actions', 'MANAGE_EVENT');
+INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
+
+SET @action = dbo.fnGetEnum('Actions', 'READ_MEMBERS_DETAILS_PRIVATE_TERTULIA');
 INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 GO
 

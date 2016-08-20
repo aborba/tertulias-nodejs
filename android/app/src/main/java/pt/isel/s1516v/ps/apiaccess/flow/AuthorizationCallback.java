@@ -54,7 +54,7 @@ public class AuthorizationCallback implements FutureCallback<MobileServiceUser> 
     @Override
     public void onSuccess(MobileServiceUser user) {
         uiManager.hideProgressBar();
-        Util.cacheCredentials(ctx, user);
+        Util.cacheCredentialsAsync(ctx, user);
         if (future != null) {
             if (futureCallback != null)
                 Futures.addCallback(future.getFuture(), futureCallback);
