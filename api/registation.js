@@ -26,7 +26,7 @@ module.exports      = function (configuration) {
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
-			'	<p>Your voucher number is <strong>' + voucher + '</strong>.</p>' +
+			'	<p>Your voucher number is <strong><span id="voucher">' + voucher + '</span></strong>.</p>' +
 			'	<p>Your user id is <strong><span id="userId">________________________________</span></strong>.</p>' +
 			'<script>' +
 			'	function signIn() {' +
@@ -36,6 +36,7 @@ module.exports      = function (configuration) {
     		'			.done(' +
     		'				function(results) {' +
     		'					var userSid = results.userId;' +
+    		'					var voucher = document.getElementById("voucher").innerHTML;' +
     		'					document.getElementById("userId").innerHTML = userSid;' +
     		'					alert("userId: " + userSid + ", voucher: " + voucher);' +
     		'				},' +
