@@ -22,7 +22,7 @@ module.exports      = function (configuration) {
 		var voucher = req.params.voucher;
 		console.log(voucher);
 		var body = '' +
-			'<script type="application/javascript" src="https://tertulias.scm.azurewebsites.net/api/vfs/site/wwwroot/MobileServices.Web.min.js"></script>\n' +
+			'<script type="application/javascript" src="/MobileServices.Web.min.js"></script>\n' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>\n' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>\n' +
