@@ -25,7 +25,7 @@ module.exports = function (configuration) {
 		console.log(voucher);
 		console.log(req.azureMobile.user);
 		var body = '' +
-			'<script src="/MobileServices.Web.min.js"></script>' +
+			'<script src="https://tertulias.scm.azurewebsites.net/api/vfs/site/wwwroot/MobileServices.Web.min.js"></script>' +
 			'<h1>Tertulias</h1>\n' +
 			'	<p>Welcome to Tertulias platform site.</p>' +
 			'	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours to join a Tertulia.</p>' +
@@ -38,7 +38,6 @@ module.exports = function (configuration) {
 			'			function (err) { alert("Error: " + err); });' +
 			'</script>' +
 			'';
-		console.log(body);
 		res.send(body);
     	next();
     });
