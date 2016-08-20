@@ -48,7 +48,7 @@ module.exports      = function (configuration) {
 			'				function(results) {\n' +
 			'					var userSid = results.userId;\n' +
 			'					var voucher = getVoucher(window.location.href);\n' +
-			'					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>."' +
+			'					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>.";\n' +
 			'					subscribe(userSid, voucher);\n' +
 			'				},\n' +
 			'				function(err) { alert("Error: " + err); }\n' +
