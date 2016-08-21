@@ -38,7 +38,7 @@ module.exports      = function (configuration) {
 
 <script type="application/javascript">
 	var voucher = getVoucher(window.location.href);
-	function onClickAction() { signInAndSubscribe(voucher); };
+	function onClickAction() { signInAndSubscribe(voucher, 'userIdMessagePlaceHolder', 'You were assigned user id'); };
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 </script>
 `;

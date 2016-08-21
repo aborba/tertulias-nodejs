@@ -1,11 +1,11 @@
 function getVoucher(href){return href.substr(href.lastIndexOf("/")+1);};
-function signInAndSubscribe(voucher){
+function signInAndSubscribe(voucher, placeholder, message){
 	new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
 	.login("google")
 	.done(function(results){
 			var userSid=results.userId;
 			var voucher=getVoucher(window.location.href);
-			document.getElementById("userIdMessagePlaceHolder").innerHTML="You were assigned user id <strong>"+userSid+"</strong>.";
+			document.getElementById(placeholder).innerHTML=message+" <strong>"+userSid+"</strong>.";
 			subscribe(userSid, voucher);},
 		function(err){alert("Error: "+err);});
 };
