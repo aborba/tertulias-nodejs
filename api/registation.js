@@ -27,7 +27,7 @@ module.exports      = function (configuration) {
 <script type="application/javascript" src="/TertuliasBody.js"></script>
 
 <div class="header">
-	<img src="/tertulias-web.png" alt="Tertulias logo" height="42" width="42">
+	<img src="/tertulias-web.png" alt="Tertulias logo" height="36" width="36">
 	<h1>Tertulias</h1>
 </div>
 
