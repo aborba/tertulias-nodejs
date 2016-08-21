@@ -62,7 +62,7 @@ module.exports      = function (configuration) {
 		.done(function(results) {
 			var token = results.mobileServiceAuthenticationToken;
 			var userSid = results.userSid;
-			getUserData(client);
+			var userData = getUserData(client);
 	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
 	        	body: null,
 	        	method: "get"
