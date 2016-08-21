@@ -35,8 +35,6 @@ module.exports      = function (configuration) {
 			.input('token', sql.NVarChar(36), voucher)
 			.execute('sp_acceptInvitationToTertulia')
 			.then((recordsets) => {
-				console.log('recordsets[1]: ', recordsets[1]);
-				console.log('recordsets["returnValue"]: ', recordsets['returnValue']);
 				if (recordsets['returnValue'] == 0) {
 					res.status(201)	// 201: Created
 						.type('application/json')
@@ -45,16 +43,16 @@ module.exports      = function (configuration) {
 				} else {
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
-						.json( { result: 'Unavailable' } );
-					return next('409');
+						.json( { result: 'Voucher unavailable' } );
+					return next();
 				}
-				next();
+				return;
 			})
 			.catch(function(err) {
 				next(err);
 			});
 		});
-		next();
+		return next();
 	});
 
 	return router;
