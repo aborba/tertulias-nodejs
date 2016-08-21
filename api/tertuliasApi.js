@@ -91,11 +91,11 @@ module.exports = function (configuration) {
 					' AND in_is_acknowledged = 0 AND in_key = @voucher')
 			.then(function(recordset) {
 				console.log(recordset);
-				var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
+				// var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
 				res.type('application/json');
 				var results = {};
 				results['tertulias'] = recordset;
-				results['links'] = JSON.parse(links);
+				// results['links'] = JSON.parse(links);
 				console.log(results);
 				res.json(results);
 				res.sendStatus(200);
