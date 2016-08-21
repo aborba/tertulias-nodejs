@@ -107,9 +107,17 @@ module.exports      = function (configuration) {
 								"Please contact your source to request a new one.");
 							return;
 						}
-						var tertulia = results.result.tertulias[0]; 
-						var name = tertulia.name || "unknown";
-						var subject = tertulia.subject || "unknown";
+						var tertulia = results.result.tertulias[0];
+						var confirmationQuestion = 'Are you sure you want to join the tertulia';
+						if (tertulia.name)
+							confirmationQuestion +=  'named "' + tertulia.name + '"?';
+						if (tertulia.subject)
+							confirmationQuestion += ' The tertulia subject is "' + tertulia.subject + '".';
+						if ( ! confirm(confirmationQuestion))
+							return;
+						subscribe(client, voucher,
+							function(results) {alert(results.result); },
+							function(err) {alert(err.message); });
 					},
 					function(err){
 						alert("Voucher information retrieval failed: " + err);
