@@ -88,6 +88,7 @@ module.exports = function (configuration) {
 	    		' WHERE tr_is_cancelled = 0' +
 	    			' AND in_is_acknowledged = 0 AND in_key = @voucher')
 	    	.then(function(recordset) {
+	    		concole.log(recordset);
                 var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
                 res.type('application/json');
                 var results = {};
