@@ -105,22 +105,23 @@ module.exports      = function (configuration) {
 					var userSid = user0.user_id;
 					var provider = user0.provider_name;
 					var claims = user0.user_claims;
+					var picture; var email; var name; var givenname; var surname;
 					claims.forEach(function(item, index) {
 						switch (item.typ) {
 							case 'picture':
-								var picture = item.val;
+								picture = item.val;
 								break;
 							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress':
-								var email = item.val;
+								email = item.val;
 								break;
 							case 'name':
-								var name = item.val;
+								name = item.val;
 								break;
 							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname':
-								var givenname = item.val;
+								givenname = item.val;
 								break;
 							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname':
-								var surname = item.val;
+								surname = item.val;
 								break;
 						}
 					});
