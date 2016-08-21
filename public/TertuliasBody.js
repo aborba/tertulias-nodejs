@@ -1,23 +1,21 @@
 function getVoucher(href){return href.substr(href.lastIndexOf("/")+1);};
-function signInAndSubscribe(voucher, confirmationQuestion, placeholder, message){
-	new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
-	.login("google")
+function signInAndSubscribe(client, voucher, confirmationQuestion, placeholder, message){
+	client.login("google")
 	.done(function(results){
 			var userSid=results.userId;
 			var voucher=getVoucher(window.location.href);
-			areYouSure(confirmationQuestion, userSid, voucher, placeholder, message);
+			areYouSure(client, confirmationQuestion, userSid, voucher, placeholder, message);
 		},
 		function(err){alert("Error: "+err);});
 };
-function areYouSure(confirmationQuestion, userSid, voucher, placeholder, message){
+function areYouSure(client, confirmationQuestion, userSid, voucher, placeholder, message){
 	if (!confirm(confirmationQuestion)) return;
 	document.getElementById(placeholder).innerHTML=message+" <strong>"+userSid+"</strong>.";
 	console.log('subscribing');
-	subscribe(userSid, voucher);
+	subscribe(client, userSid, voucher);
 };
-function subscribe(userSid,voucher){
-	var msc = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
-	msc.invokeApi("/", {
+function subscribe(client,userSid,voucher){
+	client.invokeApi("/", {
         body: null,
         method: "get"
     }).done(function(results) {
@@ -33,7 +31,7 @@ function subscribe(userSid,voucher){
     		alert("Internal error ocurred, please try again later.");
     		return;
     	}
-    	msc.invokeApi(href, {
+    	client.invokeApi(href, {
     		body: { userSid: userSid, voucher: voucher },
     		method: method
     	}).done(function(results){

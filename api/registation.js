@@ -40,24 +40,24 @@ module.exports      = function (configuration) {
 <script type="application/javascript">
 	var voucher = getVoucher(window.location.href);
 
-	function getInfo(voucher) {
-	    var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
-	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
+	function getInfo(client, voucher) {
     	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
         	body: null,
         	method: "get"
     	}).done(function(results) {
         	var name = results.result.tertulias[0].name || "no name";
         	var subject = results.result.tertulias[0].subject || "no subject";
-			signInAndSubscribe(
-				voucher,
-				'Are you sure you want to subscribe tertulia ' + name + ' about ' + subject + ' with user "YYY"?',
+
+			signInAndSubscribe(client, voucher,
+				'Are you sure you want to subscribe tertulia "' + name + '" about "' + subject + '"?',
 				'userIdMessagePlaceHolder', 'Your user id is:');
 		});
 	};
 
 	function onClickAction() {
-		getInfo(voucher);
+		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
+	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
+		getInfo(client, voucher);
 		// signInAndSubscribe(
 		// 	voucher,
 		// 	'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
