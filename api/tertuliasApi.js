@@ -13,7 +13,7 @@ module.exports = function (configuration) {
     var router = express.Router();
 
     router.get('/', (req, res, next) => {
-		console.log('in GET /tertulias');
+		console.log('in GET /api/tertulias');
 		var route = '/tertulias';
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
@@ -73,12 +73,14 @@ module.exports = function (configuration) {
 	    });
     });
 
-    router.get('/voucherinfo/:voucher', authenticate, (req, res, next) => {
-		console.log('in GET /voucherinfo/:voucher');
+    router.get('/voucherinfo/:voucher', (req, res, next) => {
+		console.log('in GET /api/voucherinfo/:voucher');
+        res.sendStatus(200);
+        return next();
 	});
 
     router.get('/voucherinfo_/:voucher', (req, res, next) => {
-		console.log('in GET /voucherinfo_/:voucher');
+		console.log('in GET /api/voucherinfo_/:voucher');
 		var voucher = req.params.voucher;
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
