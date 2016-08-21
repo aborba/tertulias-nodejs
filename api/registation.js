@@ -16,7 +16,7 @@ module.exports      = function (configuration) {
 		}
 	};
 
-	router.get('/:voucher', authenticate, (req, res, next) => {
+	router.get('/:voucher', (req, res, next) => {
 		console.log('in GET /private_invitation/:voucher');
 		console.log(configuration);
 		var voucher = req.params.voucher;

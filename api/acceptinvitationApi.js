@@ -1,12 +1,13 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-    authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
-    authorize = require('azure-mobile-apps/src/express/middleware/authorize');
+var express         = require('express'),
+	bodyParser      = require('body-parser');
 
-var util = require('../util');
+var sql             = require('mssql'),
+	util            = require('../util');
 
-module.exports = function (configuration) {
-    var router = express.Router();
+module.exports      = function (configuration) {
+    var router      = express.Router(),
+	authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
+	authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
 	    if (err) {
@@ -16,13 +17,14 @@ module.exports = function (configuration) {
 	};
 
     router.post('/', (req, res, next) => {
+		console.log('in POST /acceptinvitation');
     	var userSid = req.azureMobile.user.id;
     	console.log(userSid);
     	var voucher = req.body.voucher;
     	console.log(voucher);
 		res.json( {
 			"links": [
-				{ "rel": userSid, "method": voucher, "href": "/ok" }
+				{ "rel": "userSid", "method": "voucher", "href": "/ok" }
 			]}
 		);
     	next();
