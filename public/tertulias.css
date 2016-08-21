@@ -39,9 +39,10 @@ button {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	height: 64px;
+	width: 64px;
 }
 
 .header h1 {
-	top: 18px;
-	left: 10px;
+	bottom: 18px;
 }
