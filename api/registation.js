@@ -52,7 +52,7 @@ module.exports      = function (configuration) {
 	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
 	        	body: null,
 	        	method: "get"
-	    	}).done(function(results) {
+	    	}).done(function(results0) {
 	        	// var name = results.result.tertulias[0].name || "no name";
 	        	var name = "no name";
 	        	// var subject = results.result.tertulias[0].subject || "no subject";
