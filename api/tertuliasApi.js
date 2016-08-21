@@ -86,7 +86,7 @@ module.exports = function (configuration) {
 	    		' FROM Invitations' +
 	    			' INNER JOIN Tertulias ON in_tertulia = tr_id' +
 	    		' WHERE tr_is_cancelled = 0' +
-	    			' AND in_accepted = 0 AND in_voucher = @voucher')
+	    			' AND in_is_acknowledged = 0 AND in_key = @voucher')
 	    	.then(function(recordset) {
                 var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
                 res.type('application/json');
