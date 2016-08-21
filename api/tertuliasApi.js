@@ -76,6 +76,7 @@ module.exports = function (configuration) {
     router.get('/voucherinfo/:voucher', (req, res, next) => {
 		console.log('in GET /api/voucherinfo/:voucher');
 		var voucher = req.params.voucher;
+		console.log(voucher);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
