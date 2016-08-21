@@ -9,6 +9,7 @@ var express = require('express'),
     registation = require('./api/registation'),
     homeApi = require('./api/homeApi'),
     tertuliasApi = require('./api/tertuliasApi');
+    acceptinvitationApi = require('./api/acceptinvitationApi');
 
 var app = express();
 
