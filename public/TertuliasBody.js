@@ -5,17 +5,16 @@ function signInAndSubscribe(voucher, confirmationQuestion, placeholder, message)
 	.done(function(results){
 			var userSid=results.userId;
 			var voucher=getVoucher(window.location.href);
-			document.getElementById(placeholder).innerHTML=message+" <strong>"+userSid+"</strong>.";
-			areYouSure(confirmationQuestion, userSid, voucher);
+			areYouSure(confirmationQuestion, userSid, voucher, placeholder, message);
 		},
 		function(err){alert("Error: "+err);});
 };
-function areYouSure(confirmationQuestion, userSid, voucher){
+function areYouSure(confirmationQuestion, userSid, voucher, placeholder, message){
 	if (!confirm(confirmationQuestion)) return;
 	subscribe(userSid, voucher);
 	console.log('subscribing');
+	document.getElementById(placeholder).innerHTML=message+" <strong>"+userSid+"</strong>.";
 };
 function subscribe(userSid,voucher){
-	document.getElementById("userId").innerHTML=userSid;
 	alert(userSid+" "+voucher);
 };

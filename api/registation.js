@@ -38,7 +38,8 @@ module.exports      = function (configuration) {
 
 <script type="application/javascript">
 	var voucher = getVoucher(window.location.href);
-	function onClickAction() { signInAndSubscribe(voucher,
+	function onClickAction() { signInAndSubscribe(
+		voucher,
 		'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
 		'userIdMessagePlaceHolder', 'Your user id is:'); };
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
