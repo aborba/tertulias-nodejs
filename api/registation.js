@@ -101,7 +101,30 @@ module.exports      = function (configuration) {
 					return data.json();
 				})
 				.then(function (user) {
-					var name = "";
+					var user0 = user[0];
+					var userSid = user0.user_id;
+					var provider = user0.provider_name;
+					var claims = user0.user_claims;
+					claims.foreach(function(item, index) {
+						switch (item.typ) {
+							case 'picture':
+								var picture = item.val;
+								break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress':
+								var email = item.val;
+								break;
+							case 'name':
+								var name = item.val;
+								break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname':
+								var givenname = item.val;
+								break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname':
+								var surname = item.val;
+								break;
+						}
+					});
+					console.log(name);
         		});
 			},
 			function(err){
