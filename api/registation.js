@@ -39,9 +39,11 @@ module.exports      = function (configuration) {
 
 <script type="application/javascript">
 	var voucher = getVoucher(window.location.href);
+
 	function getInfo(voucher) {
-	    var msc = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
-    	msc.invokeApi("/voucherinfo/" + voucher, {
+	    var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
+	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
+    	client.invokeApi("/voucherinfo/" + voucher, {
         	body: null,
         	method: "get"
     	}).done(function(results) {
@@ -53,6 +55,7 @@ module.exports      = function (configuration) {
 				'userIdMessagePlaceHolder', 'Your user id is:');
 		});
 	};
+
 	function onClickAction() {
 		getInfo(voucher);
 		// signInAndSubscribe(
@@ -60,6 +63,7 @@ module.exports      = function (configuration) {
 		// 	'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
 		// 	'userIdMessagePlaceHolder', 'Your user id is:');
 	};
+
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 </script>
