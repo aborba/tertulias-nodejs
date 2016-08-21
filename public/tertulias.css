@@ -17,9 +17,9 @@ button {
 	background-color: #337ab7;
 	border-color: #2e6da4;
 	display: inline-block;
-	padding: 10px 16px;
+	padding: 12px 18px;
 	margin-bottom: 0;
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 400;
 	line-height: 1.333333333;
 	text-align: center;
@@ -30,5 +30,5 @@ button {
 	-webkit-user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 6px;
+	border-radius: 8px;
 }
