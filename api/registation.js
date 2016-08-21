@@ -102,7 +102,7 @@ module.exports      = function (configuration) {
 					});
 					client.invokeApi('/tertulias/voucherinfo/' + voucher, { body: null, method: "get"})
 					.done(function(results) {
-						if ( ! results.result.tertulias) {
+						if (results.result.tertulias.length == 0) {
 							alert("Voucher not available. Either the voucher was already used or it has expired. " +
 								"Please contact your source to request a new one.");
 							return;
