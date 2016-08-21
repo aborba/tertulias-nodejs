@@ -22,6 +22,7 @@ module.exports      = function (configuration) {
 		var voucher = req.params.voucher;
 		console.log(voucher);
 		var body = `
+<link rel="stylesheet" type="text/css" href="/tertulias.css">
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
 <script type="application/javascript" src="/TertuliasBody.js"></script>
 
