@@ -24,7 +24,7 @@ module.exports      = function (configuration) {
 		var body = `
 <link rel="stylesheet" type="text/css" href="/tertulias.css">
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
-<script type="application/javascript" src="/TertuliasBody.js"></script>
+<script type="application/javascript" src="/Tertulias.js"></script>
 
 <div class="header">
 	<img src="/tertulias-web.png" alt="Tertulias logo">
@@ -43,28 +43,32 @@ module.exports      = function (configuration) {
 
 <script type="application/javascript">
 	var voucher = getVoucher(window.location.href);
+	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 	function getInfo(client, voucher) {
-    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
-        	body: null,
-        	method: "get"
-    	}).done(function(results) {
-        	var name = results.result.tertulias[0].name || "no name";
-        	var subject = results.result.tertulias[0].subject || "no subject";
+		client.login("google")
+		.done(function(results) {
+			console.log(results.result);
+	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
+	        	body: null,
+	        	method: "get"
+	    	}).done(function(results) {
+	        	var name = results.result.tertulias[0].name || "no name";
+	        	var subject = results.result.tertulias[0].subject || "no subject";
 
-			signInAndSubscribe(client, voucher,
-				'Are you sure you want to subscribe tertulia "' + name + '" about "' + subject + '"?',
-				'userIdMessagePlaceHolder', 'Your user id is:');
+				signInAndSubscribe(client, voucher,
+					'Are you sure you want to subscribe tertulia "' + name + '" about "' + subject + '"?',
+					'userIdMessagePlaceHolder', 'Your user id is:');
+			});
+		}, function(err) {
+			alert("Error: " + err);
 		});
 	};
 
 	function onClickAction() {
-		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
-	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
+		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net"); //, "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
 		getInfo(client, voucher);
 	};
-
-	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 </script>
 `;

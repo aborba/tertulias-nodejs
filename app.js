@@ -34,8 +34,8 @@ mobile.tables
     app.use(express.static('public'));
     app.use('/private_invitation', registation(mobile.configuration));
     app.use('/api/', homeApi(mobile.configuration));
-    app.use('/api/acceptinvitation', acceptinvitationApi(mobile.configuration));
     app.use('/api/tertulias', tertuliasApi(mobile.configuration));
+    app.use('/api/acceptinvitation', acceptinvitationApi(mobile.configuration));
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
 });
