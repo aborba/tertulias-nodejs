@@ -29,7 +29,10 @@ function subscribe(userSid,voucher){
     			break;
     		}
     	}
-    	alert(href);
+    	if (!href) {
+    		alert("Internal error ocurred, please try again later.");
+    		return;
+    	}
     	msc.invokeApi(href, {
     		body: { userSid: userSid, voucher: voucher },
     		method: method
