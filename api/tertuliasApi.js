@@ -81,7 +81,7 @@ module.exports = function (configuration) {
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
-			.input('voucher', sql.VarChar(40), voucher)
+			.input('voucher', sql.NVarChar(36), voucher)
 			.query('SELECT' +
 					' tr_name AS name,' +
 					' tr_subject AS subject' +

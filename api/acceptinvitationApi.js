@@ -28,6 +28,30 @@ module.exports      = function (configuration) {
 				{ "rel": "userSid", "method": "voucher", "href": "/ok" }
 			]}
 		);
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), userSid)
+			.input('token', sql.NVarChar(36), voucher)
+			.execute('sp_acceptInvitationToTertulia')
+			.then((recordsets) => {
+				console.log(recordsets);
+				if (recordsets.length == 0) {
+					res.status(201)	// 201: Created
+						.type('application/json')
+						.json( { result: 'Ok' } );
+					return next();
+				} else {
+					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						.type('application/json')
+						.json( { result: 'Unavailable' } );
+					return next('409');
+				}
+				next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
     	next();
     });
 
