@@ -73,7 +73,7 @@ module.exports = function (configuration) {
 	    });
     });
 
-    router.get('/voucherinfo/:voucher', (req, res, next) => {
+    router.get('/voucherinfo/:voucher', authenticate, (req, res, next) => {
 		console.log('in GET /voucherinfo/:voucher');
 	});
 
