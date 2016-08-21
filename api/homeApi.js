@@ -20,7 +20,8 @@ module.exports = function (configuration) {
 			"links": [
 				{ "rel": "tertulias", "method": "GET", "href": "/tertulias" },
 				{ "rel": "registration", "method": "POST", "href": "/me" },
-				{ "rel": "me", "method": "GET", "href": "/me" }
+				{ "rel": "me", "method": "GET", "href": "/me" },
+				{ "rel": "accept_invitation", "method": "POST", "href": "/acceptinvitation" }
 			]}
 		);
     	next();

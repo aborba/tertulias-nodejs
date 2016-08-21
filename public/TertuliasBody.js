@@ -22,7 +22,14 @@ function subscribe(userSid,voucher){
         method: "get"
     }).done(function (results) {
     	var links = results.result.links;
-    	alert(links[0].rel);
+    	for (var i = 0; i < links.length; i++) {
+    		if (links[i].rel == "accept_invitation") {
+    			var method = links[i].method;
+    			var href = links[i].href;
+    			break;
+    		}
+    	}
+    	alert(href);
     }, function (error) {
         var dialog = new Windows.UI.Popups.MessageDialog(error.message);
         dialog.commands.append(okCommand);
