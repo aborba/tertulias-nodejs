@@ -62,6 +62,10 @@ module.exports      = function (configuration) {
 	function getInfo(client, voucher) {
 		client.login("google")
 		.done(function(results) {
+			client.invokeApi('/me', {method: "post"})
+			.done(function(res) {
+
+			});
 			var token = results.mobileServiceAuthenticationToken;
 			var userSid = results.userSid;
 			var userData = getUserData(client);
@@ -85,7 +89,24 @@ module.exports      = function (configuration) {
 
 	function onClickAction() {
 		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net"); //, "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
-		getInfo(client, voucher);
+		// getInfo(client, voucher);
+		client.login("google")
+		.done(
+			function(results) {
+				var url = client.applicationUrl + '/.auth/me';
+				var headers = new Headers();
+				headers.append('X-ZUMO-AUTH', client.currentUser.mobileServiceAuthenticationToken);
+				fetch(url, { headers: headers })
+				.then(function (data) {
+					return data.json();
+				})
+				.then(function (user) {
+					var name = "";
+        		});
+			},
+			function(err){
+				alert("Authentication failed: " + err);
+			});
 	};
 
 </script>

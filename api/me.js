@@ -62,6 +62,7 @@ var api = {
 								next();
 							} else {
 								console.log('User not registered; Registering.');
+								console.log(req.azureMobile.user);
 								userName(req.azureMobile.user, function(userInfo) {
 									var psInsertSid = new sql.PreparedStatement(conn);
 									psInsertSid.input('sid', sql.NVarChar);
