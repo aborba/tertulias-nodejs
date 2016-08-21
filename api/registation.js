@@ -48,7 +48,8 @@ module.exports      = function (configuration) {
 	function getInfo(client, voucher) {
 		client.login("google")
 		.done(function(results) {
-			console.log(results.result);
+			if (results)
+				console.log(results.result);
 	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
 	        	body: null,
 	        	method: "get"
