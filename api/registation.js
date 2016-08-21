@@ -25,54 +25,21 @@ module.exports      = function (configuration) {
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
 <script type="application/javascript" src="/TertuliasBody.js"></script>
 
-// <script type="application/javascript">
-
-// 	function getVoucher(href) {
-// 		return href.substr(href.lastIndexOf("/") + 1);
-// 	};
-
-// 	function signInAndSubscribe(voucher) {
-// 		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
-// 				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
-// 			.login("google")
-// 			.done(
-// 				function(results) {
-// 					var userSid = results.userId;
-// 					var voucher = getVoucher(window.location.href);
-// 					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>.";
-// 					subscribe(userSid, voucher);
-// 				},
-// 				function(err) { alert("Error: " + err); }
-// 			);
-// 	};
-
-// 	function subscribe(userSid, voucher) {
-// 		document.getElementById("userId").innerHTML = userSid;
-// 		alert(userSid + " " + voucher);
-// 	//<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>
-// 	//<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>
-// 	};
-
-// 	function onClickAction() {
-// 		var voucher = getVoucher(window.location.href);
-// 		signInAndSubscribe(voucher);
-// 	};
-
-// </script>
-
 <h1>Tertulias</h1>
 	<p>Welcome to Tertulias platform site.</p>
 	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>
-	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>
+	<p>Your voucher number is <strong><span id='voucherPlaceHolder'></span></strong>.</p>
 	<p>In order to join the Tertulia, press the button bellow (You will be asked to authenticate with your authentication provider).</p>
 
-	<button id="action" onclick="onClickAction()">Subscribe</button>
+	<button id='action' onclick="onClickAction('userIdMessagePlaceHolder')">Subscribe</button>
 
-	<p id="userIdMessage"></p>
-	<p id="tertuliaMessage"></p>
+	<p id='userIdMessagePlaceHolder'></p>
+	<p id='tertuliaMessagePlaceHolder'></p>
 
 <script type="application/javascript">
-	document.getElementById("voucher").innerHTML = getVoucher(window.location.href);
+	var voucher = getVoucher(window.location.href);
+	function onClickAction() { signInAndSubscribe(voucher); };
+	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 </script>
 `;
 		res.send(body);

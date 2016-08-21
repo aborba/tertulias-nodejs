@@ -13,4 +13,3 @@ function subscribe(userSid,voucher){
 	document.getElementById("userId").innerHTML=userSid;
 	alert(userSid+" "+voucher);
 };
-function onClickAction(){signInAndSubscribe(getVoucher(window.location.href));};
