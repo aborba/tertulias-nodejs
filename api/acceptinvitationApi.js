@@ -16,9 +16,13 @@ module.exports = function (configuration) {
 	};
 
     router.post('/', (req, res, next) => {
+    	var userSid = req.azureMobile.user.id;
+    	console.log(userSid);
+    	var voucher = req.body.voucher;
+    	console.log(voucher);
 		res.json( {
 			"links": [
-				{ "rel": req.azureMobile.user.id, "method": req.body.tertulia_name, "href": "/ok" }
+				{ "rel": userSid, "method": voucher, "href": "/ok" }
 			]}
 		);
     	next();
