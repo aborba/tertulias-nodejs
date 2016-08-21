@@ -51,7 +51,8 @@ module.exports      = function (configuration) {
 				voucher,
 				'Are you sure you want to subscribe tertulia ' + name + ' about ' + subject + ' with user "YYY"?',
 				'userIdMessagePlaceHolder', 'Your user id is:');
-		}
+		});
+	};
 	function onClickAction() {
 		signInAndSubscribe(
 			voucher,
