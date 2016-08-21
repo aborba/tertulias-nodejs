@@ -16,13 +16,12 @@ function areYouSure(confirmationQuestion, userSid, voucher, placeholder, message
 	subscribe(userSid, voucher);
 };
 function subscribe(userSid,voucher){
-	alert(userSid+" "+voucher);
 	var msc = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
 	msc.invokeApi("/", {
         body: null,
         method: "get"
     }).done(function (results) {
-    	alert(results);
+    	alert(results.toString());
     }, function (error) {
         var dialog = new Windows.UI.Popups.MessageDialog(error.message);
         dialog.commands.append(okCommand);
