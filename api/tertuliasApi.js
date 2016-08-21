@@ -78,6 +78,10 @@ module.exports = function (configuration) {
 		var voucher = req.params.voucher;
 		console.log(voucher);
 		console.log(req.azureMobile.user);
+		if (!req.azureMobile.user) {
+			res.send(401); // 401: Unauthorized
+			return next();
+		}
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -91,16 +95,13 @@ module.exports = function (configuration) {
 					' AND in_is_acknowledged = 0 AND in_key = @voucher')
 			.then(function(recordset) {
 				console.log(recordset);
-				// var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
 				res.type('application/json');
 				var results = {};
 				results['tertulias'] = recordset;
-				// results['links'] = JSON.parse(links);
-				console.log(results);
 				res.json(results);
 				res.sendStatus(200);
 				return next();
-			})
+			});
 		});
 	});
 
