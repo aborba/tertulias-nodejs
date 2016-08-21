@@ -31,11 +31,13 @@ module.exports      = function (configuration) {
 			.execute('sp_acceptInvitationToTertulia')
 			.then((recordsets) => {
 				if (recordsets['returnValue'] == 0) {
+					console.log('in 201 ok');
 					res.status(201)	// 201: Created
 						.type('application/json')
 						.json( { result: 'Ok' } );
 					return next();
 				} else {
+					console.log('in 409 error');
 					res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 						.type('application/json')
 						.json( { result: 'Voucher unavailable' } );
@@ -44,6 +46,7 @@ module.exports      = function (configuration) {
 				return;
 			})
 			.catch(function(err) {
+				console.log('in post error');
 				next(err);
 			});
 		});
