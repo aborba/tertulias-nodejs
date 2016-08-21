@@ -26,7 +26,11 @@ module.exports      = function (configuration) {
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
 <script type="application/javascript" src="/TertuliasBody.js"></script>
 
-<h1>Tertulias</h1>
+<div class="header">
+	<img src="/tertulias-web.png" alt="Tertulias logo" height="42" width="42">
+	<h1>Tertulias</h1>
+</div>
+
 	<p>Welcome to Tertulias platform site.</p>
 	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>
 	<p>Your voucher number is <strong><span id='voucherPlaceHolder'></span></strong>.</p>
@@ -58,10 +62,6 @@ module.exports      = function (configuration) {
 		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
 	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
 		getInfo(client, voucher);
-		// signInAndSubscribe(
-		// 	voucher,
-		// 	'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
-		// 	'userIdMessagePlaceHolder', 'Your user id is:');
 	};
 
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
