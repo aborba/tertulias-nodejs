@@ -35,7 +35,7 @@ function subscribe(client,userSid,voucher){
     		body: { userSid: userSid, voucher: voucher },
     		method: method
     	}).done(function(results){
-    		alert("Tertulia subscription completed successfuly.\nInstall the Tertulias app from your app store and enjoy.");
+    		alert(results.result);
     	}, function (error) {
     		alert(error.message);
     	});
