@@ -31,9 +31,9 @@ mobile.tables
     console.log('Registering the Azure Mobile Apps middleware.');
     app.use(mobile);
     app.use(express.static('public'));
-    app.use('/acceptinvitation', acceptinvitationApi(mobile.configuration));
     app.use('/private_invitation', registation(mobile.configuration));
     app.use('/api/', homeApi(mobile.configuration));
+    app.use('/api/acceptinvitation', acceptinvitationApi(mobile.configuration));
     app.use('/api/tertulias', tertuliasApi(mobile.configuration));
     console.log('Listening for requests.');
     app.listen(process.env.PORT || 3000);
