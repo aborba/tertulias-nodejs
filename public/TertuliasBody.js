@@ -11,9 +11,9 @@ function signInAndSubscribe(voucher, confirmationQuestion, placeholder, message)
 };
 function areYouSure(confirmationQuestion, userSid, voucher, placeholder, message){
 	if (!confirm(confirmationQuestion)) return;
-	subscribe(userSid, voucher);
-	console.log('subscribing');
 	document.getElementById(placeholder).innerHTML=message+" <strong>"+userSid+"</strong>.";
+	console.log('subscribing');
+	subscribe(userSid, voucher);
 };
 function subscribe(userSid,voucher){
 	alert(userSid+" "+voucher);
