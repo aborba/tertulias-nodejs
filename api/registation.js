@@ -45,11 +45,24 @@ module.exports      = function (configuration) {
 	var voucher = getVoucher(window.location.href);
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
+	function getUserData(client) {
+		var url = client.applicationUrl + '/.auth/me';
+		var headers = new Headers();
+		headers.append('X-ZUMO-AUTH', client.currentUser.mobileServiceAuthenticationToken);
+		fetch(url, { headers: headers })
+		.then(function (data) {
+			return data.json()
+		}).then(function (user) {
+        	// The user object contains the claims for the authenticated user
+        });
+	}
+
 	function getInfo(client, voucher) {
 		client.login("google")
 		.done(function(results) {
-			if (results)
-				console.log(results.result);
+			var token = results.mobileServiceAuthenticationToken;
+			var userSid = results.userSid;
+			getUserData(client);
 	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
 	        	body: null,
 	        	method: "get"
@@ -64,7 +77,7 @@ module.exports      = function (configuration) {
 					'userIdMessagePlaceHolder', 'Your user id is:');
 			});
 		}, function(err) {
-			alert("Error: " + err);
+			alert("Authentication failed: " + err);
 		});
 	};
 
