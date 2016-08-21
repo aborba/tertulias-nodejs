@@ -21,7 +21,8 @@ function subscribe(userSid,voucher){
         body: null,
         method: "get"
     }).done(function (results) {
-    	alert(results.result.toString());
+    	var links = results.result.links;
+    	alert(links[0].rel);
     }, function (error) {
         var dialog = new Windows.UI.Popups.MessageDialog(error.message);
         dialog.commands.append(okCommand);
