@@ -96,6 +96,7 @@ module.exports = function (configuration) {
 				var results = {};
 				results['tertulias'] = recordset;
 				results['links'] = JSON.parse(links);
+				console.log(results);
 				res.json(results);
 				res.sendStatus(200);
 				return next();
