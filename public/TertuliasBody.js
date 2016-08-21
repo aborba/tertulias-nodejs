@@ -20,7 +20,7 @@ function subscribe(userSid,voucher){
 	msc.invokeApi("/", {
         body: null,
         method: "get"
-    }).done(function (results) {
+    }).done(function(results) {
     	var links = results.result.links;
     	for (var i = 0; i < links.length; i++) {
     		if (links[i].rel == "accept_invitation") {
@@ -30,9 +30,15 @@ function subscribe(userSid,voucher){
     		}
     	}
     	alert(href);
+    	msc.invokeApi(href, {
+    		body: { userSid: userSid, voucher: voucher },
+    		method: method
+    	}).done(function(results){
+    		alert("Tertulia subscription completed successfuly.\nInstall the Tertulias app from your app store and enjoy.");
+    	}, function (error) {
+    		alert(error.message);
+    	});
     }, function (error) {
-        var dialog = new Windows.UI.Popups.MessageDialog(error.message);
-        dialog.commands.append(okCommand);
-        dialog.showAsync().done();
+		alert(error.message);
     });
 };
