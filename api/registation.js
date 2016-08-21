@@ -102,10 +102,14 @@ module.exports      = function (configuration) {
 					});
 					client.invokeApi('/tertulias/voucherinfo/' + voucher, { body: null, method: "get"})
 					.done(function(results) {
-						// var name = results.result.tertulias[0].name || "no name";
-						var name = "no name";
-						// var subject = results.result.tertulias[0].subject || "no subject";
-						var subject = "no subject";
+						if ( ! results.result.tertulias) {
+							alert("Voucher not available. Either the voucher was already used or it has expired. " +
+								"Please contact your source to request a new one.");
+							return;
+						}
+						var tertulia = results.result.tertulias[0]; 
+						var name = tertulia.name || "unknown";
+						var subject = tertulia.subject || "unknown";
 					},
 					function(err){
 						alert("Voucher information retrieval failed: " + err);

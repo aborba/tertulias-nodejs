@@ -14,7 +14,7 @@ function areYouSure(client, confirmationQuestion, userSid, voucher, placeholder,
 	console.log('subscribing');
 	subscribe(client, userSid, voucher);
 };
-function subscribe(client,userSid,voucher){
+function subscribe(client,voucher,fOk,fErr){
 	client.invokeApi("/", {
         body: null,
         method: "get"
@@ -35,11 +35,11 @@ function subscribe(client,userSid,voucher){
     		body: { userSid: userSid, voucher: voucher },
     		method: method
     	}).done(function(results){
-    		alert(results.result);
+    		fOk(results.result);
     	}, function (error) {
-    		alert(error.message);
+    		fErr(error.message);
     	});
     }, function (error) {
-		alert(error.message);
+		fErr(error.message);
     });
 };
