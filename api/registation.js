@@ -53,8 +53,10 @@ module.exports      = function (configuration) {
 	        	body: null,
 	        	method: "get"
 	    	}).done(function(results) {
-	        	var name = results.result.tertulias[0].name || "no name";
-	        	var subject = results.result.tertulias[0].subject || "no subject";
+	        	// var name = results.result.tertulias[0].name || "no name";
+	        	var name = "no name";
+	        	// var subject = results.result.tertulias[0].subject || "no subject";
+	        	var subject = "no subject";
 
 				signInAndSubscribe(client, voucher,
 					'Are you sure you want to subscribe tertulia "' + name + '" about "' + subject + '"?',
