@@ -1,4 +1,3 @@
-<script type="application/javascript">
 function getVoucher(href){return href.substr(href.lastIndexOf("/")+1);};
 function signInAndSubscribe(voucher){
 	new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net","309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
@@ -15,4 +14,3 @@ function subscribe(userSid,voucher){
 	alert(userSid+" "+voucher);
 };
 function onClickAction(){signInAndSubscribe(getVoucher(window.location.href));};
-</script>
