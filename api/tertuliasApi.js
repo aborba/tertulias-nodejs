@@ -77,10 +77,11 @@ module.exports = function (configuration) {
 		console.log('in GET /api/voucherinfo/:voucher');
 		var voucher = req.params.voucher;
 		console.log(voucher);
+		console.log(req.azureMobile.user);
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
 			new sql.Request()
-	    	.input('voucher', sql.NVarChar(40), voucher)
+	    	.input('voucher', sql.VarChar(40), voucher)
 	    	.query('SELECT' +
 		    		' tr_name AS name,' +
 		    		' tr_subject AS subject' +
