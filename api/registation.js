@@ -105,7 +105,7 @@ module.exports      = function (configuration) {
 					var userSid = user0.user_id;
 					var provider = user0.provider_name;
 					var claims = user0.user_claims;
-					claims.foreach(function(item, index) {
+					claims.forEach(function(item, index) {
 						switch (item.typ) {
 							case 'picture':
 								var picture = item.val;
