@@ -16,7 +16,7 @@ module.exports      = function (configuration) {
 	    }
 	};
 
-    router.post('/', (req, res, next) => {
+    router.post('/', authenticate, (req, res, next) => {
 		console.log('in POST /acceptinvitation');
     	var userSid = req.azureMobile.user.id;
     	console.log(userSid);
