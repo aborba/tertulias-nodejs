@@ -73,6 +73,33 @@ module.exports = function (configuration) {
 	    });
     });
 
+    router.get('/voucherinfo/:voucher', (req, res, next) => {
+		console.log('in GET /voucherinfo/:voucher');
+		var voucher = req.params.voucher;
+	    sql.connect(util.sqlConfiguration)
+	    .then(function() {
+			new sql.Request()
+	    	.input('voucher', sql.NVarChar(40), voucher)
+	    	.query('SELECT' +
+		    		' tr_name AS name,' +
+		    		' tr_subject AS subject' +
+	    		' FROM Invitations' +
+	    			' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+	    		' WHERE tr_is_cancelled = 0' +
+	    			' AND in_accepted = 0 AND in_voucher = @voucher')
+	    	.then(function(recordset) {
+                var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
+                res.type('application/json');
+                var results = {};
+            	results['tertulias'] = recordset;
+                results['links'] = JSON.parse(links);
+                res.json(results);
+                res.sendStatus(200);
+                return next();
+            })
+	    });
+	});
+
     router.get('/publicSearch', (req, res, next) => {
 		console.log('in GET /tertulias/publicsearch');
 		var route = '/tertulias';
