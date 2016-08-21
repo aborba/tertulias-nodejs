@@ -105,7 +105,7 @@ module.exports      = function (configuration) {
 					var userSid = user0.user_id;
 					var provider = user0.provider_name;
 					var claims = user0.user_claims;
-					var picture; var email; var name; var givenname; var surname;
+					var picture, email; var name; var givenname; var surname;
 					claims.forEach(function(item, index) {
 						switch (item.typ) {
 							case 'picture':
