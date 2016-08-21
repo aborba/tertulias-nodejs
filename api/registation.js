@@ -52,7 +52,9 @@ module.exports      = function (configuration) {
 		headers.append('X-ZUMO-AUTH', client.currentUser.mobileServiceAuthenticationToken);
 		fetch(url, { headers: headers })
 		.then(function (data) {
-			return data.json()
+			var result = data.json();
+			console.log(result);
+			return result;
 		}).then(function (user) {
         	// The user object contains the claims for the authenticated user
         });
