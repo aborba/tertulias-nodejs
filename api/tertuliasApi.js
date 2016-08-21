@@ -75,12 +75,6 @@ module.exports = function (configuration) {
 
     router.get('/voucherinfo/:voucher', (req, res, next) => {
 		console.log('in GET /api/voucherinfo/:voucher');
-        res.sendStatus(200);
-        return next();
-	});
-
-    router.get('/voucherinfo_/:voucher', (req, res, next) => {
-		console.log('in GET /api/voucherinfo_/:voucher');
 		var voucher = req.params.voucher;
 	    sql.connect(util.sqlConfiguration)
 	    .then(function() {
