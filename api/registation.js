@@ -23,16 +23,6 @@ module.exports      = function (configuration) {
 		console.log(voucher);
 		var body = `
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
-<h1>Tertulias</h1>
-	<p>Welcome to Tertulias platform site.</p>
-	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>
-	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>
-	<p>In order to join the Tertulia, press the button bellow (You will be asked to authenticate with your authentication provider).</p>
-
-	<button onclick="onClickAction()">Subscribe</button>
-
-	<p id="userIdMessage"></p>
-	<p id="tertuliaMessage"></p>
 
 <script type="application/javascript">
 
@@ -68,6 +58,17 @@ module.exports      = function (configuration) {
 	};
 
 </script>
+
+<h1>Tertulias</h1>
+	<p>Welcome to Tertulias platform site.</p>
+	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>
+	<p>Your voucher number is <strong><span id="voucher">____________________________________</span></strong>.</p>
+	<p>In order to join the Tertulia, press the button bellow (You will be asked to authenticate with your authentication provider).</p>
+
+	<button id="action" onclick="onClickAction()">Subscribe</button>
+
+	<p id="userIdMessage"></p>
+	<p id="tertuliaMessage"></p>
 
 <script type="application/javascript">
 	document.getElementById("voucher").innerHTML = getVoucher(window.location.href);
