@@ -35,8 +35,8 @@ module.exports      = function (configuration) {
 			.input('token', sql.NVarChar(36), voucher)
 			.execute('sp_acceptInvitationToTertulia')
 			.then((recordsets) => {
-				console.log(recordsets);
-				console.log(recordsets[0]);
+				console.log('recordsets[1]: ', recordsets[1]);
+				console.log('recordsets['returnValue']: ', recordsets['returnValue']);
 				if (recordsets['returnValue'] == 0) {
 					res.status(201)	// 201: Created
 						.type('application/json')
