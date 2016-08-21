@@ -43,7 +43,7 @@ module.exports      = function (configuration) {
 	function getInfo(voucher) {
 	    var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
 	    	"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
-    	client.invokeApi("/voucherinfo/" + voucher, {
+    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
         	body: null,
         	method: "get"
     	}).done(function(results) {
