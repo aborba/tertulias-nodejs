@@ -54,10 +54,11 @@ module.exports      = function (configuration) {
 		});
 	};
 	function onClickAction() {
-		signInAndSubscribe(
-			voucher,
-			'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
-			'userIdMessagePlaceHolder', 'Your user id is:');
+		getInfo(voucher);
+		// signInAndSubscribe(
+		// 	voucher,
+		// 	'Are you sure you want to subscribe tertulia "XXX" with user "YYY"?',
+		// 	'userIdMessagePlaceHolder', 'Your user id is:');
 	};
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
