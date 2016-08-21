@@ -23,41 +23,42 @@ module.exports      = function (configuration) {
 		console.log(voucher);
 		var body = `
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
+<script type="application/javascript" src="/TertuliasBody.js"></script>
 
-<script type="application/javascript">
+// <script type="application/javascript">
 
-	function getVoucher(href) {
-		return href.substr(href.lastIndexOf("/") + 1);
-	};
+// 	function getVoucher(href) {
+// 		return href.substr(href.lastIndexOf("/") + 1);
+// 	};
 
-	function signInAndSubscribe(voucher) {
-		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
-				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
-			.login("google")
-			.done(
-				function(results) {
-					var userSid = results.userId;
-					var voucher = getVoucher(window.location.href);
-					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>.";
-					subscribe(userSid, voucher);
-				},
-				function(err) { alert("Error: " + err); }
-			);
-	};
+// 	function signInAndSubscribe(voucher) {
+// 		new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net",
+// 				"309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com")
+// 			.login("google")
+// 			.done(
+// 				function(results) {
+// 					var userSid = results.userId;
+// 					var voucher = getVoucher(window.location.href);
+// 					document.getElementById("userIdMessage").innerHTML = "You were assigned user id <strong>" + userSid + "</strong>.";
+// 					subscribe(userSid, voucher);
+// 				},
+// 				function(err) { alert("Error: " + err); }
+// 			);
+// 	};
 
-	function subscribe(userSid, voucher) {
-		document.getElementById("userId").innerHTML = userSid;
-		alert(userSid + " " + voucher);
-	//<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>
-	//<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>
-	};
+// 	function subscribe(userSid, voucher) {
+// 		document.getElementById("userId").innerHTML = userSid;
+// 		alert(userSid + " " + voucher);
+// 	//<p id="userIdMessage">You were assigned user id <strong><span id="userId">____________________________________</span></strong>.</p>
+// 	//<p id="tertuliaMessage">You subscribed to Tertulia <strong><span id="userId">____________________________________</span></strong>.</p>
+// 	};
 
-	function onClickAction() {
-		var voucher = getVoucher(window.location.href);
-		signInAndSubscribe(voucher);
-	};
+// 	function onClickAction() {
+// 		var voucher = getVoucher(window.location.href);
+// 		signInAndSubscribe(voucher);
+// 	};
 
-</script>
+// </script>
 
 <h1>Tertulias</h1>
 	<p>Welcome to Tertulias platform site.</p>
