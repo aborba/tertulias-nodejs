@@ -24,7 +24,7 @@ function subscribe(userSid,voucher){
         method: "get"
     }).done(function (results) {
         var message = results.result.count + " item(s) marked as complete.";
-        var dialog = new Windows.UI.Popups.MessageDialog(message);
+        var dialog = new Windows.UI.Popups.MessageDialog(results);
         dialog.commands.append(okCommand);
         dialog.showAsync().done(function () {
             console.log("done");
