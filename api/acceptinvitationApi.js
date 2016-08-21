@@ -36,7 +36,8 @@ module.exports      = function (configuration) {
 			.execute('sp_acceptInvitationToTertulia')
 			.then((recordsets) => {
 				console.log(recordsets);
-				if (recordsets.length == 0) {
+				console.log(recordsets[0].returnValue);
+				if (recordsets['returnValue'] == 0) {
 					res.status(201)	// 201: Created
 						.type('application/json')
 						.json( { result: 'Ok' } );
