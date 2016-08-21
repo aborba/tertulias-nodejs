@@ -18,7 +18,8 @@ module.exports      = function (configuration) {
 
     router.post('/', authenticate, (req, res, next) => {
 		console.log('in POST /acceptinvitation');
-    	var userSid = req.azureMobile.user.id;
+    	// var userSid = req.azureMobile.user.id;
+    	var userSid = req.body.userSid;
     	console.log(userSid);
     	var voucher = req.body.voucher;
     	console.log(voucher);
