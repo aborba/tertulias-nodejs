@@ -23,11 +23,6 @@ module.exports      = function (configuration) {
 		console.log(userSid);
 		var voucher = req.body.voucher;
 		console.log(voucher);
-		res.json( {
-			"links": [
-				{ "rel": "userSid", "method": "voucher", "href": "/ok" }
-			]}
-		);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
