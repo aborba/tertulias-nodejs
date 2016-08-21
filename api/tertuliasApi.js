@@ -75,7 +75,7 @@ module.exports = function (configuration) {
 
     router.get('/voucherinfo/:voucher', (req, res, next) => {
 		console.log('in GET /voucherinfo/:voucher');
-	}
+	});
 
     router.get('/voucherinfo_/:voucher', (req, res, next) => {
 		console.log('in GET /voucherinfo_/:voucher');
