@@ -46,19 +46,6 @@ module.exports      = function (configuration) {
 	var voucher = getVoucher(window.location.href);
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
-	function getUserData(client) {
-		var url = client.applicationUrl + '/.auth/me';
-		var headers = new Headers();
-		headers.append('X-ZUMO-AUTH', client.currentUser.mobileServiceAuthenticationToken);
-		fetch(url, { headers: headers })
-		.then(function (data) {
-			return data.json();
-		}).then(function (user) {
-        	console.log(user);
-        	console.log(user.name);
-        });
-	}
-
 	function getInfo(client, voucher) {
 		client.login("google")
 		.done(function(results) {
@@ -105,27 +92,26 @@ module.exports      = function (configuration) {
 					var userSid = user0.user_id;
 					var provider = user0.provider_name;
 					var claims = user0.user_claims;
-					var picture, email; var name; var givenname; var surname;
+					var picture, email, name, givenname, surname;
 					claims.forEach(function(item, index) {
 						switch (item.typ) {
-							case 'picture':
-								picture = item.val;
-								break;
-							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress':
-								email = item.val;
-								break;
-							case 'name':
-								name = item.val;
-								break;
-							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname':
-								givenname = item.val;
-								break;
-							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname':
-								surname = item.val;
-								break;
+							case 'picture': picture = item.val; break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress': email = item.val; break;
+							case 'name': name = item.val; break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname': givenname = item.val; break;
+							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname': surname = item.val; break;
 						}
 					});
-					console.log(name);
+					client.invokeApi('/tertulias/voucherinfo/' + voucher, { body: null, method: "get"})
+					.done(function(results) {
+						// var name = results.result.tertulias[0].name || "no name";
+						var name = "no name";
+						// var subject = results.result.tertulias[0].subject || "no subject";
+						var subject = "no subject";
+					},
+					function(err){
+						alert("Voucher information retrieval failed: " + err);
+					});
         		});
 			},
 			function(err){
