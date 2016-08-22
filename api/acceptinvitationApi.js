@@ -78,7 +78,7 @@ module.exports      = function (configuration) {
 				});
 			});
 		});
-		return next();
+		// return next();
 	});
 
 	return router;
