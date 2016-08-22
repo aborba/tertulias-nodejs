@@ -17,32 +17,21 @@ module.exports      = function (configuration) {
 	};
 
 	var getUserInfo = function(user, voucher, next) {
-		console.log('in getUserInfo');
 	    user.getIdentity()
 	    .then(function(identity) {
-			console.log('in got identity');
 	    	var claims = identity.google.claims;
-	    	var sid = user.id;
-			console.log('sid: ' + sid);
 	    	var email = claims.email_verified == 'true' ? claims.emailaddress : "";
-			console.log('email: ' + email);
 	    	var firstName = claims.givenname;
-			console.log('firstName: ' + firstName);
 	    	var lastName = claims.givenname;
-			console.log('lastName: ' + lastName);
-	    	var alias = email ? email : firstName + lastName;
-			console.log('alias: ' + alias);
-	    	var picture = claims.picture;
-			console.log('picture: ' + picture);
-			var myclaims = {
-	    		sid: sid,
+			var selectedClaims = {
+	    		sid: user.id,
 	    		email: email,
 	    		firstName: firstName,
 	    		lastName: lastName,
-	    		alias: alias,
-	    		picture: picture
+	    		alias: email ? email : firstName + lastName,
+	    		picture: claims.picture
 	    	};
-	    	next(voucher, myclaims);
+	    	next(voucher, selectedClaims);
 	    });
 	};
 
@@ -55,10 +44,8 @@ module.exports      = function (configuration) {
 		}
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
-			console.log('in after getinfo');
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
-				console.log('for sql');
 				new sql.Request()
 				.input('token', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
@@ -69,24 +56,21 @@ module.exports      = function (configuration) {
 	    		.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then((recordsets) => {
-					console.log('recordsets');
-					console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						res.status(201)	// 201: Created
 							.type('application/json')
 							.json( { result: 'Ok' } );
 						res.end();
-						return next();
+						return;
 					} else {
-						console.log('in 409 error');
-						res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
+						console.log('in 422 error');
+						res.status(422)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 							.type('application/json')
 							.json( { result: 'Voucher unavailable' } );
 						res.end();
-						return next();
+						return next('422 - Unprocessable Entity');
 					}
-					return next();
 				})
 				.catch(function(err) {
 					console.log('in post error');
