@@ -19,6 +19,8 @@ module.exports      = function (configuration) {
 	var getUserInfo = function(user, voucher, next) {
 	    user.getIdentity()
 	    .then(function(identity){
+	    	console.log('identity');
+	    	console.log(identity);
 	    	var claims = identity.google.claims;
 	    	next(voucher, {
 	    		sid: user.id,
@@ -38,11 +40,10 @@ module.exports      = function (configuration) {
 			res.status(401);	// 401: Unauthorized
 			return next(401);
 		}
-		console.log(req.azureMobile.user);
 		var userSid = req.azureMobile.user.id;
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
-			console.log(userInfo);
+			// console.log(userInfo);
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
 				new sql.Request()
