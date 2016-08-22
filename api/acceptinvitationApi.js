@@ -22,7 +22,7 @@ module.exports      = function (configuration) {
 	    .then(function(identity) {
 			console.log('in got identity');
 	    	var claims = identity.google.claims;
-	    	return next(voucher, {
+	    	next(voucher, {
 	    		sid: user.id,
 	    		email: claims.email_verified == 'true' ? claims.emailaddress : "",
 	    		alias: email ? email : firstName + lastName,
