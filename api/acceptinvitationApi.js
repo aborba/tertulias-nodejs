@@ -55,6 +55,7 @@ module.exports      = function (configuration) {
 	    		.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then((recordsets) => {
+					console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						res.status(201)	// 201: Created
