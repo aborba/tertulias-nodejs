@@ -58,9 +58,9 @@ module.exports      = function (configuration) {
 				.then((recordsets) => {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
-						res.status(201)	// 201: Created
-							.type('application/json')
-							.json( { result: 'Ok' } );
+						res.status(201);	// 201: Created
+							// .type('application/json')
+							// .json( { result: 'Ok' } );
 						res.end();
 						return;
 					} else {

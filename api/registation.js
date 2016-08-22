@@ -135,13 +135,12 @@ module.exports      = function (configuration) {
 					    		return;
 					    	}
 					    	client.invokeApi(href, { body: { voucher: voucher }, method: method })
-					    	.done(function(results) {
-					    		alert("You joined the Tertulia successfuly: " + results.result);
-					    	}, function (err) { alert("Tertulia join failed 0: " + err.message); });
-						}, function(err) { alert("Tertulia join failed 1: " + err); });
+					    	.done(function(results) { alert("You joined the Tertulia successfuly: " + results.result);
+					    	}, function(err) { alert("Tertulia join failed: " + err.message); });
+						}, function(err) { alert("Tertulia join failed: " + err.message); });
 					}, function(err) { alert("Voucher information retrieval failed: " + err); });
         		});
-			}, function(err) { alert("Authentication failed: " + err); });
+			}, function(err) { alert("Authentication failed: " + err.message); });
 	};
 
 </script>
