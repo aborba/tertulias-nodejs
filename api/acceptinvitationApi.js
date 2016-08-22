@@ -62,7 +62,7 @@ module.exports      = function (configuration) {
 							// .type('application/json')
 							// .json( { result: 'Ok' } );
 						res.end();
-						return;
+						return next();
 					} else {
 						console.log('in 422 error');
 						res.status(422)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
