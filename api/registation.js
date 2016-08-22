@@ -117,9 +117,6 @@ module.exports      = function (configuration) {
 							confirmationQuestion += ' The tertulia subject is "' + tertulia.subject + '".';
 						if ( ! confirm(confirmationQuestion))
 							return;
-						// subscribe(client, voucher,
-						// 	function(results) {alert(results.result); },
-						// 	function(err) {alert(err.message); });
 						client.invokeApi("/", { body: null, method: "get" })
 						.done(function(results) {
 							var links = results.result.links;
@@ -136,9 +133,9 @@ module.exports      = function (configuration) {
 					    	}
 					    	client.invokeApi(href, { body: { voucher: voucher }, method: method })
 					    	.done(function(results) { alert("You joined the Tertulia successfuly: " + results.result);
-					    	}, function(err) { alert("Tertulia join failed: " + err.message); });
-						}, function(err) { alert("Tertulia join failed: " + err.message); });
-					}, function(err) { alert("Voucher information retrieval failed: " + err); });
+					    	}, function(err) { alert("Tertulia join result: " + err.message); });
+						}, function(err) { alert("System failure: " + err.message); });
+					}, function(err) { alert("Voucher information retrieval failed: " + err.message); });
         		});
 			}, function(err) { alert("Authentication failed: " + err.message); });
 	};

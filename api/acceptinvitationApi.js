@@ -16,7 +16,7 @@ module.exports      = function (configuration) {
 		}
 	};
 
-	var getUserInfo = function(user, voucher, next) {
+	var getUserInfo = function(user, voucher, continueWith) {
 	    user.getIdentity()
 	    .then(function(identity) {
 	    	var claims = identity.google.claims;
@@ -31,7 +31,7 @@ module.exports      = function (configuration) {
 	    		alias: email ? email : firstName + lastName,
 	    		picture: claims.picture
 	    	};
-	    	next(voucher, selectedClaims);
+	    	continueWith(voucher, selectedClaims);
 	    });
 	};
 
@@ -40,7 +40,7 @@ module.exports      = function (configuration) {
 		if ( ! req.azureMobile.user) {
 			console.log('401 - Unauthorized');
 			res.status(401);	// 401: Unauthorized
-			return next(401);
+			next(401);
 		}
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
@@ -58,27 +58,18 @@ module.exports      = function (configuration) {
 				.then((recordsets) => {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
-						// res.status(201);	// 201: Created
-							// .type('application/json')
-							// .json( { result: 'Ok' } );
-						// res.end();
-						return next();
+						res.status(201).end();	// 201: Created
 					} else {
 						console.log('in 422 error');
 						res.status(422)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 							.type('application/json')
-							.json( { result: 'Voucher unavailable' } );
-						res.end();
+							.json( { result: 'Voucher unavailable' } )
+							.end();
 						return next('422 - Unprocessable Entity');
 					}
-				// })
-				// .catch(function(err) {
-				// 	console.log('in post error');
-				// 	return;
 				});
 			});
 		});
-		// return next();
 	});
 
 	return router;
