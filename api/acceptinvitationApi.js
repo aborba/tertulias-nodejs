@@ -22,23 +22,27 @@ module.exports      = function (configuration) {
 	    .then(function(identity) {
 			console.log('in got identity');
 	    	var claims = identity.google.claims;
+	    	var sid = user.id;
+			console.log('sid: ' + sid);
+	    	var email = claims.email_verified == 'true' ? claims.emailaddress : "";
+			console.log('email: ' + email);
+	    	var firstName = claims.givenname;
+			console.log('firstName: ' + firstName);
+	    	var lastName = claims.givenname;
+			console.log('lastName: ' + lastName);
+	    	var alias = email ? email : firstName + lastName;
+			console.log('alias: ' + alias);
+	    	var picture = claims.picture;
+			console.log('picture: ' + picture);
 			var myclaims = {
-	    		sid: user.id,
-	    		email: claims.email_verified == 'true' ? claims.emailaddress : "",
-	    		firstName: claims.givenname,
-	    		lastName: claims.surname,
-	    		alias: email ? email : firstName + lastName,
-	    		picture: claims.picture
+	    		sid: sid,
+	    		email: email,
+	    		firstName: firstName,
+	    		lastName: lastName,
+	    		alias: alias,
+	    		picture: picture
 	    	};
-			console.log(myclaims);
-	    	next(voucher, {
-	    		sid: user.id,
-	    		email: claims.email_verified == 'true' ? claims.emailaddress : "",
-	    		alias: email ? email : firstName + lastName,
-	    		firstName: claims.givenname,
-	    		lastName: claims.surname,
-	    		picture: claims.picture
-	    	});
+	    	next(voucher, myclaims);
 	    });
 	};
 
