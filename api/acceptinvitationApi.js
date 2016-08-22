@@ -22,6 +22,7 @@ module.exports      = function (configuration) {
 	    	console.log('identity');
 	    	console.log(identity);
 	    	var claims = identity.google.claims;
+	    	return;
 	    	next(voucher, {
 	    		sid: user.id,
 	    		email: claims.email_verified ? claims.emailaddress : "",
