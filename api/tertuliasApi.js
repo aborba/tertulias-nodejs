@@ -76,8 +76,6 @@ module.exports = function (configuration) {
 	router.get('/voucherinfo/:voucher', (req, res, next) => {
 		console.log('in GET /api/voucherinfo/:voucher');
 		var voucher = req.params.voucher;
-		console.log(voucher);
-		console.log(req.azureMobile.user);
 		if (!req.azureMobile.user) {
 			res.send(401); // 401: Unauthorized
 			return next();

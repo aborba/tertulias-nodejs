@@ -16,10 +16,14 @@ module.exports      = function (configuration) {
 		}
 	};
 
-	router.post('/', authenticate, (req, res, next) => {
+	router.post('/', (req, res, next) => {
 		console.log('in POST /acceptinvitation');
-		// var userSid = req.azureMobile.user.id;
-		var userSid = req.body.userSid;
+		if ( ! req.azureMobile.user) {
+			console.log('401 - Unauthorized');
+			res.status(401);	// 401: Unauthorized
+			return next(401);
+		}
+		var userSid = req.azureMobile.user.id;
 		console.log(userSid);
 		var voucher = req.body.voucher;
 		console.log(voucher);
