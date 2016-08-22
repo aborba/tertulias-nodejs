@@ -71,10 +71,10 @@ module.exports      = function (configuration) {
 						res.end();
 						return next('422 - Unprocessable Entity');
 					}
-				})
-				.catch(function(err) {
-					console.log('in post error');
-					return;
+				// })
+				// .catch(function(err) {
+				// 	console.log('in post error');
+				// 	return;
 				});
 			});
 		});
