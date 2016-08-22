@@ -27,6 +27,7 @@ module.exports      = function (configuration) {
 		console.log(userSid);
 		var voucher = req.body.voucher;
 		console.log(voucher);
+		console.log('So far so good...');
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
