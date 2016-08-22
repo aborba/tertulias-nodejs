@@ -75,10 +75,7 @@ module.exports      = function (configuration) {
 					next(err);
 				});
 			});
-		});	    		email: claims.email_verified ? claims.emailaddress : "",
-	    		firstName: claims.givenname,
-	    		lastName: claims.surname,
-	    		picture: claims.picture
+		});
 
 		// sql.connect(util.sqlConfiguration)
 		// .then(function() {
