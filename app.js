@@ -8,7 +8,7 @@ var express = require('express'),
     azureMobileApps = require('azure-mobile-apps'),
     registation = require('./api/registation'),
     homeApi = require('./api/homeApi'),
-    tertuliasApi = require('./api/tertuliasApi');
+    tertuliasApi = require('./api/tertuliasApi'),
     acceptinvitationApi = require('./api/acceptinvitationApi');
 
 var app = express();

@@ -16,6 +16,21 @@ module.exports      = function (configuration) {
 		}
 	};
 
+	var getUserInfo = function(user, voucher, next) {
+	    user.getIdentity()
+	    .then(function(identity){
+	    	var claims = identity.google.claims;
+	    	next(voucher, {
+	    		sid: user.id,
+	    		alias: "",
+	    		email: claims.email_verified ? claims.emailaddress : "",
+	    		firstName: claims.givenname,
+	    		lastName: claims.surname,
+	    		picture: claims.picture
+	    	} );
+	    });
+	};
+
 	router.post('/', (req, res, next) => {
 		console.log('in POST /acceptinvitation');
 		if ( ! req.azureMobile.user) {
@@ -26,7 +41,7 @@ module.exports      = function (configuration) {
 		console.log(req.azureMobile.user);
 		var userSid = req.azureMobile.user.id;
 		var voucher = req.body.voucher;
-		getUserInfo(req.azureMobile.user, function(voucher, userInfo) {
+		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
 			console.log(userInfo);
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
@@ -94,21 +109,6 @@ module.exports      = function (configuration) {
 		// });
 		return next();
 	});
-
-	var getUserInfo = function(user, next) {
-	    user.getIdentity()
-	    .then(function(identity){
-	    	var claims = identity.google.claims;
-	    	next({
-	    		sid: user.id,
-	    		alias: "",
-	    		email: claims.email_verified ? claims.emailaddress : "",
-	    		firstName: claims.givenname,
-	    		lastName: claims.surname,
-	    		picture: claims.picture
-	    	});
-	    });
-	};
 
 	return router;
 };
