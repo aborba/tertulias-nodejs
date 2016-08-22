@@ -19,9 +19,9 @@ module.exports      = function (configuration) {
 	var getUserInfo = function(user, voucher, next) {
 	    user.getIdentity()
 	    .then(function(identity){
-	    	console.log('identity');
-	    	console.log(identity);
 	    	var claims = identity.google.claims;
+	    	console.log('claims');
+	    	console.log(claims);
 	    	return;
 	    	next(voucher, {
 	    		sid: user.id,
