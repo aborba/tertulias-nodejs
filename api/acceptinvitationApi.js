@@ -20,11 +20,7 @@ module.exports      = function (configuration) {
 	    user.getIdentity()
 	    .then(function(identity){
 	    	var claims = identity.google.claims;
-	    	console.log('claims');
-	    	console.log(user.id);
-	    	console.log(claims);
-	    	return;
-	    	next(voucher, {
+	    	return next(voucher, {
 	    		sid: user.id,
 	    		email: claims.email_verified == 'true' ? claims.emailaddress : "",
 	    		alias: email ? email : firstName + lastName,
@@ -64,15 +60,17 @@ module.exports      = function (configuration) {
 						res.status(201)	// 201: Created
 							.type('application/json')
 							.json( { result: 'Ok' } );
+						res.end();
 						return next();
 					} else {
 						console.log('in 409 error');
 						res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 							.type('application/json')
 							.json( { result: 'Voucher unavailable' } );
+						res.end();
 						return next();
 					}
-					return;
+					return next();
 				})
 				.catch(function(err) {
 					console.log('in post error');
