@@ -22,8 +22,8 @@ module.exports      = function (configuration) {
 	    	var claims = identity.google.claims;
 	    	next(voucher, {
 	    		sid: user.id,
-	    		alias: "",
 	    		email: claims.email_verified ? claims.emailaddress : "",
+	    		alias: email ? email : firstName + lastName,
 	    		firstName: claims.givenname,
 	    		lastName: claims.surname,
 	    		picture: claims.picture
