@@ -78,34 +78,6 @@ module.exports      = function (configuration) {
 				});
 			});
 		});
-
-		// sql.connect(util.sqlConfiguration)
-		// .then(function() {
-		// 	new sql.Request()
-		// 	.input('userSid', sql.NVarChar(40), userInfo.sid)
-		// 	.input('token', sql.NVarChar(36), voucher)
-		// 	.execute('sp_acceptInvitationToTertulia')
-		// 	.then((recordsets) => {
-		// 		if (recordsets['returnValue'] == 0) {
-		// 			console.log('in 201 ok');
-		// 			res.status(201)	// 201: Created
-		// 				.type('application/json')
-		// 				.json( { result: 'Ok' } );
-		// 			return next();
-		// 		} else {
-		// 			console.log('in 409 error');
-		// 			res.status(409)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
-		// 				.type('application/json')
-		// 				.json( { result: 'Voucher unavailable' } );
-		// 			return next();
-		// 		}
-		// 		return;
-		// 	})
-		// 	.catch(function(err) {
-		// 		console.log('in post error');
-		// 		next(err);
-		// 	});
-		// });
 		return next();
 	});
 
