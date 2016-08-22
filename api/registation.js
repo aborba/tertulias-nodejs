@@ -132,7 +132,7 @@ module.exports      = function (configuration) {
 					    		return;
 					    	}
 					    	client.invokeApi(href, { body: { voucher: voucher }, method: method })
-					    	.done(function(results) { alert("You joined the Tertulia successfuly.\nAccess the Tertulia using the app in your App store.\nEnjoy.");
+					    	.done(function(results) { alert("You joined the Tertulia successfuly. Access the Tertulia using the app in your App store. Enjoy.");
 					    	}, function(err) { alert("Tertulia join result: " + err.message); });
 						}, function(err) { alert("System failure: " + err.message); });
 					}, function(err) { alert("Voucher information retrieval failed: " + err.message); });
