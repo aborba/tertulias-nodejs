@@ -92,7 +92,6 @@ module.exports = function (configuration) {
 				' WHERE tr_is_cancelled = 0' +
 					' AND in_is_acknowledged = 0 AND in_key = @voucher')
 			.then(function(recordset) {
-				console.log(recordset);
 				res.type('application/json');
 				var results = {};
 				results['tertulias'] = recordset;

@@ -17,8 +17,10 @@ module.exports      = function (configuration) {
 	};
 
 	var getUserInfo = function(user, voucher, next) {
+		console.log('in getUserInfo');
 	    user.getIdentity()
-	    .then(function(identity){
+	    .then(function(identity) {
+			console.log('in got identity');
 	    	var claims = identity.google.claims;
 	    	return next(voucher, {
 	    		sid: user.id,
@@ -38,12 +40,12 @@ module.exports      = function (configuration) {
 			res.status(401);	// 401: Unauthorized
 			return next(401);
 		}
-		var userSid = req.azureMobile.user.id;
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
-			// console.log(userInfo);
+			console.log('in after getinfo');
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
+				console.log('for sql');
 				new sql.Request()
 				.input('token', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
@@ -54,6 +56,7 @@ module.exports      = function (configuration) {
 	    		.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then((recordsets) => {
+					console.log('recordsets');
 					console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
