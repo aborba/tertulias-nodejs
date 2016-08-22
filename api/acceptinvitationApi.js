@@ -58,10 +58,10 @@ module.exports      = function (configuration) {
 				.then((recordsets) => {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
-						res.status(201);	// 201: Created
+						// res.status(201);	// 201: Created
 							// .type('application/json')
 							// .json( { result: 'Ok' } );
-						res.end();
+						// res.end();
 						return next();
 					} else {
 						console.log('in 422 error');
