@@ -117,18 +117,31 @@ module.exports      = function (configuration) {
 							confirmationQuestion += ' The tertulia subject is "' + tertulia.subject + '".';
 						if ( ! confirm(confirmationQuestion))
 							return;
-						subscribe(client, voucher,
-							function(results) {alert(results.result); },
-							function(err) {alert(err.message); });
-					},
-					function(err){
-						alert("Voucher information retrieval failed: " + err);
-					});
+						// subscribe(client, voucher,
+						// 	function(results) {alert(results.result); },
+						// 	function(err) {alert(err.message); });
+						client.invokeApi("/", { body: null, method: "get" })
+						.done(function(results) {
+							var links = results.result.links;
+					    	for (var i = 0; i < links.length; i++) {
+					    		if (links[i].rel == "accept_invitation") {
+					    			var method = links[i].method;
+					    			var href = links[i].href;
+					    			break;
+					    		}
+					    	}
+					    	if ( ! href) {
+					    		alert("An internal error ocurred, please try again later.");
+					    		return;
+					    	}
+					    	client.invokeApi(href, { body: { voucher: voucher }, method: method })
+					    	.done(function(results) {
+					    		alert("You joined the Tertulia successfuly: " + results.result);
+					    	}, function (err) { alert("Tertulia join failed: " + err.message); });
+						}, function(err) { alert("Tertulia join failed: " + err); });
+					}, function(err) { alert("Voucher information retrieval failed: " + err); });
         		});
-			},
-			function(err){
-				alert("Authentication failed: " + err);
-			});
+			}, function(err) { alert("Authentication failed: " + err); });
 	};
 
 </script>

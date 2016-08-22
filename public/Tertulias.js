@@ -27,19 +27,19 @@ function subscribe(client,voucher,fOk,fErr){
     			break;
     		}
     	}
-    	if (!href) {
-    		alert("Internal error ocurred, please try again later.");
+    	if ( ! href) {
+    		alert("An internal error ocurred, please try again later.");
     		return;
     	}
     	client.invokeApi(href, {
-    		body: { userSid: userSid, voucher: voucher },
+    		body: { voucher: voucher },
     		method: method
     	}).done(function(results){
     		fOk(results.result);
-    	}, function (error) {
-    		fErr(error.message);
+    	}, function (err) {
+    		fErr(err.message);
     	});
-    }, function (error) {
-		fErr(error.message);
+    }, function (err) {
+		fErr(err.message);
     });
 };
