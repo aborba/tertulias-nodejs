@@ -21,16 +21,17 @@ module.exports      = function (configuration) {
 	    .then(function(identity){
 	    	var claims = identity.google.claims;
 	    	console.log('claims');
+	    	console.log(user.id);
 	    	console.log(claims);
 	    	return;
 	    	next(voucher, {
 	    		sid: user.id,
-	    		email: claims.email_verified ? claims.emailaddress : "",
+	    		email: claims.email_verified == 'true' ? claims.emailaddress : "",
 	    		alias: email ? email : firstName + lastName,
 	    		firstName: claims.givenname,
 	    		lastName: claims.surname,
 	    		picture: claims.picture
-	    	} );
+	    	});
 	    });
 	};
 
