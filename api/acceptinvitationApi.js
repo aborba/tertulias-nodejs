@@ -47,7 +47,7 @@ module.exports      = function (configuration) {
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
 				new sql.Request()
-				.input('token', sql.NVarChar(36), voucher)
+				.input('voucher', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
 				.input('alias', sql.NVarChar(20), userInfo.alias)
 	    		.input('email', sql.NVarChar(40), userInfo.email)
@@ -74,7 +74,7 @@ module.exports      = function (configuration) {
 				})
 				.catch(function(err) {
 					console.log('in post error');
-					next(err);
+					return;
 				});
 			});
 		});
