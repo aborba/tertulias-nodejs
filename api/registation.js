@@ -111,7 +111,7 @@ module.exports      = function (configuration) {
 						var tertulia = results.result.tertulias[0];
 						var confirmationQuestion = 'Please confirm that you want to join the tertulia';
 						if (tertulia.name)
-							confirmationQuestion += ' named "' + tertulia.name + '";
+							confirmationQuestion += ' named "' + tertulia.name + '"';
 						confirmationQuestion += '.';
 						if (tertulia.subject)
 							confirmationQuestion += ' The tertulia subject is "' + tertulia.subject + '".';
