@@ -49,8 +49,7 @@ module.exports = function (configuration) {
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
 console.log(HERE + ': ' + 'for sql');
-			sql.connect(util.sqlConfiguration)
-			.then(function() {
+			sql.connect(util.sqlConfiguration).then(function() {
 console.log(HERE + ': ' + 'sql connected');
 				new sql.Request()
 				.input('voucher', sql.NVarChar(36), voucher)
@@ -76,7 +75,13 @@ console.log(recordsets);
 							.end();
 						return next('422 - Unprocessable Entity');
 					}
+				}).catch(function(err) {
+					console.log('SQL Stored procedure Error');
+					res.status(500);
 				});
+			}).catch(function(err) {
+				console.log('SQL Connection Error');
+				res.status(500);
 			});
 		});
 	});
