@@ -43,7 +43,7 @@ module.exports      = function (configuration) {
 
 	// Source: http://javascriptsource.com
 	var isPopupsBlocked = () => {
-		var puTest = window.open(null, "", "width=1, height=1");
+		var puTest = window.open(null, "", "left=100, top=100, width=100, height=100, location=no, menubar=no, resizable=no, scrollbars=no, status=no, titlebar=no");
 		try { puTest.close(); return false; }
 		catch(e) { return true; }
 	};
