@@ -62,7 +62,7 @@ console.log(HERE + ': ' + 'sql connected');
 				.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
-console.log(HERE + ': ' + 'query done');
+console.log('query done');
 console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
