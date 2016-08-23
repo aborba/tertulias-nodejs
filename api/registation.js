@@ -6,7 +6,7 @@ var sql             = require('mssql'),
 
 module.exports      = function (configuration) {
 	var router      = express.Router(),
-	authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
+	// authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
 	authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
@@ -23,7 +23,6 @@ module.exports      = function (configuration) {
 <link rel="stylesheet" type="text/css" href="/tertulias.css">
 <script type="application/javascript" src="/MobileServices.Web.min.js"></script>
 <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.min.js"></script>
-<script type="application/javascript" src="/Tertulias.js"></script>
 
 <div class="header">
 	<img src="/tertulias-web.png" alt="Tertulias logo">
@@ -51,34 +50,6 @@ module.exports      = function (configuration) {
 		catch(e) { return true; }
 	}
 
-	function getInfo(client, voucher) {
-		client.login("google")
-		.done(function(results) {
-			client.invokeApi('/me', {method: "post"})
-			.done(function(res) {
-
-			});
-			var token = results.mobileServiceAuthenticationToken;
-			var userSid = results.userSid;
-			var userData = getUserData(client);
-	    	client.invokeApi('/tertulias/voucherinfo/' + voucher, {
-	        	body: null,
-	        	method: "get"
-	    	}).done(function(results0) {
-	        	// var name = results.result.tertulias[0].name || "no name";
-	        	var name = "no name";
-	        	// var subject = results.result.tertulias[0].subject || "no subject";
-	        	var subject = "no subject";
-
-				signInAndSubscribe(client, voucher,
-					'Are you sure you want to subscribe tertulia "' + name + '" about "' + subject + '"?',
-					'userIdMessagePlaceHolder', 'Your user id is:');
-			});
-		}, function(err) {
-			alert("Authentication failed: " + err);
-		});
-	};
-
 	var getConfirmationQuestion = (tertulia) => {
 		var result = 'Please confirm that you want to join the tertulia';
 		if (tertulia.name)
@@ -94,8 +65,7 @@ module.exports      = function (configuration) {
 			alert('Your browser is blocking popups; You need to enable popups in order to proceed.');
 			return;
 		}
-		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net"); //, "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
-		// getInfo(client, voucher);
+		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net");
 		client.login("google")
 		.done(
 			(results) => {
