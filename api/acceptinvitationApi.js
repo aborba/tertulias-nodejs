@@ -48,16 +48,7 @@ module.exports = function (configuration) {
 		}
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
-console.log(HERE + ': ' + 'for sql');
 			sql.connect(util.sqlConfiguration).then(function() {
-console.log(HERE + ': ' + 'sql connected');
-console.log(HERE + ': ' + voucher);
-console.log(HERE + ': ' + userInfo.sid);
-console.log(HERE + ': ' + userInfo.alias);
-console.log(HERE + ': ' + userInfo.email);
-console.log(HERE + ': ' + userInfo.firstName);
-console.log(HERE + ': ' + userInfo.lastName);
-console.log(HERE + ': ' + userInfo.picture);
 				new sql.Request()
 				.input('voucher', sql.VarChar(36), voucher)
 				.input('userSid', sql.VarChar(40), userInfo.sid)
@@ -68,8 +59,6 @@ console.log(HERE + ': ' + userInfo.picture);
 				.input('picture', sql.VarChar(255), userInfo.picture.substring(0, 255))
 				.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
-console.log('query done');
-console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						res.status(201).end();	// 201: Created
