@@ -605,8 +605,6 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, tr_id)
 			.execute('sp_getTertuliaMembers')
 			.then(function(recordset) {
-console.log('recordset');
-console.log(recordset);
 				var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "create_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
@@ -616,11 +614,13 @@ console.log(recordset);
 					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
 				']';
 				res.type('application/json');
-				recordset[0].forEach(function(elem) {
-					elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-				});
 				var results = {};
-				results['members'] = recordset[0];
+				if (recordset[0]) {
+					recordset[0].forEach(function(elem) {
+						elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+					});
+					results['members'] = recordset[0];
+				}
 				results['links'] = JSON.parse(links);
 				res.json(results);
 				res.sendStatus(200);
