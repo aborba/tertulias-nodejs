@@ -35,9 +35,12 @@ module.exports = function (configuration) {
 				picture: claims.picture
 			};
 console.log(HERE);
-selectedClaims.forEach(item, position) {
-	console.log(item);
-}
+console.log(selectedClaims.sid);
+console.log(selectedClaims.email);
+console.log(selectedClaims.firstName);
+console.log(selectedClaims.lastName);
+console.log(selectedClaims.alias);
+console.log(selectedClaims.picture);
 			continueWith(voucher, selectedClaims);
 		});
 	};
