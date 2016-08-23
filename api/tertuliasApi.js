@@ -643,10 +643,15 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id/members/count';
 		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
+var vb = 1;
+console.log(HERE + ': ' + 'Vamos Bem ' + vb++);
 		var tertulia = '/tertulias/' + tr_id;
+console.log(HERE + ': ' + 'Vamos Bem ' + vb++);
 		var route = tertulia + '/members/count';
+console.log(HERE + ': ' + 'Vamos Bem ' + vb++);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
+console.log(HERE + ': ' + 'Vamos Bem ' + vb++);
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, tr_id)
