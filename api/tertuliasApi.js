@@ -658,7 +658,7 @@ console.log(HERE + ': ' + 'Vamos Bem ' + vb++);
 			.query('SELECT COUNT(*) AS total' +
 				' FROM Members' +
 					' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
-				' WHERE tr_is_cancelled == 0' +
+				' WHERE tr_is_cancelled = 0' +
 					' AND mb_tertulia = @tertulia')
 			.then(function(recordset) {
 console.log(recordset);
