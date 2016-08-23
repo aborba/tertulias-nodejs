@@ -336,6 +336,7 @@ module.exports = function (configuration) {
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/members" }, ' +
+						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/members/count" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
@@ -594,7 +595,8 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/:tr_id/members', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/members');
+		var HERE = '/tertulias/:tr_id/members';
+		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
 		var tertulia = '/tertulias/' + tr_id;
 		var route = tertulia + '/members';
@@ -621,6 +623,44 @@ module.exports = function (configuration) {
 					});
 					results['members'] = recordset[0];
 				}
+				results['links'] = JSON.parse(links);
+				res.json(results);
+				res.status(200);
+				next();
+			}).catch(function(err) {
+				console.log('SQL Query processing Error');
+				res.status(500)
+				return next(err);
+			});
+		}).catch(function(err) {
+			console.log('SQL Connection Error');
+			res.status(500);
+			return next(err);
+		});
+	});
+
+	router.get('/:tr_id/members/count', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/members/count';
+		console.log('in GET ' + HERE);
+		var tr_id = req.params.tr_id;
+		var tertulia = '/tertulias/' + tr_id;
+		var route = tertulia + '/members/count';
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.query('SELECT COUNT(*) AS total' +
+				' FROM Members' +
+					' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
+				' WHERE tr_is_cancelled == 0' +
+					' AND mb_tertulia = @tertulia')
+			.then(function(recordset) {
+console.log(recordset);
+				res.type('application/json');
+				var results = {};
+				if (recordset[0])
+					results['totals'] = recordset[0];
 				results['links'] = JSON.parse(links);
 				res.json(results);
 				res.status(200);
