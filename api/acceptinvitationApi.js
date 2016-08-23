@@ -47,7 +47,7 @@ module.exports = function (configuration) {
 			next(401);
 		}
 		var voucher = req.body.voucher;
-		getUserInfo(req.azureMobile.user, voucher, (voucher, userInfo) => {
+		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
 console.log(HERE + ': ' + 'for sql');
 			sql.connect(util.sqlConfiguration)
 			.then(function() {
