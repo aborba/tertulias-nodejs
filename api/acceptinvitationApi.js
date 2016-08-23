@@ -34,13 +34,6 @@ module.exports = function (configuration) {
 				alias: email ? email : firstName + lastName,
 				picture: claims.picture
 			};
-console.log(HERE);
-console.log(selectedClaims.sid);
-console.log(selectedClaims.email);
-console.log(selectedClaims.firstName);
-console.log(selectedClaims.lastName);
-console.log(selectedClaims.alias);
-console.log(selectedClaims.picture);
 			continueWith(voucher, selectedClaims);
 		});
 	};
@@ -68,7 +61,7 @@ console.log(HERE + ': ' + 'sql connected');
 				.input('lastName', sql.NVarChar(40), userInfo.lastName)
 				.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
-				.then((recordsets) => {
+				.then(function(recordsets) {
 console.log(HERE + ': ' + 'query done');
 console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
