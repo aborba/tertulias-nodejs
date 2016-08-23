@@ -622,9 +622,16 @@ module.exports = function (configuration) {
 					results['members'] = recordset[0];
 				}
 				results['links'] = JSON.parse(links);
-				res.json(results);
-				res.sendStatus(200);
-				return next();
+				new sql.Request() {
+					.input('tertulia', sql.Int, tr_id)
+					.query('SELECT COUNT(*) FROM Members WHERE mb_tertulia = @tertulia')
+					.then(function(recordset) {
+						console.log(recordset);
+						res.json(results);
+						res.sendStatus(200);
+						return next();					
+					})
+				}
 			}).catch(function(err) {
 				console.log('SQL Query processing Error');
 				res.status(500)
