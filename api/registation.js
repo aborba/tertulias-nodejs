@@ -33,6 +33,7 @@ module.exports      = function (configuration) {
 	<p>You arrived at this page because you followed a link with a private invitation from a friend of yours, to join a Tertulia managed by him.</p>
 	<p>Your voucher number is <strong><span id='voucherPlaceHolder'></span></strong>.</p>
 	<p>In order to join the Tertulia, press the button bellow (You will be asked to authenticate with your authentication provider).</p>
+	<p align="center">»»» Please turn off the popup blocker to be able to authenticate «««</p>
 
 	<button id='action' onclick="onClickAction('userIdMessagePlaceHolder')">Subscribe</button>
 
