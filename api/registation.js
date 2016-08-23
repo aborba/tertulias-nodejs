@@ -44,11 +44,15 @@ module.exports      = function (configuration) {
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 	// Source: http://javascriptsource.com
-	function isPopupsBlocked() {
+	var isPopupsBlocked = () => {
 		var puTest = windows.open(null, "", "width=100, height=100");
 		try { puTest.close(); return false; }
 		catch(e) { return true; }
-	}
+	};
+
+	var getVoucher = (href) => {
+		return href.substr(href.lastIndexOf("/")+1);
+	};
 
 	var getConfirmationQuestion = (tertulia) => {
 		var result = 'Please confirm that you want to join the tertulia';
