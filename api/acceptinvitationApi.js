@@ -1,13 +1,15 @@
-var express         = require('express'),
-	bodyParser      = require('body-parser');
+var express			= require('express'),
+	bodyparser		= require('body-parser'),
+	promises		= require('azure-mobile-apps/src/utilities/promises'),
+	logger			= require('azure-mobile-apps/src/logger');
 
-var sql             = require('mssql'),
-	util            = require('../util');
+var sql				= require('mssql'),
+	util			= require('../util');
 
-module.exports      = function (configuration) {
-	var router      = express.Router(),
-	authenticate    = require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
-	authorize       = require('azure-mobile-apps/src/express/middleware/authorize');
+module.exports = function (configuration) {
+	var router		= express.Router(),
+	authenticate	= require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
+	authorize		= require('azure-mobile-apps/src/express/middleware/authorize');
 
 	var completeError = function(err, res) {
 		if (err) {
@@ -17,22 +19,22 @@ module.exports      = function (configuration) {
 	};
 
 	var getUserInfo = function(user, voucher, continueWith) {
-	    user.getIdentity()
-	    .then(function(identity) {
-	    	var claims = identity.google.claims;
-	    	var email = claims.email_verified == 'true' ? claims.emailaddress : "";
-	    	var firstName = claims.givenname;
-	    	var lastName = claims.givenname;
+		user.getIdentity()
+		.then((identity) => {
+			var claims = identity.google.claims;
+			var email = claims.email_verified == 'true' ? claims.emailaddress : "";
+			var firstName = claims.givenname;
+			var lastName = claims.givenname;
 			var selectedClaims = {
-	    		sid: user.id,
-	    		email: email,
-	    		firstName: firstName,
-	    		lastName: lastName,
-	    		alias: email ? email : firstName + lastName,
-	    		picture: claims.picture
-	    	};
-	    	continueWith(voucher, selectedClaims);
-	    });
+				sid: user.id,
+				email: email,
+				firstName: firstName,
+				lastName: lastName,
+				alias: email ? email : firstName + lastName,
+				picture: claims.picture
+			};
+			continueWith(voucher, selectedClaims);
+		});
 	};
 
 	router.post('/', (req, res, next) => {
@@ -43,17 +45,17 @@ module.exports      = function (configuration) {
 			next(401);
 		}
 		var voucher = req.body.voucher;
-		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
+		getUserInfo(req.azureMobile.user, voucher, (voucher, userInfo) => {
 			sql.connect(util.sqlConfiguration)
-			.then(function() {
+			.then(() => {
 				new sql.Request()
 				.input('voucher', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
 				.input('alias', sql.NVarChar(20), userInfo.alias)
-	    		.input('email', sql.NVarChar(40), userInfo.email)
-	    		.input('firstName', sql.NVarChar(40), userInfo.firstName)
-	    		.input('lastName', sql.NVarChar(40), userInfo.lastName)
-	    		.input('picture', sql.NVarChar(255), userInfo.picture)
+				.input('email', sql.NVarChar(40), userInfo.email)
+				.input('firstName', sql.NVarChar(40), userInfo.firstName)
+				.input('lastName', sql.NVarChar(40), userInfo.lastName)
+				.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then((recordsets) => {
 					if (recordsets['returnValue'] == 0) {
