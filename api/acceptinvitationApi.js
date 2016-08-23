@@ -77,11 +77,13 @@ console.log(recordsets);
 					}
 				}).catch(function(err) {
 					console.log('SQL Stored procedure Error');
-					res.status(500);
+					res.status(500)
+					return next(err);
 				});
 			}).catch(function(err) {
 				console.log('SQL Connection Error');
 				res.status(500);
+				return next(err);
 			});
 		});
 	});
