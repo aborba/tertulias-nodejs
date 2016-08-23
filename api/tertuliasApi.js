@@ -108,7 +108,8 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/publicSearch', (req, res, next) => {
-		console.log('in GET /tertulias/publicsearch');
+		var HERE = '/tertulias/publicsearch';
+		console.log('in GET ' + HERE);
 		var route = '/tertulias';
 		var point = 'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')';
 		sql.connect(util.sqlConfiguration)
@@ -290,7 +291,8 @@ module.exports = function (configuration) {
 	});
 
 	router.get('/:tr_id', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id');
+		var HERE = '/tertulias/:tr_id';
+		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
 		if (isNaN(tr_id))
@@ -347,7 +349,6 @@ module.exports = function (configuration) {
 					']';
 				results['links'] = JSON.parse(links);
 				req.results = results;
-				console.log("Schedule name: " + results['tertulia'].schedule_name);
 				switch(results['tertulia'].schedule_name.toUpperCase()) {
 					case 'WEEKLY':
 						console.log('in weekly');
@@ -368,7 +369,6 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['weekly'] = recordset[0];
-								console.log(results);
 								res.type('application/json');
 								res.json(results);
 								res.sendStatus(200);
@@ -433,7 +433,6 @@ module.exports = function (configuration) {
 						});
 						break;
 					default:
-						console.log(results['tertulia'].schedule_name);
 						res.status(404)	// 404: NOT Found
 						.type('application/json')
 						.json( { result: 'Not Found' } );
