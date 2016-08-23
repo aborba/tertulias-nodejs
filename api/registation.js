@@ -40,8 +40,6 @@ module.exports      = function (configuration) {
 	<p id='tertuliaMessagePlaceHolder'></p>
 
 <script type="application/javascript">
-	var voucher = getVoucher(window.location.href).replace(/\#$/, '');
-	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 	// Source: http://javascriptsource.com
 	var isPopupsBlocked = () => {
@@ -53,6 +51,9 @@ module.exports      = function (configuration) {
 	var getVoucher = (href) => {
 		return href.substr(href.lastIndexOf("/")+1);
 	};
+
+	var voucher = getVoucher(window.location.href).replace(/\#$/, '');
+	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 	var getConfirmationQuestion = (tertulia) => {
 		var result = 'Please confirm that you want to join the tertulia';
