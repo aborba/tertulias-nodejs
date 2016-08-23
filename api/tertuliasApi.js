@@ -1,6 +1,7 @@
 var express      = require('express'),
-	bodyParser   = require('body-parser'),
-	authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
+	bodyParser   = require('body-parser');
+
+var	authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
 	authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
 
 var sql          = require('mssql'),
@@ -10,7 +11,11 @@ var sql          = require('mssql'),
 	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
 } } */
 module.exports = function (configuration) {
-	var router = express.Router();
+
+	var router = express.Router(),
+	azureMobileApps = require('azure-mobile-apps'),
+	promises = require('azure-mobile-apps/src/utilities/promises'),
+	logger = require('azure-mobile-apps/src/logger');
 
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
@@ -643,7 +648,6 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id/members/count';
 		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
-var vb = 1;
 		var tertulia = '/tertulias/' + tr_id;
 		var route = tertulia + '/members/count';
 		sql.connect(util.sqlConfiguration)
@@ -657,7 +661,6 @@ var vb = 1;
 				' WHERE tr_is_cancelled = 0' +
 					' AND mb_tertulia = @tertulia')
 			.then(function(recordset) {
-console.log(recordset);
 				res.type('application/json');
 				var results = {};
 				if (recordset[0])
@@ -712,34 +715,6 @@ console.log(recordset);
 		.catch(function(err) {
 			return next(err);
 		});
-
-		// sql.connect(util.sqlConfiguration)
-		// .then(function() {
-		// 	new sql.Request()
-		// 	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-		// 	.input('tertulia', sql.Int, req.params.tr_id)
-		// 	.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
-		// 	.execute('sp_inviteToTertulia')
-		// 	.then((recordsets) => {
-		// 		console.log(recordsets);
-		// 		console.log(parameters);
-		// 		if (recordsets == '[ returnValue : 0 ]') {
-		// 			console.log('success');
-		// 			res.sendStatus(200);
-		// 		} else {
-		// 			console.log('failure');
-		// 			res.sendStatus(409);
-		// 		}
-		// 		return next();
-		// 	})
-		// 	.catch(function(err) {
-		// 		console.log('catched error');
-		// 		next(err);
-		// 	});
-		// })
-		// .catch(function(err) {
-		// 	return next(err);
-		// });
 	});
 
 	router.get('/:tr_id/members/voucher/:voucher_batch', (req, res, next) => {
@@ -770,8 +745,23 @@ console.log(recordset);
 		});
 	});
 
+	var pushMessage = function(context, message) {
+		var payload = {'data': {'message': message } };
+		if (context.push) {
+			// Send a GCM native notification.
+			context.push.gcm.send(null, payload, function (err) {
+				if (err) {
+					logger.error('Error while sending push notification: ', err);
+				} else {
+					logger.info('Push notification sent successfully!');
+				}
+			});
+		}
+	};
+
 	router.post('/:tr_id/subscribe', (req, res, next) => {
-		console.log('in POST /tertulias/:tr_id/subscribe');
+		var HERE = '/tertulias/:tr_id/subscribe';
+		console.log('in POST ' + HERE);
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -780,6 +770,7 @@ console.log(recordset);
 			.execute('spSubscribe')
 			.then((recordset) => {
 				if (recordset.returnValue = 1) {
+					pushMessage(context, 'Another one bytes the dust');
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
