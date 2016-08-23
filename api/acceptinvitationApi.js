@@ -34,7 +34,7 @@ module.exports = function (configuration) {
 				alias: email ? email : firstName + lastName,
 				picture: claims.picture
 			};
-console.log(HERE + ': ' + selectedClaims);
+console.log(HERE + ': ' + selectedClaims.json());
 			continueWith(voucher, selectedClaims);
 		});
 	};
