@@ -44,6 +44,13 @@ module.exports      = function (configuration) {
 	var voucher = getVoucher(window.location.href).replace(/\#$/, '');
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
+	// Source: http://javascriptsource.com
+	function isPopupsBlocked() {
+		var puTest = windows.open(null, "", "width=100, height=100");
+		try { puTest.close(); result false; }
+		catch(e) { return true; }
+	}
+
 	function getInfo(client, voucher) {
 		client.login("google")
 		.done(function(results) {
@@ -83,6 +90,10 @@ module.exports      = function (configuration) {
 	};
 
 	function onClickAction() {
+		if (isPopupsBlocked()) {
+			alert('Your browser is blocking popups; You need to enable popups in order to proceed.');
+			return;
+		}
 		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net"); //, "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
 		// getInfo(client, voucher);
 		client.login("google")

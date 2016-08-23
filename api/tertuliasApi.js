@@ -765,8 +765,9 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
-			.execute('spSubscribe')
+			.execute('sp_subscribePublicTertulia')
 			.then((recordset) => {
+				console.log(recordset);
 				if (recordset.returnValue = 1) {
 					pushMessage(context, 'Another one bytes the dust');
 					res.sendStatus(200);
