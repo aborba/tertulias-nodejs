@@ -25,7 +25,7 @@ module.exports = function (configuration) {
 			var claims = identity.google.claims;
 			var email = claims.email_verified == 'true' ? claims.emailaddress : "";
 			var firstName = claims.givenname;
-			var lastName = claims.givenname;
+			var lastName = claims.surname;
 			var selectedClaims = {
 				sid: user.id,
 				email: email,
