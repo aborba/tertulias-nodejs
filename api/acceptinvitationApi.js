@@ -51,6 +51,13 @@ module.exports = function (configuration) {
 console.log(HERE + ': ' + 'for sql');
 			sql.connect(util.sqlConfiguration).then(function() {
 console.log(HERE + ': ' + 'sql connected');
+console.log(HERE + ': ' + voucher);
+console.log(HERE + ': ' + userInfo.sid);
+console.log(HERE + ': ' + userInfo.alias);
+console.log(HERE + ': ' + userInfo.email);
+console.log(HERE + ': ' + userInfo.firstName);
+console.log(HERE + ': ' + userInfo.lastName);
+console.log(HERE + ': ' + userInfo.picture);
 				new sql.Request()
 				.input('voucher', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
