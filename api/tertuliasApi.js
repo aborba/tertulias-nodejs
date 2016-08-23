@@ -395,7 +395,6 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['monthly'] = recordset[0];
-								console.log(results);
 								res.type('application/json');
 								res.json(results);
 								res.sendStatus(200);
@@ -424,7 +423,6 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['monthlyw'] = recordset[0];
-								console.log(results);
 								res.type('application/json');
 								res.json(results);
 								res.sendStatus(200);
