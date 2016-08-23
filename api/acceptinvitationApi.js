@@ -59,13 +59,13 @@ console.log(HERE + ': ' + userInfo.firstName);
 console.log(HERE + ': ' + userInfo.lastName);
 console.log(HERE + ': ' + userInfo.picture);
 				new sql.Request()
-				.input('voucher', sql.NVarChar(36), voucher)
-				.input('userSid', sql.NVarChar(40), userInfo.sid)
-				.input('alias', sql.NVarChar(20), userInfo.alias)
-				.input('email', sql.NVarChar(40), userInfo.email)
-				.input('firstName', sql.NVarChar(40), userInfo.firstName)
-				.input('lastName', sql.NVarChar(40), userInfo.lastName)
-				.input('picture', sql.NVarChar(255), userInfo.picture)
+				.input('voucher', sql.VarChar(36), voucher)
+				.input('userSid', sql.VarChar(40), userInfo.sid)
+				.input('alias', sql.VarChar(20), userInfo.alias.subString(0, 20))
+				.input('email', sql.VarChar(40), userInfo.email.subString(0, 40))
+				.input('firstName', sql.VarChar(40), userInfo.firstName.subString(0, 40))
+				.input('lastName', sql.VarChar(40), userInfo.lastName.subString(0, 40))
+				.input('picture', sql.VarChar(255), userInfo.picture.subString(0, 255))
 				.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
 console.log('query done');
