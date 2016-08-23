@@ -441,7 +441,8 @@ module.exports = function (configuration) {
 	});
 
 	router.patch('/:tr_id', (req, res, next) => {
-		console.log('in PATCH /tertulias/:tr_id');
+		var HERE = '/tertulias/:tr_id';
+		console.log('in PATCH ' + HERE);
 		var tr_id = req.params.tr_id;
 		if (isNaN(tr_id))
 			return next();
