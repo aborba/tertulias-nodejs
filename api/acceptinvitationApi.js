@@ -19,8 +19,9 @@ module.exports = function (configuration) {
 	};
 
 	var getUserInfo = function(user, voucher, continueWith) {
+		var HERE = 'getUserInfo';
 		user.getIdentity()
-		.then((identity) => {
+		.then( (identity) => {
 			var claims = identity.google.claims;
 			var email = claims.email_verified == 'true' ? claims.emailaddress : "";
 			var firstName = claims.givenname;
@@ -33,12 +34,14 @@ module.exports = function (configuration) {
 				alias: email ? email : firstName + lastName,
 				picture: claims.picture
 			};
+console.log(HERE + ': ' + selectedClaims);
 			continueWith(voucher, selectedClaims);
 		});
 	};
 
 	router.post('/', (req, res, next) => {
-		console.log('in POST /acceptinvitation');
+		var HERE = '/acceptinvitation';
+		console.log('in POST ' + HERE);
 		if ( ! req.azureMobile.user) {
 			console.log('401 - Unauthorized');
 			res.status(401);	// 401: Unauthorized
@@ -46,8 +49,10 @@ module.exports = function (configuration) {
 		}
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, (voucher, userInfo) => {
+console.log(HERE + ': ' + 'for sql');
 			sql.connect(util.sqlConfiguration)
 			.then(() => {
+console.log(HERE + ': ' + 'sql connected');
 				new sql.Request()
 				.input('voucher', sql.NVarChar(36), voucher)
 				.input('userSid', sql.NVarChar(40), userInfo.sid)
@@ -58,9 +63,12 @@ module.exports = function (configuration) {
 				.input('picture', sql.NVarChar(255), userInfo.picture)
 				.execute('sp_acceptInvitationToTertulia')
 				.then((recordsets) => {
+console.log(HERE + ': ' + 'query done');
+console.log(recordsets);
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						res.status(201).end();	// 201: Created
+						return;
 					} else {
 						console.log('in 422 error');
 						res.status(422)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
