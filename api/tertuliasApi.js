@@ -624,13 +624,15 @@ module.exports = function (configuration) {
 				res.sendStatus(200);
 				return next();
 			}).catch(function(err) {
-					console.log('SQL Query processing Error');
-					res.status(500)
-					return next(err);
+				console.log('SQL Query processing Error');
+				res.status(500)
+				return next(err);
+			});
 		}).catch(function(err) {
-				console.log('SQL Connection Error');
-				res.status(500);
-				return next(err);;
+			console.log('SQL Connection Error');
+			res.status(500);
+			return next(err);
+		});
 	});
 
 	router.post('/:tr_id/members/voucher', (req, res, next) => {
