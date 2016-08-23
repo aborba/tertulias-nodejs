@@ -50,7 +50,7 @@ module.exports = function (configuration) {
 		getUserInfo(req.azureMobile.user, voucher, (voucher, userInfo) => {
 console.log(HERE + ': ' + 'for sql');
 			sql.connect(util.sqlConfiguration)
-			.then(() => {
+			.then(function() {
 console.log(HERE + ': ' + 'sql connected');
 				new sql.Request()
 				.input('voucher', sql.NVarChar(36), voucher)
