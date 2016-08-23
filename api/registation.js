@@ -41,7 +41,7 @@ module.exports      = function (configuration) {
 	<p id='tertuliaMessagePlaceHolder'></p>
 
 <script type="application/javascript">
-	var voucher = getVoucher(window.location.href);
+	var voucher = getVoucher(window.location.href).replace(/\#$/, '');
 	document.getElementById('voucherPlaceHolder').innerHTML = voucher;
 
 	function getInfo(client, voucher) {
@@ -72,26 +72,34 @@ module.exports      = function (configuration) {
 		});
 	};
 
+	var getConfirmationQuestion = (tertulia) => {
+		var result = 'Please confirm that you want to join the tertulia';
+		if (tertulia.name)
+			result += ' named "' + tertulia.name + '"';
+		result += '.';
+		if (tertulia.subject)
+			result += ' The tertulia subject is "' + tertulia.subject + '".';
+		return result;
+	};
+
 	function onClickAction() {
 		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net"); //, "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com");
 		// getInfo(client, voucher);
 		client.login("google")
 		.done(
-			function(results) {
+			(results) => {
 				var url = client.applicationUrl + '/.auth/me';
 				var headers = new Headers();
 				headers.append('X-ZUMO-AUTH', client.currentUser.mobileServiceAuthenticationToken);
 				fetch(url, { headers: headers })
-				.then(function (data) {
-					return data.json();
-				})
-				.then(function (user) {
+				.then( (data) => { return data.json(); })
+				.then( (user) => {
 					var user0 = user[0];
 					var userSid = user0.user_id;
 					var provider = user0.provider_name;
 					var claims = user0.user_claims;
 					var picture, email, name, givenname, surname;
-					claims.forEach(function(item, index) {
+					claims.forEach( (item, index) => {
 						switch (item.typ) {
 							case 'picture': picture = item.val; break;
 							case 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress': email = item.val; break;
@@ -101,7 +109,7 @@ module.exports      = function (configuration) {
 						}
 					});
 					client.invokeApi('/tertulias/voucherinfo/' + voucher, { body: null, method: "get"})
-					.done(function(results) {
+					.done( (results) => {
 						if (results.result.tertulias.length == 0) {
 							alert("Voucher not available. If the voucher code is valid, " +
 								"either it was already claimed or it has expired. " +
@@ -109,16 +117,11 @@ module.exports      = function (configuration) {
 							return;
 						}
 						var tertulia = results.result.tertulias[0];
-						var confirmationQuestion = 'Please confirm that you want to join the tertulia';
-						if (tertulia.name)
-							confirmationQuestion += ' named "' + tertulia.name + '"';
-						confirmationQuestion += '.';
-						if (tertulia.subject)
-							confirmationQuestion += ' The tertulia subject is "' + tertulia.subject + '".';
+						var confirmationQuestion = getConfirmationQuestion(tertulia);
 						if ( ! confirm(confirmationQuestion))
 							return;
 						client.invokeApi("/", { body: null, method: "get" })
-						.done(function(results) {
+						.done( (results) => {
 							var links = results.result.links;
 					    	for (var i = 0; i < links.length; i++) {
 					    		if (links[i].rel == "accept_invitation") {
@@ -132,12 +135,12 @@ module.exports      = function (configuration) {
 					    		return;
 					    	}
 					    	client.invokeApi(href, { body: { voucher: voucher }, method: method })
-					    	.done(function(results) { alert("You joined the Tertulia successfuly. Access the Tertulia using the app in your App store. Enjoy.");
-					    	}, function(err) { alert("Tertulia join result: " + err.message); });
-						}, function(err) { alert("System failure: " + err.message); });
-					}, function(err) { alert("Voucher information retrieval failed: " + err.message); });
+					    	.done( (results) => { alert("You joined the Tertulia successfuly. Access the Tertulia using the app in your App store. Enjoy.");
+					    	}, (err) => { alert("Tertulia join result: " + err.message); });
+						}, (err) => { alert("System failure: " + err.message); });
+					}, (err) => { alert("Voucher information retrieval failed: " + err.message); });
         		});
-			}, function(err) { alert("Authentication failed: " + err.message); });
+			}, (err) => { alert("Authentication failed: " + err.message); });
 	};
 
 </script>
