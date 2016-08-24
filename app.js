@@ -4,6 +4,10 @@ var util = require('./util');
 util.logTertulias2(appVersion);
 util.nodeVersion();
 
+var azure = require('azure');
+var promises = require('azure-mobile-apps/src/utilities/promises');
+var logger = require('azure-mobile-apps/src/logger');
+
 var express = require('express'),
 	azureMobileApps = require('azure-mobile-apps'),
 	registation = require('./api/registation'),

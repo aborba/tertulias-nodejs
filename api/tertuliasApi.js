@@ -13,10 +13,7 @@ var sql          = require('mssql'),
 module.exports = function (configuration) {
 
 	var router = express.Router();
-	// var azure = require('azure');
-	var azureMobileApps = require('azure-mobile-apps');
-	// var promises = require('azure-mobile-apps/src/utilities/promises');
-	// var logger = require('azure-mobile-apps/src/logger');
+	// var azureMobileApps = require('azure-mobile-apps');
 
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
