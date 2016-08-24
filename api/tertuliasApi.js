@@ -14,6 +14,9 @@ module.exports = function (configuration) {
 
 	var router = express.Router();
 	// var azureMobileApps = require('azure-mobile-apps');
+	var azure = require('azure');
+	var promises = require('azure-mobile-apps/src/utilities/promises');
+	var logger = require('azure-mobile-apps/src/logger');
 
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
