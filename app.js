@@ -11,9 +11,9 @@ var express = require('express'),
 	acceptinvitationApi = require('./api/acceptinvitationApi'),
 	tertuliasApi = require('./api/tertuliasApi');
 
-var azure = require('azure');
-var promises = require('azure-mobile-apps/src/utilities/promises');
-var logger = require('azure-mobile-apps/src/logger');
+// var azure = require('azure');
+// var promises = require('azure-mobile-apps/src/utilities/promises');
+// var logger = require('azure-mobile-apps/src/logger');
 
 var app = express();
 

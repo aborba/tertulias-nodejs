@@ -744,10 +744,10 @@ module.exports = function (configuration) {
 		});
 	});
 
-	var pushMessage = function(message) {
+	var pushMessage = function(tag, message) {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=5OcTtb8gBgt/kcPR//YcmCNTr9wYOG+oxWEHLE6juCU=');
 		var payload = {data: {message: message } };
-		notificationHubService.gcm.send(null, payload, function(err) {
+		notificationHubService.gcm.send(tag, payload, function(err) {
 			if (err) {
 				console.log('Error while sending push notification');
 				console.log(err);
@@ -760,16 +760,18 @@ module.exports = function (configuration) {
 	router.post('/:tr_id/subscribe', (req, res, next) => {
 		var HERE = '/tertulias/:tr_id/subscribe';
 		console.log('in POST ' + HERE);
+		var tr_id = req.params.tr_id;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
+			.input('tertulia', sql.Int, tr_id)
 			.execute('sp_subscribePublicTertulia')
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
-					pushMessage('Another one bytes the dust');
+					var tag = 'tr_' + tr_id;
+					pushMessage(tag, 'Another user joined tertulia ' + tr_id);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
