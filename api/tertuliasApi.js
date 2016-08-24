@@ -741,7 +741,7 @@ module.exports = function (configuration) {
 		});
 	});
 
-	var pushMessage = function(context, message) {
+	var pushMessage = function(message) {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=5OcTtb8gBgt/kcPR//YcmCNTr9wYOG+oxWEHLE6juCU=');
 		var payload = {data: {message: message } };
 		notificationHubService.gcm.send(null, payload, function(err) {
@@ -766,7 +766,7 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
-					pushMessage(context, 'Another one bytes the dust');
+					pushMessage('Another one bytes the dust');
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
