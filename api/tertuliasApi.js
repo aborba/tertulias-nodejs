@@ -12,11 +12,11 @@ var sql          = require('mssql'),
 } } */
 module.exports = function (configuration) {
 
-	var router = express.Router(),
-	azure = require('azure'),
-	azureMobileApps = require('azure-mobile-apps'),
-	promises = require('azure-mobile-apps/src/utilities/promises'),
-	logger = require('azure-mobile-apps/src/logger');
+	var router = express.Router();
+	// var azure = require('azure'),
+	// azureMobileApps = require('azure-mobile-apps'),
+	// promises = require('azure-mobile-apps/src/utilities/promises'),
+	// logger = require('azure-mobile-apps/src/logger');
 
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
