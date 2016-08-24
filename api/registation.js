@@ -67,10 +67,10 @@ module.exports      = function (configuration) {
 	};
 
 	function onClickAction() {
-		if (isPopupsBlocked()) {
-			alert('Your browser is blocking popups; You need to enable popups in order to proceed.');
-			return;
-		}
+		// if (isPopupsBlocked()) {
+		// 	alert('Your browser is blocking popups; You need to enable popups in order to proceed.');
+		// 	return;
+		// }
 		var client = new WindowsAzure.MobileServiceClient("https://tertulias.azurewebsites.net");
 		client.login("google")
 		.done(

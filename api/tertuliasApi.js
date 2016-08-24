@@ -13,6 +13,7 @@ var sql          = require('mssql'),
 module.exports = function (configuration) {
 
 	var router = express.Router(),
+	azure = require('azure'),
 	azureMobileApps = require('azure-mobile-apps'),
 	promises = require('azure-mobile-apps/src/utilities/promises'),
 	logger = require('azure-mobile-apps/src/logger');
@@ -744,17 +745,16 @@ module.exports = function (configuration) {
 	});
 
 	var pushMessage = function(context, message) {
-		var payload = {'data': {'message': message } };
-		if (context.push) {
-			// Send a GCM native notification.
-			context.push.gcm.send(null, payload, function (err) {
-				if (err) {
-					logger.error('Error while sending push notification: ', err);
-				} else {
-					logger.info('Push notification sent successfully!');
-				}
-			});
-		}
+		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=5OcTtb8gBgt/kcPR//YcmCNTr9wYOG+oxWEHLE6juCU=');
+		var payload = {data: {message: message } };
+		notificationHubService.gcm.send(null, payload, function(err) {
+			if (err) {
+				console.log('Error while sending push notification');
+				console.log(err);
+			} else {
+				console.log('Push notification sent successfully');
+			}
+		});
 	};
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
