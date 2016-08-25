@@ -799,6 +799,9 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
+					var tag = 'tertulia_' + tr_id;
+					var message = '{action:"unsubscribe",tertulia:' + tr_id + '}';
+					pushMessage(null, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
