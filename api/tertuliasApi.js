@@ -63,6 +63,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
+						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/members/count" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
