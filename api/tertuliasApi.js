@@ -770,8 +770,9 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
-					var tag = 'tr_' + tr_id;
-					pushMessage(null, 'Another user joined tertulia ' + tr_id);
+					var tag = 'tertulia_' + tr_id;
+					var message = '{action:"subscribe",tertulia:' + tr_id + '}';
+					pushMessage(null, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
