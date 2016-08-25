@@ -745,7 +745,7 @@ module.exports = function (configuration) {
 	});
 
 	var pushMessage = function(tag, message) {
-		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=5OcTtb8gBgt/kcPR//YcmCNTr9wYOG+oxWEHLE6juCU=');
+		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=O66f19tUEKmJJc7vhj4MQcWlKbE7OFyJvvVE2i9XwQc=');
 		var payload = {data: {message: message } };
 		notificationHubService.gcm.send(tag, payload, function(err) {
 			if (err) {
