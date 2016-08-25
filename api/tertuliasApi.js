@@ -789,7 +789,9 @@ module.exports = function (configuration) {
 	});
 
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
-		console.log('in DELETE /tertulias/:tr_id/unsubscribe');
+		var HERE = '/tertulias/:tr_id/unsubscribe';
+		console.log('in DELETE ' + HERE);
+		var tr_id = req.params.tr_id;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
