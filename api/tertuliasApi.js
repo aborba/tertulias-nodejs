@@ -489,7 +489,7 @@ module.exports = function (configuration) {
 							console.log("WEEKLY updated");
 							var tag = 'tertulia_' + tr_id;
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(null, message);
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -538,7 +538,7 @@ module.exports = function (configuration) {
 							console.log("MONTHLYD updated");
 							var tag = 'tertulia_' + tr_id;
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(null, message);
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -588,7 +588,7 @@ module.exports = function (configuration) {
 							console.log("MONTHLYW updated");
 							var tag = 'tertulia_' + tr_id;
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(null, message);
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -781,7 +781,7 @@ module.exports = function (configuration) {
 				if (recordset.returnValue = 1) {
 					var tag = 'tertulia_' + tr_id;
 					var message = '{action:"subscribe",tertulia:' + tr_id + '}';
-					pushMessage(null, message);
+					pushMessage(tag, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
@@ -808,11 +808,43 @@ module.exports = function (configuration) {
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spUnsubscribe')
 			.then((recordset) => {
-				console.log(recordset);
 				if (recordset.returnValue = 1) {
 					var tag = 'tertulia_' + tr_id;
 					var message = '{action:"unsubscribe",tertulia:' + tr_id + '}';
-					pushMessage(null, message);
+					pushMessage(tag, message);
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.post('/:tr_id/message', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/message';
+		console.log('in POST ' + HERE);
+		var tr_id = req.params.tr_id;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.input('typeName', sql.NVarChar(40), req.body.typeName)
+			.input('message', sql.NVarChar(40), req.body.message)
+			.execute('sp_postNotification')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset.returnValue = 0) {
+					var tag = 'tertulia_' + tr_id;
+					var message = '{action:"message",tertulia:' + tr_id + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
