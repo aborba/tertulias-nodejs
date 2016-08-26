@@ -9,7 +9,10 @@ var sql				= require('mssql'),
 module.exports = function (configuration) {
 	var router		= express.Router(),
 	authenticate	= require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
-	authorize		= require('azure-mobile-apps/src/express/middleware/authorize');
+	authorize		= require('azure-mobile-apps/src/express/middleware/authorize'),
+	azureMobile		= require('azure'),
+	promises		= require('azure-mobile-apps/src/utilities/promises'),
+	logger			= require('azure-mobile-apps/src/logger');
 
 	var completeError = function(err, res) {
 		if (err) {
@@ -75,7 +78,6 @@ module.exports = function (configuration) {
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
-						console.log(req);
 						var tr_id = request.parameters.tertulia.value;
 						var tag = 'tertulia_' + tr_id;
 						var message = '{action:"subscribe",tertulia:' + 'tr_id' + '}';
