@@ -18,6 +18,19 @@ module.exports = function (configuration) {
 		}
 	};
 
+	var pushMessage = function(tag, message) {
+		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
+		var payload = {data: {message: message } };
+		notificationHubService.gcm.send(tag, payload, function(err) {
+			if (err) {
+				console.log('Error while sending push notification');
+				console.log(err);
+			} else {
+				console.log('Push notification sent successfully');
+			}
+		});
+	};
+
 	var getUserInfo = function(user, voucher, continueWith) {
 		var HERE = 'getUserInfo';
 		user.getIdentity()
@@ -57,10 +70,15 @@ module.exports = function (configuration) {
 				.input('firstName', sql.VarChar(40), userInfo.firstName.substring(0, 40))
 				.input('lastName', sql.VarChar(40), userInfo.lastName.substring(0, 40))
 				.input('picture', sql.VarChar(255), userInfo.picture.substring(0, 255))
+				.output('tertulia', sql.Int)
 				.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
+						var tr_id = request.parameters.tertulia.value;
+						var tag = 'tertulia_' + tr_id;
+						var message = '{action:"subscribe",tertulia:' + 'tr_id' + '}';
+						pushMessage(null, message);
 						res.status(201).end();	// 201: Created
 						return;
 					} else {
