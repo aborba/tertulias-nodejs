@@ -75,6 +75,7 @@ module.exports = function (configuration) {
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
+						console.log(req);
 						var tr_id = req.parameters.tertulia.value;
 						var tag = 'tertulia_' + tr_id;
 						var message = '{action:"subscribe",tertulia:' + 'tr_id' + '}';
