@@ -524,6 +524,9 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYD updated");
+							var tag = 'tertulia_' + tr_id;
+							var message = '{action:"update",tertulia:' + tr_id + '}';
+							pushMessage(null, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -571,6 +574,9 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYW updated");
+							var tag = 'tertulia_' + tr_id;
+							var message = '{action:"update",tertulia:' + tr_id + '}';
+							pushMessage(null, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
