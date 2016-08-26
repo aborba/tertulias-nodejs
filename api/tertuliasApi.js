@@ -18,6 +18,19 @@ module.exports = function (configuration) {
 	var promises = require('azure-mobile-apps/src/utilities/promises');
 	var logger = require('azure-mobile-apps/src/logger');
 
+	var pushMessage = function(tag, message) {
+		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
+		var payload = {data: {message: message } };
+		notificationHubService.gcm.send(tag, payload, function(err) {
+			if (err) {
+				console.log('Error while sending push notification');
+				console.log(err);
+			} else {
+				console.log('Push notification sent successfully');
+			}
+		});
+	};
+
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
 		var route = '/tertulias';
@@ -753,19 +766,6 @@ module.exports = function (configuration) {
 			return next(err);
 		});
 	});
-
-	var pushMessage = function(tag, message) {
-		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
-		var payload = {data: {message: message } };
-		notificationHubService.gcm.send(tag, payload, function(err) {
-			if (err) {
-				console.log('Error while sending push notification');
-				console.log(err);
-			} else {
-				console.log('Push notification sent successfully');
-			}
-		});
-	};
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
 		var HERE = '/tertulias/:tr_id/subscribe';

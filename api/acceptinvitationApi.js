@@ -83,6 +83,7 @@ module.exports = function (configuration) {
 						return;
 					} else {
 						console.log('in 422 error');
+						console.log(recordsets);
 						res.status(422)	// 409: Conflict, 422: Unprocessable Entity (WebDAV; RFC 4918)
 							.type('application/json')
 							.json( { result: 'Voucher unavailable' } )
