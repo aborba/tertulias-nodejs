@@ -33,8 +33,10 @@ var api = {
 				var results = {};
 				results['me'] = recordset[0];
 				results['links'] = JSON.parse(links);
-				res.json(results);
-				res.sendStatus(200);
+				res.status(200)
+					.type('application/json')
+					.json(results)
+					.end();
 				return next();
 			})
 			.catch(function(err) {
