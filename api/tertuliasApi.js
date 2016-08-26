@@ -12,11 +12,10 @@ var sql          = require('mssql'),
 } } */
 module.exports = function (configuration) {
 
-	var router = express.Router();
-	// var azureMobileApps = require('azure-mobile-apps');
-	var azure = require('azure');
-	var promises = require('azure-mobile-apps/src/utilities/promises');
-	var logger = require('azure-mobile-apps/src/logger');
+	var router = express.Router(),
+		azure = require('azure'),
+		promises = require('azure-mobile-apps/src/utilities/promises'),
+		logger = require('azure-mobile-apps/src/logger');
 
 	var pushMessage = function(tag, message) {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
@@ -76,7 +75,7 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
-						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/members/count" }, ' +
+						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/:id/members/count" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
