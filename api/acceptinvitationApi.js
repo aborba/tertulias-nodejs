@@ -10,7 +10,7 @@ module.exports = function (configuration) {
 	var router		= express.Router(),
 	authenticate	= require('azure-mobile-apps/src/express/middleware/authenticate')(configuration),
 	authorize		= require('azure-mobile-apps/src/express/middleware/authorize'),
-	azureMobile		= require('azure'),
+	azure			= require('azure'),
 	promises		= require('azure-mobile-apps/src/utilities/promises'),
 	logger			= require('azure-mobile-apps/src/logger');
 
