@@ -62,7 +62,7 @@ module.exports = function (configuration) {
 		var voucher = req.body.voucher;
 		getUserInfo(req.azureMobile.user, voucher, function(voucher, userInfo) {
 			sql.connect(util.sqlConfiguration).then(function() {
-				new sql.Request()
+				var request = new sql.Request()
 				.input('voucher', sql.VarChar(36), voucher)
 				.input('userSid', sql.VarChar(40), userInfo.sid)
 				.input('alias', sql.VarChar(20), userInfo.alias.substring(0, 20))
@@ -70,13 +70,13 @@ module.exports = function (configuration) {
 				.input('firstName', sql.VarChar(40), userInfo.firstName.substring(0, 40))
 				.input('lastName', sql.VarChar(40), userInfo.lastName.substring(0, 40))
 				.input('picture', sql.VarChar(255), userInfo.picture.substring(0, 255))
-				.output('tertulia', sql.Int)
-				.execute('sp_acceptInvitationToTertulia')
+				.output('tertulia', sql.Int);
+				request.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						console.log(req);
-						var tr_id = req.parameters.tertulia.value;
+						var tr_id = request.parameters.tertulia.value;
 						var tag = 'tertulia_' + tr_id;
 						var message = '{action:"subscribe",tertulia:' + 'tr_id' + '}';
 						pushMessage(null, message);
