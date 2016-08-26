@@ -80,7 +80,7 @@ module.exports = function (configuration) {
 						console.log('in 201 ok');
 						var tr_id = request.parameters.tertulia.value;
 						var tag = 'tertulia_' + tr_id;
-						var message = '{action:"subscribe",tertulia:' + 'tr_id' + '}';
+						var message = '{action:"subscribe",tertulia:' + tr_id + '}';
 						pushMessage(null, message);
 						res.status(201).end();	// 201: Created
 						return;
