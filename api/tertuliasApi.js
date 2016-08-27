@@ -30,6 +30,7 @@ module.exports = function (configuration) {
 		});
 	};
 
+	// '{ "rel": "self", "method": "GET", "href": "/tertulias" }, ' +
 	router.get('/', (req, res, next) => {
 		console.log('in GET /api/tertulias');
 		var route = '/tertulias';
@@ -76,6 +77,8 @@ module.exports = function (configuration) {
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
 						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/:id/members/count" }, ' +
+						'{ "rel": "get_messages", "method": "GET", "href": "' + route + '/:id/messages" }, ' +
+						'{ "rel": "post_messages", "method": "POST", "href": "' + route + '/:id/messages" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
@@ -304,6 +307,7 @@ module.exports = function (configuration) {
 		});
 	});
 
+	// '{ "rel": "self", "method": "GET", "href": "'/api/tertulias/:id" }, ' +
 	router.get('/:tr_id', (req, res, next) => {
 		var HERE = '/tertulias/:tr_id';
 		console.log('in GET ' + HERE);
@@ -454,6 +458,7 @@ module.exports = function (configuration) {
 		});
 	});
 
+	// '{ "rel": "update", "method": "PATCH", "href": "/tertulias/:id" }, '
 	router.patch('/:tr_id', (req, res, next) => {
 		var HERE = '/tertulias/:tr_id';
 		console.log('in PATCH ' + HERE);
@@ -827,7 +832,8 @@ module.exports = function (configuration) {
 		});
 	});
 
-	router.post('/:tr_id/message', (req, res, next) => {
+	// '{ "rel": "post_messages", "method": "POST", "href": "' + route + '/:id/messages" }, ' +
+	router.post('/:tr_id/messages', (req, res, next) => {
 		var HERE = '/tertulias/:tr_id/message';
 		console.log('in POST ' + HERE);
 		var tr_id = req.params.tr_id;
