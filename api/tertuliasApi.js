@@ -362,6 +362,8 @@ module.exports = function (configuration) {
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/members" }, ' +
 						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/members/count" }, ' +
+						'{ "rel": "get_messages", "method": "GET", "href": "' + route + '/:id/messages" }, ' +
+						'{ "rel": "post_messages", "method": "POST", "href": "' + route + '/:id/messages" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
