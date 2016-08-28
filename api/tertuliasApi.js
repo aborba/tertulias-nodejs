@@ -25,7 +25,7 @@ module.exports = function (configuration) {
 				console.log('Error while sending push notification');
 				console.log(err);
 			} else {
-				console.log('Push notification sent successfully');
+				console.log('Push notification sent successfully' + tag ? ' to tag' + tag : '');
 			}
 		});
 	};
