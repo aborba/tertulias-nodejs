@@ -17,7 +17,7 @@ module.exports = function (configuration) {
 		promises = require('azure-mobile-apps/src/utilities/promises'),
 		logger = require('azure-mobile-apps/src/logger');
 
-	var pushMessage = function(tag, message) {
+	var pushMessage = (tag, message) => {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
 		var payload = {data: {message: message } };
 		notificationHubService.gcm.send(tag, payload, function(err) {
@@ -30,6 +30,10 @@ module.exports = function (configuration) {
 			}
 		});
 	};
+
+	var getPushTag = (tr_id) => {
+		return 'tertulia_' + tr_id;
+	}
 
 	// '{ "rel": "self", "method": "GET", "href": "/tertulias" }, ' +
 	router.get('/', (req, res, next) => {
@@ -207,10 +211,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -251,10 +255,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -297,10 +301,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -495,7 +499,7 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("WEEKLY updated");
-							var tag = 'tertulia_' + tr_id;
+							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
 							pushMessage(tag, message);
 							res.status(201)	// 201: Created
@@ -509,11 +513,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('422');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("WEEKLY error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -544,7 +548,7 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYD updated");
-							var tag = 'tertulia_' + tr_id;
+							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
 							pushMessage(tag, message);
 							res.status(201)	// 201: Created
@@ -558,11 +562,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('409');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("MONTHLYD error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -594,7 +598,7 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYW updated");
-							var tag = 'tertulia_' + tr_id;
+							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
 							pushMessage(tag, message);
 							res.status(201)	// 201: Created
@@ -608,11 +612,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('409');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("MONTHLYW error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -660,7 +664,7 @@ module.exports = function (configuration) {
 				results['links'] = JSON.parse(links);
 				res.json(results);
 				res.status(200);
-				next();
+				return next();
 			}).catch(function(err) {
 				console.log('SQL Query processing Error');
 				res.status(500)
@@ -696,7 +700,7 @@ module.exports = function (configuration) {
 					results['totals'] = recordset[0];
 				res.json(results);
 				res.status(200);
-				next();
+				return next();
 			}).catch(function(err) {
 				console.log('SQL Query processing Error');
 				res.status(500)
@@ -787,17 +791,18 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
-					var tag = 'tertulia_' + tr_id;
+					var tag = getPushTag(tr_id);
 					var message = '{action:"subscribe",tertulia:' + tr_id + '}';
 					pushMessage(tag, message);
 					res.sendStatus(200);
+					return next();
 				} else {
 					res.sendStatus(409);
+					return next();
 				}
-				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -817,7 +822,7 @@ module.exports = function (configuration) {
 			.execute('spUnsubscribe')
 			.then((recordset) => {
 				if (recordset.returnValue = 1) {
-					var tag = 'tertulia_' + tr_id;
+					var tag = getPushTag(tr_id);
 					var message = '{action:"unsubscribe",tertulia:' + tr_id + '}';
 					pushMessage(tag, message);
 					res.sendStatus(200);
@@ -827,7 +832,51 @@ module.exports = function (configuration) {
 				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.get('/:tr_id/messages', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/message';
+		console.log('in GET ' + HERE);
+		var tr_id = req.params.tr_id;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.input('min_id', sql.Int, req.body.min_id)
+			.query('SELECT' +
+					' no_id AS id,' +
+					' us_id AS userId,' +
+					' us_alias AS alias,' +
+					' no_tertulia AS tertulia,' +
+					' tr_name AS tertuliaName,' +
+					' no_tag AS tag,' +
+					' no_message AS message' +
+				' FROM Notifications' +
+					' INNER JOIN Users ON no_user = us_id' +
+					' INNER JOIN Tertulias ON no_tertulia = tr_id' +
+					' INNER JOIN Members ON mb_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0' +
+					' AND mb_user = us_id' +
+					' AND tr_id = @tertulia' +
+					' AND no_id > @min_id')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset['returnValue'] == 0) {
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -850,17 +899,18 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				console.log(recordset);
 				if (recordset['returnValue'] == 0) {
-					var tag = 'tertulia_' + tr_id;
+					var tag = getPushTag(tr_id);
 					var message = '{action:"message",tertulia:' + tr_id + '}';
 					pushMessage(tag, message);
 					res.sendStatus(200);
+					return next();
 				} else {
 					res.sendStatus(409);
+					return next();
 				}
-				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
