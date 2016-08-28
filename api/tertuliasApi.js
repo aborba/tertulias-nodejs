@@ -844,12 +844,11 @@ module.exports = function (configuration) {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, tr_id)
-			.input('typeName', sql.NVarChar(40), req.body.typeName)
 			.input('message', sql.NVarChar(40), req.body.message)
 			.execute('sp_postNotification')
 			.then((recordset) => {
 				console.log(recordset);
-				if (recordset.returnValue = 0) {
+				if (recordset['returnValue'] == 0) {
 					var tag = 'tertulia_' + tr_id;
 					var message = '{action:"message",tertulia:' + tr_id + '}';
 					pushMessage(tag, message);
