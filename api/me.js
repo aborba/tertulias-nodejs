@@ -20,7 +20,7 @@ var api = {
 					' us_firstName AS firstName,' +
 					' us_lastName AS lastName,' +
 					' us_email AS email,' +
-					' us_picture AS picture', +
+					' us_picture AS picture,' +
 					' us_myKey AS myKey' +
 				' FROM Users' +
 				' WHERE us_sid = @sid')
