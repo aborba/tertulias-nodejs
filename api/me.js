@@ -21,7 +21,7 @@ var api = {
 					' us_lastName AS lastName,' +
 					' us_email AS email,' +
 					' us_picture AS picture', +
-					' us_myKey AS myKey', +
+					' us_myKey AS myKey' +
 				' FROM Users' +
 				' WHERE us_sid = @sid')
 			.then(function(recordset) {
@@ -32,6 +32,7 @@ var api = {
 					']';
 				res.type('application/json');
 				var results = {};
+				console.log(recordset);
 				results['me'] = recordset[0];
 				results['links'] = JSON.parse(links);
 				res.status(200)
