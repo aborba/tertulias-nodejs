@@ -21,9 +21,9 @@ module.exports = function (configuration) {
 		}
 	};
 
-	var pushMessage = function(tag, message) {
+	var pushMessage = function(tag, message, myKey) {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
-		var payload = {data: {message: message } };
+		var payload = {data: {message: message, myKey: myKey } };
 		notificationHubService.gcm.send(tag, payload, function(err) {
 			if (err) {
 				console.log('Error while sending push notification');
@@ -50,6 +50,7 @@ module.exports = function (configuration) {
 				alias: email ? email : firstName + lastName,
 				picture: claims.picture
 			};
+
 			continueWith(voucher, selectedClaims);
 		});
 	};
@@ -74,14 +75,16 @@ module.exports = function (configuration) {
 				.input('lastName', sql.VarChar(40), userInfo.lastName.substring(0, 40))
 				.input('picture', sql.VarChar(255), userInfo.picture.substring(0, 255))
 				.output('tertulia', sql.Int);
+				.output('myKey', sql.VarChar(36));
 				request.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
 						var tr_id = request.parameters.tertulia.value;
+						var myKey = request.parameters.mykey.value;
 						var tag = 'tertulia_' + tr_id;
 						var message = '{action:"subscribe",tertulia:' + tr_id + '}';
-						pushMessage(null, message);
+						pushMessage(null, message, myKey);
 						res.status(201).end();	// 201: Created
 						return;
 					} else {
