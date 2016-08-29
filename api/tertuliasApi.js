@@ -17,9 +17,9 @@ module.exports = function (configuration) {
 		promises = require('azure-mobile-apps/src/utilities/promises'),
 		logger = require('azure-mobile-apps/src/logger');
 
-	var pushMessage = (tag, message) => {
+	var pushMessage = (tag, message, myKey) => {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
-		var payload = {data: {message: message } };
+		var payload = {data: {message: message, myKey: myKey } };
 		notificationHubService.gcm.send(tag, payload, function(err) {
 			if (err) {
 				console.log('Error while sending push notification');
@@ -27,6 +27,7 @@ module.exports = function (configuration) {
 			} else {
 				var log_msg = 'Push notification sent successfully' + tag ? ' to tag ' + tag : '';
 				console.log(log_msg);
+				console.log(payload);
 			}
 		});
 	};
