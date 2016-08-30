@@ -503,7 +503,7 @@ module.exports = function (configuration) {
 							console.log("WEEKLY updated");
 							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, mykey);
+							pushMessage(tag, message, myKey);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -552,7 +552,7 @@ module.exports = function (configuration) {
 							console.log("MONTHLYD updated");
 							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, mykey);
+							pushMessage(tag, message, myKey);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -602,7 +602,7 @@ module.exports = function (configuration) {
 							console.log("MONTHLYW updated");
 							var tag = getPushTag(tr_id);
 							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, mykey);
+							pushMessage(tag, message, myKey);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -784,7 +784,7 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id/subscribe';
 		console.log('in POST ' + HERE);
 		var tr_id = req.params.tr_id;
-		var myKey = req.body.mykey;
+		var myKey = req.body.myKey;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -796,7 +796,7 @@ module.exports = function (configuration) {
 				if (recordset.returnValue = 1) {
 					var tag = getPushTag(tr_id);
 					var message = '{action:"subscribe",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, mykey);
+					pushMessage(tag, message, myKey);
 					res.sendStatus(200);
 					return next();
 				} else {
@@ -817,7 +817,7 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id/unsubscribe';
 		console.log('in DELETE ' + HERE);
 		var tr_id = req.params.tr_id;
-		var myKey = req.body.mykey;
+		var myKey = req.body.myKey;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -828,7 +828,7 @@ module.exports = function (configuration) {
 				if (recordset.returnValue = 1) {
 					var tag = getPushTag(tr_id);
 					var message = '{action:"unsubscribe",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, mykey);
+					pushMessage(tag, message, myKey);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
@@ -893,7 +893,7 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id/message';
 		console.log('in POST ' + HERE);
 		var tr_id = req.params.tr_id;
-		var myKey = req.body.mykey;
+		var myKey = req.body.myKey;
 		sql.connect(util.sqlConfiguration)
 		.then(function() {
 			new sql.Request()
@@ -906,7 +906,7 @@ module.exports = function (configuration) {
 				if (recordset['returnValue'] == 0) {
 					var tag = getPushTag(tr_id);
 					var message = '{action:"message",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, mykey);
+					pushMessage(tag, message, myKey);
 					res.sendStatus(200);
 					return next();
 				} else {
