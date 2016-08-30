@@ -471,6 +471,7 @@ module.exports = function (configuration) {
 		var HERE = '/tertulias/:tr_id';
 		console.log('in PATCH ' + HERE);
 		var tr_id = req.params.tr_id;
+		console.log(req.body);
 		var myKey = req.body.mykey;
 		if (isNaN(tr_id))
 			return next();
