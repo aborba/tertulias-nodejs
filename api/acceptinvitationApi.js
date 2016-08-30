@@ -80,6 +80,7 @@ module.exports = function (configuration) {
 				.then(function(recordsets) {
 					if (recordsets['returnValue'] == 0) {
 						console.log('in 201 ok');
+						console.log(request.parameters);
 						var tr_id = request.parameters.tertulia.value;
 						var myKey = request.parameters.mykey.value;
 						var tag = 'tertulia_' + tr_id;
