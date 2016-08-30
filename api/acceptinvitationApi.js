@@ -74,7 +74,7 @@ module.exports = function (configuration) {
 				.input('firstName', sql.VarChar(40), userInfo.firstName.substring(0, 40))
 				.input('lastName', sql.VarChar(40), userInfo.lastName.substring(0, 40))
 				.input('picture', sql.VarChar(255), userInfo.picture.substring(0, 255))
-				.output('tertulia', sql.Int);
+				.output('tertulia', sql.Int)
 				.output('myKey', sql.VarChar(36));
 				request.execute('sp_acceptInvitationToTertulia')
 				.then(function(recordsets) {
