@@ -17,9 +17,9 @@ module.exports = function (configuration) {
 		promises = require('azure-mobile-apps/src/utilities/promises'),
 		logger = require('azure-mobile-apps/src/logger');
 
-	var pushMessage = (tag, message, myKey) => {
+	var pushMessage = (tag, message) => {
 		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
-		var payload = {data: {message: message, myKey: myKey } };
+		var payload = { data: { message: message } };
 		notificationHubService.gcm.send(tag, payload, function(err) {
 			if (err) {
 				console.log('Error while sending push notification');
@@ -502,8 +502,8 @@ module.exports = function (configuration) {
 						if (recordsets.length == 0) {
 							console.log("WEEKLY updated");
 							var tag = getPushTag(tr_id);
-							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, myKey);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -551,8 +551,8 @@ module.exports = function (configuration) {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYD updated");
 							var tag = getPushTag(tr_id);
-							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, myKey);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -601,8 +601,8 @@ module.exports = function (configuration) {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYW updated");
 							var tag = getPushTag(tr_id);
-							var message = '{action:"update",tertulia:' + tr_id + '}';
-							pushMessage(tag, message, myKey);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -795,8 +795,8 @@ module.exports = function (configuration) {
 				console.log(recordset);
 				if (recordset.returnValue = 1) {
 					var tag = getPushTag(tr_id);
-					var message = '{action:"subscribe",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, myKey);
+					var message = '{action:"subscribe",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
 					return next();
 				} else {
@@ -827,8 +827,8 @@ module.exports = function (configuration) {
 			.then((recordset) => {
 				if (recordset.returnValue = 1) {
 					var tag = getPushTag(tr_id);
-					var message = '{action:"unsubscribe",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, myKey);
+					var message = '{action:"unsubscribe",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
@@ -905,8 +905,8 @@ module.exports = function (configuration) {
 				console.log(recordset);
 				if (recordset['returnValue'] == 0) {
 					var tag = getPushTag(tr_id);
-					var message = '{action:"message",tertulia:' + tr_id + '}';
-					pushMessage(tag, message, myKey);
+					var message = '{action:"message",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
 					return next();
 				} else {
