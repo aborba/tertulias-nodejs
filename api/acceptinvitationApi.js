@@ -82,7 +82,7 @@ module.exports = function (configuration) {
 						console.log('in 201 ok');
 						console.log(request.parameters);
 						var tr_id = request.parameters.tertulia.value;
-						var myKey = request.parameters.mykey.value;
+						var myKey = request.parameters.myKey.value;
 						var tag = 'tertulia_' + tr_id;
 						var message = '{action:"subscribe",tertulia:' + tr_id + '}';
 						pushMessage(null, message, myKey);
