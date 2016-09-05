@@ -24,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.EnumMap;
@@ -37,6 +38,7 @@ public class EdUiManager extends UiManager {
 
     public enum UIRESOURCE {
         TOOLBAR,
+        PROGRESSBAR,
         TITLE, SUBJECT, PRIVACY,
         LOCATION, ADDRESS, ZIP, CITY, COUNTRY, LATITUDE, LONGITUDE,
         SCHEDULE
@@ -51,11 +53,13 @@ public class EdUiManager extends UiManager {
             locationNameView, addressView, zipView, cityView, countryView,
             latitudeView, longitudeView,
             scheduleView;
+    private ProgressBar progressBar;
     private CheckBox isPrivateView;
 
     public EdUiManager(Context ctx) {
         super(ctx);
         uiResources.put(UIRESOURCE.TOOLBAR, R.id.toolbar);
+        uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.progressBar);
         uiResources.put(UIRESOURCE.TITLE, R.id.tertuliaName);
         uiResources.put(UIRESOURCE.SUBJECT, R.id.subject);
         uiResources.put(UIRESOURCE.PRIVACY, R.id.isPrivate);
@@ -106,6 +110,19 @@ public class EdUiManager extends UiManager {
             tertulia.location.geolocation.isLongitude = true;
             tertulia.location.geolocation.longitude = Util.string2Double(longitudeView.getText().toString());
         }
+    }
+
+    public void setProgressBarVisibility(int visibility) {
+        lazyViewsSetup();
+        progressBar.setVisibility(visibility);
+    }
+
+    public void showProgressBar() {
+        setProgressBarVisibility(View.VISIBLE);
+    }
+
+    public void hideProgressBar() {
+        setProgressBarVisibility(View.GONE);
     }
 
     public View getView(UIRESOURCE uiresource) {
@@ -199,6 +216,7 @@ public class EdUiManager extends UiManager {
         if (isViewsSet)
             return;
         toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
+        progressBar = setup(UIRESOURCE.PROGRESSBAR, ProgressBar.class, uiViews);
         tertuliaNameView = setup(UIRESOURCE.TITLE, TextView.class, uiViews);
         subjectView = setup(UIRESOURCE.SUBJECT, TextView.class, uiViews);
         locationNameView = setup(UIRESOURCE.LOCATION, TextView.class, uiViews);

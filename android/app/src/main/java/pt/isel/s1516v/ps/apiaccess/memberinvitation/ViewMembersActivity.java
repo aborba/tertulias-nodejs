@@ -29,6 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -38,6 +39,8 @@ import com.google.gson.JsonElement;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.flow.Futurizable;
+import pt.isel.s1516v.ps.apiaccess.flow.GetData;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ui.VmUiManager;
@@ -57,7 +60,7 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     private ContactListItem[] contacts;
     private ApiMemberBundle members;
 
-    private MembersArrayAdapter viewAdapter;
+    private MembersViewArrayAdapter viewAdapter;
 
     // region Activity Lifecycle
 
@@ -74,7 +77,7 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
                 R.string.title_activity_view_members,
                 Util.IGNORE, Util.IGNORE, null, true);
 
-        viewAdapter = new MembersArrayAdapter(this, members != null ? members.members : new ApiMember[0]);
+        viewAdapter = new MembersViewArrayAdapter(this, members != null ? members.members : new ApiMember[0]);
         Util.setupAdapter(this, (RecyclerView) uiManager.getView(VmUiManager.UIRESOURCE.RECYCLE), viewAdapter);
 
         handleIntent(getIntent());
@@ -132,8 +135,8 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
 
     private void refreshDataAndViews() {
         MobileServiceClient cli = Util.getMobileServiceClient(this);
-        ListenableFuture<JsonElement> future = cli.invokeApi(apiLinks.getRoute(LINK_MEMBERS), null, apiLinks.getMethod(LINK_MEMBERS), null);
-        Futures.addCallback(future, new MembersPresentation());
+        ListenableFuture<JsonElement> future = cli.invokeApi(apiLinks.getRoute(LINK_MEMBERS_COUNT), null, apiLinks.getMethod(LINK_MEMBERS_COUNT), null);
+        Futures.addCallback(future, new MembersCountPresentation(false));
     }
 
     // endregion
@@ -161,6 +164,12 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
     // endregion
 
     private class MembersPresentation implements FutureCallback<JsonElement> {
+        private final boolean isRetry;
+
+        public MembersPresentation(boolean isRetry) {
+            this.isRetry = isRetry;
+        }
+
         @Override
         public void onSuccess(JsonElement result) {
             new AsyncTask<JsonElement, Void, ApiMemberBundle>() {
@@ -179,9 +188,44 @@ public class ViewMembersActivity extends Activity implements TertuliasApi {
         }
 
         @Override
-        public void onFailure(Throwable e) {
+        public void onFailure(Throwable t) {
             Context ctx = ViewMembersActivity.this;
-            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, e.getMessage()));
+            if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
+                Util.longSnack(uiManager.getRootView(), R.string.main_activity_token_expired);
+                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks, uiManager);
+                Util.refreshToken(ctx, uiManager.getRootView(), future, new MembersPresentation(true));
+                return;
+            }
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, t.getMessage()));
+        }
+    }
+
+    private class MembersCountPresentation implements FutureCallback<JsonElement> {
+        private final boolean isRetry;
+
+        public MembersCountPresentation(boolean isRetry) {
+            this.isRetry = isRetry;
+        }
+
+        @Override
+        public void onSuccess(JsonElement result) {
+            ApiTotals totals = new Gson().fromJson(result, ApiTotals.class);
+            uiManager.set(totals.get());
+            ListenableFuture<JsonElement> future = Util.getMobileServiceClient(ViewMembersActivity.this)
+                    .invokeApi(apiLinks.getRoute(LINK_MEMBERS), null, apiLinks.getMethod(LINK_MEMBERS), null);
+            Futures.addCallback(future, new MembersPresentation(false));
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Context ctx = ViewMembersActivity.this;
+            if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
+                Util.longSnack(uiManager.getRootView(), R.string.main_activity_token_expired);
+                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks, uiManager);
+                Util.refreshToken(ctx, uiManager.getRootView(), future, new MembersCountPresentation(true));
+                return;
+            }
+            Util.longSnack(uiManager.getRootView(), getEMsg(ctx, t.getMessage()));
         }
     }
 

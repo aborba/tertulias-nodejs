@@ -28,13 +28,16 @@ public interface TertuliasApi {
     String HTTP_POST = HttpConstants.PostMethod;
     String HTTP_PUT = HttpConstants.PutMethod;
 
-    // Endpoints keys
-    String INTENT_LINKS = "Links";
     String ROUTE_END_POINT_LABEL = "RouteEndPoint";
     String ROUTE_METHOD_LABEL = "RouteMethod";
     String GET_TERTULIAS = "getTertulias";
     String POST_TERTULIAS = "postTertulias";
     String POST_REGISTRATION = "postRegistration";
+    // Intent parameters
+
+    // Endpoints keys
+    String INTENT_LINKS = "Links";
+    String INTENT_TERTULIA_ID = "tertuliaId";
 
     // Links
     String LINK_SELF = "self";
@@ -50,8 +53,11 @@ public interface TertuliasApi {
     String LINK_SUBSCRIBE = "subscribe";
     String LINK_UNSUBSCRIBE = "unsubscribe";
     String LINK_MEMBERS = "members";
+    String LINK_MEMBERS_COUNT = "members_count";
     String LINK_POSTVAUCHER = "create_vouchers";
     String LINK_GETVAUCHERS = "get_vouchers";
+    String LINK_GETMESSAGE = "get_messages";
+    String LINK_SENDMESSAGE = "post_messages";
 
     // Activity Return Codes
     int NEW_TERTULIA_RETURN_CODE = 1;

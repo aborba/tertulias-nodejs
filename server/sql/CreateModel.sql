@@ -27,7 +27,7 @@
  	no - Notifications
  	nv - EnumValues
  	qi - QuantifiedItems
- 	rb - RBAC0
+ 	rb - Rbac0
  	sc - Schedules
  	tp - Templates
  	tr - Tertulias
@@ -79,8 +79,8 @@ IF OBJECT_ID(N'dbo.spSetEnumI') IS NOT NULL DROP PROCEDURE spSetEnumI;
 IF OBJECT_ID(N'dbo.spSetEnumS') IS NOT NULL DROP PROCEDURE spSetEnumS;
 GO
 
-IF OBJECT_ID(N'sp_subscribePublicTertulia') IS NOT NULL DROP PROCEDURE sp_subscribePublicTertulia;
-IF OBJECT_ID(N'sp_unsubscribePublicTertulia') IS NOT NULL DROP PROCEDURE sp_unsubscribePublicTertulia;
+IF OBJECT_ID(N'dbo.sp_subscribePublicTertulia') IS NOT NULL DROP PROCEDURE sp_subscribePublicTertulia;
+IF OBJECT_ID(N'dbo.sp_unsubscribePublicTertulia') IS NOT NULL DROP PROCEDURE sp_unsubscribePublicTertulia;
 IF OBJECT_ID(N'dbo.sp_acceptInvitationToTertulia') IS NOT NULL DROP PROCEDURE sp_acceptInvitationToTertulia;
 IF OBJECT_ID(N'dbo.sp_createInvitationVouchers') IS NOT NULL DROP PROCEDURE sp_createInvitationVouchers;
 IF OBJECT_ID(N'dbo.fnGetTemplate_byTertuliaId') IS NOT NULL DROP FUNCTION fnGetTemplate_byTertuliaId;
@@ -128,7 +128,7 @@ GO
 
 IF OBJECT_ID(N'dbo.trLogUserInsert') IS NOT NULL DROP TRIGGER trLogUserInsert;
 
-IF OBJECT_ID(N'dbo.RBAC0') IS NOT NULL DROP TABLE RBAC0;
+IF OBJECT_ID(N'dbo.Rbac0') IS NOT NULL DROP TABLE Rbac0;
 IF OBJECT_ID(N'dbo.Invitations') IS NOT NULL DROP TABLE Invitations;
 IF OBJECT_ID(N'dbo.fnCountOpenInvitations') IS NOT NULL DROP FUNCTION fnCountOpenInvitations;
 IF OBJECT_ID(N'dbo.ReadNotifications') IS NOT NULL DROP TABLE ReadNotifications;
@@ -188,7 +188,7 @@ CREATE TABLE EnumValues(
 );
 GO
 
-CREATE TABLE RBAC0(
+CREATE TABLE Rbac0(
 	rb_id INTEGER IDENTITY(1,1) PRIMARY KEY
 	, rb_role INTEGER NOT NULL
 	, rb_action INTEGER NOT NULL
@@ -320,6 +320,7 @@ CREATE TABLE Users(
 	, us_lastName VARCHAR(40)
 	, us_email VARCHAR(40)
 	, us_picture VARCHAR(255)
+	, us_myKey VARCHAR(36) NOT NULL DEFAULT newId()
 	, CONSTRAINT un_users_sid UNIQUE (us_sid)
 	, CONSTRAINT un_users_alias UNIQUE (us_alias)
 	, CONSTRAINT un_users_email UNIQUE (us_email)
@@ -729,8 +730,8 @@ CREATE PROCEDURE sp_insertTertulia_Weekly
 	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_insertTertulia_Weekly
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_insertTertulia_Weekly
 	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
 
 	SET @scheduleType = dbo.fnGetEnum('Schedule', 'Weekly');
@@ -793,8 +794,8 @@ CREATE PROCEDURE sp_insertTertulia_Monthly
 	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_insertTertulia_Monthly
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_insertTertulia_Monthly
 	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER;
 
 	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyD');
@@ -855,8 +856,8 @@ CREATE PROCEDURE sp_insertTertulia_MonthlyW
 	@scheduleWeekDay INTEGER, @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_insertTertulia_MonthlyW
 	DECLARE @scheduleType INTEGER, @location INTEGER, @schedule INTEGER, @tertulia INTEGER, @owner INTEGER, @dow INTEGER;
 
 	SET @scheduleType = dbo.fnGetEnum('Schedule', 'MonthlyW');
@@ -920,8 +921,8 @@ CREATE PROCEDURE sp_updateTertulia_Weekly
 	@scheduleWeekDay INTEGER, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_updateTertulia_Weekly
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_updateTertulia_Weekly
 
 	IF (dbo.fnGetAuthorizationForAction(@userId, @tertuliaId, 'UPDATE_TERTULIA') <> 1)
 	BEGIN
@@ -1013,8 +1014,8 @@ CREATE PROCEDURE sp_updateTertulia_Monthly
 	@scheduleDayNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_updateTertulia_Monthly
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_updateTertulia_Monthly
 
 	DECLARE @authorization BIT;
 	SET @authorization = dbo.fnGetAuthorizationForAction(@userId, @tertuliaId, 'UPDATE_TERTULIA');
@@ -1106,8 +1107,8 @@ CREATE PROCEDURE sp_updateTertulia_MonthlyW
 	@scheduleWeekDay INTEGER, @scheduleWeekNr INTEGER, @scheduleIsFromStart BIT, @scheduleSkip INTEGER
 AS
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_updateTertulia_MonthlyW
 BEGIN TRY
+	BEGIN TRANSACTION tran_sp_updateTertulia_MonthlyW
 
 	IF (dbo.fnGetAuthorizationForAction(@userId, @tertuliaId, 'UPDATE_TERTULIA') <> 1)
 	BEGIN
@@ -1198,25 +1199,27 @@ CREATE PROCEDURE sp_createEvent
 	@eventLocation VARCHAR(40),
 	@eventDate DATETIME
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_createEvent
-BEGIN TRY
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_createEvent
 
-	IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'CREATE_EVENT') <> 1)
-	BEGIN
-		ROLLBACK TRANSACTION tran_sp_createEvent;
-		RETURN 1;
-	END
+		IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'CREATE_EVENT') <> 1)
+		BEGIN
+			ROLLBACK TRANSACTION tran_sp_createEvent;
+			RETURN 1;
+		END
 
-	DECLARE @location INTEGER;
-	EXEC @location = dbo.sp_getId 'lo', 'Locations', @eventLocation;
-	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
-	COMMIT TRANSACTION tran_sp_createEvent
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_sp_createEvent
-END CATCH
+		DECLARE @location INTEGER;
+		EXEC @location = dbo.sp_getId 'lo', 'Locations', @eventLocation;
+		INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
+		COMMIT TRANSACTION tran_sp_createEvent
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		ROLLBACK TRANSACTION tran_sp_createEvent
+	END CATCH
+END
 GO
 
 CREATE PROCEDURE sp_createEventDefaultLocation
@@ -1224,25 +1227,27 @@ CREATE PROCEDURE sp_createEventDefaultLocation
 	@tertulia INTEGER, 
 	@eventDate DATETIME
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_createEventDfltLoc
-BEGIN TRY
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_createEventDfltLoc
 
-	IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'CREATE_EVENT') <> 1)
-	BEGIN
-		ROLLBACK TRANSACTION tran_sp_createEventDfltLoc;
-		RETURN 1;
-	END
+		IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'CREATE_EVENT') <> 1)
+		BEGIN
+			ROLLBACK TRANSACTION tran_sp_createEventDfltLoc;
+			RETURN 1;
+		END
 
-	DECLARE @location INTEGER;
-	SET @location = dbo.fnGetTertuliaLocation_byTertuliaId(@tertulia);
-	INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
-	COMMIT TRANSACTION tran_sp_createEventDfltLoc
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_sp_createEventDfltLoc
-END CATCH
+		DECLARE @location INTEGER;
+		SET @location = dbo.fnGetTertuliaLocation_byTertuliaId(@tertulia);
+		INSERT INTO Events (ev_tertulia, ev_location, ev_targetDate) VALUES (@tertulia, @location, @eventDate);
+		COMMIT TRANSACTION tran_sp_createEventDfltLoc
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		ROLLBACK TRANSACTION tran_sp_createEventDfltLoc
+	END CATCH
+END
 GO
 
 CREATE PROCEDURE sp_buildEventsItems
@@ -1251,37 +1256,39 @@ CREATE PROCEDURE sp_buildEventsItems
 	@eventDate DATETIME, 
 	@templateName VARCHAR(40)
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_buildEventsItems
-BEGIN TRY
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_buildEventsItems
 
-	IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'MANAGE_EVENT') <> 1)
-	BEGIN
-		ROLLBACK TRANSACTION tran_sp_buildEventsItems;
-		RETURN 1;
-	END
+		IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'MANAGE_EVENT') <> 1)
+		BEGIN
+			ROLLBACK TRANSACTION tran_sp_buildEventsItems;
+			RETURN 1;
+		END
 
-	DECLARE @event INTEGER, @template INTEGER;
-	SET @template = dbo.fnGetTemplate_byTertuliaId(@tertulia, @templateName);
-	DECLARE _cursor CURSOR FOR SELECT qi_item, qi_quantity FROM QuantifiedItems WHERE qi_template = @template;
-	OPEN _cursor;
-	DECLARE @itemId INTEGER, @baseQty INTEGER;
-	FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-		INSERT INTO EventsItems (ei_event, ei_item, ei_quantity) VALUES (@event, @itemId, @baseQty);
+		DECLARE @event INTEGER, @template INTEGER;
+		SET @template = dbo.fnGetTemplate_byTertuliaId(@tertulia, @templateName);
+		DECLARE _cursor CURSOR FOR SELECT qi_item, qi_quantity FROM QuantifiedItems WHERE qi_template = @template;
+		OPEN _cursor;
+		DECLARE @itemId INTEGER, @baseQty INTEGER;
 		FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
-	END
-	CLOSE _cursor;
-	DEALLOCATE _cursor;
-	COMMIT TRANSACTION tran_sp_buildEventsItems
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	CLOSE _cursor;
-	DEALLOCATE _cursor;
-	ROLLBACK TRANSACTION tran_sp_buildEventsItems
-END CATCH
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			INSERT INTO EventsItems (ei_event, ei_item, ei_quantity) VALUES (@event, @itemId, @baseQty);
+			FETCH NEXT FROM _cursor INTO @itemId, @baseQty;
+		END
+		CLOSE _cursor;
+		DEALLOCATE _cursor;
+		COMMIT TRANSACTION tran_sp_buildEventsItems
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		CLOSE _cursor;
+		DEALLOCATE _cursor;
+		ROLLBACK TRANSACTION tran_sp_buildEventsItems
+	END CATCH
+END
 GO
 
 -- Commit Event Checklist item to user
@@ -1292,61 +1299,64 @@ CREATE PROCEDURE sp_assignChecklistItems
 	@itemName VARCHAR(40), 
 	@itemQuantity INTEGER
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_assignChecklistItems
-BEGIN TRY
-	DECLARE @userId INTEGER, @eventId INTEGER, @itemId INTEGER, @totalQuantity INTEGER, @committedQuantity INTEGER;
-	SET @userId = dbo.fnGetUserId_bySid(@userSid);
-	SET @eventId = dbo.fnGetEvent_byTertuliaId(@tertulia, @eventDate);
-	SET @itemId = dbo.fnGetItem_byTertuliaId(@tertulia, @itemName);
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_assignChecklistItems
+		DECLARE @userId INTEGER, @eventId INTEGER, @itemId INTEGER, @totalQuantity INTEGER, @committedQuantity INTEGER;
+		SET @userId = dbo.fnGetUserId_bySid(@userSid);
+		SET @eventId = dbo.fnGetEvent_byTertuliaId(@tertulia, @eventDate);
+		SET @itemId = dbo.fnGetItem_byTertuliaId(@tertulia, @itemName);
 
-	SELECT @totalQuantity = SUM(ei_quantity) FROM EventsItems 
-	WHERE ei_event = @eventId AND ei_item = @itemId;
-	IF (@totalQuantity = NULL) SET @totalQuantity = 0
+		SELECT @totalQuantity = SUM(ei_quantity) FROM EventsItems 
+		WHERE ei_event = @eventId AND ei_item = @itemId;
+		IF (@totalQuantity = NULL) SET @totalQuantity = 0
 
-	SELECT @committedQuantity = SUM(ct_quantity) FROM Contributions 
-	WHERE ct_event = @eventId AND ct_item = @itemId AND ct_user <> @userId;
-	IF (@committedQuantity IS NULL) SET @committedQuantity = 0
+		SELECT @committedQuantity = SUM(ct_quantity) FROM Contributions 
+		WHERE ct_event = @eventId AND ct_item = @itemId AND ct_user <> @userId;
+		IF (@committedQuantity IS NULL) SET @committedQuantity = 0
 
-	DECLARE @availableQuantity INTEGER;
-	SET @availableQuantity = @totalQuantity - @committedQuantity;
-	IF (@availableQuantity < 0) SET @availableQuantity = 0;
-	IF (@itemQuantity > @availableQuantity) SET @itemQuantity = @availableQuantity;
-	IF ((SELECT COUNT(ct_id) FROM Contributions WHERE ct_user = @userId AND ct_event = @eventId AND ct_item = @itemId) = 0)
-	BEGIN
-		INSERT INTO Contributions (ct_user, ct_event, ct_item, ct_quantity) VALUES (@userId, @eventId, @itemId, @itemQuantity);
-	END ELSE BEGIN
-		UPDATE Contributions SET ct_quantity = @itemQuantity WHERE ct_user = @userId AND ct_event = @eventId AND ct_item = @itemId;
-	END
-	COMMIT TRANSACTION tran_sp_assignChecklistItems;
-	RETURN @itemQuantity;
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_sp_assignChecklistItems
-END CATCH
+		DECLARE @availableQuantity INTEGER;
+		SET @availableQuantity = @totalQuantity - @committedQuantity;
+		IF (@availableQuantity < 0) SET @availableQuantity = 0;
+		IF (@itemQuantity > @availableQuantity) SET @itemQuantity = @availableQuantity;
+		IF ((SELECT COUNT(ct_id) FROM Contributions WHERE ct_user = @userId AND ct_event = @eventId AND ct_item = @itemId) = 0)
+		BEGIN
+			INSERT INTO Contributions (ct_user, ct_event, ct_item, ct_quantity) VALUES (@userId, @eventId, @itemId, @itemQuantity);
+		END ELSE BEGIN
+			UPDATE Contributions SET ct_quantity = @itemQuantity WHERE ct_user = @userId AND ct_event = @eventId AND ct_item = @itemId;
+		END
+		COMMIT TRANSACTION tran_sp_assignChecklistItems;
+		RETURN @itemQuantity;
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		ROLLBACK TRANSACTION tran_sp_assignChecklistItems
+	END CATCH
+END
 GO
 
 CREATE PROCEDURE sp_postNotification
 	@userSid VARCHAR(40),
-	@tertulia INTEGER, 
-	@typeName VARCHAR(40), 
+	@tertulia INTEGER,
 	@message VARCHAR(40)
 AS
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_postNotification
-BEGIN TRY
-	DECLARE @userId INTEGER, @tag INTEGER;
-	SET @userId = dbo.fnGetUserId_bySid(@userSid);
-	SET @tag = dbo.fnGetEnum('Tags', 'announcements');
-	INSERT INTO Notifications (no_tertulia, no_user, no_tag, no_message) 
-	VALUES (@tertulia, @userId, @tag, @message);
-	COMMIT TRANSACTION tran_sp_postNotification
-END TRY
-BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_sp_postNotification
-END CATCH
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_postNotification
+		DECLARE @userId INTEGER, @tag INTEGER;
+		SET @userId = dbo.fnGetUserId_bySid(@userSid);
+		SET @tag = dbo.fnGetEnum('Tags', 'announcements');
+		INSERT INTO Notifications (no_tertulia, no_user, no_tag, no_message) 
+		VALUES (@tertulia, @userId, @tag, @message);
+		COMMIT TRANSACTION tran_sp_postNotification
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		ROLLBACK TRANSACTION tran_sp_postNotification
+	END CATCH
+END
 GO
 
 CREATE PROCEDURE sp_getTertuliaMembers
@@ -1395,85 +1405,117 @@ BEGIN
 			INNER JOIN EnumValues ON mb_role = nv_id
 		WHERE tr_id = @tertulia;
 END
+GO
 
 CREATE PROCEDURE sp_createInvitationVouchers
 	@userSid VARCHAR(40),
 	@tertulia INTEGER,
 	@vouchers_count INTEGER,
 	@vouchers_batch VARCHAR(36) OUTPUT
+AS
+BEGIN
+	SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	BEGIN TRY
+		BEGIN TRANSACTION tran_sp_inviteToTertulia
+
+		IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'INVITE_NEW_MEMBER') <> 1)
+		BEGIN
+			ROLLBACK TRANSACTION tran_sp_inviteToTertulia;
+			RETURN 1;
+		END
+
+		DECLARE @userId INTEGER, @role VARCHAR(40);
+
+		SET @userId = dbo.fnGetUserId_bySid(@userSid);
+
+		SELECT @role = nv_name
+			FROM Tertulias
+			INNER JOIN Members ON mb_tertulia = tr_id
+			INNER JOIN EnumValues ON mb_role = nv_id
+			WHERE tr_is_cancelled = 0
+				AND mb_user = @userId AND tr_id = @tertulia;
+
+		IF (@role IS NULL OR @role NOT IN ('owner', 'member'))
+		BEGIN
+			ROLLBACK TRANSACTION tran_sp_inviteToTertulia
+			RETURN 1;
+		END
+
+		SET @vouchers_batch = newid();
+
+		DECLARE @voucher VARCHAR(36);
+
+		WHILE @vouchers_count > 0
+		BEGIN
+			SET @voucher = newid();
+			INSERT INTO Invitations (in_key, in_batch, in_tertulia, in_user) VALUES (@voucher, @vouchers_batch, @tertulia, @userId);
+			SET @vouchers_count = @vouchers_count - 1;
+		END
+		COMMIT TRANSACTION tran_sp_inviteToTertulia
+		RETURN 0;
+	END TRY
+	BEGIN CATCH
+		SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
+		--ROLLBACK TRANSACTION tran_sp_inviteToTertulia
+	END CATCH
+END
+GO
+
+CREATE PROCEDURE sp_acceptInvitationToTertulia
+	@voucher VARCHAR(36),
+	@userSid VARCHAR(40),
+	@alias VARCHAR(20),
+	@email VARCHAR(40),
+	@firstName VARCHAR(40),
+	@lastName VARCHAR(40),
+	@picture VARCHAR(255),
+	@tertulia INTEGER OUTPUT,
+	@myKey VARCHAR(36) OUTPUT
 AS 
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_inviteToTertulia
 BEGIN TRY
+	DECLARE @user INTEGER, @tertuliaId INTEGER, @role INTEGER, @email_i VARCHAR(40), @email_u VARCHAR(40);
 
-	IF (dbo.fnGetAuthorizationForActionBySid(@userSid, @tertulia, 'INVITE_NEW_MEMBER') <> 1)
+	BEGIN TRANSACTION tran_spAcceptInvitation
+	SELECT @user = us_id FROM Users WHERE us_sid = @userSid;
+	IF (@user IS NULL)
 	BEGIN
-		ROLLBACK TRANSACTION tran_sp_inviteToTertulia;
+		INSERT INTO Users(us_sid, us_alias, us_firstName, us_lastName, us_email, us_picture) 
+		VALUES (@userSid, @alias, @firstName, @lastName, @email, @picture);
+		SET @user = SCOPE_IDENTITY();
+	END
+
+	SELECT @myKey = us_myKey FROM Users WHERE us_id = @user;
+
+	SELECT @tertuliaId = in_tertulia
+	FROM Invitations 
+		INNER JOIN Tertulias ON in_tertulia = tr_id
+	WHERE tr_is_cancelled = 0 AND in_is_acknowledged = 0
+		AND in_key = @voucher;
+
+	IF (@tertuliaId IS NULL)
+	BEGIN
+		IF (@@TRANCOUNT > 0)
+			ROLLBACK TRANSACTION tran_spAcceptInvitation
+		SELECT 'Error' AS Result;
 		RETURN 1;
 	END
 
-	DECLARE @userId INTEGER, @role VARCHAR(40);
+	SET @role = dbo.fnGetEnum('Roles', 'member');
 
-	SET @userId = dbo.fnGetUserId_bySid(@userSid);
+	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertuliaId, @user, @role);
+	UPDATE Invitations SET in_is_acknowledged = 1 WHERE in_key = @voucher;
 
-	SELECT @role = nv_name
-		FROM Tertulias
-		INNER JOIN Members ON mb_tertulia = tr_id
-		INNER JOIN EnumValues ON mb_role = nv_id
-		WHERE tr_is_cancelled = 0
-			AND mb_user = @userId AND tr_id = @tertulia;
-
-	IF (@role IS NULL OR @role NOT IN ('owner', 'member'))
-	BEGIN
-		ROLLBACK TRANSACTION tran_sp_inviteToTertulia
-		RETURN 1;
-	END
-
-	SET @vouchers_batch = newid();
-
-	DECLARE @voucher VARCHAR(36);
-
-	WHILE @vouchers_count > 0
-	BEGIN
-		SET @voucher = newid();
-		INSERT INTO Invitations (in_key, in_batch, in_tertulia, in_user) VALUES (@voucher, @vouchers_batch, @tertulia, @userId);
-		SET @vouchers_count = @vouchers_count - 1;
-	END
-	COMMIT TRANSACTION tran_sp_inviteToTertulia
+	SET @tertulia = @tertuliaId;
+	COMMIT TRANSACTION tran_spAcceptInvitation
+	SELECT 'OK' AS Result;
 	RETURN 0;
 END TRY
 BEGIN CATCH
-	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	--ROLLBACK TRANSACTION tran_sp_inviteToTertulia
-END CATCH
-
-CREATE PROCEDURE sp_acceptInvitationToTertulia
-	@userSid VARCHAR(40),
-	@token VARCHAR(36)
-AS 
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_spAcceptInvitation
-BEGIN TRY
-	DECLARE @userId INTEGER, @tertulia INTEGER, @role INTEGER, @email_i VARCHAR(40), @email_u VARCHAR(40);
-	SELECT @tertulia = in_tertulia
-		FROM Invitations 
-		INNER JOIN Tertulias ON in_tertulia = tr_id
-		WHERE tr_is_cancelled = 0 AND in_key = @token AND in_is_acknowledged = 0;
-	SET @userId = dbo.fnGetUserId_bySid(@userSid);
-	IF (@userId IS NULL OR @tertulia IS NULL)
-	BEGIN
+	IF (@@TRANCOUNT > 0)
 		ROLLBACK TRANSACTION tran_spAcceptInvitation
-		RETURN 1;
-	END
-	SET @role = dbo.fnGetEnum('Roles', 'member');
-	INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @userId, @role);
-	UPDATE Invitations SET in_is_acknowledged = 1 WHERE in_key = @token;
-	COMMIT TRANSACTION tran_spAcceptInvitation
-	RETURN @token;
-END TRY
-BEGIN CATCH
 	SELECT ERROR_NUMBER() AS ErrorNumber, ERROR_MESSAGE() AS ErrorMessage;
-	ROLLBACK TRANSACTION tran_spAcceptInvitation
+	RETURN 1;
 END CATCH
 GO
 
@@ -1482,26 +1524,25 @@ CREATE PROCEDURE sp_subscribePublicTertulia
 	@tertulia INTEGER
 AS 
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_sp_subscribePublicTertulia
 BEGIN TRY
-	DECLARE @totals INTEGER, @user INTEGER, @member INTEGER;
+	BEGIN TRANSACTION tran_sp_subscribePublicTertulia
+	DECLARE @user INTEGER, @member INTEGER;
 
-	SELECT @totals = COUNT(*) FROM Tertulias WHERE tr_is_cancelled = 0 AND tr_is_private = 0;
-	IF (@totals = 0)
+	IF NOT EXISTS (SELECT * FROM Tertulias WHERE tr_is_cancelled = 0 AND tr_is_private = 0)
 	BEGIN
-		ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia
+		IF (@@TRANCOUNT > 0)
+			ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia
 		RAISERROR ('Tertulia is either cancelled or private.', -1, -1);
 		RETURN 1;
 	END
 
 	SET @user = dbo.fnGetUserId_bySid(@userSid);
 
-	SELECT @totals = COUNT(*) FROM Tertulias
-	INNER JOIN Members ON mb_tertulia = tr_id
-	WHERE tr_is_cancelled = 0 AND tr_id = @tertulia AND mb_user = @user
-	IF (@totals = 1)
+	IF EXISTS (SELECT * FROM Tertulias INNER JOIN Members ON mb_tertulia = tr_id
+		WHERE tr_is_cancelled = 0 AND tr_id = @tertulia AND mb_user = @user)
 	BEGIN
-		ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia
+		IF (@@TRANCOUNT > 0)
+			ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia
 		RAISERROR ('Duplicate subscription.', -1, -1);
 		RETURN 1;
 	END
@@ -1510,13 +1551,14 @@ BEGIN TRY
 
     INSERT INTO Members (mb_tertulia, mb_user, mb_role) VALUES (@tertulia, @user, @member);
     COMMIT TRANSACTION tran_sp_subscribePublicTertulia;
-	RETURN 1;
+	RETURN 0;
 
 END TRY
 BEGIN CATCH
+	IF (@@TRANCOUNT > 0)
+		ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia;
 	DECLARE @ErrorMessage NVARCHAR(4000);  
 	SELECT @ErrorMessage = ERROR_MESSAGE();
-	ROLLBACK TRANSACTION tran_sp_subscribePublicTertulia;
 	RAISERROR (@ErrorMessage, -1, -1);
 	RETURN 1;
 END CATCH
@@ -1527,8 +1569,8 @@ CREATE PROCEDURE sp_unsubscribePublicTertulia
 	@tertulia INTEGER
 AS 
 SET TRANSACTION ISOLATION LEVEL READ COMMITTED
-BEGIN TRANSACTION tran_spUnsubscribe
 BEGIN TRY
+	BEGIN TRANSACTION tran_spUnsubscribe
 
 	DECLARE @role INTEGER, @user INTEGER;
 
@@ -1554,8 +1596,8 @@ CREATE TRIGGER trLogUserInsert
 	AFTER INSERT
 AS
 BEGIN
-BEGIN TRANSACTION tran_log_user_creation WITH MARK
 BEGIN TRY
+	BEGIN TRANSACTION tran_log_user_creation WITH MARK
 	DECLARE @type INTEGER, @user INTEGER;
 	SELECT @user = us_id FROM INSERTED;
 	SELECT @type = nt_id FROM EnumTypes WHERE nt_name = 'Users';
@@ -1637,27 +1679,28 @@ EXEC spSetEnumI N'Actions', N'MANAGE_EVENT', 0;
 EXEC spSetEnumI N'Actions', N'READ_MEMBERS_DETAILS_PRIVATE_TERTULIA', 0;
 GO
 
--- RBAC0
-DECLARE @owner INTEGER, @manager INTEGER;
+-- Rbac0
+DECLARE @owner INTEGER, @manager INTEGER, @member INTEGER;
 SET @owner = dbo.fnGetEnum('Roles', 'owner');
 SET @manager = dbo.fnGetEnum('Roles', 'manager');
+SET @member = dbo.fnGetEnum('Roles', 'member');
 
 DECLARE @action INTEGER;
 
 SET @action = dbo.fnGetEnum('Actions', 'UPDATE_TERTULIA');
-INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action);
+INSERT INTO Rbac0 (rb_role, rb_action) VALUES (@owner, @action);
 
 SET @action = dbo.fnGetEnum('Actions', 'INVITE_NEW_MEMBER');
-INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
+INSERT INTO Rbac0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 
 SET @action = dbo.fnGetEnum('Actions', 'CREATE_EVENT');
-INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
+INSERT INTO Rbac0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 
 SET @action = dbo.fnGetEnum('Actions', 'MANAGE_EVENT');
-INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
+INSERT INTO Rbac0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 
 SET @action = dbo.fnGetEnum('Actions', 'READ_MEMBERS_DETAILS_PRIVATE_TERTULIA');
-INSERT INTO RBAC0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
+INSERT INTO Rbac0 (rb_role, rb_action) VALUES (@owner, @action), (@manager, @action);
 GO
 
 -- Tags

@@ -45,25 +45,28 @@ public class EdApiTertuliaMonthlyWSchedule extends EdApiTertulia implements Sche
                                          String zip, String city, String country,
                                          String latitude, String longitude,
                                          int weekDay, int weekNr, boolean isFromStart, int skip,
-                                         String scheduleType) {
+                                         String scheduleType,
+                                         String myKey) {
         super(tertuliaId, name, subject, isPrivate,
                 roleType,
                 locationId, location, address, zip, city, country,
                 latitude, longitude,
-                scheduleType);
+                scheduleType,
+                myKey);
         this.weekDay = weekDay;
         this.weekNr = weekNr;
         this.isFromStart = isFromStart;
         this.skip = skip;
     }
 
-    public EdApiTertuliaMonthlyWSchedule(TertuliaEdition tertulia) {
+    public EdApiTertuliaMonthlyWSchedule(TertuliaEdition tertulia, String myKey) {
         super(tertulia.id, tertulia.name, tertulia.subject, tertulia.isPrivate,
                 tertulia.role.name,
                 tertulia.location.id, tertulia.location.name, tertulia.location.address.address, tertulia.location.address.zip,
                 tertulia.location.address.city, tertulia.location.address.country,
                 tertulia.location.geolocation.getLatitude(), tertulia.location.geolocation.getLongitude(),
-                tertulia.tertuliaSchedule.getType().name());
+                tertulia.tertuliaSchedule.getType().name(),
+                myKey);
         TertuliaScheduleMonthlyW schedule = (TertuliaScheduleMonthlyW) tertulia.tertuliaSchedule;
         weekDay = schedule.weekday + 1;
         weekNr = schedule.weeknr;

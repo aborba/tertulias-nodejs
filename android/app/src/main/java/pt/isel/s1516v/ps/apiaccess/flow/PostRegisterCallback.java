@@ -22,6 +22,7 @@ package pt.isel.s1516v.ps.apiaccess.flow;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -31,20 +32,26 @@ import java.util.concurrent.ExecutionException;
 
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
 
 public class PostRegisterCallback implements FutureCallback<JsonElement> {
     final Context ctx;
     final String rel;
     final Futurizable<JsonElement> future;
     final FutureCallback<JsonElement> futureCallback;
+    final MaUiManager uiManager;
+    final boolean isRetry;
     final View rootView;
 
-    public PostRegisterCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback) {
+    public PostRegisterCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, MaUiManager uiManager, boolean isRetry) {
         this.ctx = ctx;
         this.rel = rel;
         this.future = future;
         this.futureCallback = futureCallback;
-        rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        this.uiManager = uiManager;
+        this.isRetry = isRetry;
+
+        rootView = Util.getRootView(ctx);
     }
 
     @Override
@@ -52,19 +59,24 @@ public class PostRegisterCallback implements FutureCallback<JsonElement> {
         if (result != null)
             Util.longSnack(rootView, R.string.main_activity_user_registration);
         if (future != null) {
-            if (futureCallback != null)
+            if (futureCallback != null) {
                 Futures.addCallback(future.getFuture(), futureCallback);
+                return;
+            }
             else
                 try {
                     future.getFuture().get();
+                    return;
                 } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
                     e.printStackTrace();
                 }
         }
+        uiManager.hideProgressBar();
     }
 
     @Override
     public void onFailure(Throwable t) {
+        uiManager.hideProgressBar();
         String message = t.getMessage();
         Util.longSnack(rootView, message);
     }

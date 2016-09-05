@@ -1,0 +1,23 @@
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
+    defaultConfig {
+
+        minSdkVersion 15
+        targetSdkVersion 21
+    }
+
+    buildTypes {
+        release {
+
+        }
+    }
+}
+dependencies {
+	compile 'com.nineoldandroids:library:2.4.0+'
+    compile 'com.android.support:support-v4:21.+'
+    compile 'com.android.support:recyclerview-v7:+'
+}

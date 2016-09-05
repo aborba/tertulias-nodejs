@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "401692095457",
+    "project_id": "tertulias-22908"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:401692095457:android:77751a9f52b3af0d",
+        "android_client_info": {
+          "package_name": "pt.isel.s1516v.ps.apiaccess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "401692095457-7qgt3m8rl807oksfqq0t1edaod55qukl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pt.isel.s1516v.ps.apiaccess",
+            "certificate_hash": "742FCC0C0558AD707FB33DF9C0B86F396D26F93A"
+          }
+        },
+        {
+          "client_id": "401692095457-di9jb43rffpd6q2gsqbmt7114gbvscqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbwqbSTuQRLfZw52MEFe7GvA1OiCpfJZI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

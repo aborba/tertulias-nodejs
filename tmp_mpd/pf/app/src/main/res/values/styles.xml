@@ -1,0 +1,114 @@
+<resources>
+
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+        <!-- Base application theme.
+             Defining this lets values-v21/styles.xml reuse it with changes. -->
+    </style>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!-- colorPrimary is used, for instance, for the default ActionBar
+             (but not Toolbar) background.
+              We specify the same color for the toolbar background in
+              toolbar.xml.. -->
+        <item name="colorPrimary">@color/material_drawer_primary</item>
+
+        <!-- colorPrimaryDark is used for the status bar (with the
+             battery, clock, etc). -->
+        <item name="colorPrimaryDark">@color/material_drawer_primary_dark</item>
+
+        <!-- colorAccent is used as the default value for
+             colorControlActivated which is used to tint widgets. -->
+        <item name="colorAccent">@color/material_drawer_accent</item>
+
+        <!-- MaterialDrawer specific values -->
+        <item name="material_drawer_background">@color/material_drawer_background</item>
+        <item name="material_drawer_icons">@color/material_drawer_icons</item>
+        <item name="material_drawer_primary_text">@color/material_drawer_primary_text</item>
+        <item name="material_drawer_primary_icon">@color/material_drawer_primary_icon</item>
+        <item name="material_drawer_secondary_text">@color/material_drawer_secondary_text</item>
+        <item name="material_drawer_hint_text">@color/material_drawer_hint_text</item>
+        <item name="material_drawer_divider">@color/material_drawer_divider</item>
+        <item name="material_drawer_selected">@color/material_drawer_selected</item>
+        <item name="material_drawer_selected_text">@color/material_drawer_selected_text</item>
+        <item name="material_drawer_header_selection_text">
+            @color/material_drawer_header_selection_text
+        </item>
+
+
+    </style>
+    <style name="ThemeToolbarWhiteText" parent="Theme.AppCompat.NoActionBar">
+        <!-- android:textColorPrimary is the  color of the title text
+             in the Toolbar, in the Theme.AppCompat theme:  -->
+        <item name="android:textColorPrimary">@color/abc_primary_text_material_dark</item>
+
+        <!-- android:textColorPrimaryInverse is the  color of the title
+             text in the Toolbar, in the Theme.AppCompat.Light theme:  -->
+        <!-- <item name="android:textColorPrimaryInverse">@color/abc_primary_text_material_light</item> -->
+
+        <!-- android:actionMenuTextColor is the color of the text of
+              action (menu) items in the Toolbar, at least in the
+              Theme.AppCompat theme.
+              For some reason, they already get the textColorPrimary
+              when running on API 21, but not on older versions of
+              Android, so this is only necessary to support older
+              Android versions.-->
+        <item name="actionMenuTextColor">@color/abc_primary_text_material_dark</item>
+        <!-- android:textColorSecondary is the color of the menu
+             overflow icon (three vertical dots) -->
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>
+
+        <!-- This would set the toolbar's background color,
+              but setting this also changes the popup menu's background,
+              even if we define popupTheme for our <Toolbar> -->
+        <item name="android:background">@color/material_drawer_primary</item>
+    </style>
+    <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/material_drawer_primary</item>
+        <item name="android:textColorPrimary">@color/text_title</item>
+        <item name="android:background">@color/background_list_front</item>
+    </style>
+
+
+    <!-- Swipe RecyclerView -->
+
+    <style name="ListBackContent">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/height_list</item>
+        <item name="android:background">@drawable/background_item</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="ListFrontContent">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">@dimen/height_list</item>
+        <item name="android:background">@color/background_list_front</item>
+        <item name="android:padding">@dimen/padding_default</item>
+    </style>
+
+    <style name="ListImage">
+        <item name="android:layout_width">@dimen/size_list_image</item>
+        <item name="android:layout_height">@dimen/size_list_image</item>
+        <item name="android:scaleGravity">fill</item>
+        <item name="android:layout_marginRight">@dimen/padding_default</item>
+    </style>
+
+    <style name="ListTitle">
+        <item name="android:paddingBottom">@dimen/padding_default</item>
+        <item name="android:textColor">@color/text_title</item>
+        <item name="android:textSize">@dimen/font_size_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="ListDescription">
+        <item name="android:textColor">@color/text_description</item>
+        <item name="android:textSize">@dimen/font_size_description</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="ListButtonAction">
+        <item name="android:layout_margin">10dp</item>
+    </style>
+</resources>

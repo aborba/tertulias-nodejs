@@ -1,0 +1,8 @@
+<sync-adapter
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:contentAuthority="pt.isel.pdm.g04.pf.data.thoth.provider"
+    android:accountType="pt.isel.pdm.g04.pf"
+    android:userVisible="true"
+    android:supportsUploading="true"
+    android:allowParallelSyncs="false"
+    android:isAlwaysSyncable="true"/>

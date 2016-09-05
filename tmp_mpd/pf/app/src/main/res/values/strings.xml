@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_name">Teacher Locator</string>
+    <string name="location_building_a" translatable="false">Edifício A - Serviços Administrativos</string>
+    <string name="location_building_c" translatable="false">Edifício C - Edifício Ferreira Cardoso</string>
+    <string name="location_building_e" translatable="false">Edifício E</string>
+    <string name="location_building_f" translatable="false">Edifício F</string>
+    <string name="location_building_g" translatable="false">Edifício G</string>
+    <string name="location_building_m" translatable="false">Edifício M</string>
+    <string name="location_building_p" translatable="false">Edifício P</string>
+    <string name="location_gym" translatable="false">Ginásio, balnearios, Salas das Tunas</string>
+    <string name="location_cc" translatable="false">Centro de Cálculo</string>
+    <string name="location_student_pavillion" translatable="false">Pavilhão do Estudante</string>
+    <string name="location_residence" translatable="false">Residência Maria Beatriz</string>
+    <string name="location_isel" translatable="false">ISEL</string>
+
+    <!-- Parse keys -->
+    <string name="parse_app_id">iG6wYvJYmAugroxDqKjHze2XDsBEL7n7vjxi1tYq</string>
+    <string name="parse_client_key">mtqIW7H7ZMxlNk7cpdto7VutCm3zKV0xQLmpZRKx</string>
+
+    <!-- Titles -->
+    <string name="title_activity_login" translatable="false">LoginActivity</string>
+    <string name="title_activity_parse_signup" translatable="false">ParseSignupActivity</string>
+    <string name="title_activity_maps" translatable="false">Map</string>
+
+    <string name="notification_last_seen_minutes" formatted="false">%d minutes ago</string>
+    <string name="notification_last_seen_hours" formatted="false">%d hours ago</string>
+    <string name="notification_none">There are no notifications here.</string>
+
+    <!-- About -->
+    <string name="aboutLibraries_description_text">Android application for locating ISEL teachers registered in the Thoth platform.&lt;br />&lt;br />Authors:&lt;br />&lt;br />António Borba Nº22908&lt;br />Pedro Cardoso Nº37539</string>
+
+    <!-- Settings -->
+    <string name="pref_header_general">General</string>
+    <string name="slider_diskcache_title">Disk cache</string>
+    <string name="slider_memorycache_title">Memory cache</string>
+    <string name="slider_message">Higher values improves usage experience.</string>
+    <string name="slider_summary">Current value is $1 KiB</string>
+    <string name="slider_unit" translatable="false">KiB</string>
+    <string name="pref_use_colored_notifications">Use colors in notifications</string>
+    <string name="pref_description_use_colored_notifications">Selected color matches different locations in ISEL</string>
+
+    <!-- Drawer Items -->
+    <string name="drawer_item_notifications">Notifications</string>
+    <string name="drawer_item_map">Map</string>
+    <string name="drawer_item_settings">Settings</string>
+    <string name="drawer_item_sharelocation">Share location</string>
+    <string name="drawer_item_about">About...</string>
+    <string name="drawer_item_teachers">Teachers</string>
+    <string name="drawer_addaccount">Switch account...</string>
+    <string name="parser_email_not_verified">Account will only be accessible after completing e-mail verification. Please check you e-mail.</string>
+
+    <string name="addacount_not_supported">Ad-hoc account creation not allowed.</string>
+    <string name="action_settings">Settings</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="invalid_email">This email address is invalid</string>
+    <string name="invalid_password">Password is too short</string>
+    <string name="incorrect_password">Password is incorrect</string>
+    <string name="field_required">This field is required</string>
+
+    <string name="notification_share">Share</string>
+    <string name="notification_open">Open</string>
+    <string name="notification_email">Contact</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync" translatable="false">Data &amp; sync</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+
+    <string name="thoth_authenticator_label" translatable="false">Teacher Locator - Thoth</string>
+    <string name="parse_authenticator_label">Teacher Locator - Parse</string>
+
+    <string name="pref_teachers_address" translatable="false">https://adeetc.thothapp.com/api/v1/teachers/</string>
+    <string name="pref_students_address" translatable="false">https://adeetc.thothapp.com/api/v1/students/</string>
+    <string name="pref_students_address_summary">Default address is https://adeetc.thothapp.com/api/v1/teachers/</string>
+    <string name="pref_teachers_address_summary">Default address is https://adeetc.thothapp.com/api/v1/students/</string>
+    <string name="pref_teachers_address_dialogtitle">Teachers Address</string>
+    <string name="pref_students_address_dialogtitle">Students Address</string>
+    <string name="pref_show_geofences">Show supported locations on map</string>
+    <string name="pref_header_locations">Locations</string>
+    <string name="pref_show_save_battery">Use battery saving mode</string>
+    <string name="account_setup_complete">Account setup complete.</string>
+    <string name="account_setup_failed">Account creation aborted. Server authentication unsuccessful.</string>
+    <string name="account_setup_error">Errors occurred in server authorization</string>
+
+</resources>

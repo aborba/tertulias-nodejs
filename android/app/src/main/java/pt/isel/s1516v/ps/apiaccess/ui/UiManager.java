@@ -25,6 +25,8 @@ import android.view.View;
 
 import java.util.EnumMap;
 
+import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+
 public abstract class UiManager {
     final protected Context ctx;
     final protected Activity activity;
@@ -37,9 +39,13 @@ public abstract class UiManager {
 
     public View getRootView() {
         if (rootView == null)
-            rootView = ((Activity) ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+            rootView = Util.getRootView(ctx);
         return rootView;
     }
+
+    public abstract void showProgressBar();
+
+    public abstract void hideProgressBar();
 
     public abstract boolean isGeoCapability();
 

@@ -93,7 +93,7 @@ public class SearchContactsActivity extends Activity
         emptyView = (TextView) findViewById(R.id.sca_empty_view);
 
         Util.setupToolBar(this, (Toolbar) findViewById(R.id.sca_toolbar),
-                R.string.title_activity_search_public_tertulia,
+                R.string.title_activity_search_contacts,
                 Util.IGNORE, Util.IGNORE, null, true, searchView);
 
         recyclerView = (RecyclerView) findViewById(R.id.sca_RecyclerView);
@@ -169,7 +169,7 @@ public class SearchContactsActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PublicTertuliaDetailsActivity.ACTIVITY_REQUEST_CODE) {
-            View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            View rootView = Util.getRootView(this);
             if (resultCode == RESULT_OK) {
                 Util.longSnack(rootView, R.string.public_tertulia_details_subscribe_success);
                 setResult(RESULT_OK);

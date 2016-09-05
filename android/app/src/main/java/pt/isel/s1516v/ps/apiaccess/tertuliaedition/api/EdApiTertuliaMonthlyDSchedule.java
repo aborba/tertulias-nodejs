@@ -43,24 +43,26 @@ public class EdApiTertuliaMonthlyDSchedule extends EdApiTertulia implements Sche
                                          String zip, String city, String country,
                                          String latitude, String longitude,
                                          int dayNr, boolean isFromStart, int skip,
-                                         String scheduleType) {
+                                         String scheduleType, String myKey) {
         super(tertuliaId, name, subject, isPrivate,
                 roleType,
                 locationId, location, address, zip, city, country,
                 latitude, longitude,
-                scheduleType);
+                scheduleType,
+                myKey);
         this.dayNr = dayNr;
         this.isFromStart = isFromStart;
         this.skip = skip;
     }
 
-    public EdApiTertuliaMonthlyDSchedule(TertuliaEdition tertulia) {
+    public EdApiTertuliaMonthlyDSchedule(TertuliaEdition tertulia, String myKey) {
         super(tertulia.id, tertulia.name, tertulia.subject, tertulia.isPrivate,
                 tertulia.role.name,
                 tertulia.location.id, tertulia.location.name, tertulia.location.address.address, tertulia.location.address.zip,
                 tertulia.location.address.city, tertulia.location.address.country,
                 tertulia.location.geolocation.getLatitude(), tertulia.location.geolocation.getLongitude(),
-                tertulia.tertuliaSchedule.getType().name());
+                tertulia.tertuliaSchedule.getType().name(),
+                myKey);
         TertuliaScheduleMonthlyD schedule = (TertuliaScheduleMonthlyD)tertulia.tertuliaSchedule;
         dayNr = schedule.dayNr;
         isFromStart = schedule.isFromStart;

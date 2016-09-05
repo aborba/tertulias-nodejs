@@ -22,16 +22,20 @@ package pt.isel.s1516v.ps.apiaccess.flow;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.gson.JsonElement;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 import com.microsoft.windowsazure.mobileservices.authentication.MobileServiceUser;
 
 import java.util.concurrent.ExecutionException;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
 
 public class AuthorizationCallback implements FutureCallback<MobileServiceUser> {
@@ -48,23 +52,26 @@ public class AuthorizationCallback implements FutureCallback<MobileServiceUser> 
         this.future = future;
         this.futureCallback = futureCallback;
 
-        rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView = Util.getRootView(ctx);
     }
 
     @Override
     public void onSuccess(MobileServiceUser user) {
-        uiManager.hideProgressBar();
         Util.cacheCredentialsAsync(ctx, user);
         if (future != null) {
-            if (futureCallback != null)
+            if (futureCallback != null) {
                 Futures.addCallback(future.getFuture(), futureCallback);
+                return;
+            }
             else
                 try {
                     future.getFuture().get();
+                    return;
                 } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
                     e.printStackTrace();
                 }
         }
+        uiManager.hideProgressBar();
     }
 
     @Override

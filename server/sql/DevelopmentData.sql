@@ -228,11 +228,11 @@ GO
 DECLARE @userSid VARCHAR(40), @tertulia INTEGER;
 SET @UserSid = dbo.fnGetUserSid_byAlias('GGLabs');
 EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Tertulia do Tejo para testes';
-EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'My test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'My test post to a tertulia';
 EXEC @tertulia = dbo.sp_getId 'tr', 'Tertulias', 'Terças Ggl para testes';
-EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'Another test post to a tertulia';
-EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'And another test post to a tertulia';
-EXEC sp_postNotification @userSid, @tertulia, 'Announcement', 'Yet another test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'Another test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'And another test post to a tertulia';
+EXEC sp_postNotification @userSid, @tertulia, 'Yet another test post to a tertulia';
 GO
 
 -- Mark Tertulia messages as read

@@ -29,18 +29,18 @@ public class EdApiTertulia extends CrApiTertulia implements Parcelable {
 
     @com.google.gson.annotations.SerializedName("tertulia_id")
     public final int tertuliaId;
-
     @com.google.gson.annotations.SerializedName("role_type")
     public final String roleType;
-
     @com.google.gson.annotations.SerializedName("location_id")
     public final int locationId;
+    @com.google.gson.annotations.SerializedName("myKey")
+    public final String mykey;
 
     public EdApiTertulia(int tertuliaId, String tertuliaName, String subject, boolean isPrivate,
                          String roleType,
                          int locationId, String locationName, String streetAddress, String zip, String city, String country,
                          String latitude, String longitude,
-                         String scheduleType) {
+                         String scheduleType, String mykey) {
         super(tertuliaName, subject, isPrivate,
                 locationName, streetAddress, zip, city, country,
                 latitude, longitude,
@@ -48,6 +48,7 @@ public class EdApiTertulia extends CrApiTertulia implements Parcelable {
         this.tertuliaId = tertuliaId;
         this.locationId = locationId;
         this.roleType = roleType;
+        this.mykey = mykey;
     }
 
     @Override
@@ -62,6 +63,7 @@ public class EdApiTertulia extends CrApiTertulia implements Parcelable {
         tertuliaId = in.readInt();
         roleType = in.readString();
         locationId = in.readInt();
+        mykey = in.readString();
     }
 
     @Override
@@ -75,6 +77,7 @@ public class EdApiTertulia extends CrApiTertulia implements Parcelable {
         out.writeInt(tertuliaId);
         out.writeString(roleType);
         out.writeInt(locationId);
+        out.writeString(mykey);
     }
 
     public static final Creator<EdApiTertulia> CREATOR = new Creator<EdApiTertulia>() {

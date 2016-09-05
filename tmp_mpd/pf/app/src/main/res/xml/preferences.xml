@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/pref_header_general">
+
+        <pt.isel.pdm.g04.pf.presentation.widget.SliderPreference
+            android:dialogMessage="@string/slider_message"
+            android:key="diskCacheSize"
+            android:text="@string/slider_unit"
+            android:title="@string/slider_diskcache_title" />
+        <pt.isel.pdm.g04.pf.presentation.widget.SliderPreference
+            android:dialogMessage="@string/slider_message"
+            android:key="memoryCacheSize"
+            android:text="@string/slider_unit"
+            android:title="@string/slider_memorycache_title" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_header_locations">
+
+        <com.cgollner.unclouded.preferences.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="useColoredNotifications"
+            android:summary="@string/pref_description_use_colored_notifications"
+            android:title="@string/pref_use_colored_notifications" />
+
+        <com.cgollner.unclouded.preferences.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="showGeofences"
+            android:title="@string/pref_show_geofences" />
+
+        <com.cgollner.unclouded.preferences.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="useBatterySavingMode"
+            android:title="@string/pref_show_save_battery" />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Thoth">
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_teachers_address"
+            android:dialogTitle="@string/pref_teachers_address_dialogtitle"
+            android:key="teachersServerAddress"
+            android:summary="@string/pref_teachers_address_summary"
+            android:title="@string/pref_teachers_address_dialogtitle" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_students_address"
+            android:dialogTitle="@string/pref_students_address_dialogtitle"
+            android:key="studentsServerAddress"
+            android:summary="@string/pref_students_address_summary"
+            android:title="@string/pref_students_address_dialogtitle" />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        debug_config {
+            keyAlias 'tertulias_abs'
+            keyPassword 'Apples123'
+            storeFile file('C:/Users/abs/Documents/keyStore/tertulias_abs/tertulias_abs.keystore')
+            storePassword 'Apples123'
+        }
+    }
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
+    defaultConfig {
+        applicationId "pt.isel.s1516v.ps.apiaccess"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.debug_config
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:design:24.2.0'
+    compile 'com.google.android.gms:play-services-auth:9.4.0'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.microsoft.azure:azure-mobile-android:3.1.0'
+    testCompile 'junit:junit:4.12'
+}
+
+repositories {
+    maven {
+        url "http://dl.bintray.com/microsoftazuremobile/SDK"
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'

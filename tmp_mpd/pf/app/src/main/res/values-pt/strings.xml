@@ -1,0 +1,75 @@
+<resources>
+
+    <!-- About -->
+    <string name="aboutLibraries_description_text">Aplicação Android para localização dos docentes registados na plataforma Thoth.&lt;br />&lt;br />Autores:&lt;br />&lt;br />António Borba Nº22908&lt;br />Pedro Cardoso Nº37539</string>
+
+    <!-- Settings -->
+    <string name="pref_header_general">Geral</string>
+    <string name="slider_diskcache_title">Cache de Disco</string>
+    <string name="slider_memorycache_title">Cache de Memória</string>
+    <string name="slider_message">Quanto maior o valor melhor será a experiência de utilização.</string>
+    <string name="slider_summary">O valor atual é $1 KiB</string>
+    <string name="pref_use_colored_notifications">Usar cores nas notificações</string>
+    <string name="pref_description_use_colored_notifications">As cores escolhidas correspondem a localizações diferentes dentro do ISEL</string>
+
+    <string name="notification_last_seen_minutes" formatted="false">Há %d minutos</string>
+    <string name="notification_last_seen_hours" formatted="false">Há %d horas</string>
+    <string name="notification_none">Não existem notificações aqui.</string>
+
+    <!-- Drawer Items -->
+    <string name="drawer_item_notifications">Notificações</string>
+    <string name="drawer_item_map">Mapa</string>
+    <string name="drawer_item_settings">Definições</string>
+    <string name="drawer_item_sharelocation">Partilhar Localização</string>
+    <string name="drawer_item_about">Acerca de...</string>
+    <string name="drawer_item_teachers">Docentes</string>
+    <string name="drawer_addaccount">Mudar de Conta...</string>
+    <string name="parser_email_not_verified">A conta só estará activa após verificação do email. Verifique no seu email a mensagem para validação.</string>
+
+    <string name="addacount_not_supported">Não é possível adicionar manualmente contas deste tipo.</string>
+    <string name="action_settings">Definições</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="invalid_email">O endereço de email é inválido</string>
+    <string name="invalid_password">Password demasiado curta</string>
+    <string name="incorrect_password">Password incorrecta</string>
+    <string name="field_required">Campo de preenhimento obrigatório</string>
+
+    <string name="notification_share">Partilhar</string>
+    <string name="notification_open">Abrir</string>
+    <string name="notification_email">Contactar</string>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_title_sync_frequency">Frequência de sincronização</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+        <item>3 hora</item>
+        <item>6 hora</item>
+        <item>Nunca</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string name="pref_title_system_sync_settings">Definições de sincronização</string>
+    <string name="parse_authenticator_label">Teacher Locator - Parse</string>
+
+    <string name="pref_students_address_summary">O endereço por omissão é https://adeetc.thothapp.com/api/v1/teachers/</string>
+    <string name="pref_teachers_address_summary">O endereço por omissão é https://adeetc.thothapp.com/api/v1/students/</string>
+    <string name="pref_teachers_address_dialogtitle">Endereço de Professores</string>
+    <string name="pref_students_address_dialogtitle">Endereço de Alunos</string>
+    <string name="pref_show_geofences">Mostrar no mapa localizações suportadas</string>
+    <string name="pref_header_locations">Localizações</string>
+    <string name="pref_show_save_battery">Usar modo de poupança de bateria</string>
+    <string name="account_setup_complete">Criação de conta concluída.</string>
+    <string name="account_setup_failed">Não é possível criar conta. A autenticação com o servidor não foi concluída com êxito.</string>
+    <string name="account_setup_error">Ocorreram erros na autenticação com o servidor</string>
+
+</resources>

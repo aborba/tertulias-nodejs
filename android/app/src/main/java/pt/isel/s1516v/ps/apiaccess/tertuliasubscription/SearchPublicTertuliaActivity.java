@@ -146,7 +146,7 @@ public class SearchPublicTertuliaActivity extends Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PublicTertuliaDetailsActivity.ACTIVITY_REQUEST_CODE) {
-            View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            View rootView = Util.getRootView(this);
             if (resultCode == RESULT_OK) {
                 Util.longSnack(rootView, R.string.public_tertulia_details_subscribe_success);
                 setResult(RESULT_OK);

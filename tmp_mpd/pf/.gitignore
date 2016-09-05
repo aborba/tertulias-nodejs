@@ -1,0 +1,13 @@
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+.idea/
+out/
+
+build/
+.gradle/
+.apt_generated/
+*.iml
+
+/captures

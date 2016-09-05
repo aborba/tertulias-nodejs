@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -32,6 +33,7 @@ import com.google.gson.JsonElement;
 import java.util.concurrent.ExecutionException;
 
 import pt.isel.s1516v.ps.apiaccess.MainActivity;
+import pt.isel.s1516v.ps.apiaccess.Me;
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
@@ -44,16 +46,18 @@ public class GetMeCallback implements FutureCallback<JsonElement> {
     final String rel;
     final Futurizable<JsonElement> future;
     final FutureCallback<JsonElement> futureCallback;
-    final View rootView;
     final MaUiManager uiManager;
+    final boolean isRetry;
+    final View rootView;
 
-    public GetMeCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, MaUiManager uiManager) {
+    public GetMeCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, MaUiManager uiManager, boolean isRetry) {
         this.ctx = ctx;
         this.rel = rel;
         this.future = future;
         this.futureCallback = futureCallback;
         this.uiManager = uiManager;
-        rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        this.isRetry = isRetry;
+        rootView = Util.getRootView(ctx);
     }
 
     @Override
@@ -71,25 +75,29 @@ public class GetMeCallback implements FutureCallback<JsonElement> {
         if (result != null) {
             Util.longSnack(rootView, R.string.main_activity_user_reading);
             ApiMe apiMe = new Gson().fromJson(result, ApiMe.class);
-            if (apiMe.me.picture != null)
-                Util.logd(apiMe.me.picture);
-            uiManager.setLoggedIn(apiMe.me.picture);
+            MainActivity.me = new Me(apiMe);
+            uiManager.setLoggedIn(MainActivity.me.me);
         }
 
         if (future != null) {
-            if (futureCallback != null)
+            if (futureCallback != null) {
                 Futures.addCallback(future.getFuture(), futureCallback);
+                return;
+            }
             else
                 try {
                     future.getFuture().get();
+                    return;
                 } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
                     e.printStackTrace();
                 }
         }
+        uiManager.hideProgressBar();
     }
 
     @Override
     public void onFailure(Throwable t) {
+        uiManager.hideProgressBar();
         String message = t.getMessage();
         Util.longSnack(rootView, message);
     }

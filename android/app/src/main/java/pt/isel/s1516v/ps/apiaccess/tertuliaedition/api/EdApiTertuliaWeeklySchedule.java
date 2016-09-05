@@ -41,23 +41,25 @@ public class EdApiTertuliaWeeklySchedule extends EdApiTertulia implements Schedu
                                        String zip, String city, String country,
                                        String latitude, String longitude,
                                        int weekDay, int skip,
-                                       String scheduleType) {
+                                       String scheduleType, String myKey) {
         super(tertuliaId, name, subject, isPrivate,
                 roleType,
                 locationId, location, address, zip, city, country,
                 latitude, longitude,
-                scheduleType);
+                scheduleType,
+                myKey);
         this.weekDay = weekDay;
         this.skip = skip;
     }
 
-    public EdApiTertuliaWeeklySchedule(TertuliaEdition tertulia) {
+    public EdApiTertuliaWeeklySchedule(TertuliaEdition tertulia, String mykey) {
         super(tertulia.id, tertulia.name, tertulia.subject, tertulia.isPrivate,
                 tertulia.role.name,
                 tertulia.location.id, tertulia.location.name, tertulia.location.address.address, tertulia.location.address.zip,
                 tertulia.location.address.city, tertulia.location.address.country,
                 tertulia.location.geolocation.getLatitude(), tertulia.location.geolocation.getLongitude(),
-                tertulia.tertuliaSchedule.getType().name());
+                tertulia.tertuliaSchedule.getType().name(),
+                mykey);
         TertuliaScheduleWeekly schedule = (TertuliaScheduleWeekly)tertulia.tertuliaSchedule;
         weekDay = schedule.weekday + 1;
         skip = schedule.skip;

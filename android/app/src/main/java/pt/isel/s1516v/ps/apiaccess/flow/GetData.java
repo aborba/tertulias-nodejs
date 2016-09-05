@@ -21,6 +21,8 @@ package pt.isel.s1516v.ps.apiaccess.flow;
 
 import android.content.Context;
 import android.util.Pair;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonElement;
@@ -36,20 +38,26 @@ import java.util.concurrent.TimeoutException;
 
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiLinks;
+import pt.isel.s1516v.ps.apiaccess.ui.MaUiManager;
+import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class GetData<T extends JsonElement> implements Futurizable<T> {
     private final Context ctx;
     private final String rel;
     private final ApiLinks apiLinks;
+    private final UiManager uiManager;
 
-    public GetData(Context ctx, String rel, ApiLinks apiLinks) {
+    public GetData(Context ctx, String rel, ApiLinks apiLinks, UiManager uiManager) {
         this.ctx = ctx;
         this.rel = rel;
         this.apiLinks = apiLinks;
+        this.uiManager = uiManager;
     }
 
     @Override
     public ListenableFuture<T> getFuture() {
+        if (uiManager != null)
+            uiManager.showProgressBar();
         if (rel == null)
             return new ListenableFuture<T>() {
                 @Override

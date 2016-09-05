@@ -33,6 +33,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -44,10 +45,14 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import java.util.Locale;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.flow.Futurizable;
+import pt.isel.s1516v.ps.apiaccess.flow.GetData;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
@@ -70,6 +75,7 @@ import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ScheduleWeeklyActivity;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiAddress;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliacreation.ui.CrUiTertulia;
+import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaMonthlyDSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaMonthlyWSchedule;
 import pt.isel.s1516v.ps.apiaccess.tertuliaedition.api.EdApiTertuliaWeeklySchedule;
@@ -182,22 +188,23 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
 
                         JsonElement postParameters;
                         String apiLinksKey;
+                        String myKey = Util.getMyKey();
                         switch (tertulia.tertuliaSchedule.getType().name()) {
                             case "WEEKLY":
                                 uiManager.update(tertulia);
-                                EdApiTertuliaWeeklySchedule apiWeekly = new EdApiTertuliaWeeklySchedule(tertulia);
+                                EdApiTertuliaWeeklySchedule apiWeekly = new EdApiTertuliaWeeklySchedule(tertulia, myKey);
                                 postParameters = new Gson().toJsonTree(apiWeekly);
                                 apiLinksKey = LINK_UPDATE;
                                 break;
                             case "MONTHLYD":
                                 uiManager.update(tertulia);
-                                EdApiTertuliaMonthlyDSchedule apiMonthy = new EdApiTertuliaMonthlyDSchedule(tertulia);
+                                EdApiTertuliaMonthlyDSchedule apiMonthy = new EdApiTertuliaMonthlyDSchedule(tertulia, myKey);
                                 postParameters = new Gson().toJsonTree(apiMonthy);
                                 apiLinksKey = LINK_UPDATE;
                                 break;
                             case "MONTHLYW":
                                 uiManager.update(tertulia);
-                                EdApiTertuliaMonthlyWSchedule apiMonthyW = new EdApiTertuliaMonthlyWSchedule(tertulia);
+                                EdApiTertuliaMonthlyWSchedule apiMonthyW = new EdApiTertuliaMonthlyWSchedule(tertulia, myKey);
                                 postParameters = new Gson().toJsonTree(apiMonthyW);
                                 apiLinksKey = LINK_UPDATE;
                                 break;
@@ -215,7 +222,7 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
 
                         Futures.addCallback(Util.getMobileServiceClient(EditTertuliaActivity.this)
                                         .invokeApi(apiEndPoint, postParameters, apiMethod, null)
-                                , new Callback(uiManager.getRootView()));
+                                , new Callback(EditTertuliaActivity.this, false));
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
@@ -321,10 +328,12 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
     // region Private Classes
 
     public class Callback implements FutureCallback<JsonElement> {
-        private View view;
+        private final Context ctx;
+        private final boolean isRetry;
 
-        public Callback(View view) {
-            this.view = view;
+        public Callback(Context ctx, boolean isRetry) {
+            this.ctx = ctx;
+            this.isRetry = isRetry;
         }
 
         @Override
@@ -332,13 +341,21 @@ public class EditTertuliaActivity extends Activity implements TertuliasApi, Dial
             Util.logd("Tertulia updated");
             Util.logd(result.toString());
             setResult(RESULT_OK);
+            uiManager.hideProgressBar();
             finish();
         }
 
         @Override
-        public void onFailure(Throwable e) {
+        public void onFailure(Throwable t) {
+            if (! isRetry && ( ! Util.isCurrentTokenValid(ctx) || Util.isApiError(t, 401))) { // && ! Util.isCurrentTokenValid(ctx)) {
+                Util.longSnack(uiManager.getRootView(), R.string.main_activity_token_expired);
+                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks, uiManager);
+                Util.refreshToken(ctx, uiManager.getRootView(), future, new Callback(ctx, true));
+                return;
+            }
+            uiManager.hideProgressBar();
             Util.logd("Tertulia update failed");
-            Util.logd(e.getMessage());
+            Util.logd(t.getMessage());
             setResult(RESULT_FAIL);
             finish();
         }

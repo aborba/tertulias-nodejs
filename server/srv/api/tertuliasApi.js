@@ -1,25 +1,50 @@
 var express      = require('express'),
-	bodyParser   = require('body-parser'),
-    authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
-    authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
+	bodyParser   = require('body-parser');
+
+var	authenticate = require('azure-mobile-apps/src/express/middleware/authenticate'),
+	authorize    = require('azure-mobile-apps/src/express/middleware/authorize');
 
 var sql          = require('mssql'),
-    util         = require('../util');
+	util         = require('../util');
 
 /* { 'SQL types': {
 	'String': 'sql.NVarChar', 'Number': 'sql.Int', 'Boolean': 'sql.Bit', 'Date': 'sql.DateTime', 'Buffer': 'sql.VarBinary', 'sql.Table': 'sql.TVP'
 } } */
 module.exports = function (configuration) {
-    var router = express.Router();
 
-    router.get('/', (req, res, next) => {
-		console.log('in GET /tertulias');
+	var router = express.Router(),
+		azure = require('azure'),
+		promises = require('azure-mobile-apps/src/utilities/promises'),
+		logger = require('azure-mobile-apps/src/logger');
+
+	var pushMessage = (tag, message) => {
+		var notificationHubService = azure.createNotificationHubService('tertulias', 'Endpoint=sb://tertulias.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=Ef9XYWpw3byXXlTPG/HF9E9hoLG+Pc65cySLzrFRvLY=');
+		var payload = { data: { message: message } };
+		notificationHubService.gcm.send(tag, payload, function(err) {
+			if (err) {
+				console.log('Error while sending push notification');
+				console.log(err);
+			} else {
+				var log_msg = 'Push notification sent successfully' + tag ? ' to tag ' + tag : '';
+				console.log(log_msg);
+				console.log(payload);
+			}
+		});
+	};
+
+	var getPushTag = (tr_id) => {
+		return 'tertulia_' + tr_id;
+	}
+
+	// '{ "rel": "self", "method": "GET", "href": "/tertulias" }, ' +
+	router.get('/', (req, res, next) => {
+		console.log('in GET /api/tertulias');
 		var route = '/tertulias';
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
-	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.query('SELECT' +
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.query('SELECT' +
 					' tr_id         AS id,' +
 					' tr_name       AS name,' +
 					' tr_subject    AS subject,' +
@@ -41,8 +66,8 @@ module.exports = function (configuration) {
 						' INNER JOIN Users ON rn_user = us_id WHERE us_sid = @userSid)' +
 				' GROUP BY no_tertulia) AS c ON no_tertulia = tr_id' +
 				' WHERE tr_is_cancelled = 0 AND us_sid = @userSid')
-	    	.then(function(recordset) {
-			    var links = '[ ' +
+			.then(function(recordset) {
+				var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "create_weekly", "method": "POST", "href": "' + route + '/weekly" }, ' +
 						'{ "rel": "create_monthly", "method": "POST", "href": "' + route + '/monthly" }, ' +
@@ -51,81 +76,114 @@ module.exports = function (configuration) {
 						'{ "rel": "create_yearlyw", "method": "POST", "href": "' + route + '/yearlyw" }, ' +
 						'{ "rel": "searchPublic", "method": "GET", "href": "' + route + '/publicsearch" } ' +
 					']';
-			    var itemLinks = '[ ' +
+				var itemLinks = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/:id/unsubscribe" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/:id/members" }, ' +
+						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/:id/members/count" }, ' +
+						'{ "rel": "get_messages", "method": "GET", "href": "' + route + '/:id/messages" }, ' +
+						'{ "rel": "post_messages", "method": "POST", "href": "' + route + '/:id/messages" }, ' +
 						'{ "rel": "event", "method": "POST", "href": "' + route + '/:id/event" } ' +
 					']';
 				res.type('application/json');
-                recordset.forEach(function(elem) {
-                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-        		});
-                var results = {};
-            	results['tertulias'] = recordset;
-                results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-	    	})
-	    });
-    });
+				recordset.forEach(function(elem) {
+					elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+				});
+				var results = {};
+				results['tertulias'] = recordset;
+				results['links'] = JSON.parse(links);
+				res.json(results);
+				res.sendStatus(200);
+				return next();
+			})
+		});
+	});
 
-    router.get('/publicSearch', (req, res, next) => {
-		console.log('in GET /tertulias/publicsearch');
+	router.get('/voucherinfo/:voucher', (req, res, next) => {
+		console.log('in GET /api/voucherinfo/:voucher');
+		var voucher = req.params.voucher;
+		if (!req.azureMobile.user) {
+			res.send(401); // 401: Unauthorized
+			return next();
+		}
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('voucher', sql.NVarChar(36), voucher)
+			.query('SELECT' +
+					' tr_name AS name,' +
+					' tr_subject AS subject' +
+				' FROM Invitations' +
+					' INNER JOIN Tertulias ON in_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0' +
+					' AND in_is_acknowledged = 0 AND in_key = @voucher')
+			.then(function(recordset) {
+				res.type('application/json');
+				var results = {};
+				results['tertulias'] = recordset;
+				res.json(results);
+				res.sendStatus(200);
+				return next();
+			});
+		});
+	});
+
+	router.get('/publicSearch', (req, res, next) => {
+		var HERE = '/tertulias/publicsearch';
+		console.log('in GET ' + HERE);
 		var route = '/tertulias';
 		var point = 'POINT(' + req.query.latitude + ' ' + req.query.longitude + ')';
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
-	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.input('query', sql.NVarChar, '%' + req.query.query + '%')
-	    	.input('latitude', sql.NVarChar, req.query.latitude)
-	    	.input('longitude', sql.NVarChar, req.query.longitude)
-	    	.input('point', sql.NVarChar, point)
-	    	.query('SELECT TOP 25' +
-		    		' tr_id AS id,' +
-		    		' tr_name AS name,' +
-		    		' tr_subject AS subject,' +
-		    		' lo_name AS location' +
-	    		' FROM Tertulias' +
-	    			' INNER JOIN Locations ON tr_location = lo_id' +
-	    		' WHERE (tr_name LIKE @query OR tr_subject LIKE @query OR lo_name LIKE @query)' +
-	    			' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
-		    		' AND tr_id NOT IN' +
-		    			' (SELECT mb_tertulia FROM Tertulias' +
-		    			' INNER JOIN Members ON mb_tertulia = tr_id' +
-		    			' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @userSid)' +
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('query', sql.NVarChar, '%' + req.query.query + '%')
+			.input('latitude', sql.NVarChar, req.query.latitude)
+			.input('longitude', sql.NVarChar, req.query.longitude)
+			.input('point', sql.NVarChar, point)
+			.query('SELECT TOP 25' +
+					' tr_id AS id,' +
+					' tr_name AS name,' +
+					' tr_subject AS subject,' +
+					' lo_name AS location' +
+				' FROM Tertulias' +
+					' INNER JOIN Locations ON tr_location = lo_id' +
+				' WHERE (tr_name LIKE @query OR tr_subject LIKE @query OR lo_name LIKE @query)' +
+					' AND tr_is_cancelled = 0 AND tr_is_private = 0' +
+					' AND tr_id NOT IN' +
+						' (SELECT mb_tertulia FROM Tertulias' +
+						' INNER JOIN Members ON mb_tertulia = tr_id' +
+						' INNER JOIN Users ON mb_user = us_id WHERE us_sid = @userSid)' +
 				' ORDER BY lo_geography.STDistance( @point )')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( @latitude @longitude )\')')
 				// ' ORDER BY lo_geography.STDistance(\'POINT( 38.11 -9.1123113 )\')')
-	    	.then(function(recordset) {
-                var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
-                var itemLinks = '[ ' +
-            	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+			.then(function(recordset) {
+				var links = '[ { "rel": "self", "method": "GET", "href": "' + route + '/publicSearch" } ]';
+				var itemLinks = '[ ' +
+						'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/:id/subscribe" }' +
 					']';
-                res.type('application/json');
-                recordset.forEach(function(elem) {
-                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-        		});
-                var results = {};
-            	results['tertulias'] = recordset;
-                results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-            })
-	    });
+				res.type('application/json');
+				recordset.forEach(function(elem) {
+					elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+				});
+				var results = {};
+				results['tertulias'] = recordset;
+				results['links'] = JSON.parse(links);
+				res.json(results);
+				res.sendStatus(200);
+				return next();
+			})
+		});
 	});
 
 	router.post('/weekly', (req, res, next) => {
 		console.log('in POST /tertulias/weekly');
 		console.log(req.body);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
@@ -154,10 +212,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -168,8 +226,8 @@ module.exports = function (configuration) {
 	router.post('/monthly', (req, res, next) => {
 		console.log('in POST /tertulias/monthly');
 		console.log(req.body);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
@@ -198,10 +256,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -212,8 +270,8 @@ module.exports = function (configuration) {
 	router.post('/monthlyw', (req, res, next) => {
 		console.log('in POST /tertulias/monthlyw');
 		console.log(req.body);
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertuliaName', sql.NVarChar(40), req.body.tertulia_name)
@@ -244,10 +302,10 @@ module.exports = function (configuration) {
 						.json( { result: 'Duplicate' } );
 					return next('409');
 				}
-				next();
+				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -255,14 +313,16 @@ module.exports = function (configuration) {
 		});
 	});
 
+	// '{ "rel": "self", "method": "GET", "href": "'/api/tertulias/:id" }, ' +
 	router.get('/:tr_id', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id');
+		var HERE = '/tertulias/:tr_id';
+		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
 		var route = '/tertulias/' + tr_id;
 		if (isNaN(tr_id))
 			return next();
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('tertulia', sql.Int, tr_id)
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
@@ -300,24 +360,26 @@ module.exports = function (configuration) {
 						' WHERE us_sid = @userSid)))' +
 					' AND tr_id = @tertulia')
 			.then(function(recordset) {
-                var results = {};
-            	results['tertulia'] = recordset[0];
+				var results = {};
+				results['tertulia'] = recordset[0];
 				var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "' + route + '" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "' + route + '" }, ' +
 						'{ "rel": "members", "method": "GET", "href": "' + route + '/members" }, ' +
+						'{ "rel": "members_count", "method": "GET", "href": "' + route + '/members/count" }, ' +
+						'{ "rel": "get_messages", "method": "GET", "href": "' + route + '/messages" }, ' +
+						'{ "rel": "post_messages", "method": "POST", "href": "' + route + '/messages" }, ' +
 						'{ "rel": "subscribe", "method": "POST", "href": "' + route + '/subscribe" }, ' +
 						'{ "rel": "unsubscribe", "method": "DELETE", "href": "' + route + '/unsubscribe" } ' +
 					']';
-                results['links'] = JSON.parse(links);
+				results['links'] = JSON.parse(links);
 				req.results = results;
-				console.log("Schedule name: " + results['tertulia'].schedule_name);
 				switch(results['tertulia'].schedule_name.toUpperCase()) {
 					case 'WEEKLY':
 						console.log('in weekly');
-					    sql.connect(util.sqlConfiguration)
-					    .then(function() {
+						sql.connect(util.sqlConfiguration)
+						.then(function() {
 							new sql.Request()
 							.input('schedule', sql.Int, recordset[0].schedule_id)
 							// .input('tertulia', sql.Int, recordset[0].tertulia_id)
@@ -333,18 +395,17 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['weekly'] = recordset[0];
-								console.log(results);
-				                res.type('application/json');
-				                res.json(results);
-				                res.sendStatus(200);
-				                return next();
+								res.type('application/json');
+								res.json(results);
+								res.sendStatus(200);
+								return next();
 							})
 						});
 						break;
 					case 'MONTHLYD':
 						console.log('in monthly');
-					    sql.connect(util.sqlConfiguration)
-					    .then(function() {
+						sql.connect(util.sqlConfiguration)
+						.then(function() {
 							new sql.Request()
 							.input('schedule', sql.Int, recordset[0].schedule_id)
 							// .input('tertulia', sql.Int, recordset[0].tertulia_id)
@@ -360,18 +421,17 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['monthly'] = recordset[0];
-								console.log(results);
-				                res.type('application/json');
-				                res.json(results);
-				                res.sendStatus(200);
-				                return next();
+								res.type('application/json');
+								res.json(results);
+								res.sendStatus(200);
+								return next();
 							})
 						});
 						break;
 					case 'MONTHLYW':
 						console.log('in monthlyw');
-					    sql.connect(util.sqlConfiguration)
-					    .then(function() {
+						sql.connect(util.sqlConfiguration)
+						.then(function() {
 							new sql.Request()
 							.input('schedule', sql.Int, recordset[0].schedule_id)
 							//.input('tertulia', sql.Int, recordset[0].tertulia_id)
@@ -389,16 +449,14 @@ module.exports = function (configuration) {
 								' WHERE tr_schedule = @schedule')
 							.then(function(recordset) {
 								results['monthlyw'] = recordset[0];
-								console.log(results);
-				                res.type('application/json');
-				                res.json(results);
-				                res.sendStatus(200);
-				                return next();
+								res.type('application/json');
+								res.json(results);
+								res.sendStatus(200);
+								return next();
 							})
 						});
 						break;
 					default:
-						console.log(results['tertulia'].schedule_name);
 						res.status(404)	// 404: NOT Found
 						.type('application/json')
 						.json( { result: 'Not Found' } );
@@ -408,19 +466,22 @@ module.exports = function (configuration) {
 		});
 	});
 
+	// '{ "rel": "update", "method": "PATCH", "href": "/tertulias/:id" }, '
 	router.patch('/:tr_id', (req, res, next) => {
-		console.log('in PATCH /tertulias/:tr_id');
+		var HERE = '/tertulias/:tr_id';
+		console.log('in PATCH ' + HERE);
 		var tr_id = req.params.tr_id;
 		if (isNaN(tr_id))
 			return next();
+		var myKey = req.body.myKey;
 		console.log(tr_id);
 		console.log(req.azureMobile.user.id);
 		console.log(req.body);
 		switch (req.body.schedule_name.toUpperCase()) {
 			case "WEEKLY":
 				console.log("in WEEKLY");
-			    sql.connect(util.sqlConfiguration)
-			    .then(function() {
+				sql.connect(util.sqlConfiguration)
+				.then(function() {
 					new sql.Request()
 					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
@@ -440,6 +501,9 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("WEEKLY updated");
+							var tag = getPushTag(tr_id);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -451,11 +515,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('422');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("WEEKLY error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -464,8 +528,8 @@ module.exports = function (configuration) {
 				break;
 			case "MONTHLYD":
 				console.log("in MONTHLYD");
-			    sql.connect(util.sqlConfiguration)
-			    .then(function() {
+				sql.connect(util.sqlConfiguration)
+				.then(function() {
 					new sql.Request()
 					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
@@ -486,6 +550,9 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYD updated");
+							var tag = getPushTag(tr_id);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -497,11 +564,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('409');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("MONTHLYD error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -510,8 +577,8 @@ module.exports = function (configuration) {
 				break;
 			case "MONTHLYW":
 				console.log("in MONTHLYW");
-			    sql.connect(util.sqlConfiguration)
-			    .then(function() {
+				sql.connect(util.sqlConfiguration)
+				.then(function() {
 					new sql.Request()
 					.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 					.input('tertuliaId', sql.Int, tr_id)
@@ -533,6 +600,9 @@ module.exports = function (configuration) {
 					.then((recordsets) => {
 						if (recordsets.length == 0) {
 							console.log("MONTHLYW updated");
+							var tag = getPushTag(tr_id);
+							var message = '{action:"update",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+							pushMessage(tag, message);
 							res.status(201)	// 201: Created
 								.type('application/json')
 								.json( { result: 'Ok' } );
@@ -544,11 +614,11 @@ module.exports = function (configuration) {
 								.json( { result: 'Duplicate' } );
 							return next('409');
 						}
-						next();
+						return next();
 					})
 					.catch(function(err) {
 						console.log("MONTHLYW error");
-						next(err);
+						return next(err);
 					});
 				})
 				.catch(function(err) {
@@ -564,38 +634,85 @@ module.exports = function (configuration) {
 		}
 	});
 
-    router.get('/:tr_id/members', (req, res, next) => {
-		console.log('in GET /tertulias/:tr_id/members');
+	router.get('/:tr_id/members', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/members';
+		console.log('in GET ' + HERE);
 		var tr_id = req.params.tr_id;
 		var tertulia = '/tertulias/' + tr_id;
 		var route = tertulia + '/members';
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
-	    	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.input('tertulia', sql.Int, tr_id)
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
 			.execute('sp_getTertuliaMembers')
-	    	.then(function(recordset) {
-                var links = '[ ' +
+			.then(function(recordset) {
+				var links = '[ ' +
 					'{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "create_vouchers", "method": "POST", "href": "' + route + '/voucher" } ' +
-            	']';
-                var itemLinks = '[ ' +
-        	    	'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
+				']';
+				var itemLinks = '[ ' +
+					'{ "rel": "self", "method": "GET", "href": "' + route + '/:id" }, ' +
 					'{ "rel": "edit_member", "method": "PATCH", "href": "' + route + '/:id/edit" }' +
 				']';
-                res.type('application/json');
-                recordset[0].forEach(function(elem) {
-                	elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
-        		});
-                var results = {};
-            	results['members'] = recordset[0];
-                results['links'] = JSON.parse(links);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-            })
-	    });
+				res.type('application/json');
+				var results = {};
+				if (recordset[0]) {
+					recordset[0].forEach(function(elem) {
+						elem['links'] = JSON.parse(itemLinks.replace(/:id/g, elem.id));
+					});
+					results['members'] = recordset[0];
+				}
+				results['links'] = JSON.parse(links);
+				res.json(results);
+				res.status(200);
+				return next();
+			}).catch(function(err) {
+				console.log('SQL Query processing Error');
+				res.status(500)
+				return next(err);
+			});
+		}).catch(function(err) {
+			console.log('SQL Connection Error');
+			res.status(500);
+			return next(err);
+		});
+	});
+
+	router.get('/:tr_id/members/count', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/members/count';
+		console.log('in GET ' + HERE);
+		var tr_id = req.params.tr_id;
+		var tertulia = '/tertulias/' + tr_id;
+		var route = tertulia + '/members/count';
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			// .input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.query('SELECT COUNT(*) AS total' +
+				' FROM Members' +
+					' INNER JOIN Tertulias ON mb_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0' +
+					' AND mb_tertulia = @tertulia')
+			.then(function(recordset) {
+				res.type('application/json');
+				var results = {};
+				if (recordset[0])
+					results['totals'] = recordset[0];
+				res.json(results);
+				res.status(200);
+				return next();
+			}).catch(function(err) {
+				console.log('SQL Query processing Error');
+				res.status(500)
+				return next(err);
+			});
+		}).catch(function(err) {
+			console.log('SQL Connection Error');
+			res.status(500);
+			return next(err);
+		});
 	});
 
 	router.post('/:tr_id/members/voucher', (req, res, next) => {
@@ -615,7 +732,7 @@ module.exports = function (configuration) {
 				console.log(route);
 				var batch = request.parameters.vouchers_batch.value;
 				console.log(batch);
-			    var links = '[ ' +
+				var links = '[ ' +
 					// '{ "rel": "self", "method": "GET", "href": "' + route + '" }, ' +
 					'{ "rel": "get_vouchers", "method": "GET", "href": "' + route + '/' + batch + '" } ' +
 				']';
@@ -633,34 +750,6 @@ module.exports = function (configuration) {
 		.catch(function(err) {
 			return next(err);
 		});
-
-		// sql.connect(util.sqlConfiguration)
-		// .then(function() {
-		// 	new sql.Request()
-		// 	.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-		// 	.input('tertulia', sql.Int, req.params.tr_id)
-		// 	.output('voucher', sql.NVarChar(36), '3C1EC24B-31AD-4D2D-9DAE-8F98EF32B155')
-		// 	.execute('sp_inviteToTertulia')
-		// 	.then((recordsets) => {
-		// 		console.log(recordsets);
-		// 		console.log(parameters);
-		// 		if (recordsets == '[ returnValue : 0 ]') {
-		// 			console.log('success');
-		// 			res.sendStatus(200);
-		// 		} else {
-		// 			console.log('failure');
-		// 			res.sendStatus(409);
-		// 		}
-		// 		return next();
-		// 	})
-		// 	.catch(function(err) {
-		// 		console.log('catched error');
-		// 		next(err);
-		// 	});
-		// })
-		// .catch(function(err) {
-		// 	return next(err);
-		// });
 	});
 
 	router.get('/:tr_id/members/voucher/:voucher_batch', (req, res, next) => {
@@ -692,23 +781,31 @@ module.exports = function (configuration) {
 	});
 
 	router.post('/:tr_id/subscribe', (req, res, next) => {
-		console.log('in POST /tertulias/:tr_id/subscribe');
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		var HERE = '/tertulias/:tr_id/subscribe';
+		console.log('in POST ' + HERE);
+		var tr_id = req.params.tr_id;
+		var myKey = req.body.myKey;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
-			.input('tertulia', sql.Int, req.params.tr_id)
-			.execute('spSubscribe')
+			.input('tertulia', sql.Int, tr_id)
+			.execute('sp_subscribePublicTertulia')
 			.then((recordset) => {
+				console.log(recordset);
 				if (recordset.returnValue = 1) {
+					var tag = getPushTag(tr_id);
+					var message = '{action:"subscribe",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
+					return next();
 				} else {
 					res.sendStatus(409);
+					return next();
 				}
-				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -717,16 +814,21 @@ module.exports = function (configuration) {
 	});
 
 	router.delete('/:tr_id/unsubscribe', (req, res, next) => {
-		console.log('in DELETE /tertulias/:tr_id/unsubscribe');
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		var HERE = '/tertulias/:tr_id/unsubscribe';
+		console.log('in DELETE ' + HERE);
+		var tr_id = req.params.tr_id;
+		var myKey = req.body.myKey;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
 			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
 			.input('tertulia', sql.Int, req.params.tr_id)
 			.execute('spUnsubscribe')
 			.then((recordset) => {
-				console.log(recordset);
 				if (recordset.returnValue = 1) {
+					var tag = getPushTag(tr_id);
+					var message = '{action:"unsubscribe",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
 					res.sendStatus(200);
 				} else {
 					res.sendStatus(409);
@@ -734,7 +836,86 @@ module.exports = function (configuration) {
 				return next();
 			})
 			.catch(function(err) {
-				next(err);
+				return next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	router.get('/:tr_id/messages', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/message';
+		console.log('in GET ' + HERE);
+		var tr_id = req.params.tr_id;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.input('min_id', sql.Int, req.body.min_id)
+			.query('SELECT' +
+					' no_id AS id,' +
+					' us_id AS userId,' +
+					' us_alias AS alias,' +
+					' no_tertulia AS tertulia,' +
+					' tr_name AS tertuliaName,' +
+					' no_tag AS tag,' +
+					' no_message AS message' +
+				' FROM Notifications' +
+					' INNER JOIN Users ON no_user = us_id' +
+					' INNER JOIN Tertulias ON no_tertulia = tr_id' +
+					' INNER JOIN Members ON mb_tertulia = tr_id' +
+				' WHERE tr_is_cancelled = 0' +
+					' AND mb_user = us_id' +
+					' AND tr_id = @tertulia' +
+					' AND no_id > @min_id')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset['returnValue'] == 0) {
+					res.sendStatus(200);
+				} else {
+					res.sendStatus(409);
+				}
+				return next();
+			})
+			.catch(function(err) {
+				return next(err);
+			});
+		})
+		.catch(function(err) {
+			return next(err);
+		});
+	});
+
+	// '{ "rel": "post_messages", "method": "POST", "href": "' + route + '/:id/messages" }, ' +
+	router.post('/:tr_id/messages', (req, res, next) => {
+		var HERE = '/tertulias/:tr_id/message';
+		console.log('in POST ' + HERE);
+		var tr_id = req.params.tr_id;
+		var myKey = req.body.myKey;
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
+			new sql.Request()
+			.input('userSid', sql.NVarChar(40), req.azureMobile.user.id)
+			.input('tertulia', sql.Int, tr_id)
+			.input('message', sql.NVarChar(40), req.body.message)
+			.execute('sp_postNotification')
+			.then((recordset) => {
+				console.log(recordset);
+				if (recordset['returnValue'] == 0) {
+					var tag = getPushTag(tr_id);
+					var message = '{action:"message",tertulia:' + tr_id + ',myKey:' + myKey + '}';
+					pushMessage(tag, message);
+					res.sendStatus(200);
+					return next();
+				} else {
+					res.sendStatus(409);
+					return next();
+				}
+			})
+			.catch(function(err) {
+				return next(err);
 			});
 		})
 		.catch(function(err) {
@@ -743,13 +924,13 @@ module.exports = function (configuration) {
 	});
 
 	var completeError = function(err, res) {
-	    if (err) {
-	    	console.log("Error:");
-	        console.error(err);
-	        if (res) res.sendStatus(500);
-	    }
+		if (err) {
+			console.log("Error:");
+			console.error(err);
+			if (res) res.sendStatus(500);
+		}
 	};
 
-    return router;
+	return router;
 
 }

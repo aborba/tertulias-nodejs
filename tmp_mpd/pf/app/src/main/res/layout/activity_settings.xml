@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
+    android:theme="@style/ThemeToolbarWhiteText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?attr/actionBarSize"
+    app:navigationContentDescription="@string/abc_action_bar_up_description"
+    android:background="@color/material_drawer_primary"
+    app:navigationIcon="?attr/homeAsUpIndicator"
+    app:title="@string/drawer_item_settings"
+    />

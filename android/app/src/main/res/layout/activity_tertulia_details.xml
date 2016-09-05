@@ -7,7 +7,8 @@
     android:orientation="vertical"
     tools:context=".tertuliadetails.TertuliaDetailsActivity">
 
-    <include layout="@layout/template_appbar" />
+    <include
+        layout="@layout/template_appbar" />
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/tda_title_layout"
@@ -98,9 +99,9 @@
                 android:id="@+id/tda_isPrivate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:layout_marginStart="10sp"
                 android:layout_marginTop="6sp"
-                android:layout_marginBottom="16dp"
                 android:enabled="false"
                 android:singleLine="true"
                 android:text="@string/tertulia_details_private_hint"
@@ -270,6 +271,14 @@
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
+
+    <ProgressBar
+        android:id="@+id/tda_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_anchor="@id/tda_title_layout"
+        app:layout_anchorGravity="center|bottom" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/tda_mapLookupButton"

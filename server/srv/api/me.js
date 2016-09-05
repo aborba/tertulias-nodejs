@@ -8,39 +8,48 @@ var tranDone = false;
 
 var api = {
 	get: function (req, res, next) {
-		console.log('in GET /me');
+		var HERE = '/me';
+		console.log('in GET ' + HERE);
 		var route = '/me';
-	    sql.connect(util.sqlConfiguration)
-	    .then(function() {
+		sql.connect(util.sqlConfiguration)
+		.then(function() {
 			new sql.Request()
-	    	.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
-	    	.query('SELECT' +
+			.input('sid', sql.NVarChar(40), req.azureMobile.user.id)
+			.query('SELECT' +
 					' us_alias AS alias,' +
 					' us_firstName AS firstName,' +
 					' us_lastName AS lastName,' +
 					' us_email AS email,' +
-					' us_picture AS picture' +
+					' us_picture AS picture,' +
+					' us_myKey AS myKey' +
 				' FROM Users' +
 				' WHERE us_sid = @sid')
-	    	.then(function(recordset) {
-			    var links = '[ ' +
+			.then(function(recordset) {
+				var links = '[ ' +
 						'{ "rel": "self", "method": "GET", "href": "/me" }, ' +
 						'{ "rel": "update", "method": "PATCH", "href": "/me" }, ' +
 						'{ "rel": "delete", "method": "DELETE", "href": "/me" } ' +
 					']';
 				res.type('application/json');
-                var results = {};
-            	results['me'] = recordset[0];
-                results['links'] = JSON.parse(links);
-				console.log(results);
-                res.json(results);
-                res.sendStatus(200);
-                return next();
-	    	})
-	    });
+				var results = {};
+				console.log(recordset);
+				results['me'] = recordset[0];
+				results['links'] = JSON.parse(links);
+				res.status(200)
+					.type('application/json')
+					.json(results)
+					.end();
+				return next();
+			})
+			.catch(function(err) {
+				return next(err);
+			});
+		});
 	},
 
 	post: function (req, res, next) {
+		var HERE = '/me';
+		console.log('in POST ' + HERE);
 		var conn = new sql.Connection(util.sqlConfiguration);
 		conn.connect(function(err) {
 			if (err) { completeError(err, res); return; }
@@ -57,11 +66,12 @@ var api = {
 							if (err) { rollback500(err, res, tran); return; }
 							psSelectId.unprepare();
 							if (typeof recordset != 'undefined' && recordset[0] != null) {
-								console.log('User registered; Returning.');
+console.log('User registered; Returning.');
 								rollback200(res, tran);
 								next();
 							} else {
-								console.log('User not registered; Registering.');
+console.log('User not registered; Registering.');
+console.log(req.azureMobile.user);
 								userName(req.azureMobile.user, function(userInfo) {
 									var psInsertSid = new sql.PreparedStatement(conn);
 									psInsertSid.input('sid', sql.NVarChar);
@@ -94,22 +104,22 @@ var api = {
 				});
 			});
 		});
-    }
+	}
 };
 
 api.access = 'authenticated';
 
 var userName = function(user, next) {
-    user.getIdentity().then(function(identity){
-    	var claims = identity.google.claims;
-    	next({
-    		alias: "",
-    		email: claims.email_verified ? claims.emailaddress : "",
-    		firstName: claims.givenname,
-    		lastName: claims.surname,
-    		picture: claims.picture
-    	});
-    });
+	user.getIdentity().then(function(identity){
+		var claims = identity.google.claims;
+		next({
+			alias: "",
+			email: claims.email_verified ? claims.emailaddress : "",
+			firstName: claims.givenname,
+			lastName: claims.surname,
+			picture: claims.picture
+		});
+	});
 };
 
 var completeError = function(err, res) {

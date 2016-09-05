@@ -21,6 +21,7 @@ package pt.isel.s1516v.ps.apiaccess.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -29,15 +30,19 @@ import android.widget.TextView;
 
 import java.util.EnumMap;
 
+import pt.isel.s1516v.ps.apiaccess.Me;
+import pt.isel.s1516v.ps.apiaccess.MeCore;
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
+import pt.isel.s1516v.ps.apiaccess.tertuliaedition.ui.EdUiManager;
 
 public class MaUiManager extends UiManager {
 
     private DrawerManager drawerManager;
+    private DrawerLayout drawerLayout;
     private RecyclerView recyclerView;
-    private TextView emptyView;
+    private TextView emptyView, userInfoView, aboutView;
     private ProgressBar progressBar;
     private ImageView userView, authenticatedView;
     private boolean isUserInfo;
@@ -47,9 +52,11 @@ public class MaUiManager extends UiManager {
         DRAWER_MENU_LIST,
         USER_PICTURE,
         AUTHENTICATED_PICTURE,
+        USER_INFO,
         RECYCLER_VIEW,
         EMPTY_VIEW,
-        PROGRESSBAR
+        PROGRESSBAR,
+        ABOUT
     }
 
     public final EnumMap<UIRESOURCE, Integer> uiResources = new EnumMap<>(UIRESOURCE.class);
@@ -153,18 +160,29 @@ public class MaUiManager extends UiManager {
     public MaUiManager setLoggedIn(int resource) {
         lazyViewsSetup();
         setUserPicture(resource);
+        authenticatedView.setVisibility(View.VISIBLE);
         return this;
     }
 
     public MaUiManager setLoggedIn(String resource) {
         lazyViewsSetup();
         setUserPicture(resource);
+        authenticatedView.setVisibility(View.VISIBLE);
+        return this;
+    }
+
+    public MaUiManager setLoggedIn(MeCore me) {
+        lazyViewsSetup();
+        setUserPicture(me.picture);
+        userInfoView.setText(me.alias);
+        authenticatedView.setVisibility(View.VISIBLE);
         return this;
     }
 
     public MaUiManager setLoggedOut() {
         lazyViewsSetup();
         drawerManager.resetIcon();
+        userInfoView.setText("");
         isUserInfo = false;
         authenticatedView.setVisibility(View.INVISIBLE);
         return this;
@@ -221,16 +239,21 @@ public class MaUiManager extends UiManager {
         uiResources.put(UIRESOURCE.DRAWER_LAYOUT, R.id.drawer_layout);
         uiResources.put(UIRESOURCE.DRAWER_MENU_LIST, R.id.ma_menuList);
         uiResources.put(UIRESOURCE.USER_PICTURE, R.id.ma_userImage);
+        uiResources.put(UIRESOURCE.USER_INFO, R.id.ma_userInfo);
         uiResources.put(UIRESOURCE.AUTHENTICATED_PICTURE, R.id.ma_authenticatedImage);
         uiResources.put(UIRESOURCE.RECYCLER_VIEW, R.id.ma_recyclerView);
         uiResources.put(UIRESOURCE.EMPTY_VIEW, R.id.ma_emptyView);
         uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.ma_progressBar);
+        uiResources.put(UIRESOURCE.ABOUT, R.id.ma_about);
 
+        drawerLayout = setup(UIRESOURCE.DRAWER_LAYOUT, DrawerLayout.class, uiViews);
         recyclerView = setup(UIRESOURCE.RECYCLER_VIEW, RecyclerView.class, uiViews);
         emptyView = setup(UIRESOURCE.EMPTY_VIEW, TextView.class, uiViews);
         progressBar = setup(UIRESOURCE.PROGRESSBAR, ProgressBar.class, uiViews);
         userView = setup(UIRESOURCE.USER_PICTURE, ImageView.class, uiViews);
+        userInfoView = setup(UIRESOURCE.USER_INFO, TextView.class, uiViews);
         authenticatedView = setup(UIRESOURCE.AUTHENTICATED_PICTURE, ImageView.class, uiViews);
+        aboutView = setup(UIRESOURCE.ABOUT, TextView.class, uiViews);
 
         isViewsSet = true;
     }

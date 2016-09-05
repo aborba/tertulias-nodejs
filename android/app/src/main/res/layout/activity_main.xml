@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2016 António Borba da Silva
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -45,7 +44,7 @@
                 android:fitsSystemWindows="true"
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginEnd="64dp"
-                app:expandedTitleMarginStart="48dp"
+                app:expandedTitleMarginStart="96dp"
                 app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
                 <ImageView
@@ -135,8 +134,9 @@
             android:id="@+id/ma_authenticatedImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="9sp"
-            android:layout_marginStart="5sp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="16sp"
+            android:layout_marginTop="16sp"
             android:src="@drawable/ic_verified_user_black_24dp"
             android:visibility="invisible" />
 
@@ -162,10 +162,29 @@
             android:layout_marginBottom="16dp"
             android:layout_marginTop="12dp" />
 
+        <TextView
+            android:id="@+id/ma_userInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onClickUserInfo" />
+
         <ListView
             android:id="@+id/ma_menuList"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin" />
+
+        <TextView
+            android:id="@+id/ma_about"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10sp"
+            android:layout_weight="1"
+            android:gravity="bottom"
+            android:text="@string/about_menu"
+            android:textSize="18dp" />
 
     </LinearLayout>
 

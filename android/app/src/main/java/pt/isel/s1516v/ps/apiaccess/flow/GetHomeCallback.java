@@ -21,8 +21,10 @@ package pt.isel.s1516v.ps.apiaccess.flow;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Pair;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -40,6 +42,7 @@ import com.microsoft.windowsazure.mobileservices.http.ServiceFilter;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterRequest;
 import com.microsoft.windowsazure.mobileservices.http.ServiceFilterResponse;
 
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,56 +62,80 @@ public class GetHomeCallback implements FutureCallback<JsonElement> {
     private final static String API_ROOT_END_POINT = "/";
 
     private final Context ctx;
-    private final MaUiManager uiManager;
     private final String rel;
     private final Futurizable<JsonElement> future;
     private final FutureCallback<JsonElement> futureCallback;
+    private final MaUiManager uiManager;
     private final boolean isRetry;
     private final View rootView;
 
-    public GetHomeCallback(Context ctx, MaUiManager uiManager, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, boolean isRetry) {
+    public GetHomeCallback(Context ctx, String rel, Futurizable<JsonElement> future, FutureCallback<JsonElement> futureCallback, MaUiManager uiManager, boolean isRetry) {
         this.ctx = ctx;
-        this.uiManager = uiManager;
         this.rel = rel;
         this.future = future;
         this.futureCallback = futureCallback;
+        this.uiManager = uiManager;
         this.isRetry = isRetry;
 
-        rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView = Util.getRootView(ctx);
     }
 
     @Override
     public void onSuccess(JsonElement result) {
-        uiManager.hideProgressBar();
         if (result != null) {
             Util.longSnack(rootView, R.string.main_activity_routes_defined);
-            ApiLinks apiLinks = new Gson().fromJson(result, ApiLinks.class);
-            MainActivity.apiHome.swap(apiLinks);
-        }
-        if (future != null) {
-            if (futureCallback != null)
-                Futures.addCallback(future.getFuture(), futureCallback);
-            else
-                try {
-                    future.getFuture().get();
-                } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
-                    e.printStackTrace();
+            new AsyncTask<JsonElement, Void, ApiLinks>() {
+
+                @Override
+                protected ApiLinks doInBackground(JsonElement... params) {
+                    JsonElement result = params[0];
+                    ApiLinks apiLinks = new Gson().fromJson(result, ApiLinks.class);
+                    return apiLinks;
                 }
+
+                @Override
+                protected void onPostExecute(ApiLinks apiLinks) {
+                    MainActivity.apiHome.swap(apiLinks);
+                    if (future != null) {
+                        if (futureCallback != null) {
+                            uiManager.showProgressBar();
+                            Futures.addCallback(future.getFuture(), futureCallback);
+                            return;
+                        }
+                        else
+                            try {
+                                future.getFuture().get();
+                                return;
+                            } catch (InterruptedException | ExecutionException | IllegalArgumentException e) {
+                                Util.longSnack(rootView, R.string.main_activity_error_remote_dialog);
+                                e.printStackTrace();
+                            }
+                    }
+                    uiManager.hideProgressBar();
+                }
+            }.execute(result);
         }
     }
 
     @Override
     public void onFailure(Throwable t) {
-        // TODO: Refresh token
-        if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
-            Util.longSnack(rootView, R.string.main_activity_token_expired);
-            GetData<JsonElement> getHome = new GetData<>(ctx, MainActivity.API_ROOT_END_POINT, null);
-            GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, uiManager, null, future, futureCallback, true);
+        boolean isTokenValid = Util.isCurrentTokenValid(ctx);
+        Date expirationDate = Util.getTokenExpirationDate(Util.getAuthenticationToken(ctx));
+        Date currentDate = new Date();
+        if (isRetry) {
+            uiManager.hideProgressBar();
+            Util.longSnack(rootView, R.string.main_activity_status_access_error + "\n" + t.getMessage());
+            futureCallback.onFailure(t);
+            return;
+        }
+        boolean invalidToken = ! Util.isCurrentTokenValid(ctx) || Util.isApiError(t, 401);
+        if (invalidToken || Util.isErrorCause(t, "timeout")) {
+            Util.longSnack(rootView, invalidToken ? R.string.main_activity_token_expired : R.string.main_activity_server_timeout);
+            GetData<JsonElement> getHome = new GetData<>(ctx, MainActivity.API_ROOT_END_POINT, null, uiManager);
+            GetHomeCallback getHomeCallback = new GetHomeCallback(ctx, null, future, futureCallback, uiManager, true);
             Util.refreshToken(ctx, uiManager.getRootView(), getHome, getHomeCallback);
             return;
         }
-        uiManager.hideProgressBar();
-        Util.longSnack(rootView, t.getMessage());
         futureCallback.onFailure(t);
     }
 

@@ -84,6 +84,16 @@ public class MiUiManager extends UiManager {
     // region UiManager
 
     @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public boolean isGeoCapability() {
         return false;
     }

@@ -18,9 +18,11 @@
   -->
 
 <resources>
+    <!-- Application -->
     <string name="app_name">Tertulias</string>
     <string name="app_mobile_service_creation_error">There was an error creating the Mobile Service. Please contact support.</string>
 
+    <!-- Main Activity -->
     <string name="title_activity_main_activity">Tertulias</string>
     <string name="main_activity_create_tertulia_button_text">New</string>
     <string name="main_activity_search_tertulias_button_text">Subscribe</string>
@@ -42,11 +44,13 @@
     <string name="main_activity_logout_failed_message">User signout failed.</string>
     <string name="main_activity_logout_succeed_message">User signout succeeded.</string>
     <string name="main_activity_status_code_401">Access not allowed. Please login.</string>
+    <string name="main_activity_status_access_error">Please logout and login again</string>
     <string name="main_activity_server_error_exiting">Server error. Shame on us. Application Exiting.</string>
     <string name="main_activity_root_path_not_found">Root path unreachable. Shame on us.</string>
     <string name="main_activity_routes_defined">Main routes defined.</string>
     <string name="main_activity_routes_undefined">No routes defined yet. Still working&#8230;</string>
-    <string name="main_activity_token_expired">Access token expired; Requesting a new access token&#8230;</string>
+    <string name="main_activity_token_expired">Refreshing access token&#8230;</string>
+    <string name="main_activity_server_timeout">Server timeout, retrying&#8230;</string>
     <string name="main_activity_user_registration">User registration completed&#8230;</string>
     <string name="main_activity_user_reading">User registration reading completed&#8230;</string>
     <string name="main_activity_no_network_title">Connection to the network unavailable.</string>
@@ -58,6 +62,9 @@
         <item>Refresh List</item>
     </string-array>
 
+    <string name="main_activity_error_remote_dialog">Error talking to the server</string>
+
+    <!-- Tertulia Details -->
     <string name="title_activity_tertulia_details">Tertulia Details</string>
     <string name="tertulia_details_label">Tertulia Details</string>
     <string name="tertulia_details_title">Title</string>
@@ -77,6 +84,7 @@
     <string name="tertulia_details_members_button">Members</string>
     <string name="tertulia_details_unsubscribe_button">Unsubscribe</string>
 
+    <!-- New Tertulia -->
     <string name="title_activity_new_tertulia">New Tertulia</string>
     <string name="new_tertulia_label">New Tertulia</string>
     <string name="new_tertulia_name_label">Title</string>
@@ -140,6 +148,7 @@
 
     <string name="title_activity_place_presentation">Place Location</string>
 
+    <!-- Edit Tertulia -->
     <string name="title_activity_edit_tertulia">Edit Tertulia</string>
     <string name="edit_tertulia_update_button">Update</string>
     <string name="edit_tertulia_toast_cancel">Tertulia edition cancelled</string>
@@ -147,6 +156,7 @@
     <string name="message_dialog_edit_tertulia_owner_warning">"You can only edit tertulias that you own. Please get ownership from the current owner and try again."</string>
     <string name="message_dialog_edit_tertulia">"Do you really want to update this tertulia?"</string>
 
+    <!-- Search Public Tertulia -->
     <string name="title_activity_search_public_tertulia">"Search Public Tertulia"</string>
     <string name="search_public_tertulia_name_label">By Title</string>
     <string name="search_public_tertulia_location_label">By Location</string>
@@ -158,14 +168,17 @@
     <string name="search_public_tertulia_search_hint">Search</string>
     <string name="search_public_tertulia_empty_list">No matches found</string>
 
+    <!-- Subscribe Public Tertulia -->
     <string name="title_dialog_subscribe_public_tertulia">"Subscribe Public Tertulia"</string>
     <string name="message_dialog_subscribe_public_tertulia">"Do you really want to subscribe to this tertulia?"</string>
 
+    <!-- Unsubscribe Public Tertulia -->
     <string name="title_dialog_unsubscribe_public_tertulia">"Unsubscribe From Tertulia"</string>
     <string name="message_dialog_unsubscribe_public_tertulia">"Do you really want to unsubscribe from this tertulia?"</string>
     <string name="message_dialog_unsubscribe_public_tertulia_owner_warning">"You cannot unsubscribe from a tertulia that you own. Please transfer the tertulia ownership to another member and try again."</string>
     <string name="message_dialog_unsubscribe_complete">"Unsubscribed from Tertulia"</string>
 
+    <!-- Public Tertulia Details -->
     <string name="title_activity_public_tertulia_details">Subscribe Public Tertulia</string>
     <string name="public_tertulia_details_label">Tertulia Details</string>
     <string name="public_tertulia_details_title">Title</string>
@@ -287,6 +300,7 @@
         <item>4<sup>th</sup> week</item>
     </string-array>
 
+    <!-- Edit User Profile -->
     <string name="title_edit_user_profile">Profile Edit</string>
     <string name="edit_user_profile_alias">User Alias</string>
     <string name="edit_user_profile_submit_button">Update</string>
@@ -301,17 +315,44 @@
     <string name="activity_list_tertulias_back_menu">Back</string>
     <string name="activity_list_tertulias_toast_no_details">Details not available.</string>
 
+    <!-- View Tertulia Members -->
     <string name="title_activity_view_members">View Members</string>
+    <string name="view_member_users_count">There are %d users subscribing this tertulia.</string>
+    <string name="view_member_empty_list">Insufucient previledges to view members.</string>
     <string name="view_member_invitations_button">Invite</string>
     <string name="view_member_edit_button">Edit</string>
     <string name="view_member_cancel_button">Cancel</string>
 
+    <!-- Search Contacts -->
+    <string name="title_activity_search_contacts">Search Contacts to Invite</string>
+
+    <!-- Invite Member -->
     <string name="title_activity_member_invitation">Member Invitation</string>
     <string name="member_invitation_toast_sent">Tertulia invitations sent</string>
     <string name="member_invitation_toast_cancel">Tertulia invitations cancelled</string>
     <string name="member_invitation_submit_button">Invite</string>
     <string name="member_invitation_cancel_button">Cancel</string>
 
+    <!-- Get Messages -->
+    <string name="title_activity_get_messages">Tertulia Messages</string>
+    <string name="get_messages_post_message_button">Send</string>
+    <string name="get_messages_cancel_button">Cancel</string>
+
+    <!-- Post Message -->
+    <string name="title_activity_send_message">Send Message</string>
+    <string name="send_message_body_title">Body</string>
+    <string name="send_message_send_button">Send</string>
+    <string name="send_message_cancel_button">Cancel</string>
+
+    <!-- About -->
+    <string name="title_activity_about">About...</string>
+    <string name="about_menu">About</string>
+
+    <string name="tertulias_notification_title">Tertúlias notification</string>
+    <string name="tertulias_authenticator_label">Tertúlias account</string>
+    <string name="tertulias_notification_addacount_not_supported">Add account is not supported</string>
+
+    <!-- Generic stuff -->
     <string name="squarebracket_open">[</string>
     <string name="squarebracket_close">]</string>
     <string name="dash">-</string>

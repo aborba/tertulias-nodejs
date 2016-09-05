@@ -41,7 +41,7 @@ public class GetTokenCallback implements FutureCallback<JsonElement> {
         this.ctx = ctx;
         this.future = future;
         this.futureCallback = futureCallback;
-        rootView = ((Activity)ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        rootView = Util.getRootView(ctx);
     }
 
     @Override

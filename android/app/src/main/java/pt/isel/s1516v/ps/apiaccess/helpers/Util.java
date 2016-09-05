@@ -34,6 +34,8 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -85,7 +87,9 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import pt.isel.s1516v.ps.apiaccess.FutureCallback2;
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.R;
+import pt.isel.s1516v.ps.apiaccess.TertuliasApplication;
 import pt.isel.s1516v.ps.apiaccess.flow.Futurizable;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ViewMembersActivity;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaListItem;
@@ -120,6 +124,13 @@ public class Util {
                 .setTextColor(Color.WHITE);
         snackbar.setAction("Action", null).show();
     }
+
+    public static View getRootView(Context ctx) {
+        if (rootView == null)
+            rootView = ((Activity) ctx).getWindow().getDecorView().findViewById(android.R.id.content);
+        return rootView;
+    }
+    private static View rootView;
 
     public static void alert(Context ctx, int title, int message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx).setMessage(message);
@@ -162,7 +173,7 @@ public class Util {
 
     // region Token
 
-    public static void refreshToken(final Context ctx, final View rootView, final Futurizable<JsonElement> future, final FutureCallback<JsonElement> futureCallback) {
+    public static <T> void refreshToken(final Context ctx, final View rootView, final Futurizable<T> future, final FutureCallback<T> futureCallback) {
 
         ServiceFilter serviceFilter = new ServiceFilter() {
             @Override
@@ -180,8 +191,11 @@ public class Util {
                                     String content = ((ServiceFilterResponse)response).getContent();
                                     if (content != null) {
                                         ApiGoogleCredentials credentials = new Gson().fromJson(content, ApiGoogleCredentials.class);
-                                        Util.setCredentials(ctx, credentials);
-                                        Util.cacheCredentialsAsync(ctx, credentials);
+                                        boolean isTokenValid = isTokenValid(credentials.token, 0);
+                                        if ( ! isTokenValid)
+                                            throw new RuntimeException();
+                                        setCredentials(ctx, credentials);
+                                        cacheCredentials(ctx, credentials);
                                     }
                                 }
                             }
@@ -226,38 +240,109 @@ public class Util {
         );
     }
 
+//    public static void refreshToken(final Context ctx, final View rootView, final Futurizable<JsonElement> future, final FutureCallback<JsonElement> futureCallback) {
+//
+//        ServiceFilter serviceFilter = new ServiceFilter() {
+//            @Override
+//            public ListenableFuture handleRequest(ServiceFilterRequest request, NextServiceFilterCallback next) {
+//                //request.addHeader("X-Custom-Header", "Header Value");
+//
+//                ListenableFuture nextFuture = next.onNext(request);
+//                Futures.addCallback(
+//                        nextFuture,
+//                        new FutureCallback() {
+//
+//                            @Override
+//                            public void onSuccess(Object response) {
+//                                if (response != null) {
+//                                    String content = ((ServiceFilterResponse)response).getContent();
+//                                    if (content != null) {
+//                                        ApiGoogleCredentials credentials = new Gson().fromJson(content, ApiGoogleCredentials.class);
+//                                        boolean isTokenValid = isTokenValid(credentials.token, 0);
+//                                        if ( ! isTokenValid)
+//                                            throw new RuntimeException();
+//                                        setCredentials(ctx, credentials);
+//                                        cacheCredentials(ctx, credentials);
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Throwable t) {
+//                                Util.longSnack(rootView, t.getMessage());
+//                                Util.logd("ServiceFilter on refresh token failed");
+//                                Util.logd(t.getMessage());
+//                            }
+//                        }
+//                );
+//                return nextFuture;
+//            }
+//        };
+//
+//        MobileServiceClient cli = Util.getMobileServiceClient(ctx).withFilter(serviceFilter);
+//        MobileServiceHttpClient httpClient = new MobileServiceHttpClient(cli);
+//        String path = "/.auth/refresh";
+//        byte[] content = null;
+//        String httpMethod = HttpConstants.GetMethod;
+//        List<Pair<String, String>> requestHeaders = null; // new LinkedList<>();
+//        List<Pair<String, String>> parameters = new LinkedList<>();
+//        parameters.add(new Pair<>("access_type", "offline"));
+//        ListenableFuture<ServiceFilterResponse> serviceFilterResponseListenableFuture = httpClient.request(path, content, httpMethod, requestHeaders, parameters);
+//        Futures.addCallback(
+//                serviceFilterResponseListenableFuture,
+//                new FutureCallback<ServiceFilterResponse>() {
+//
+//                    @Override
+//                    public void onSuccess(ServiceFilterResponse result) {
+//                        Util.logd(result.toString());
+//                        Futures.addCallback(future.getFuture(), futureCallback);
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Throwable t) {
+//                        Util.logd(t.getMessage());
+//                        Util.longSnack(rootView, t.getMessage());
+//                    }
+//                }
+//        );
+//    }
+
     public static String getAuthenticationToken(MobileServiceClient cli) {
         if (cli == null)
             return null;
-        MobileServiceUser mobileServiceUser = cli.getCurrentUser();
-        return mobileServiceUser == null ? null : mobileServiceUser.getAuthenticationToken();
+        MobileServiceUser user = cli.getCurrentUser();
+        return user == null ? null : user.getAuthenticationToken();
     }
 
-    public static boolean isTokenValid(String token, long withinMillis) {
+    public static String getAuthenticationToken(Context ctx) {
+        MobileServiceClient cli = getMobileServiceClient(ctx);
+        return getAuthenticationToken(cli);
+    }
+
+    public static Date getTokenExpirationDate(String token) {
         if (token == null)
-            return false;
+            return new Date(0);
         String[] tokenParts = token.split("\\.");
         if (tokenParts.length <= 1)
-            return false;
+            return new Date(0);;
         String jwt = tokenParts[1];
         jwt = jwt.replace('-', '+').replace('_', '/');
         switch (jwt.length() % 4) {
-            case 0:
-                break;
-            case 2:
-                jwt += "==";
-                break;
-            case 3:
-                jwt += "=";
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid base64url string.");
+            case 0: break;
+            case 2: jwt += "=="; break;
+            case 3: jwt += "="; break;
+            default: throw new IllegalArgumentException("Invalid base64url string.");
         }
         String payloadString = new String(Base64.decode(jwt, Base64.DEFAULT));
         JwtPayload payload = new Gson().fromJson(payloadString, JwtPayload.class);
-        Date expirationTime = new Date(payload.exp * 1000);
-        Date currentTime = new Date();
+        Date expirationDate = new Date(payload.exp * 1000);
+        return expirationDate;
+    }
+
+    public static boolean isTokenValid(String token, long withinMillis) {
+        Date expirationTime = getTokenExpirationDate(token);
         Long expirationTimeInMillis = expirationTime.getTime();
+        Date currentTime = new Date();
         Long currentTimeInMillis = currentTime.getTime();
         Long currentTimeOutInMillis = currentTimeInMillis - withinMillis;
         boolean result = expirationTimeInMillis > currentTimeOutInMillis;
@@ -266,12 +351,21 @@ public class Util {
     }
 
     public static boolean isCurrentTokenValid(Context ctx, long withinMillis) {
-        String token = getMobileServiceClient(ctx).getCurrentUser().getAuthenticationToken();
+        String token = getAuthenticationToken(ctx);
         return isTokenValid(token, withinMillis);
     }
 
     public static boolean isCurrentTokenValid(Context ctx) {
         return isCurrentTokenValid(ctx, 0);
+    }
+
+    public static boolean isTokenExpiredSince(Context ctx, long withinMillis) {
+        return isCurrentTokenValid(ctx, -withinMillis);
+    }
+
+    public static boolean isLoginRequired(Context ctx) {
+        boolean isRequired = isTokenExpiredSince(ctx, 259200000); // 1000 * 3600 * 72
+        return isRequired;
     }
 
     // endregion
@@ -389,8 +483,10 @@ public class Util {
 
     public static void request(Activity ctx, String route, String httpMethod, List<Pair<String, String>> parameters, FutureCallback<JsonElement> callback) {
         if (route == null || httpMethod == null) {
-            Util.longSnack(ctx.getWindow().getDecorView().findViewById(android.R.id.content),
-                    R.string.main_activity_server_error_exiting);
+            try {
+                Util.longSnack(getRootView(ctx), R.string.main_activity_server_error_exiting);
+                Thread.sleep(500);
+            } catch (InterruptedException e) {}
             ctx.finish();
         }
         if (!Util.isConnectivityAvailable(ctx)) {
@@ -405,7 +501,7 @@ public class Util {
 
     public static void request(Activity ctx, String route, String httpMethod, JsonElement body, FutureCallback<JsonElement> callback) {
         if (route == null || httpMethod == null) {
-            Util.longSnack(ctx.getWindow().getDecorView().findViewById(android.R.id.content),
+            Util.longSnack(getRootView(ctx),
                     R.string.main_activity_server_error_exiting);
             ctx.finish();
         }
@@ -603,6 +699,12 @@ public class Util {
     private static final String USERID_PREF = "userid";
     private static final String TOKEN_PREF = "token";
 
+    public static String getMyKey() {
+        if (MainActivity.me == null || MainActivity.me.me == null)
+            return null;
+        return MainActivity.me.me.myKey;
+    }
+
     // endregion
 
     public static String[] getTrimmedLowerCaseNames(TertuliaListItem[] tertulias) {
@@ -613,15 +715,26 @@ public class Util {
     }
 
     public static ApiError getApiError(Throwable t) {
-        return new Gson().fromJson(t.getMessage(), ApiError.class);
+        try {
+            return new Gson().fromJson(t.getMessage(), ApiError.class);
+        } catch(RuntimeException e) {
+            return null;
+        }
     }
 
     public static int getApiErrorCode(Throwable t) {
+        ApiError apiError = getApiError(t);
+        if (apiError == null)
+            return -1;
         return getApiError(t).code;
     }
 
     public static boolean isApiError(Throwable t, int code) {
         return getApiErrorCode(t) == code;
+    }
+
+    public static boolean isErrorCause(Throwable t, String cause) {
+        return t.getCause().getMessage().equals(cause);
     }
 
 }

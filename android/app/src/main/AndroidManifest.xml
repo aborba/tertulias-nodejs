@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2016 António Borba da Silva
   ~
   ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
@@ -16,23 +15,35 @@
   ~ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
   ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   ~
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="pt.isel.s1516v.ps.apiaccess">
 
     <uses-sdk
         android:minSdkVersion="19"
         android:targetSdkVersion="23" />
 
+    <permission android:name="pt.isel.s1516v.ps.apiaccess.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="pt.isel.s1516v.ps.apiaccess.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
 
     <application
         android:name=".TertuliasApplication"
@@ -40,19 +51,24 @@
         android:icon="@mipmap/tertulias"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:icon">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDkSDomP2ZKLPumUj-KtnjGnjeCVLPgvrQ"/>
+            android:value="AIzaSyDkSDomP2ZKLPumUj-KtnjGnjeCVLPgvrQ" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main_activity"
             android:theme="@style/AppTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -86,9 +102,11 @@
         <activity
             android:name=".tertuliasubscription.SearchPublicTertuliaActivity"
             android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_tertulia" />
@@ -99,24 +117,101 @@
             android:label="@string/title_activity_public_tertulia_details"
             android:parentActivityName=".tertuliasubscription.PublicTertuliaDetailsActivity" />
 
-        <activity android:name=".memberinvitation.ViewMembersActivity"
+        <activity
+            android:name=".memberinvitation.ViewMembersActivity"
             android:label="@string/title_activity_member_invitation"
             android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity" />
 
         <activity
             android:name=".memberinvitation.SearchContactsActivity"
             android:label="@string/title_activity_member_invitation"
-            android:parentActivityName=".memberinvitation.ViewMembersActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".memberinvitation.ViewMembersActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable_contact" />
         </activity>
 
         <activity android:name=".InvitationActivity" />
+
+        <activity
+            android:name=".viewmessages.ViewMessagesActivity"
+            android:label="@string/title_activity_get_messages"
+            android:parentActivityName=".tertuliadetails.TertuliaDetailsActivity" />
+
+        <activity
+            android:name=".sendmessage.SendMessageActivity"
+            android:label="@string/title_activity_send_message"
+            android:parentActivityName=".viewmessages.ViewMessagesActivity" />
+
+        <activity
+            android:name=".about.AboutActivity"
+            android:label="@string/title_activity_about"
+            android:parentActivityName=".MainActivity" />
+
+        <provider
+            android:name="pt.isel.s1516v.ps.apiaccess.contentprovider.TertuliasContentProvider"
+            android:authorities="pt.isel.s1516v.ps.apiaccess"
+            android:enabled="true"
+            android:exported="false"
+            android:syncable="true" />
+
+        <receiver
+            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="pt.isel.s1516v.ps.apiaccess" />
+            </intent-filter>
+
+        </receiver>
+
+        <service
+            android:name=".notifications.InstanceIDService"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".notifications.RegistrationIntentService"
+            android:exported="false" />
+
+        <service
+            android:name=".syncadapter.TertuliasSyncService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":sync">
+
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data android:name="android.content.SyncAdapter"
+                android:resource="@xml/tertulias_syncadapter" />
+        </service>
+
+        <service
+            android:name=".syncadapter.TertuliasAuthenticatorService"
+            android:enabled="true"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/tertulias_authenticator" />
+        </service>
 
     </application>
 

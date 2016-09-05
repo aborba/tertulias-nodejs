@@ -30,6 +30,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -46,6 +47,7 @@ import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ViewMembersActivity;
+import pt.isel.s1516v.ps.apiaccess.sendmessage.SendMessageActivity;
 import pt.isel.s1516v.ps.apiaccess.support.TertuliasApi;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaEdition;
 import pt.isel.s1516v.ps.apiaccess.support.domain.TertuliaScheduleMonthlyD;
@@ -59,6 +61,7 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthl
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.ui.DtUiManager;
 import pt.isel.s1516v.ps.apiaccess.tertuliaedition.EditTertuliaActivity;
+import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSubscribeTertulia;
 
 public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
@@ -129,12 +132,17 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     private void refreshDataAndViews() {
+        if (! isVerifications_0_Passed())
+            return;
         MobileServiceClient cli = Util.getMobileServiceClient(this);
         ListenableFuture<JsonElement> rTertuliasFuture = cli.invokeApi(apiLinks.getRoute(LINK_SELF), null, apiLinks.getMethod(LINK_SELF), null);
         Futures.addCallback(rTertuliasFuture, new TertuliaPresentation(false));
     }
 
     public void onClickMapLookup(View view) {
+        Log.d("trt", "in onClickMapLookup");
+        if (! isVerifications_0_Passed())
+            return;
         if (!uiManager.isGeo()) {
             Util.longSnack(view, R.string.tertulia_details_undefined_coordinates);
             return;
@@ -153,14 +161,25 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public void onClickSubmitEvent(View view) {
         Log.d("trt", "in onClickSubmitEvent");
+        if (! isVerifications_1_Passed())
+            return;
     }
 
     public void onClickSubmitMessages(View view) {
         Log.d("trt", "in onClickSubmitMessages");
+        if (! isVerifications_1_Passed())
+            return;
+        ApiLinks apiLinks = new ApiLinks(tertulia.links);
+        Intent intent = new Intent(this, SendMessageActivity.class);
+        intent.putExtra(SendMessageActivity.INTENT_TERTULIA_ID, tertulia.id);
+        intent.putExtra(SendMessageActivity.INTENT_LINKS, apiLinks);
+        startActivity(intent);
     }
 
     public void onClickSubmitEdit(View view) {
         Log.d("trt", "in onClickSubmitEdit");
+        if (! isVerifications_1_Passed())
+            return;
         if (!tertulia.role.name.toLowerCase().equals("owner")) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.title_activity_edit_tertulia)
@@ -179,6 +198,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
 
     public void onClickSubmitMembers(View view) {
         Log.d("trt", "in onClickSubmitMembers");
+        if (! isVerifications_1_Passed())
+            return;
         ApiLinks apiLinks = new ApiLinks(tertulia.links);
         Intent intent = new Intent(this, ViewMembersActivity.class);
         intent.putExtra(ViewMembersActivity.INTENT_LINKS, apiLinks);
@@ -186,6 +207,8 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     public void onClickUnsubscribe(View view) {
+        if (! isVerifications_1_Passed())
+            return;
         if (tertulia.role.name.toLowerCase().equals("owner")) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.title_dialog_unsubscribe_public_tertulia)
@@ -202,17 +225,25 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        for (ApiLink apiLink : tertulia.links) {
+                        ApiLink link = null;
+                        for (ApiLink apiLink : tertulia.links)
                             if (apiLink.rel.equals(LINK_UNSUBSCRIBE)) {
-                                String apiEndPoint = apiLink.href;
-                                String apiMethod = apiLink.method;
-                                Futures.addCallback(Util.getMobileServiceClient(TertuliaDetailsActivity.this)
-                                                .invokeApi(apiEndPoint, null, apiMethod, null)
-                                        , new UnsubscriptionCallback(findViewById(android.R.id.content)));
-                                return;
+                                link = apiLink;
+                                break;
                             }
+                        if (link == null) {
+                            Util.longSnack(uiManager.getRootView(), "Oops! Unsubscribe link not found."); // TODO: strings.xml
+                            return;
                         }
-                        Util.longSnack(uiManager.getRootView(), "Oops! Unsubscribe link not found."); // TODO: strings.xml
+
+                        String myKey = Util.getMyKey();
+                        ApiSubscribeTertulia api = new ApiSubscribeTertulia(myKey);
+                        JsonElement postParameters = new Gson().toJsonTree(api);
+                        MobileServiceClient cli = Util.getMobileServiceClient(TertuliaDetailsActivity.this);
+                        String apiEndPoint = link.href;
+                        String apiMethod = link.method;
+                        Futures.addCallback(cli.invokeApi(apiEndPoint, postParameters, apiMethod, null),
+                                new UnsubscriptionCallback(findViewById(android.R.id.content)));
                     }
                 })
                 .setNegativeButton(android.R.string.no, null)
@@ -220,6 +251,22 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
     }
 
     // endregion
+
+    private boolean isVerifications_0_Passed() {
+        if (!Util.isConnectivityAvailable(this)) {
+            Util.alert(this, R.string.main_activity_no_network_title, R.string.main_activity_no_network);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isVerifications_1_Passed() {
+        if (tertulia == null) {
+            Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
+            return false;
+        }
+        return isVerifications_0_Passed();
+    }
 
     public class UnsubscriptionCallback implements FutureCallback<JsonElement> {
 
@@ -348,11 +395,9 @@ public class TertuliaDetailsActivity extends Activity implements TertuliasApi {
         @Override
         public void onFailure(Throwable t) {
             Context ctx = TertuliaDetailsActivity.this;
-            // TODO: Refresh token
             if (! isRetry && Util.isApiError(t, 401)) { // && ! Util.isCurrentTokenValid(ctx)) {
                 Util.longSnack(uiManager.getRootView(), R.string.main_activity_token_expired);
-                MobileServiceClient cli = Util.getMobileServiceClient(ctx);
-                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks);
+                Futurizable<JsonElement> future = new GetData<>(ctx, LINK_SELF, apiLinks, uiManager);
                 Util.refreshToken(ctx, uiManager.getRootView(), future, new TertuliaPresentation(true));
                 return;
             }

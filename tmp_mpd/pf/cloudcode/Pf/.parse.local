@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Pf": {
+      "applicationId": "iG6wYvJYmAugroxDqKjHze2XDsBEL7n7vjxi1tYq"
+    },
+    "_default": {
+      "link": "Pf"
+    }
+  }
+}

@@ -12,9 +12,11 @@ public class ApiMeCore {
     public final String email;
     @com.google.gson.annotations.SerializedName("picture")
     public final String picture;
+    @com.google.gson.annotations.SerializedName("myKey")
+    public final String myKey;
 
     public ApiMeCore() {
-        alias = firstName = lastName = email = picture = null;
+        alias = firstName = lastName = email = picture = myKey = null;
     }
 
     @Override
@@ -30,5 +32,4 @@ public class ApiMeCore {
                 other.email == this.email &&
                 other.picture == this.picture;
     }
-
 }

@@ -40,6 +40,7 @@ import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
 
 import java.util.EnumMap;
 
+import pt.isel.s1516v.ps.apiaccess.MainActivity;
 import pt.isel.s1516v.ps.apiaccess.R;
 import pt.isel.s1516v.ps.apiaccess.helpers.Error;
 import pt.isel.s1516v.ps.apiaccess.helpers.GeoPosition;
@@ -55,6 +56,7 @@ import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthl
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleMonthlyW;
 import pt.isel.s1516v.ps.apiaccess.support.remote.ApiTertuliaEditionBundleWeekly;
 import pt.isel.s1516v.ps.apiaccess.tertuliadetails.PlacePresentationActivity;
+import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.gson.ApiSubscribeTertulia;
 import pt.isel.s1516v.ps.apiaccess.tertuliasubscription.ui.SbUiManager;
 
 public class PublicTertuliaDetailsActivity extends Activity implements TertuliasApi {
@@ -146,7 +148,7 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int whichButton) {
+                    public void onClick(DialogInterface dialog, int whichButton) { // TODO: alterar ApiLink[] para ApiLinks
                         Parcelable[] parcelables = getIntent().getParcelableArrayExtra(LINKS);
                         ApiLink[] apiLinks = new ApiLink[parcelables.length];
                         for (int i = 0; i < parcelables.length; i++)
@@ -163,8 +165,12 @@ public class PublicTertuliaDetailsActivity extends Activity implements Tertulias
                             Util.longSnack(findViewById(android.R.id.content), R.string.main_activity_routes_undefined);
                             return;
                         }
-                        Futures.addCallback(Util.getMobileServiceClient(PublicTertuliaDetailsActivity.this)
-                                        .invokeApi(apiEndPoint, null, apiMethod, null)
+
+                        String myKey = MainActivity.me.me.myKey;
+                        ApiSubscribeTertulia api = new ApiSubscribeTertulia(myKey);
+                        JsonElement postParameters = new Gson().toJsonTree(api);
+                        MobileServiceClient cli = Util.getMobileServiceClient(PublicTertuliaDetailsActivity.this);
+                        Futures.addCallback(cli.invokeApi(apiEndPoint, postParameters, apiMethod, null)
                                 , new SubscriptionCallback(findViewById(android.R.id.content)));
                     }})
                 .setNegativeButton(android.R.string.no, null)

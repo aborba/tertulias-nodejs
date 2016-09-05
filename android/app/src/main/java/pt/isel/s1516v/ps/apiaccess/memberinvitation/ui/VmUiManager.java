@@ -28,19 +28,20 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.EnumMap;
+import java.util.Locale;
 
 import pt.isel.s1516v.ps.apiaccess.R;
-import pt.isel.s1516v.ps.apiaccess.TertuliasArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.helpers.Util;
 import pt.isel.s1516v.ps.apiaccess.memberinvitation.ApiMember;
-import pt.isel.s1516v.ps.apiaccess.memberinvitation.MembersArrayAdapter;
+import pt.isel.s1516v.ps.apiaccess.memberinvitation.MembersViewArrayAdapter;
 import pt.isel.s1516v.ps.apiaccess.ui.UiManager;
 
 public class VmUiManager extends UiManager {
 
     public enum UIRESOURCE {
         TOOLBAR,
-        PROGRESBAR,
+        PROGRESSBAR,
+        TOTALS,
         EMPTY,
         RECYCLE
     }
@@ -51,24 +52,41 @@ public class VmUiManager extends UiManager {
 
     private Toolbar toolbarView;
     private ProgressBar progressBar;
+    private TextView totalsView;
     private TextView emptyView;
     private RecyclerView recyclerView;
 
     public VmUiManager(Context ctx) {
         super(ctx);
         uiResources.put(UIRESOURCE.TOOLBAR, R.id.toolbar);
-        uiResources.put(UIRESOURCE.PROGRESBAR, R.id.vma_progressbar);
+        uiResources.put(UIRESOURCE.PROGRESSBAR, R.id.vma_progressbar);
+        uiResources.put(UIRESOURCE.TOTALS, R.id.vma_members_count);
         uiResources.put(UIRESOURCE.EMPTY, R.id.vma_empty_view);
         uiResources.put(UIRESOURCE.RECYCLE, R.id.vma_RecyclerView);
     }
 
     public void set(ApiMember[] members) {
         lazyViewsSetup();
-        MembersArrayAdapter arrayAdapter = new MembersArrayAdapter((Activity) ctx, members);
+        MembersViewArrayAdapter arrayAdapter = new MembersViewArrayAdapter((Activity) ctx, members);
         swapAdapter(arrayAdapter);
+        if (members == null || members.length == 0) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
     }
 
-    public void swapAdapter(MembersArrayAdapter viewAdapter) {
+    public void set(int totals) {
+        lazyViewsSetup();
+        if (totals == 1)
+            return;
+        String template = ctx.getResources().getString(R.string.view_member_users_count);
+        totalsView.setText(String.format(Locale.getDefault(), template, totals));
+    }
+
+    public void swapAdapter(MembersViewArrayAdapter viewAdapter) {
         lazyViewsSetup();
         Util.setupAdapter((Activity) ctx, recyclerView, viewAdapter);
     }
@@ -79,6 +97,16 @@ public class VmUiManager extends UiManager {
     }
 
     // region UiManager
+
+    @Override
+    public void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar() {
+        progressBar.setVisibility(View.INVISIBLE);
+    }
 
     @Override
     public boolean isGeoCapability() {
@@ -127,7 +155,8 @@ public class VmUiManager extends UiManager {
         if (isViewsSet)
             return;
         toolbarView = setup(UIRESOURCE.TOOLBAR, Toolbar.class, uiViews);
-        progressBar = setup(UIRESOURCE.PROGRESBAR, ProgressBar.class, uiViews);
+        progressBar = setup(UIRESOURCE.PROGRESSBAR, ProgressBar.class, uiViews);
+        totalsView = setup(UIRESOURCE.TOTALS, TextView.class, uiViews);
         emptyView = setup(UIRESOURCE.EMPTY, TextView.class, uiViews);
         recyclerView = setup(UIRESOURCE.RECYCLE, RecyclerView.class, uiViews);
         recyclerView.setHasFixedSize(true);
