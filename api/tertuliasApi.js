@@ -715,6 +715,7 @@ module.exports = function (configuration) {
 		});
 	});
 
+
 	router.post('/:tr_id/members/voucher', (req, res, next) => {
 		console.log('in POST /tertulias/:tr_id/members/voucher');
 		var tr_id = req.params.tr_id;
