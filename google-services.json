@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "309180942544",
+    "firebase_url": "https://tertulias-2016.firebaseio.com",
+    "project_id": "tertulias-2016",
+    "storage_bucket": "tertulias-2016.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309180942544:android:77751a9f52b3af0d",
+        "android_client_info": {
+          "package_name": "pt.isel.s1516v.ps.apiaccess"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "309180942544-ik11ig35h1lm2ac7b4ho5aullv3vmvi4.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "309180942544-p7pg44n9uamccukt8caic0jerl2jpmta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoGUhECgZ3XFcbmboEwUJ8ayq88nm9szQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

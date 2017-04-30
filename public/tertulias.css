@@ -1,0 +1,49 @@
+body {
+	background-color: lightblue;
+}
+
+h1 {
+	font-family: verdana;
+	color: white;
+	text-align: center;
+}
+
+p {
+	font-family: verdana;
+	font-size: 20px;
+}
+
+button {
+	color: #fff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+	display: inline-block;
+	padding: 10px 16px;
+	margin-bottom: 0;
+	font-size: 1.5em;
+	font-family: verdana;
+	font-weight: 400;
+	line-height: 1.333333333;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	background-image: none;
+	border: 1px solid transparent;
+	border-radius: 8px;
+}
+
+.header img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height: 64px;
+	width: 64px;
+}
+
+.header h1 {
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 1em;
+}
