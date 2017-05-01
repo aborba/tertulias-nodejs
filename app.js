@@ -4,6 +4,7 @@ var util = require('./util');
 util.logTertulias2(appVersion);
 util.nodeVersion();
 
+
 var express = require('express'),
 	azureMobileApps = require('azure-mobile-apps'),
 	registation = require('./api/registation'),
